@@ -1,0 +1,83 @@
+import "nft.ral"
+
+TxContract NFTListing(
+    mut price: U256,
+    tokenId: ByteVec,
+    tokenOwner: Address,
+    marketAddress: Address,
+    commissionRate: U256
+) {
+    event NFTListingPriceUpdated(
+       tokenId: ByteVec,
+       oldPrice: U256,
+       newPrice: U256
+    )
+
+    event NFTSold(
+      price: U256,
+      tokenId: ByteVec,
+      previousOwner: Address,
+      newOwner: Address
+    )
+
+    event NFTListingCancelled(
+      tokenId: ByteVec,
+      tokenOwner: Address
+    )
+
+    pub fn getMetadata() -> (U256, ByteVec, Address, Address) {
+        return price, tokenId, tokenOwner, marketAddress
+    }
+
+    @use(approvedAssets = true, contractAssets = true)
+    pub fn buy() -> () {
+        // This method can only be called from the marketplace
+        // where this NFT listing was created
+        let callingContract = callerAddress!()
+        assert!(callingContract == marketAddress)
+
+        assert!(txCallerSize!() == 1)
+        let buyer = txCaller!(0)
+
+        // Charge a commission for the marketplace
+        let commission = (price * commissionRate) / 10000
+        if (commission > 0) {
+            // NOTE: Fails here if buy directly from NFTListing instead
+            // of going through the market place.
+            transferAlph!(buyer, marketAddress, commission)
+        }
+
+        if (buyer != tokenOwner) {
+            transferAlph!(buyer, tokenOwner, price)
+        }
+
+        let nft = NFT(tokenId)
+        nft.updateOwner(buyer)
+
+        emit NFTSold(price, tokenId, tokenOwner, buyer)
+
+        destroySelf!(tokenOwner)
+    }
+
+    @use(approvedAssets = true, contractAssets = true)
+    pub fn cancel() -> () {
+        assert!(txCallerSize!() == 1)
+        assert!(txCaller!(0) == tokenOwner)
+
+        let nft = NFT(tokenId)
+        nft.updateOwner(tokenOwner)
+
+        emit NFTListingCancelled(tokenId, tokenOwner)
+
+        destroySelf!(tokenOwner)
+    }
+
+    pub fn updatePrice(newPrice: U256) -> () {
+        assert!(txCallerSize!() == 1)
+        assert!(txCaller!(0) == tokenOwner)
+
+        emit NFTListingPriceUpdated(tokenId, price, newPrice)
+
+        price = newPrice
+    }
+}

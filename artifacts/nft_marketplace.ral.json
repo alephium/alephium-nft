@@ -1,0 +1,146 @@
+{
+  "sourceCodeSha256": "a283d6383fc810609ed4d2dedc2e479837da2be6ef8c64764d6ade7ba75738fa",
+  "bytecode": "040617406f4081409340a540b501010204000a160017020c59170316031601a2160201010101020701402f16010c334d5a0d2f4d0c591702160116001602b2a0031305641703160213c1e8d4a51000a21600a0001603c017041604771705160017061605160601021602a002a9051601160016021604160573160402010001010007000506a00116005f1600a101010001010007000507a00216005f1600a102010001010007000508a00316005f1600a1030000000000095a0d2f4d0c59a001454d",
+  "codeHash": "81bbcdca2305c5975d993187ec286ab298e1e543995477cf2c5ccc11394dec99",
+  "fieldsSig": {
+    "signature": "TxContract NFTMarketPlace(nftListingByteCode:ByteVec,mut admin:Address,mut listingPrice:U256,mut commissionRate:U256)",
+    "names": [
+      "nftListingByteCode",
+      "admin",
+      "listingPrice",
+      "commissionRate"
+    ],
+    "types": [
+      "ByteVec",
+      "Address",
+      "U256",
+      "U256"
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "NFTListed",
+      "signature": "event NFTListed(price:U256,tokenId:ByteVec,tokenOwner:Address,listingContractId:ByteVec,listingContractAddress:Address)",
+      "fieldNames": [
+        "price",
+        "tokenId",
+        "tokenOwner",
+        "listingContractId",
+        "listingContractAddress"
+      ],
+      "fieldTypes": [
+        "U256",
+        "ByteVec",
+        "Address",
+        "ByteVec",
+        "Address"
+      ]
+    },
+    {
+      "name": "AdminUpdated",
+      "signature": "event AdminUpdated(previous:Address,new:Address)",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address"
+      ]
+    },
+    {
+      "name": "ListingPriceUpdated",
+      "signature": "event ListingPriceUpdated(previous:U256,new:U256)",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "U256",
+        "U256"
+      ]
+    },
+    {
+      "name": "CommissionRateUpdated",
+      "signature": "event CommissionRateUpdated(previous:U256,new:U256)",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "U256",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "buyNFT",
+      "signature": "@use(approvedAssets=true,contractAssets=true) pub buyNFT(nftListingContractId:ByteVec,totalPayment:U256)->()",
+      "argNames": [
+        "nftListingContractId",
+        "totalPayment"
+      ],
+      "argTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "listNFT",
+      "signature": "@use(approvedAssets=true,contractAssets=true) pub listNFT(tokenId:ByteVec,price:U256)->(ByteVec)",
+      "argNames": [
+        "tokenId",
+        "price"
+      ],
+      "argTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "updateAdmin",
+      "signature": "pub updateAdmin(newAdmin:Address)->()",
+      "argNames": [
+        "newAdmin"
+      ],
+      "argTypes": [
+        "Address"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateListingPrice",
+      "signature": "pub updateListingPrice(newListingPrice:U256)->()",
+      "argNames": [
+        "newListingPrice"
+      ],
+      "argTypes": [
+        "U256"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateCommissionRate",
+      "signature": "pub updateCommissionRate(newCommissionRate:U256)->()",
+      "argNames": [
+        "newCommissionRate"
+      ],
+      "argTypes": [
+        "U256"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "checkCallerIsAdmin",
+      "signature": "checkCallerIsAdmin()->()",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": []
+    }
+  ]
+}

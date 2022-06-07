@@ -1,0 +1,87 @@
+{
+  "sourceCodeSha256": "7d121f29c783b1c86ba55b5d0a60526eccb198fbed1ee7903a38f3ae0b5e258e",
+  "bytecode": "05040f184037404e010000000405a001a002a003a00402010000000102a000020100010100135a0d2f4d0c59a00045b4a000451b4d05a00016005f1600a10001010000000e5a0d2f4d0c59a000454d06a0005ea000b0",
+  "codeHash": "574c756d8891447ff6688003e95f10b7ffe2229eaca413d27ef10f14c844346d",
+  "fieldsSig": {
+    "signature": "TxContract NFT(mut owner:Address,name:ByteVec,symbol:ByteVec,uri:ByteVec,collectionAddress:Address)",
+    "names": [
+      "owner",
+      "name",
+      "symbol",
+      "uri",
+      "collectionAddress"
+    ],
+    "types": [
+      "Address",
+      "ByteVec",
+      "ByteVec",
+      "ByteVec",
+      "Address"
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "NFTOwnerUpdated",
+      "signature": "event NFTOwnerUpdated(previousOwner:Address,newOwner:Address)",
+      "fieldNames": [
+        "previousOwner",
+        "newOwner"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address"
+      ]
+    },
+    {
+      "name": "NFTBurnt",
+      "signature": "event NFTBurnt(owner:Address)",
+      "fieldNames": [
+        "owner"
+      ],
+      "fieldTypes": [
+        "Address"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "getMetadata",
+      "signature": "pub getMetadata()->(ByteVec,ByteVec,ByteVec,Address)",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": [
+        "ByteVec",
+        "ByteVec",
+        "ByteVec",
+        "Address"
+      ]
+    },
+    {
+      "name": "getOwner",
+      "signature": "pub getOwner()->(Address)",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": [
+        "Address"
+      ]
+    },
+    {
+      "name": "updateOwner",
+      "signature": "pub updateOwner(newOwner:Address)->()",
+      "argNames": [
+        "newOwner"
+      ],
+      "argTypes": [
+        "Address"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "burn",
+      "signature": "@use(approvedAssets=true,contractAssets=true) pub burn()->()",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": []
+    }
+  ]
+}

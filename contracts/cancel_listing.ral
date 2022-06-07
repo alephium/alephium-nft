@@ -1,0 +1,8 @@
+import "nft_listing.ral"
+
+TxScript Main(
+    nftListingContractId: ByteVec
+) {
+    let nftListing = NFTListing(nftListingContractId)
+    nftListing.cancel()
+}

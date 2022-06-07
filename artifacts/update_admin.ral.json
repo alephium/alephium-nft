@@ -1,0 +1,24 @@
+{
+  "sourceCodeSha256": "d04c185e90b75e69c6982883bccea7d76325ba2880d3f5c52b364224715c5617",
+  "bytecodeTemplate": "01010300010005{1}1700{0}16000102",
+  "fieldsSig": {
+    "signature": "TxScript Main(newAdmin:Address,nftMarketplaceContractId:ByteVec)",
+    "names": [
+      "newAdmin",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "Address",
+      "ByteVec"
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "signature": "@use(approvedAssets=true) pub main()->()",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": []
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+// Who can change the metadata of this NFT? Maybe it should just be fixed
+// when it is created, to reduce complexity
+// Right now only 1 token is supported
+TxContract NFT(
+    mut owner: Address,
+    name: ByteVec,
+    symbol: ByteVec,
+    uri: ByteVec,                 // name; description; image
+    collectionAddress: Address    // The collection address, 0 when no collection
+) {
+
+    event NFTOwnerUpdated(
+      previousOwner: Address,
+      newOwner: Address
+    )
+
+    event NFTBurnt(
+      owner: Address
+    )
+
+    pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
+        return name, symbol, uri, collectionAddress
+    }
+
+    pub fn getOwner() -> (Address) {
+        return owner
+    }
+
+    pub fn updateOwner(newOwner: Address) -> () {
+        assert!(txCallerSize!() == 1)
+        assert!(txCaller!(0) == owner || callerAddress!() == owner)
+
+        emit NFTOwnerUpdated(owner, newOwner)
+        owner = newOwner
+    }
+
+    @use(approvedAssets = true, contractAssets = true)
+    pub fn burn() -> () {
+        assert!(txCallerSize!() == 1)
+        assert!(txCaller!(0) == owner)
+
+        emit NFTBurnt(owner)
+
+        destroySelf!(owner)
+    }
+}

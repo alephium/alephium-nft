@@ -1,0 +1,110 @@
+import "nft.ral"
+import "nft_listing.ral"
+
+TxContract NFTMarketPlace(
+    nftListingByteCode: ByteVec,
+    mut admin: Address,
+    mut listingPrice: U256,
+    mut commissionRate: U256   // basis point. e.g. 2.5% == 250 basis point
+) {
+
+    event NFTListed(
+      price: U256,
+      tokenId: ByteVec,
+      tokenOwner: Address,
+      listingContractId: ByteVec,
+      listingContractAddress: Address
+    )
+
+    event AdminUpdated(
+        previous: Address,
+        new: Address
+    )
+
+    event ListingPriceUpdated(
+        previous: U256,
+        new: U256
+    )
+
+    event CommissionRateUpdated(
+        previous: U256,
+        new: U256
+    )
+
+    @use(approvedAssets = true, contractAssets = true)
+    pub fn buyNFT(
+        nftListingContractId: ByteVec,
+        totalPayment: U256
+    ) -> () {
+        let nftListing = NFTListing(nftListingContractId)
+        let buyer = txCaller!(0)
+        approveAlph!(buyer, totalPayment)
+        nftListing.buy()
+    }
+
+    @use(approvedAssets = true, contractAssets = true)
+    pub fn listNFT(
+        tokenId: ByteVec,
+        price: U256
+    ) -> (ByteVec) {
+        assert!(price > 0)
+        assert!(txCallerSize!() == 1)
+        let tokenOwner = txCaller!(0)
+
+        let initialState = encodeToByteVec!(
+            price,
+            tokenId,
+            tokenOwner,
+            selfAddress!(),
+            commissionRate
+        )
+
+        approveAlph!(tokenOwner, 1000000000000)  // TODO: Set appropriate amount
+        // Create the listing contract
+        let nftListingContractId = createSubContract!(tokenId, nftListingByteCode, initialState)
+        let nftListingContractAddress = contractIdToAddress!(nftListingContractId)
+
+        // Update owner of the NFT to the listing contract
+        let nft = NFT(tokenId)
+        nft.updateOwner(nftListingContractAddress)
+
+        // Charge the listing fee
+        transferAlphToSelf!(tokenOwner, listingPrice)
+
+        emit NFTListed(
+            price,
+            tokenId,
+            tokenOwner,
+            nftListingContractId,
+            nftListingContractAddress
+        )
+
+        return nftListingContractId
+    }
+
+    pub fn updateAdmin(newAdmin: Address) -> () {
+        checkCallerIsAdmin()
+
+        emit AdminUpdated(admin, newAdmin)
+        admin = newAdmin
+    }
+
+    pub fn updateListingPrice(newListingPrice: U256) -> () {
+        checkCallerIsAdmin()
+
+        emit ListingPriceUpdated(listingPrice, newListingPrice)
+        listingPrice = newListingPrice
+    }
+
+    pub fn updateCommissionRate(newCommissionRate: U256) -> () {
+        checkCallerIsAdmin()
+
+        emit CommissionRateUpdated(commissionRate, newCommissionRate)
+        commissionRate = newCommissionRate
+    }
+
+    fn checkCallerIsAdmin() -> () {
+       assert!(txCallerSize!() == 1)
+       assert!(txCaller!(0) == admin)
+    }
+}

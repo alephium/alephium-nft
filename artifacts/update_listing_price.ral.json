@@ -1,0 +1,24 @@
+{
+  "sourceCodeSha256": "491f527276f756f8c9042ba57511a1691f8f1e7907e11e743345ab131988a52f",
+  "bytecodeTemplate": "01010300010005{1}1700{0}16000103",
+  "fieldsSig": {
+    "signature": "TxScript Main(price:U256,nftMarketplaceContractId:ByteVec)",
+    "names": [
+      "price",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "U256",
+      "ByteVec"
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "signature": "@use(approvedAssets=true) pub main()->()",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": []
+    }
+  ]
+}

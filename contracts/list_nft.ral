@@ -1,0 +1,13 @@
+import "nft_marketplace.ral"
+
+TxScript Main(
+    tokenId: ByteVec,
+    price: U256,
+    marketPlaceContractId: ByteVec
+) {
+    let caller = txCaller!(0)
+    let marketPlace = NFTMarketPlace(marketPlaceContractId)
+
+    approveAlph!(caller, 2000000000000)  // TODO: Set appropriate amount
+    marketPlace.listNFT(tokenId, price)
+}
