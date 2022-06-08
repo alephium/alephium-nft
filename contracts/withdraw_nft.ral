@@ -1,0 +1,8 @@
+import "nft.ral"
+
+TxScript Main(
+    nftContractId: ByteVec
+) {
+    let nft = NFT(nftContractId)
+    nft.withdraw()
+}

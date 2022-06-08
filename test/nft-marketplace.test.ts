@@ -1,9 +1,10 @@
 import * as web3 from 'alephium-web3'
-import { verifyContractState, timeout, subContractId, addressFromContractId } from '../test/helpers/utils'
+import { verifyContractState, timeout, subContractId, addressFromContractId, checkHexString } from '../test/helpers/utils'
 import { testWallet1, testAddress1, testWallet2, testAddress2 } from '../test/helpers/signer'
 import { NFTCollection } from '../test/helpers/nft-collection'
 import { NFTMarketplace } from '../test/helpers/nft-marketplace'
 import { NodeProvider } from 'alephium-web3'
+import { provider } from '../utils/providers'
 
 describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
@@ -22,21 +23,25 @@ describe('nft marketplace', function() {
       "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"
     )
 
-    const nftContractAddress = await nftCollection.mintNFT(
+    const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
+    const nftContractId = subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
+    const nftContractAddress = addressFromContractId(nftContractId)
+    await nftCollection.mintNFT(
       nftCollectionContractId,
       nftCollectionContractAddress,
       nftCollectionContractGroup,
       "CryptoPunk #0001",
       "CP0001",
-      "https://cryptopunks.app/cryptopunks/details/1"
+      nftUri
     )
+
 
     verifyContractState(provider, nftContractAddress, (state) => {
       // check the owner
       expect(state.fields[0].value).toEqual(testAddress1)
     })
 
-    const tokenId = web3.binToHex(web3.contractIdFromAddress(nftContractAddress))
+    const tokenId = nftContractId
     const price = 1000
     const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId)
     const nftListingContractAddress = addressFromContractId(nftListingContractId)
@@ -119,6 +124,19 @@ describe('nft marketplace', function() {
       expect(nftPriceUpdatedEventFields[3].value).toEqual(testAddress1)
 
       // TODO: Verify NFTListingContract is gone
+    }
+
+    // Withdraw & Deposit NFT
+    {
+      expect((await getTokens(testAddress1))).not.toContain(tokenId)
+
+      await nftCollection.withdrawNFT(nftContractId)
+
+      expect((await getTokens(testAddress1))).toContain(tokenId)
+
+      await nftCollection.depositNFT(nftContractId)
+
+      expect((await getTokens(testAddress1))).not.toContain(tokenId)
     }
 
     // Cancel the listing
@@ -264,5 +282,10 @@ describe('nft marketplace', function() {
         expect(state.fields[1].value).toEqual(updatedValue)
       })
     }
+  }
+
+  async function getTokens(address: string): Promise<string[]> {
+    const utxos = await provider.addresses.getAddressesAddressUtxos(address)
+    return utxos.utxos.flatMap((utxo) => utxo.tokens).map((token) => token.id)
   }
 })

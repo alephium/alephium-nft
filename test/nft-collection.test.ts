@@ -20,14 +20,37 @@ describe('nft collection', function() {
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractAddress = await nftCollection.mintNFT(
+    const nftContractId = utils.subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
+    const nftName = "CryptoPunk #0001"
+    const nftSymbol = "CP0001"
+    const nftContractAddress = utils.addressFromContractId(nftContractId)
+    await nftCollection.mintNFT(
       nftCollectionContractId,
       nftCollectionContractAddress,
       nftCollectionContractGroup,
-      "CryptoPunk #0001",
-      "CP0001",
+      nftName,
+      nftSymbol,
       nftUri
     )
+
+    const nftCollectionContractEvents = await provider.events.getEventsContractContractaddress(
+      nftCollectionContractAddress,
+      { start: 0, group: nftCollectionContractGroup }
+    )
+
+    expect(nftCollectionContractEvents.events.length).toEqual(1)
+
+    const nftMintedEventFields = nftCollectionContractEvents.events[0].fields
+    // Check minter address
+    expect(nftMintedEventFields[0].value).toEqual(testAddress1)
+    // Check collection address
+    expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractAddress)
+    // Check info of the minted NFT
+    expect(utils.checkHexString(nftMintedEventFields[2].value, nftName))
+    expect(utils.checkHexString(nftMintedEventFields[3].value, nftSymbol))
+    expect(utils.checkHexString(nftMintedEventFields[4].value, nftUri))
+    expect(nftMintedEventFields[5].value).toEqual(nftContractId)
+    expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
 
     const nftContractState = await provider.contracts.getContractsAddressState(
       nftContractAddress, { group: 0 }

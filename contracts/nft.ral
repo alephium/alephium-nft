@@ -14,6 +14,14 @@ TxContract NFT(
       newOwner: Address
     )
 
+    event NFTWithdrawn(
+      owner: Address
+    )
+
+    event NFTDeposited(
+      owner: Address
+    )
+
     event NFTBurnt(
       owner: Address
     )
@@ -38,13 +46,35 @@ TxContract NFT(
         owner = newOwner
     }
 
+    @use(approvedAssets=true, contractAssets = true)
+    pub fn deposit() -> () {
+        checkCallerIsOwner()
+
+        emit NFTDeposited(owner)
+
+        transferTokenToSelf!(owner, selfContractId!(), 1)
+    }
+
+    @use(approvedAssets=true, contractAssets = true)
+    pub fn withdraw() -> () {
+        checkCallerIsOwner()
+
+        emit NFTWithdrawn(owner)
+
+        transferTokenFromSelf!(owner, selfContractId!(), 1)
+    }
+
     @use(approvedAssets = true, contractAssets = true)
     pub fn burn() -> () {
-        assert!(txCallerSize!() == 1)
-        assert!(txCaller!(0) == owner)
+        checkCallerIsOwner()
 
         emit NFTBurnt(owner)
 
         destroySelf!(owner)
+    }
+
+   fn checkCallerIsOwner() -> () {
+       assert!(txCallerSize!() == 1)
+       assert!(txCaller!(0) == owner)
     }
 }
