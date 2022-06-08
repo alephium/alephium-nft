@@ -9,6 +9,6 @@ TxScript Main(
     let caller = txCaller!(0)
     let nftCollection = NFTCollection(nftCollectionContractId)
 
-    approveAlph!(caller, 1000000000000)
+    approveAlph!(caller, 1100000000000000000)
     nftCollection.mint(name, symbol, uri)
 }

@@ -26,9 +26,13 @@ TxContract NFT(
         return owner
     }
 
+    @use(contractAssets = true)
     pub fn updateOwner(newOwner: Address) -> () {
         assert!(txCallerSize!() == 1)
         assert!(txCaller!(0) == owner || callerAddress!() == owner)
+
+        // Token needs to be owned by the contract when owner is changed
+        assert!(tokenRemaining!(selfAddress!(), selfContractId!()) == 1)
 
         emit NFTOwnerUpdated(owner, newOwner)
         owner = newOwner

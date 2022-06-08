@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "491f527276f756f8c9042ba57511a1691f8f1e7907e11e743345ab131988a52f",
+  "sourceCodeSha256": "6695651a2511c0cf7a7a056ee05345c2cbee6b569ebb13819c26322a07e58897",
   "bytecodeTemplate": "01010300010005{1}1700{0}16000103",
   "fieldsSig": {
     "signature": "TxScript Main(price:U256,nftMarketplaceContractId:ByteVec)",

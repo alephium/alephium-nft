@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "7d121f29c783b1c86ba55b5d0a60526eccb198fbed1ee7903a38f3ae0b5e258e",
-  "bytecode": "05040f184037404e010000000405a001a002a003a00402010000000102a000020100010100135a0d2f4d0c59a00045b4a000451b4d05a00016005f1600a10001010000000e5a0d2f4d0c59a000454d06a0005ea000b0",
-  "codeHash": "574c756d8891447ff6688003e95f10b7ffe2229eaca413d27ef10f14c844346d",
+  "sourceCodeSha256": "4a2c522bb9815cf58459a4bfa6f3c4fb65c91674104d2bab77537dff0b35d6fa",
+  "bytecode": "05040f18403d4054010000000405a001a002a003a00402010000000102a000020102010100195a0d2f4d0c59a00045b4a000451b4db2b1a50d2f4d05a00016005f1600a10001010000000e5a0d2f4d0c59a000454d06a0005ea000b0",
+  "codeHash": "b35bb6cdeb1251a6675be85163e90c5ca076fe82be9b405ce00b67d8750d4191",
   "fieldsSig": {
     "signature": "TxContract NFT(mut owner:Address,name:ByteVec,symbol:ByteVec,uri:ByteVec,collectionAddress:Address)",
     "names": [
@@ -67,7 +67,7 @@
     },
     {
       "name": "updateOwner",
-      "signature": "pub updateOwner(newOwner:Address)->()",
+      "signature": "@use(contractAssets=true) pub updateOwner(newOwner:Address)->()",
       "argNames": [
         "newOwner"
       ],

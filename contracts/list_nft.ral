@@ -8,6 +8,6 @@ TxScript Main(
     let caller = txCaller!(0)
     let marketPlace = NFTMarketPlace(marketPlaceContractId)
 
-    approveAlph!(caller, 2000000000000)  // TODO: Set appropriate amount
+    approveAlph!(caller, 1100000000000000000)
     marketPlace.listNFT(tokenId, price)
 }
