@@ -102,7 +102,7 @@ export class NFTMarketplace extends DeployHelpers {
   }
 
   async buyNFT(
-    totalPayment: number,
+    totalPayment: Number256,
     tokenId: string,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
@@ -118,8 +118,7 @@ export class NFTMarketplace extends DeployHelpers {
           totalPayment: totalPayment,
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 200000  // TODO: set appropriately
+        }
       }
     )
   }
@@ -139,8 +138,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 300000  // TODO: set appropriately
+        }
       }
     )
   }
@@ -161,7 +159,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: price,
           nftMarketplaceContractId: marketPlaceContractId
         },
-        gasAmount: 300000
+        gasAmount: 20000
       }
     )
   }
@@ -182,7 +180,7 @@ export class NFTMarketplace extends DeployHelpers {
           newAdmin: admin,
           nftMarketplaceContractId: marketPlaceContractId
         },
-        gasAmount: 300000
+        gasAmount: 20000
       }
     )
   }
@@ -203,7 +201,7 @@ export class NFTMarketplace extends DeployHelpers {
           newCommissionRate: commissionRate,
           nftMarketplaceContractId: marketPlaceContractId
         },
-        gasAmount: 300000
+        gasAmount: 20000
       }
     )
   }

@@ -22,8 +22,6 @@ TxContract NFTListing(
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
         if (commission > 0) {
-            // NOTE: Fails here if buy directly from NFTListing instead
-            // of going through the market place.
             transferAlph!(buyer, marketAddress, commission)
         }
 
@@ -32,7 +30,8 @@ TxContract NFTListing(
         }
 
         let nft = NFT(tokenId)
-        nft.updateOwner(buyer)
+        let nftAddress = contractIdToAddress!(tokenId)
+        nft.transferOwnershipAndAsset{buyer -> 1 alph}(buyer)
 
         destroySelf!(tokenOwner)
     }
@@ -42,7 +41,7 @@ TxContract NFTListing(
         assert!(callerAddress!() == marketAddress)
 
         let nft = NFT(tokenId)
-        nft.updateOwner(tokenOwner)
+        nft.transferOwnership(tokenOwner)
 
         destroySelf!(tokenOwner)
     }

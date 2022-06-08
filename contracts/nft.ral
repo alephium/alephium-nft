@@ -36,12 +36,21 @@ TxContract NFT(
     }
 
     @using(assetsInContract = true)
-    pub fn updateOwner(newOwner: Address) -> () {
+    pub fn transferOwnership(newOwner: Address) -> () {
         assert!(callerAddress!() == owner)
+        updateOwner(newOwner)
+    }
 
+    @using(preapprovedAssets = true, assetsInContract = true)
+    pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
+        assert!(callerAddress!() == owner)
+        updateOwner(newOwner)
+        transferAlph!(newOwner, owner, 1 alph)
+    }
+
+    fn updateOwner(newOwner: Address) -> () {
         // Token needs to be owned by the contract when owner is changed
         assert!(!isTokenWithdrawn)
-
         emit NFTOwnerUpdated(owner, newOwner)
         owner = newOwner
     }

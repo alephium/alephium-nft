@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "901993be20fcd09922b8c4b0796c6418c600f94587b8a3486c01f9e81c6a0451",
-  "bytecode": "06060f184031405a4075408f010000000405a002a003a004a00502010000000102a0000201020101000db4a000454da001194d05a00016005f1600a100010100010017a0014db417001600a000464c0605a00016005f1600a10004a1010716005e1600b10dac010200000010b4a000454da001194d03a10106a0005ea000b10dab010200000010b4a000454da001194d08a0005eb2b10dbda000b0",
-  "codeHash": "928336e3d7aba370d94122f3f5e7563ee56e786029785e4df70ed1f5bc02283c",
+  "sourceCodeSha256": "6a4cedc660ca932aab30fcedad4fcdbe4e7b33ad9bc1ae20f86c3002c33ee884",
+  "bytecode": "06080f184027404540594082409d40b7010000000405a002a003a004a00502010000000102a00002010201010006b4a000454d1600000401010101000ab4a000454d160000041600a00013c40de0b6b3a7640000a7000001010009a001194d05a00016005f1600a100010100010017a0014db417001600a000464c0605a00016005f1600a10004a1010716005e1600b10dac010200000010b4a000454da001194d03a10106a0005ea000b10dab010200000010b4a000454da001194d08a0005eb2b10dbda000b0",
+  "codeHash": "306b3e44574685949a4f16381097bd3e22441107788a92f55c47e33b13892e53",
   "fieldsSig": {
     "signature": "TxContract NFT(mut owner:Address,mut isTokenWithdrawn:Bool,name:ByteVec,description:ByteVec,uri:ByteVec,collectionAddress:Address)",
     "names": [
@@ -88,8 +88,30 @@
       ]
     },
     {
+      "name": "transferOwnership",
+      "signature": "@using(assetsInContract=true) pub transferOwnership(newOwner:Address)->()",
+      "argNames": [
+        "newOwner"
+      ],
+      "argTypes": [
+        "Address"
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "transferOwnershipAndAsset",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub transferOwnershipAndAsset(newOwner:Address)->()",
+      "argNames": [
+        "newOwner"
+      ],
+      "argTypes": [
+        "Address"
+      ],
+      "returnTypes": []
+    },
+    {
       "name": "updateOwner",
-      "signature": "@using(assetsInContract=true) pub updateOwner(newOwner:Address)->()",
+      "signature": "updateOwner(newOwner:Address)->()",
       "argNames": [
         "newOwner"
       ],
