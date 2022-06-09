@@ -10,22 +10,17 @@ function MyApp({ Component, pageProps }) {
                 <div className="flex mt-4">
                     <Link href="/">
                         <a className="mr-4 text-pink-500">
-                            Home
-                        </a>
-                    </Link>
-                    <Link href="/mint-nft">
-                        <a className="mr-6 text-pink-500">
-                            Mint NFT
-                        </a>
-                    </Link>
-                    <Link href="/my-nfts">
-                        <a className="mr-6 text-pink-500">
                             My NFTs
                         </a>
                     </Link>
-                    <Link href="/dashboard">
+                    <Link href="/mint-nfts">
                         <a className="mr-6 text-pink-500">
-                            Dashboard
+                            Mint NFTs
+                        </a>
+                    </Link>
+                    <Link href="/buy-nfts">
+                        <a className="mr-6 text-pink-500">
+                            Buy NFTs
                         </a>
                     </Link>
                 </div>
