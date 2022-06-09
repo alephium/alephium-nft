@@ -14,7 +14,7 @@ import { mintNFTScript } from '../utils/contracts'
 import { withdrawNFTScript } from '../utils/contracts'
 import { debug } from 'util'
 
-export default function MintNFT() {
+export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
     const [formInput, updateFormInput] = useState({ name: '', description: '' })
     const router = useRouter()

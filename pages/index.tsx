@@ -53,9 +53,10 @@ export default function Home() {
     }
 
     async function listNft(nft) {
+        console.log('list nft', nft)
     }
 
-    if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>)
+    if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
     return (
         <div className="flex justify-center">
             <div className="px-4" style={{ maxWidth: '1600px' }}>
@@ -71,7 +72,6 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <div className="p-4 bg-black">
-                                    <p className="text-2xl font-bold text-white">{nft.price} ALPH </p>
                                     <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => listNft(nft)}>Sell</button>
                                 </div>
                             </div>
