@@ -8,7 +8,7 @@ export class NFTCollection extends Web3Helpers {
 
   async create(
     collectionName: string,
-    collectionSymbol: string,
+    collectionDescription: string,
     collectionUri: string
   ): Promise<[string, string, number]> {
     const nftContract = await web3.Contract.fromSource(this.provider, 'nft.ral')
@@ -19,7 +19,7 @@ export class NFTCollection extends Web3Helpers {
         initialFields: {
           nftByteCode: nftContract.bytecode,
           collectionName: web3.stringToHex(collectionName),
-          collectionSymbol: web3.stringToHex(collectionSymbol),
+          collectionDescription: web3.stringToHex(collectionDescription),
           collectionUri: web3.stringToHex(collectionUri)
         }
       }
@@ -37,7 +37,7 @@ export class NFTCollection extends Web3Helpers {
     nftCollectionContractAddress: string,
     nftCollectionContractGroup: number,
     nftName: string,
-    nftSymbol: string,
+    nftDescription: string,
     nftUri: string
   ) {
     await this.callTxScript(
@@ -46,7 +46,7 @@ export class NFTCollection extends Web3Helpers {
         initialFields: {
           nftCollectionContractId: nftCollectionContractId,
           name: web3.stringToHex(nftName),
-          symbol: web3.stringToHex(nftSymbol),
+          description: web3.stringToHex(nftDescription),
           uri: web3.stringToHex(nftUri)
         },
         gasAmount: 200000  // TODO: set appropriately

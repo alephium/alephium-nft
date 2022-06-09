@@ -3,14 +3,14 @@
 TxContract NFTCollection(
     nftByteCode: ByteVec,
     collectionName: ByteVec,
-    collectionSymbol: ByteVec,
+    collectionDescription: ByteVec,
     collectionUri: ByteVec
 ) {
     event NFTMinted(
       minter: Address,
       collectionAddress: Address,
       name: ByteVec,
-      symbol: ByteVec,
+      description: ByteVec,
       uri: ByteVec,
       tokenId: ByteVec,
       nftContractAddress: Address
@@ -19,7 +19,7 @@ TxContract NFTCollection(
     @use(approvedAssets = true, contractAssets = true)
     pub fn mint(
         nftName: ByteVec,
-        nftSymbol: ByteVec,
+        nftDescription: ByteVec,
         nftUri: ByteVec
     ) -> (ByteVec) {
         assert!(txCallerSize!() == 1)
@@ -30,7 +30,7 @@ TxContract NFTCollection(
         let initialState = encodeToByteVec!(
             minter,
             nftName,
-            nftSymbol,
+            nftDescription,
             nftUri,
             collectionAddress
         )
@@ -42,7 +42,7 @@ TxContract NFTCollection(
             minter,
             collectionAddress,
             nftName,
-            nftSymbol,
+            nftDescription,
             nftUri,
             contractId,
             contractIdToAddress!(contractId)

@@ -11,3 +11,14 @@ export function subContractId(parentContractId: string, pathInHex: string): stri
     blake2b(blake2b(data, undefined, 32), undefined, 32)
   )
 }
+
+export function addressFromContractId(contractId: string): string {
+  const addressType = Buffer.from([0x03])
+  const hash = Buffer.from(web3.hexToBinUnsafe(contractId))
+  const bytes = Buffer.concat([addressType, hash])
+  return web3.bs58.encode(bytes)
+}
+
+export function hexToString(str: any): string {
+  return Buffer.from(str.toString(), 'hex').toString()
+}

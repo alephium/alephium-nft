@@ -1,13 +1,13 @@
 {
-  "sourceCodeSha256": "39fb1512a836821708813c77a50804f4a93f03448b1b3979cdff7fc10e69c2c1",
+  "sourceCodeSha256": "3dcb35ffd35ee4b3b851b91da1d6dba2a8deeb8a9dd726ee33cd1af90be6d638",
   "bytecode": "0401404c010103070140265a0d2f4d0c591703b21704160316001601160216041305641705160313c40de0b6b3a7640000a21602a00016050dc117060516031604160016011602160616067775160602",
   "codeHash": "70dda190480ce153c7320ebff339760abea981371c3a19eb2c07eb944189c31a",
   "fieldsSig": {
-    "signature": "TxContract NFTCollection(nftByteCode:ByteVec,collectionName:ByteVec,collectionSymbol:ByteVec,collectionUri:ByteVec)",
+    "signature": "TxContract NFTCollection(nftByteCode:ByteVec,collectionName:ByteVec,collectionDescription:ByteVec,collectionUri:ByteVec)",
     "names": [
       "nftByteCode",
       "collectionName",
-      "collectionSymbol",
+      "collectionDescription",
       "collectionUri"
     ],
     "types": [
@@ -20,12 +20,12 @@
   "eventsSig": [
     {
       "name": "NFTMinted",
-      "signature": "event NFTMinted(minter:Address,collectionAddress:Address,name:ByteVec,symbol:ByteVec,uri:ByteVec,tokenId:ByteVec,nftContractAddress:Address)",
+      "signature": "event NFTMinted(minter:Address,collectionAddress:Address,name:ByteVec,description:ByteVec,uri:ByteVec,tokenId:ByteVec,nftContractAddress:Address)",
       "fieldNames": [
         "minter",
         "collectionAddress",
         "name",
-        "symbol",
+        "description",
         "uri",
         "tokenId",
         "nftContractAddress"
@@ -44,10 +44,10 @@
   "functions": [
     {
       "name": "mint",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub mint(nftName:ByteVec,nftSymbol:ByteVec,nftUri:ByteVec)->(ByteVec)",
+      "signature": "@use(approvedAssets=true,contractAssets=true) pub mint(nftName:ByteVec,nftDescription:ByteVec,nftUri:ByteVec)->(ByteVec)",
       "argNames": [
         "nftName",
-        "nftSymbol",
+        "nftDescription",
         "nftUri"
       ],
       "argTypes": [

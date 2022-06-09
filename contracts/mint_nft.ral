@@ -3,12 +3,12 @@ import "nft_collection.ral"
 TxScript Main(
     nftCollectionContractId: ByteVec,
     name: ByteVec,
-    symbol: ByteVec,
+    description: ByteVec,
     uri: ByteVec
 ) {
     let caller = txCaller!(0)
     let nftCollection = NFTCollection(nftCollectionContractId)
 
     approveAlph!(caller, 1100000000000000000)
-    nftCollection.mint(name, symbol, uri)
+    nftCollection.mint(name, description, uri)
 }

@@ -4,7 +4,7 @@
 TxContract NFT(
     mut owner: Address,
     name: ByteVec,
-    symbol: ByteVec,
+    description: ByteVec,
     uri: ByteVec,                 // name; description; image
     collectionAddress: Address    // The collection address, 0 when no collection
 ) {
@@ -27,7 +27,7 @@ TxContract NFT(
     )
 
     pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
-        return name, symbol, uri, collectionAddress
+        return name, description, uri, collectionAddress
     }
 
     pub fn getOwner() -> (Address) {
