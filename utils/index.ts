@@ -3,8 +3,8 @@ import { blake2b } from 'blakejs'
 
 export function subContractId(parentContractId: string, pathInHex: string): string {
   const data = Buffer.concat([
-    web3.hexToBinUnsafe(parentContractId),
     web3.hexToBinUnsafe(pathInHex),
+    web3.hexToBinUnsafe(parentContractId)
   ])
 
   return web3.binToHex(

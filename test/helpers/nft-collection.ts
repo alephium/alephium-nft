@@ -1,7 +1,4 @@
 import * as web3 from 'alephium-web3'
-import { checkHexString, subContractId } from '../helpers/utils'
-import { testAddress1 } from '../helpers/signer'
-import { timeout } from './utils'
 import { Web3Helpers } from '../helpers/web3-helpers'
 
 export class NFTCollection extends Web3Helpers {

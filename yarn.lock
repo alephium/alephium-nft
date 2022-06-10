@@ -1118,10 +1118,10 @@
     "json-schema-traverse" "^0.4.1"
     "uri-js" "^4.2.2"
 
-"alephium-web3@0.9.0":
-  "integrity" "sha512-qst2PNUXUY6i7ndupXf5zFat88SXvQO1pIGTA8bkZzjHZdYlQ9KkEIJBUkLBoegcejqL1LqoqeDkJgPfTXPOmg=="
-  "resolved" "https://registry.npmjs.org/alephium-web3/-/alephium-web3-0.9.0.tgz"
-  "version" "0.9.0"
+"alephium-web3@0.9.3":
+  "integrity" "sha512-f5GgqsDHdFBQBoywAtRwHTmFDbfOvqW/ghUBDKMTyAL/8uFfT3LNK23iHHaqGd++H2B2oxU2CwljJSROs1vXow=="
+  "resolved" "https://registry.npmjs.org/alephium-web3/-/alephium-web3-0.9.3.tgz"
+  "version" "0.9.3"
   dependencies:
     "@scure/bip32" "1.0.1"
     "base-x" "4.0.0"

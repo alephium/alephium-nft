@@ -1,6 +1,6 @@
 import * as web3 from 'alephium-web3'
-import { verifyContractState, timeout, subContractId, addressFromContractId, checkHexString } from '../test/helpers/utils'
-import { testWallet1, testAddress1, testWallet2, testAddress2 } from '../test/helpers/signer'
+import { verifyContractState, timeout } from '../test/helpers/utils'
+import { testWallet1, testAddress1, testAddress2 } from '../test/helpers/signer'
 import { NFTCollection } from '../test/helpers/nft-collection'
 import { NFTMarketplace } from '../test/helpers/nft-marketplace'
 import { NodeProvider } from 'alephium-web3'
@@ -24,8 +24,8 @@ describe('nft marketplace', function() {
     )
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
-    const nftContractAddress = addressFromContractId(nftContractId)
+    const nftContractId = web3.subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
+    const nftContractAddress = web3.addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
       "CryptoPunk #0001",
@@ -41,8 +41,8 @@ describe('nft marketplace', function() {
 
     const tokenId = nftContractId
     const price = 1000
-    const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId)
-    const nftListingContractAddress = addressFromContractId(nftListingContractId)
+    const nftListingContractId = web3.subContractId(nftMarketplaceContractId, tokenId)
+    const nftListingContractAddress = web3.addressFromContractId(nftListingContractId)
 
     // list NFT
     {

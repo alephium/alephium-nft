@@ -25,25 +25,6 @@ export function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function subContractId(parentContractId: string, pathInHex: string): string {
-  const data = Buffer.concat([
-    web3.hexToBinUnsafe(pathInHex),
-    web3.hexToBinUnsafe(parentContractId)
-  ])
-
-  return web3.binToHex(
-    blake2b(blake2b(data, undefined, 32), undefined, 32)
-  )
-}
-
 export function relativeDiff(a: number, b: number): number {
   return Math.abs(a - b) / Math.max(a, b)
-}
-
-// Use the addressFromContractId function in web3 when it is released
-export function addressFromContractId(contractId: string): string {
-  const addressType = Buffer.from([0x03])
-  const hash = Buffer.from(web3.hexToBinUnsafe(contractId))
-  const bytes = Buffer.concat([addressType, hash])
-  return web3.bs58.encode(bytes)
 }
