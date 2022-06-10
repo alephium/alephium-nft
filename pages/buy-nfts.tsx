@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { testAddress1 } from '../test/helpers/signer'
 import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
-import { addressFromContractId, hexToString } from '../utils'
 import axios from 'axios'
 
 export default function BuyNFTs() {

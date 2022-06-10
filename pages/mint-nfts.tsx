@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
-import { Contract, Script, stringToHex, contractIdFromAddress, binToHex } from 'alephium-web3'
+import { stringToHex, subContractId } from 'alephium-web3'
 import { testAddress1, testWallet1 } from '../utils/signers'
-import { subContractId, addressFromContractId } from '../utils'
 import { provider } from '../utils/providers'
 
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
@@ -12,7 +11,6 @@ import { NFTCollectionContract } from '../utils/contracts'
 import { NFTContract } from '../utils/contracts'
 import { mintNFTScript } from '../utils/contracts'
 import { withdrawNFTScript } from '../utils/contracts'
-import { debug } from 'util'
 
 export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
@@ -75,9 +73,9 @@ export default function MintNFTs() {
             nftCollectionTx.unsignedTx, nftCollectionTx.txId, testAddress1
         )
 
+        console.log('nftCollectionContractId', nftCollectionContractId)
         const nftCollectionContractId = nftCollectionTx.contractId
         const nftContractId = subContractId(nftCollectionContractId, stringToHex(uri))
-
         const mintNFTTx = await mintNFTScript.transactionForDeployment(
             signer,
             {

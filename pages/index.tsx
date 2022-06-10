@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { testAddress1 } from '../test/helpers/signer'
 import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
-import { addressFromContractId, hexToString } from '../utils'
+import { hexToString } from '../utils'
+import { addressFromContractId } from 'alephium-web3'
 import axios from 'axios'
 
 export default function Home() {
@@ -52,8 +53,9 @@ export default function Home() {
         setLoadingState('loaded')
     }
 
-    async function listNft(nft) {
-        console.log('list nft', nft)
+    async function sellNft(nft) {
+        console.log('sell nft', nft)
+
     }
 
     if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
@@ -72,7 +74,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <div className="p-4 bg-black">
-                                    <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => listNft(nft)}>Sell</button>
+                                    <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => sellNft(nft)}>Sell</button>
                                 </div>
                             </div>
                         ))
