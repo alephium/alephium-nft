@@ -6,9 +6,7 @@ TxScript Main(
     description: ByteVec,
     uri: ByteVec
 ) {
-    let caller = txCaller!(0)
     let nftCollection = NFTCollection(nftCollectionContractId)
-
-    approveAlph!(caller, 1100000000000000000)
+    approveAlph!(callerAddress!(), 1100000000000000000)
     nftCollection.mint(name, description, uri)
 }

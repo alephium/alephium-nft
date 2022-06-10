@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "05bcf223556025a0202e7077e294425e95a902ce8d137009ddb4e4939c7bc3f9",
-  "bytecode": "05040f4064408740a3010000000405a000a001a002a0030201010004004030b417001600a003454d5a0d2f4d0c591701a000a0042c1367102d170216020c334c041601a0031602a71601a002464c041601a002a000a7a001170316011603010206a000a001a002160161a002b00101000100145a0d2f4d0c59a002454da0011700a0021600010207a001a0025fa002b00100010100105a0d2f4d0c59a002454d05a001a0001600601600a100",
-  "codeHash": "6f71bb41508abe8fa8ee7442b60e0c927a06733f4c387b83e63a690d5c762f81",
+  "sourceCodeSha256": "8400162b747a90296ca21f60a89838c0782f21a30e24ccc31768be099489bfec",
+  "bytecode": "05040f405340714088010000000405a000a001a002a0030201010103004023a000a0042c1367102d170116010c334c041600a0031601a71600a002464c041600a002a000a7a001170216001602010206a000a001a002160061a002b001010001000fb4a002454da0011700a0021600010207a001a0025fa002b001000101000bb4a002454d05a001a0001600601600a100",
+  "codeHash": "59bb44b987a36adbe277e6b27d2d47da1ae934938b8b87747efa3ba5add21593",
   "fieldsSig": {
     "signature": "TxContract NFTListing(mut price:U256,tokenId:ByteVec,tokenOwner:Address,marketAddress:Address,commissionRate:U256)",
     "names": [
@@ -78,14 +78,18 @@
     },
     {
       "name": "buy",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub buy()->()",
-      "argNames": [],
-      "argTypes": [],
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub buy(buyer:Address)->()",
+      "argNames": [
+        "buyer"
+      ],
+      "argTypes": [
+        "Address"
+      ],
       "returnTypes": []
     },
     {
       "name": "cancel",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub cancel()->()",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub cancel()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []

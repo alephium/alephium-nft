@@ -28,8 +28,6 @@ describe('nft marketplace', function() {
     const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
-      nftCollectionContractAddress,
-      nftCollectionContractGroup,
       "CryptoPunk #0001",
       "CP0001",
       nftUri

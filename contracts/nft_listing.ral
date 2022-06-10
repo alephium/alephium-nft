@@ -29,16 +29,8 @@ TxContract NFTListing(
         return price, tokenId, tokenOwner, marketAddress
     }
 
-    @use(approvedAssets = true, contractAssets = true)
-    pub fn buy() -> () {
-        // This method can only be called from the marketplace
-        // where this NFT listing was created
-        let callingContract = callerAddress!()
-        assert!(callingContract == marketAddress)
-
-        assert!(txCallerSize!() == 1)
-        let buyer = txCaller!(0)
-
+    @using(preapprovedAssets = true, assetsInContract = true)
+    pub fn buy(buyer: Address) -> () {
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
         if (commission > 0) {
@@ -59,10 +51,9 @@ TxContract NFTListing(
         destroySelf!(tokenOwner)
     }
 
-    @use(approvedAssets = true, contractAssets = true)
+    @using(preapprovedAssets = true, assetsInContract = true)
     pub fn cancel() -> () {
-        assert!(txCallerSize!() == 1)
-        assert!(txCaller!(0) == tokenOwner)
+        assert!(callerAddress!() == tokenOwner)
 
         let nft = NFT(tokenId)
         nft.updateOwner(tokenOwner)
@@ -73,8 +64,7 @@ TxContract NFTListing(
     }
 
     pub fn updatePrice(newPrice: U256) -> () {
-        assert!(txCallerSize!() == 1)
-        assert!(txCaller!(0) == tokenOwner)
+        assert!(callerAddress!() == tokenOwner)
 
         emit NFTListingPriceUpdated(tokenId, price, newPrice)
 

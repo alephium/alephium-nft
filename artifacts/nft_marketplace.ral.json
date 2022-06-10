@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "f836809afa46ad9f1d18c4a566302526a2fa3b6153bb8dfd7718a7419177f119",
-  "bytecode": "04061740724084409640a840b801010204000a160017020c59170316031601a2160201010101020701402f16010c334d5a0d2f4d0c591702160116001602b2a0031305641703160213c40de0b6b3a7640000a21600a0001603c017041604771705160017061605160601021602a002a9051601160016021604160573160402010001010007000506a00116005f1600a101010001010007000507a00216005f1600a102010001010007000508a00316005f1600a1030000000000095a0d2f4d0c59a001454d",
-  "codeHash": "67d8e393c907d230e971fcfa695c2f6876a6a492c342895dea4875dc1ee4bf3c",
+  "sourceCodeSha256": "7ad851145ff5a30d8d94d7a90af5fed4427c337bb7e219cee55b363e048eb03b",
+  "bytecode": "04051840644079408e40a301010204000a16001702b4170316031601a21603160201010101020601402516010c334db41702160116001602b2a0031305641703160213c40de0b6b3a7640000a21600a0001603c0170416047717051602a002a905160116001602160416057316050201000101000ab4a001454d06a00116005f1600a10101000101000ab4a001454d07a00216005f1600a10201000101000ab4a001454d08a00316005f1600a103",
+  "codeHash": "098ea49d3797dd22ce2a025783cf8bcc44289e837cfc274d6363e2d7888f01a0",
   "fieldsSig": {
     "signature": "TxContract NFTMarketPlace(nftListingByteCode:ByteVec,mut admin:Address,mut listingPrice:U256,mut commissionRate:U256)",
     "names": [
@@ -76,7 +76,7 @@
   "functions": [
     {
       "name": "buyNFT",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub buyNFT(nftListingContractId:ByteVec,totalPayment:U256)->()",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub buyNFT(nftListingContractId:ByteVec,totalPayment:U256)->()",
       "argNames": [
         "nftListingContractId",
         "totalPayment"
@@ -89,7 +89,7 @@
     },
     {
       "name": "listNFT",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub listNFT(tokenId:ByteVec,price:U256)->(ByteVec)",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub listNFT(tokenId:ByteVec,price:U256)->(Address)",
       "argNames": [
         "tokenId",
         "price"
@@ -99,7 +99,7 @@
         "U256"
       ],
       "returnTypes": [
-        "ByteVec"
+        "Address"
       ]
     },
     {
@@ -133,13 +133,6 @@
       "argTypes": [
         "U256"
       ],
-      "returnTypes": []
-    },
-    {
-      "name": "checkCallerIsAdmin",
-      "signature": "checkCallerIsAdmin()->()",
-      "argNames": [],
-      "argTypes": [],
       "returnTypes": []
     }
   ]

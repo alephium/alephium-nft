@@ -7,9 +7,8 @@ TxScript Main(
 ) {
     assert!(totalPayment > 0)
 
-    let caller = txCaller!(0)
     let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
 
-    approveAlph!(caller, totalPayment)
+    approveAlph!(callerAddress!(), totalPayment)
     nftMarketplace.buyNFT(nftListingContractId, totalPayment)
 }

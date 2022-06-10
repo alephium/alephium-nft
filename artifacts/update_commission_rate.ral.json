@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "af87d8b2bc5847595d6d4fd5d0e0d00dc24bd6a7869e5700b8bc5b16b1b91d7d",
+  "sourceCodeSha256": "15c9ea631f6a42ff7059993b2008634d7cadc54c86d157f25fbe14f88c2e414e",
   "bytecodeTemplate": "01010300010005{1}1700{0}16000104",
   "fieldsSig": {
     "signature": "TxScript Main(newCommissionRate:U256,nftMarketplaceContractId:ByteVec)",
@@ -15,7 +15,7 @@
   "functions": [
     {
       "name": "main",
-      "signature": "@use(approvedAssets=true) pub main()->()",
+      "signature": "@using(preapprovedAssets=true) pub main()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []

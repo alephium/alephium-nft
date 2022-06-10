@@ -16,15 +16,14 @@ TxContract NFTCollection(
       nftContractAddress: Address
     )
 
-    @use(approvedAssets = true, contractAssets = true)
+    @using(preapprovedAssets = true, assetsInContract = true)
     pub fn mint(
         nftName: ByteVec,
         nftDescription: ByteVec,
         nftUri: ByteVec
     ) -> (ByteVec) {
-        assert!(txCallerSize!() == 1)
+        let minter = callerAddress!()
 
-        let minter = txCaller!(0)
         let collectionAddress = selfAddress!()
 
         let initialState = encodeToByteVec!(

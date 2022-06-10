@@ -34,10 +34,9 @@ TxContract NFT(
         return owner
     }
 
-    @use(contractAssets = true)
+    @using(assetsInContract = true)
     pub fn updateOwner(newOwner: Address) -> () {
-        assert!(txCallerSize!() == 1)
-        assert!(txCaller!(0) == owner || callerAddress!() == owner)
+        assert!(callerAddress!() == owner)
 
         // Token needs to be owned by the contract when owner is changed
         assert!(tokenRemaining!(selfAddress!(), selfContractId!()) == 1)
@@ -46,35 +45,30 @@ TxContract NFT(
         owner = newOwner
     }
 
-    @use(approvedAssets=true, contractAssets = true)
+    @using(preapprovedAssets=true, assetsInContract = true)
     pub fn deposit() -> () {
-        checkCallerIsOwner()
+        assert!(callerAddress!() == owner)
 
         emit NFTDeposited(owner)
 
         transferTokenToSelf!(owner, selfContractId!(), 1)
     }
 
-    @use(approvedAssets=true, contractAssets = true)
+    @using(preapprovedAssets=true, assetsInContract = true)
     pub fn withdraw() -> () {
-        checkCallerIsOwner()
+        assert!(callerAddress!() == owner)
 
         emit NFTWithdrawn(owner)
 
         transferTokenFromSelf!(owner, selfContractId!(), 1)
     }
 
-    @use(approvedAssets = true, contractAssets = true)
+    @using(preapprovedAssets = true, assetsInContract = true)
     pub fn burn() -> () {
-        checkCallerIsOwner()
+        assert!(callerAddress!() == owner)
 
         emit NFTBurnt(owner)
 
         destroySelf!(owner)
-    }
-
-   fn checkCallerIsOwner() -> () {
-       assert!(txCallerSize!() == 1)
-       assert!(txCaller!(0) == owner)
     }
 }

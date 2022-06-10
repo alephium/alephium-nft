@@ -34,8 +34,6 @@ export class NFTCollection extends Web3Helpers {
 
   async mintNFT(
     nftCollectionContractId: string,
-    nftCollectionContractAddress: string,
-    nftCollectionContractGroup: number,
     nftName: string,
     nftDescription: string,
     nftUri: string

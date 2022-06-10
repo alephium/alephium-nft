@@ -26,8 +26,6 @@ describe('nft collection', function() {
     const nftContractAddress = utils.addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
-      nftCollectionContractAddress,
-      nftCollectionContractGroup,
       nftName,
       nftDescription,
       nftUri
@@ -49,6 +47,7 @@ describe('nft collection', function() {
     expect(utils.checkHexString(nftMintedEventFields[2].value, nftName))
     expect(utils.checkHexString(nftMintedEventFields[3].value, nftDescription))
     expect(utils.checkHexString(nftMintedEventFields[4].value, nftUri))
+
     expect(nftMintedEventFields[5].value).toEqual(nftContractId)
     expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
 

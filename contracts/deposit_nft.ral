@@ -4,6 +4,6 @@ TxScript Main(
     nftContractId: ByteVec
 ) {
     let nft = NFT(nftContractId)
-    approveToken!(txCaller!(0), nftContractId, 1)
+    approveToken!(callerAddress!(), nftContractId, 1)
     nft.deposit()
 }

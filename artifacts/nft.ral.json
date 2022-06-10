@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "7be7ac2f393b8e4273bd5b4f88bc4f40b329431c8ed7af67f5607740f2f2591f",
-  "bytecode": "05070f18403d404e405f406e407e010000000405a001a002a003a00402010000000102a000020102010100195a0d2f4d0c59a00045b4a000451b4db2b1a50d2f4d05a00016005f1600a100010100000008000607a0005ea000b10dac010100000008000606a0005ea000b10dab010100000006000608a0005ea000b00000000000095a0d2f4d0c59a000454d",
-  "codeHash": "d7a88394dc104d0cf5de8e278204675a39a50e42b02fcd2ffb8b1fc6b88ef02d",
+  "sourceCodeSha256": "d40bcb7255b2b24780a34c6a9cefc753abb2661a70fe4921e3b545e760a4ef76",
+  "bytecode": "05060f1840334047405b406d010000000405a001a002a003a00402010000000102a00002010201010010b4a000454db2b1a50d2f4d05a00016005f1600a10001010000000bb4a000454d07a0005ea000b10dac01010000000bb4a000454d06a0005ea000b10dab010100000009b4a000454d08a0005ea000b0",
+  "codeHash": "9c8d0283b9770f6fa129cb93e1cef50265fc37f5ee30e32eebe7cd6dc1fcc36b",
   "fieldsSig": {
     "signature": "TxContract NFT(mut owner:Address,name:ByteVec,description:ByteVec,uri:ByteVec,collectionAddress:Address)",
     "names": [
@@ -87,7 +87,7 @@
     },
     {
       "name": "updateOwner",
-      "signature": "@use(contractAssets=true) pub updateOwner(newOwner:Address)->()",
+      "signature": "@using(assetsInContract=true) pub updateOwner(newOwner:Address)->()",
       "argNames": [
         "newOwner"
       ],
@@ -98,28 +98,21 @@
     },
     {
       "name": "deposit",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub deposit()->()",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub deposit()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []
     },
     {
       "name": "withdraw",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub withdraw()->()",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub withdraw()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []
     },
     {
       "name": "burn",
-      "signature": "@use(approvedAssets=true,contractAssets=true) pub burn()->()",
-      "argNames": [],
-      "argTypes": [],
-      "returnTypes": []
-    },
-    {
-      "name": "checkCallerIsOwner",
-      "signature": "checkCallerIsOwner()->()",
+      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub burn()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []

@@ -1,4 +1,3 @@
-import "nft.ral"
 import "nft_listing.ral"
 
 TxContract NFTMarketPlace(
@@ -31,25 +30,25 @@ TxContract NFTMarketPlace(
         new: U256
     )
 
-    @use(approvedAssets = true, contractAssets = true)
+    @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buyNFT(
         nftListingContractId: ByteVec,
         totalPayment: U256
     ) -> () {
         let nftListing = NFTListing(nftListingContractId)
-        let buyer = txCaller!(0)
+        let buyer = callerAddress!()
         approveAlph!(buyer, totalPayment)
-        nftListing.buy()
+        nftListing.buy(buyer)
     }
 
-    @use(approvedAssets = true, contractAssets = true)
+
+    @using(preapprovedAssets = true, assetsInContract = true)
     pub fn listNFT(
         tokenId: ByteVec,
         price: U256
-    ) -> (ByteVec) {
+    ) -> (Address) {
         assert!(price > 0)
-        assert!(txCallerSize!() == 1)
-        let tokenOwner = txCaller!(0)
+        let tokenOwner = callerAddress!()
 
         let initialState = encodeToByteVec!(
             price,
@@ -64,10 +63,6 @@ TxContract NFTMarketPlace(
         let nftListingContractId = createSubContract!(tokenId, nftListingByteCode, initialState)
         let nftListingContractAddress = contractIdToAddress!(nftListingContractId)
 
-        // Update owner of the NFT to the listing contract
-        let nft = NFT(tokenId)
-        nft.updateOwner(nftListingContractAddress)
-
         // Charge the listing fee
         transferAlphToSelf!(tokenOwner, listingPrice)
 
@@ -79,32 +74,27 @@ TxContract NFTMarketPlace(
             nftListingContractAddress
         )
 
-        return nftListingContractId
+        return nftListingContractAddress
     }
 
     pub fn updateAdmin(newAdmin: Address) -> () {
-        checkCallerIsAdmin()
+        assert!(callerAddress!() == admin)
 
         emit AdminUpdated(admin, newAdmin)
         admin = newAdmin
     }
 
     pub fn updateListingPrice(newListingPrice: U256) -> () {
-        checkCallerIsAdmin()
+        assert!(callerAddress!() == admin)
 
         emit ListingPriceUpdated(listingPrice, newListingPrice)
         listingPrice = newListingPrice
     }
 
     pub fn updateCommissionRate(newCommissionRate: U256) -> () {
-        checkCallerIsAdmin()
+        assert!(callerAddress!() == admin)
 
         emit CommissionRateUpdated(commissionRate, newCommissionRate)
         commissionRate = newCommissionRate
-    }
-
-    fn checkCallerIsAdmin() -> () {
-       assert!(txCallerSize!() == 1)
-       assert!(txCaller!(0) == admin)
     }
 }
