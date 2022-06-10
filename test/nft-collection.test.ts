@@ -1,7 +1,7 @@
 import * as web3 from 'alephium-web3'
-import * as utils from '../test/helpers/utils'
-import { NFTCollection } from '../test/helpers/nft-collection'
-import { testWallet1, testAddress1 } from '../test/helpers/signer'
+import * as utils from '../scripts/utils'
+import { NFTCollection } from '../scripts/nft-collection'
+import { testWallet1, testAddress1 } from '../scripts/signer'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {

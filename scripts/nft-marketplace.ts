@@ -1,5 +1,5 @@
 import * as web3 from 'alephium-web3'
-import { Web3Helpers } from '../helpers/web3-helpers'
+import { Web3Helpers } from '../scripts/web3-helpers'
 
 export class NFTMarketplace extends Web3Helpers {
 
