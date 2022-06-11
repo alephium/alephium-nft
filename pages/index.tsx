@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { testAddress1 } from '../test/helpers/signer'
+import { testAddress1 } from '../scripts/signer'
 import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
 import { hexToString } from '../utils'

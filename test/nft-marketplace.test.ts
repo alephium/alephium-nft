@@ -10,8 +10,8 @@ describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
     const signer = await testWallet1(provider)
-    const nftCollection = new NFTCollection(provider, signer)
-    const nftMarketplace = new NFTMarketplace(provider, signer)
+    const nftCollection = new NFTCollection(provider, signer, true)
+    const nftMarketplace = new NFTMarketplace(provider, signer, true)
 
     const nftMarketplaceContractAddress = await nftMarketplace.create()
     const nftMarketplaceContractId = web3.binToHex(web3.contractIdFromAddress(nftMarketplaceContractAddress))
@@ -101,7 +101,7 @@ describe('nft marketplace', function() {
         expect(state.fields[0].value).toEqual(nftListingContractAddress)
       })
 
-      await nftMarketplace.buyNFT(2000000000, nftMarketplaceContractId, nftListingContractId)
+      await nftMarketplace.buyNFT(2000000000000000000, nftMarketplaceContractId, nftListingContractId)
       await timeout(3000)
 
       await verifyContractState(provider, nftContractAddress, (state) => {

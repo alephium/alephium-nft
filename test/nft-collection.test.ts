@@ -8,7 +8,7 @@ describe('nft collection', function() {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
     const signer = await testWallet1(provider)
 
-    const nftCollection = new NFTCollection(provider, signer)
+    const nftCollection = new NFTCollection(provider, signer, true)
 
     const [
       nftCollectionContractId,

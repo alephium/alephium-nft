@@ -58,7 +58,7 @@ TxContract NFTMarketPlace(
             commissionRate
         )
 
-        approveAlph!(tokenOwner, 1000000000000000000)
+        approveAlph!(tokenOwner, 1100000000000000000)
         // Create the listing contract
         let nftListingContractId = createSubContract!(tokenId, nftListingByteCode, initialState)
         let nftListingContractAddress = contractIdToAddress!(nftListingContractId)
