@@ -13,6 +13,7 @@ import axios from 'axios'
 export default function Home() {
     const [nfts, setNfts] = useState([])
     const [loadingState, setLoadingState] = useState('not-loaded')
+
     useEffect(() => {
         loadNFTs()
     }, [])
@@ -59,18 +60,12 @@ export default function Home() {
     }
 
     async function sellNft(nft) {
-        console.log('sell nft', nft)
-
         const nftMarketplace = await getNFTMarketplace()
         const nftCollection = await getNFTCollection()
         const depositNFTResult = await nftCollection.depositNFT(nft.tokenId)
         const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
 
-        console.log('depositNFTResult', depositNFTResult)
-        console.log('listNFTResult', listNFTTxResult)
-        console.log(`token ${nft.tokenId} listed`)
-
-        router.push('/')
+        loadNFTs()
     }
 
     if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
