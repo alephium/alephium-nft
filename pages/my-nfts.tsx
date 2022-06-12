@@ -10,15 +10,23 @@ import addresses from '../configs/addresses.json'
 
 import axios from 'axios'
 
+interface NFT {
+    name: string,
+    description: string,
+    image: string,
+    tokenId: string,
+    collectionAddress: string
+}
+
 export default function Home() {
-    const [nfts, setNfts] = useState([])
+    const [nfts, setNfts] = useState([] as NFT[])
     const [loadingState, setLoadingState] = useState('not-loaded')
 
     useEffect(() => {
         loadNFTs()
     }, [])
 
-    async function loadNFT(tokenId: string) {
+    async function loadNFT(tokenId: string): undefined | NFT {
         var nftState = undefined
         try {
             nftState = await provider.contracts.getContractsAddressState(
@@ -26,7 +34,7 @@ export default function Home() {
                 { group: 0 }
             )
         } catch (e) {
-            console.log(`error fetching state for ${tokenId}`, e)
+            console.debug(`error fetching state for ${tokenId}`, e)
         }
 
         if (nftState && nftState.codeHash === NFTContract.codeHash) {

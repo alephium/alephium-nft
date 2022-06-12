@@ -8,7 +8,6 @@ import addresses from '../configs/addresses.json'
 
 const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
-
 export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
     const [formInput, updateFormInput] = useState({ name: '', description: '' })
@@ -30,7 +29,7 @@ export default function MintNFTs() {
         }
     }
 
-    async function uploadToIPFS() {
+    async function uploadToIPFS(): Promise<string> {
         const { name, description } = formInput
         if (!name || !description || !fileUrl) return
         /* first, upload to IPFS */
@@ -59,8 +58,8 @@ export default function MintNFTs() {
         const mintNFTResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
         const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
 
-        console.log('mintNFTResult', mintNFTResult)
-        console.log('withdrawNFTResult', withdrawNFTResult)
+        console.debug('mintNFTResult', mintNFTResult)
+        console.debug('withdrawNFTResult', withdrawNFTResult)
 
         router.push('/')
     }
