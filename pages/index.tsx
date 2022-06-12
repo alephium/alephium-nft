@@ -4,6 +4,10 @@ import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import { addressFromContractId } from 'alephium-web3'
+import { getNFTMarketplace } from '../scripts/nft-marketplace'
+import { getNFTCollection } from '../scripts/nft-collection'
+import addresses from '../configs/addresses.json'
+
 import axios from 'axios'
 
 export default function Home() {
@@ -31,6 +35,7 @@ export default function Home() {
                 name: metadata.name,
                 description: metadata.description,
                 image: metadata.image,
+                tokenId: tokenId,
                 collectionAddress: contractState.fields[4].value
             }
         }
@@ -56,6 +61,16 @@ export default function Home() {
     async function sellNft(nft) {
         console.log('sell nft', nft)
 
+        const nftMarketplace = await getNFTMarketplace()
+        const nftCollection = await getNFTCollection()
+        const depositNFTResult = await nftCollection.depositNFT(nft.tokenId)
+        const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
+
+        console.log('depositNFTResult', depositNFTResult)
+        console.log('listNFTResult', listNFTTxResult)
+        console.log(`token ${nft.tokenId} listed`)
+
+        router.push('/')
     }
 
     if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)

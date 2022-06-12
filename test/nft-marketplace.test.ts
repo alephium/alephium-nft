@@ -1,17 +1,16 @@
 import * as web3 from 'alephium-web3'
 import { verifyContractState, timeout } from '../scripts/utils'
-import { testWallet1, testAddress1, testAddress2 } from '../scripts/signer'
-import { NFTCollection } from '../scripts/nft-collection'
-import { NFTMarketplace } from '../scripts/nft-marketplace'
+import { testAddress1, testAddress2 } from '../scripts/signer'
+import { getNFTCollection } from '../scripts/nft-collection'
+import { getNFTMarketplace, NFTMarketplace } from '../scripts/nft-marketplace'
 import { NodeProvider } from 'alephium-web3'
 import { provider } from '../utils/providers'
 
 describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
-    const signer = await testWallet1(provider)
-    const nftCollection = new NFTCollection(provider, signer, true)
-    const nftMarketplace = new NFTMarketplace(provider, signer, true)
+    const nftCollection = await getNFTCollection(true)
+    const nftMarketplace = await getNFTMarketplace(true)
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
@@ -170,8 +169,7 @@ describe('nft marketplace', function() {
 
   test('Update metadata in the NFT marketplace', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
-    const signer = await testWallet1(provider)
-    const nftMarketplace = new NFTMarketplace(provider, signer)
+    const nftMarketplace = await getNFTMarketplace(true)
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress

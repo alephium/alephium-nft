@@ -114,9 +114,9 @@ export class NFTCollection extends Web3Helpers {
   }
 }
 
-export async function getNFTCollection(): Promise<NFTCollection> {
+export async function getNFTCollection(isTest: boolean = false): Promise<NFTCollection> {
   const provider = new web3.NodeProvider('http://127.0.0.1:22973')
   const signer = await testWallet1(provider)
 
-  return new NFTCollection(provider, signer)
+  return new NFTCollection(provider, signer, isTest)
 }
