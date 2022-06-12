@@ -18,9 +18,9 @@ export default function Home() {
     }, [])
 
     async function loadNFT(tokenId: string) {
-        var contractState = undefined
+        var nftState = undefined
         try {
-            contractState = await provider.contracts.getContractsAddressState(
+            nftState = await provider.contracts.getContractsAddressState(
                 addressFromContractId(tokenId),
                 { group: 0 }
             )
@@ -28,15 +28,15 @@ export default function Home() {
             console.log(`error fetching state for ${tokenId}`, e)
         }
 
-        if (contractState && contractState.codeHash === NFTContract.codeHash) {
-            const metadataUri = hexToString(contractState.fields[3].value)
+        if (nftState && nftState.codeHash === NFTContract.codeHash) {
+            const metadataUri = hexToString(nftState.fields[3].value)
             const metadata = (await axios.get(metadataUri)).data
             return {
                 name: metadata.name,
                 description: metadata.description,
                 image: metadata.image,
                 tokenId: tokenId,
-                collectionAddress: contractState.fields[4].value
+                collectionAddress: nftState.fields[4].value
             }
         }
     }

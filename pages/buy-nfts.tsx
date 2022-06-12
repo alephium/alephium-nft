@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
-import { testAddress1 } from '../test/helpers/signer'
+import { addressFromContractId } from 'alephium-web3'
+import { getNFTMarketplace } from '../scripts/nft-marketplace'
+import addresses from '../configs/addresses.json'
 import { provider } from '../utils/providers'
-import { NFTContract } from '../utils/contracts'
+import { NFTListingContract } from '../utils/contracts'
+import { hexToString } from '../utils'
 import axios from 'axios'
 
 export default function BuyNFTs() {
@@ -10,6 +13,45 @@ export default function BuyNFTs() {
     useEffect(() => {
         loadListedNFTs()
     }, [])
+
+
+    async function loadListedNFT(event) {
+        console.log('load listed event', event)
+        console.log('event.fields', event.fields)
+        const listingContractId = event.fields[3].value
+
+        var listingState = undefined
+        try {
+            listingState = await provider.contracts.getContractsAddressState(
+                addressFromContractId(listingContractId),
+                { group: 0 }
+            )
+        } catch (e) {
+            console.log(`error fetching state for ${tokenId}`, e)
+        }
+
+        if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
+            const tokenId = listingState.fields[1].value
+
+            const nftState = await provider.contracts.getContractsAddressState(
+                addressFromContractId(tokenId),
+                { group: 0 }
+            )
+            const metadataUri = hexToString(nftState.fields[3].value)
+            const metadata = (await axios.get(metadataUri)).data
+
+            return {
+                price: listingState.fields[0].value,
+                name: metadata.name,
+                description: metadata.description,
+                image: metadata.image,
+                tokenId: tokenId,
+                tokenOwner: listingState.fields[2].value,
+                marketAddress: listingState.fields[3].value,
+                commissionRate: listingState.fields[4].value
+            }
+        }
+    }
 
     async function loadListedNFTs() {
         // Setup marketplace and get all the listed NFTListed
@@ -22,7 +64,16 @@ export default function BuyNFTs() {
         //       listingContractAddress: Address
         //     )
         //
+        const nftMarketplace = await getNFTMarketplace()
+        const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
+        const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
+
         const items = []
+        for (var event of events) {
+            const listedNFT = await loadListedNFT(event)
+            listedNFT && items.push(listedNFT)
+        }
+
         setNfts(items)
         setLoadingState('loaded')
     }

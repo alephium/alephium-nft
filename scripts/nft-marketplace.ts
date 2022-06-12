@@ -10,6 +10,7 @@ import updateCommissionRateArtifact from '../artifacts/update_commission_rate.ra
 import nftListingArtifact from '../artifacts/nft_listing.ral.json'
 import nftMarketplaceArtifact from '../artifacts/nft_marketplace.ral.json'
 import { testWallet1 } from '../utils/signers'
+import { ContractEvent } from 'alephium-web3/dist/src/api/api-alephium'
 
 export class NFTMarketplace extends Web3Helpers {
 
@@ -196,6 +197,15 @@ export class NFTMarketplace extends Web3Helpers {
       },
       signerAddress
     )
+  }
+
+  async getListedNFTs(marketPlaceContractAddress: string): Promise<ContractEvent[]> {
+    const contractEvents = await this.provider.events.getEventsContractContractaddress(
+      marketPlaceContractAddress,
+      { start: 0 }
+    )
+    // NFTListed event has index 0
+    return contractEvents.events.filter((event) => event.eventIndex == 0)
   }
 }
 
