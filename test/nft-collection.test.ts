@@ -10,13 +10,12 @@ describe('nft collection', function() {
 
     const nftCollection = new NFTCollection(provider, signer, true)
 
-    const [
-      nftCollectionContractId,
-      nftCollectionContractAddress,
-      nftCollectionContractGroup
-    ] = await nftCollection.create(
+    const nftCollectionDeployTx = await nftCollection.create(
       "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"
     )
+    const nftCollectionContractId = nftCollectionDeployTx.contractId
+    const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
+    const nftCollectionContractGroup = nftCollectionDeployTx.fromGroup
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"

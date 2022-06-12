@@ -13,7 +13,7 @@ export class NFTCollection extends Web3Helpers {
     collectionName: string,
     collectionDescription: string,
     collectionUri: string
-  ): Promise<[string, string, number]> {
+  ): Promise<web3.DeployContractTransaction> {
     const nftContract = this.isTest ?
       await web3.Contract.fromSource(this.provider, 'nft.ral') :
       await web3.Contract.fromJson(nftArtifact)
@@ -34,11 +34,7 @@ export class NFTCollection extends Web3Helpers {
       }
     )
 
-    return [
-      nftCollectionDeployTx.contractId,
-      nftCollectionDeployTx.contractAddress,
-      nftCollectionDeployTx.fromGroup
-    ]
+    return nftCollectionDeployTx
   }
 
   async mintNFT(

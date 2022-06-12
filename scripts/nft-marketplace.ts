@@ -16,7 +16,7 @@ export class NFTMarketplace extends Web3Helpers {
     this.signer = signer
   }
 
-  async create(signerAddress?: string): Promise<string> {
+  async create(signerAddress?: string): Promise<web3.DeployContractTransaction> {
     const nftListingContract = this.isTest ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :
       await web3.Contract.fromJson(nftListingArtifact)
@@ -40,7 +40,7 @@ export class NFTMarketplace extends Web3Helpers {
       signerAddress
     )
 
-    return nftMarketplaceDeployTx.contractAddress
+    return nftMarketplaceDeployTx
   }
 
   async listNFT(

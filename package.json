@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:contracts": "jest -i --config ./configs/jest-contracts.config.ts"
+    "test:contracts": "jest -i --config ./configs/jest-contracts.config.ts",
+    "deploy:contracts": "node scripts/deploy.js"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
