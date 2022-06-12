@@ -2,15 +2,12 @@ import { useState } from 'react'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
 import { stringToHex, subContractId } from 'alephium-web3'
-import { testAddress1, testWallet1 } from '../utils/signers'
-import { provider } from '../utils/providers'
+import { getNFTCollection } from '../scripts/nft-collection'
 
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+import addresses from '../configs/addresses.json'
 
-import { NFTCollectionContract } from '../utils/contracts'
-import { NFTContract } from '../utils/contracts'
-import { mintNFTScript } from '../utils/contracts'
-import { withdrawNFTScript } from '../utils/contracts'
+const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+
 
 export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
@@ -20,7 +17,7 @@ export default function MintNFTs() {
     async function onChange(e) {
         const file = e.target.files[0]
         try {
-            const added = await client.add(
+            const added = await ipfsClient.add(
                 file,
                 {
                     progress: (prog) => console.log(`received: ${prog}`)
@@ -41,7 +38,7 @@ export default function MintNFTs() {
             name, description, image: fileUrl
         })
         try {
-            const added = await client.add(data)
+            const added = await ipfsClient.add(data)
             const url = `https://ipfs.infura.io/ipfs/${added.path}`
             /* after file is uploaded to IPFS, return the URL to use it in the transaction */
             return url
@@ -51,60 +48,19 @@ export default function MintNFTs() {
     }
 
     async function mintNFT() {
-        const signer = await testWallet1(provider)
         const uri = await uploadToIPFS()
         const name = formInput.name
         const description = formInput.description
+        const nftCollection = await getNFTCollection()
+        // TODO: Figure out UI to create collection, right now use default collection id
 
-        // TODO: Figure out UI to create collection
-        const nftCollectionTx = await NFTCollectionContract.transactionForDeployment(
-            signer,
-            {
-                initialFields: {
-                    nftByteCode: NFTContract.bytecode,
-                    collectionName: stringToHex(name),
-                    collectionDescription: stringToHex(description),
-                    collectionUri: stringToHex(uri)
-                }
-            }
-        )
-
-        const nftCollectionTxResult = await signer.submitTransaction(
-            nftCollectionTx.unsignedTx, nftCollectionTx.txId, testAddress1
-        )
-
-        console.log('nftCollectionContractId', nftCollectionContractId)
-        const nftCollectionContractId = nftCollectionTx.contractId
+        const nftCollectionContractId = addresses.defaultNftCollectionContractId
         const nftContractId = subContractId(nftCollectionContractId, stringToHex(uri))
-        const mintNFTTx = await mintNFTScript.transactionForDeployment(
-            signer,
-            {
-                initialFields: {
-                    nftCollectionContractId: nftCollectionContractId,
-                    name: stringToHex(name),
-                    description: stringToHex(description),
-                    uri: stringToHex(uri)
-                },
-                gasAmount: 200000
-            }
-        )
+        const mintNFTResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
+        const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
 
-        const mintNFTResult = await signer.submitTransaction(
-            mintNFTTx.unsignedTx, mintNFTTx.txId, testAddress1
-        )
-
-        const withdrawNFTTx = await withdrawNFTScript.transactionForDeployment(
-            signer,
-            {
-                initialFields: {
-                    nftContractId: nftContractId
-                }
-            }
-        )
-
-        const withdrawNFTResult = await signer.submitTransaction(
-            withdrawNFTTx.unsignedTx, withdrawNFTTx.txId, testAddress1
-        )
+        console.log('mintNFTResult', mintNFTResult)
+        console.log('withdrawNFTResult', withdrawNFTResult)
 
         router.push('/')
     }

@@ -53,3 +53,4 @@ Before running the application, two smart contracts need to be created:
 ```
 npm deploy:contracts
 ```
+

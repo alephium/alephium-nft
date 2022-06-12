@@ -6,6 +6,7 @@ import mintNFTArtifact from '../artifacts/mint_nft.ral.json'
 import burnNFTArtifact from '../artifacts/burn_nft.ral.json'
 import depositNFTArtifact from '../artifacts/deposit_nft.ral.json'
 import withdrawNFTArtifact from '../artifacts/withdraw_nft.ral.json'
+import { testWallet1 } from '../utils/signers'
 
 export class NFTCollection extends Web3Helpers {
 
@@ -111,4 +112,11 @@ export class NFTCollection extends Web3Helpers {
       }
     )
   }
+}
+
+export async function getNFTCollection(): Promise<NFTCollection> {
+  const provider = new web3.NodeProvider('http://127.0.0.1:22973')
+  const signer = await testWallet1(provider)
+
+  return new NFTCollection(provider, signer)
 }

@@ -13,15 +13,13 @@ describe('nft marketplace', function() {
     const nftCollection = new NFTCollection(provider, signer, true)
     const nftMarketplace = new NFTMarketplace(provider, signer, true)
 
-    const nftMarketplaceContractAddress = await nftMarketplace.create()
-    const nftMarketplaceContractId = web3.binToHex(web3.contractIdFromAddress(nftMarketplaceContractAddress))
-    const [
-      nftCollectionContractId,
-      nftCollectionContractAddress,
-      nftCollectionContractGroup
-    ] = await nftCollection.create(
+    const nftMarketplaceDeployTx = await nftMarketplace.create()
+    const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
+    const nftMarketplaceContractId = nftMarketplaceDeployTx.contractId
+    const nftCollectionDeployTx = await nftCollection.create(
       "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"
     )
+    const nftCollectionContractId = nftCollectionDeployTx.contractId
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = web3.subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
@@ -175,8 +173,9 @@ describe('nft marketplace', function() {
     const signer = await testWallet1(provider)
     const nftMarketplace = new NFTMarketplace(provider, signer)
 
-    const nftMarketplaceContractAddress = await nftMarketplace.create()
-    const nftMarketplaceContractId = web3.binToHex(web3.contractIdFromAddress(nftMarketplaceContractAddress))
+    const nftMarketplaceDeployTx = await nftMarketplace.create()
+    const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
+    const nftMarketplaceContractId = nftMarketplaceDeployTx.contractId
 
     // Update listing price
     await checkListingPrice(
