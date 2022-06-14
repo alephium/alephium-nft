@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { testAddress1 } from '../scripts/signer'
 import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
@@ -7,6 +7,7 @@ import { addressFromContractId } from '@alephium/web3'
 import { getNFTMarketplace } from '../scripts/nft-marketplace'
 import { getNFTCollection } from '../scripts/nft-collection'
 import addresses from '../configs/addresses.json'
+import { WalletConnectContext } from './alephium-providers'
 
 import axios from 'axios'
 
@@ -21,6 +22,9 @@ interface NFT {
 export default function Home() {
     const [nfts, setNfts] = useState([] as NFT[])
     const [loadingState, setLoadingState] = useState('not-loaded')
+    const context = useContext(WalletConnectContext)
+
+    console.log('accounts in my nft', context.accounts)
 
     useEffect(() => {
         loadNFTs()
