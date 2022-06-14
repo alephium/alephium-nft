@@ -1,6 +1,7 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import Link from 'next/link'
+import { walletConnectCallback } from '../utils/providers'
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -23,6 +24,7 @@ function MyApp({ Component, pageProps }) {
                             Buy NFTs
                         </a>
                     </Link>
+                    <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={walletConnectCallback}>Connect to Wallet</button>
                 </div>
             </nav>
             <Component {...pageProps} />
