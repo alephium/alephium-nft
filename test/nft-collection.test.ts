@@ -1,4 +1,4 @@
-import * as web3 from 'alephium-web3'
+import * as web3 from '@alephium/web3'
 import * as utils from '../scripts/utils'
 import { NFTCollection } from '../scripts/nft-collection'
 import { testWallet1, testAddress1 } from '../scripts/signer'

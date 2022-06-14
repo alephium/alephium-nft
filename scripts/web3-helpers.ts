@@ -1,4 +1,4 @@
-import * as web3 from 'alephium-web3'
+import * as web3 from '@alephium/web3'
 
 export class Web3Helpers {
   provider: web3.NodeProvider

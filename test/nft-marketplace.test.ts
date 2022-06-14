@@ -1,9 +1,9 @@
-import * as web3 from 'alephium-web3'
+import * as web3 from '@alephium/web3'
 import { verifyContractState, timeout } from '../scripts/utils'
 import { testAddress1, testAddress2 } from '../scripts/signer'
 import { getNFTCollection } from '../scripts/nft-collection'
 import { getNFTMarketplace, NFTMarketplace } from '../scripts/nft-marketplace'
-import { NodeProvider } from 'alephium-web3'
+import { NodeProvider } from '@alephium/web3'
 import { provider } from '../utils/providers'
 
 describe('nft marketplace', function() {

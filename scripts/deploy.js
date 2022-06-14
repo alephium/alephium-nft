@@ -1,4 +1,4 @@
-const web3 = require('alephium-web3')
+const web3 = require('@alephium/web3')
 const fs = require('fs')
 
 async function main() {

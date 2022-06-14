@@ -1,4 +1,4 @@
-import { NodeProvider } from 'alephium-web3'
+import { NodeProvider } from '@alephium/web3'
 import WalletConnectClient from '@walletconnect/client'
 
 const localDevProvider = new NodeProvider('http://127.0.0.1:22973')

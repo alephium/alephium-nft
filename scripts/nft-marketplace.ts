@@ -1,4 +1,4 @@
-import * as web3 from 'alephium-web3'
+import * as web3 from '@alephium/web3'
 import { Web3Helpers } from '../scripts/web3-helpers'
 import listNFTArtifact from '../artifacts/list_nft.ral.json'
 import updateNFTPriceArtifact from '../artifacts/update_nft_price.ral.json'
@@ -10,7 +10,7 @@ import updateCommissionRateArtifact from '../artifacts/update_commission_rate.ra
 import nftListingArtifact from '../artifacts/nft_listing.ral.json'
 import nftMarketplaceArtifact from '../artifacts/nft_marketplace.ral.json'
 import { testWallet1 } from '../utils/signers'
-import { ContractEvent } from 'alephium-web3/dist/src/api/api-alephium'
+import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 
 export class NFTMarketplace extends Web3Helpers {
 

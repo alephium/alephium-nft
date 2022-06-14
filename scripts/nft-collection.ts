@@ -1,4 +1,4 @@
-import * as web3 from 'alephium-web3'
+import * as web3 from '@alephium/web3'
 import { Web3Helpers } from '../scripts/web3-helpers'
 import nftArtifact from '../artifacts/nft.ral.json'
 import nftCollectionArtifact from '../artifacts/nft_collection.ral.json'

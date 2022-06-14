@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { addressFromContractId, binToHex, contractIdFromAddress } from 'alephium-web3'
+import { addressFromContractId, binToHex, contractIdFromAddress } from '@alephium/web3'
 import { getNFTMarketplace } from '../scripts/nft-marketplace'
 import addresses from '../configs/addresses.json'
 import { provider } from '../utils/providers'

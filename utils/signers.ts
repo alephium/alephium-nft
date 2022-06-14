@@ -1,4 +1,4 @@
-import { NodeProvider, NodeWallet } from 'alephium-web3'
+import { NodeProvider, NodeWallet } from '@alephium/web3'
 
 export const testAddress1 = '1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH'
 export async function testWallet1(provider: NodeProvider): Promise<NodeWallet> {
