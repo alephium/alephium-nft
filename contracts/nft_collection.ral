@@ -34,8 +34,8 @@ TxContract NFTCollection(
             collectionAddress
         )
 
-        approveAlph!(minter, 1100000000000000000)
-        let contractId = createSubContractWithToken!(nftUri, nftByteCode, initialState, 1)
+
+        let contractId = createSubContractWithToken!{minter -> 1.1 alph}(nftUri, nftByteCode, initialState, 1)
 
         emit NFTMinted(
             minter,

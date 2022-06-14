@@ -37,8 +37,7 @@ TxContract NFTMarketPlace(
     ) -> () {
         let nftListing = NFTListing(nftListingContractId)
         let buyer = callerAddress!()
-        approveAlph!(buyer, totalPayment)
-        nftListing.buy(buyer)
+        nftListing.buy{buyer -> totalPayment}(buyer)
     }
 
 
@@ -58,9 +57,8 @@ TxContract NFTMarketPlace(
             commissionRate
         )
 
-        approveAlph!(tokenOwner, 1100000000000000000)
         // Create the listing contract
-        let nftListingContractId = createSubContract!(tokenId, nftListingByteCode, initialState)
+        let nftListingContractId = createSubContract!{tokenOwner -> 1.1 alph}(tokenId, nftListingByteCode, initialState)
         let nftListingContractAddress = contractIdToAddress!(nftListingContractId)
 
         // Charge the listing fee

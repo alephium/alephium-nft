@@ -51,7 +51,7 @@ TxContract NFTListing(
         destroySelf!(tokenOwner)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(assetsInContract = true)
     pub fn cancel() -> () {
         assert!(callerAddress!() == tokenOwner)
 

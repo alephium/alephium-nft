@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "d40bcb7255b2b24780a34c6a9cefc753abb2661a70fe4921e3b545e760a4ef76",
-  "bytecode": "05060f1840334047405b406d010000000405a001a002a003a00402010000000102a00002010201010010b4a000454db2b1a50d2f4d05a00016005f1600a10001010000000bb4a000454d07a0005ea000b10dac01010000000bb4a000454d06a0005ea000b10dab010100000009b4a000454d08a0005ea000b0",
-  "codeHash": "9c8d0283b9770f6fa129cb93e1cef50265fc37f5ee30e32eebe7cd6dc1fcc36b",
+  "sourceCodeSha256": "6fe39b4a5818bc2ccc135332326913939346a81d6e65320a1822a63bf7d32a66",
+  "bytecode": "05060f1840334047405b406d010000000405a001a002a003a00402010000000102a00002010201010010b4a000454db2b1a50d2f4d05a00016005f1600a10001010000000bb4a000454d07a0005ea000b10dac01020000000bb4a000454d06a0005ea000b10dab010200000009b4a000454d08a0005ea000b0",
+  "codeHash": "bbea0422d39c281c73fbcf9b7a202191511fd767f92f4a915ad490746bd162e5",
   "fieldsSig": {
     "signature": "TxContract NFT(mut owner:Address,name:ByteVec,description:ByteVec,uri:ByteVec,collectionAddress:Address)",
     "names": [
@@ -105,14 +105,14 @@
     },
     {
       "name": "withdraw",
-      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub withdraw()->()",
+      "signature": "@using(assetsInContract=true) pub withdraw()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []
     },
     {
       "name": "burn",
-      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub burn()->()",
+      "signature": "@using(assetsInContract=true) pub burn()->()",
       "argNames": [],
       "argTypes": [],
       "returnTypes": []

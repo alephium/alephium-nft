@@ -54,7 +54,7 @@ TxContract NFT(
         transferTokenToSelf!(owner, selfContractId!(), 1)
     }
 
-    @using(preapprovedAssets=true, assetsInContract = true)
+    @using(assetsInContract = true)
     pub fn withdraw() -> () {
         assert!(callerAddress!() == owner)
 
@@ -63,7 +63,7 @@ TxContract NFT(
         transferTokenFromSelf!(owner, selfContractId!(), 1)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(assetsInContract = true)
     pub fn burn() -> () {
         assert!(callerAddress!() == owner)
 

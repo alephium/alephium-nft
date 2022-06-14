@@ -73,7 +73,7 @@ describe('nft collection', function() {
       gasPrice
     )
 
-    const alphAmountInNFT = +nftContractState.asset.alphAmount
+    const alphAmountInNFT = +nftContractState.asset.attoAlphAmount
     const balanceAfterBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
     const refundedFromNFT = +balanceAfterBurning.balance + totalGas - +balanceBeforeBurning.balance
 

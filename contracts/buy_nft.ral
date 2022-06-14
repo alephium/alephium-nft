@@ -9,6 +9,5 @@ TxScript Main(
 
     let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
 
-    approveAlph!(callerAddress!(), totalPayment)
-    nftMarketplace.buyNFT(nftListingContractId, totalPayment)
+    nftMarketplace.buyNFT{callerAddress!() -> totalPayment}(nftListingContractId, totalPayment)
 }

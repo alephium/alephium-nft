@@ -8,8 +8,7 @@ TxScript Main(
 ) {
     let marketPlace = NFTMarketPlace(marketPlaceContractId)
 
-    approveAlph!(callerAddress!(), 1200000000000000000)
-    let nftListingContractAddress = marketPlace.listNFT(tokenId, price)
+    let nftListingContractAddress = marketPlace.listNFT{callerAddress!() -> 1.2 alph}(tokenId, price)
 
     // Update owner of the NFT to the listing contract
     let nft = NFT(tokenId)
