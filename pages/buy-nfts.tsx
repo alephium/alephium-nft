@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { addressFromContractId, binToHex, contractIdFromAddress } from '@alephium/web3'
-import { getNFTMarketplace } from '../scripts/nft-marketplace'
+import { NFTMarketplace } from '../scripts/nft-marketplace'
+import { NFTCollection } from '../scripts/nft-collection'
 import addresses from '../configs/addresses.json'
-import { provider } from '../utils/providers'
 import { NFTListingContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import axios from 'axios'
-import { useRouter } from 'next/router'
-import { getNFTCollection } from '../scripts/nft-collection'
+import { AlephiumWeb3Context } from './alephium-web3-providers'
 
 interface NFTListing {
     price: number
@@ -24,46 +23,48 @@ interface NFTListing {
 export default function BuyNFTs() {
     const [nftListings, setNftListings] = useState([] as NFTListing[])
     const [loadingState, setLoadingState] = useState('not-loaded')
-    const router = useRouter()
+    const context = useContext(AlephiumWeb3Context)
 
     useEffect(() => {
         loadListedNFTs()
-    }, [])
-
+    }, [context.accounts])
 
     async function loadListedNFT(event): NFTListing | undefined {
 
         const tokenId = event.fields[1].value
         const listingContractId = event.fields[3].value
 
-        var listingState = undefined
-        try {
-            listingState = await provider.contracts.getContractsAddressState(
-                addressFromContractId(listingContractId),
-                { group: 0 }
-            )
-        } catch (e) {
-            console.log(`error fetching state for ${tokenId}`, e)
-        }
+        if (context.nodeProvider) {
+            var listingState = undefined
 
-        if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
-            const nftState = await provider.contracts.getContractsAddressState(
-                addressFromContractId(tokenId),
-                { group: 0 }
-            )
+            try {
+                listingState = await context.nodeProvider.contracts.getContractsAddressState(
+                    addressFromContractId(listingContractId),
+                    { group: 0 }
+                )
+            } catch (e) {
+                console.log(`error fetching state for ${tokenId}`, e)
+            }
 
-            const metadataUri = hexToString(nftState.fields[3].value)
-            const metadata = (await axios.get(metadataUri)).data
-            return {
-                price: listingState.fields[0].value,
-                name: metadata.name,
-                description: metadata.description,
-                image: metadata.image,
-                tokenId: tokenId,
-                tokenOwner: listingState.fields[2].value,
-                marketAddress: listingState.fields[3].value,
-                commissionRate: listingState.fields[4].value,
-                listingContractId: listingContractId
+            if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
+                const nftState = await context.nodeProvider.contracts.getContractsAddressState(
+                    addressFromContractId(tokenId),
+                    { group: 0 }
+                )
+
+                const metadataUri = hexToString(nftState.fields[3].value)
+                const metadata = (await axios.get(metadataUri)).data
+                return {
+                    price: listingState.fields[0].value,
+                    name: metadata.name,
+                    description: metadata.description,
+                    image: metadata.image,
+                    tokenId: tokenId,
+                    tokenOwner: listingState.fields[2].value,
+                    marketAddress: listingState.fields[3].value,
+                    commissionRate: listingState.fields[4].value,
+                    listingContractId: listingContractId
+                }
             }
         }
     }
@@ -79,30 +80,50 @@ export default function BuyNFTs() {
         //     listingContractAddress: Address
         //   )
         //
-        const nftMarketplace = await getNFTMarketplace()
-        const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
-        const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
-
         const items = new Map<string, NFTListing>()
-        for (var event of events) {
-            const listedNFT = await loadListedNFT(event)
-            listedNFT && items.set(listedNFT.listingContractId, listedNFT)
+
+        console.log('context.account', context.accounts)
+        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+            const nftMarketplace = new NFTMarketplace(
+                context.nodeProvider,
+                context.signerProvider,
+                context.accounts[0].address
+            )
+            const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
+            const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
+
+            for (var event of events) {
+                const listedNFT = await loadListedNFT(event)
+                listedNFT && items.set(listedNFT.listingContractId, listedNFT)
+            }
         }
+
 
         setNftListings(Array.from(items.values()))
         setLoadingState('loaded')
     }
 
     async function buyNft(nftListing) {
-        const nftMarketplace = await getNFTMarketplace()
-        const nftCollection = await getNFTCollection()
-        await nftMarketplace.buyNFT(
-            2000000000000000000,
-            binToHex(contractIdFromAddress(nftListing.marketAddress)),
-            nftListing.listingContractId
-        )
-        await nftCollection.withdrawNFT(nftListing.tokenId)
-        await loadListedNFTs()
+        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+            const nftMarketplace = new NFTMarketplace(
+                context.nodeProvider,
+                context.signerProvider,
+                context.accounts[0].address
+            )
+            const nftCollection = new NFTCollection(
+                context.nodeProvider,
+                context.signerProvider,
+                context.accounts[0].address
+            )
+
+            await nftMarketplace.buyNFT(
+                2000000000000000000,
+                binToHex(contractIdFromAddress(nftListing.marketAddress)),
+                nftListing.listingContractId
+            )
+            await nftCollection.withdrawNFT(nftListing.tokenId)
+            await loadListedNFTs()
+        }
     }
 
     if (loadingState === 'loaded' && !nftListings.length) return (<h1 className="px-20 py-10 text-3xl">No NFTs for sale</h1>)

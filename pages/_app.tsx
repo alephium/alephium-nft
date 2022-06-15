@@ -1,12 +1,12 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import Link from 'next/link'
-import { Web3Provider } from './alephium-providers'
+import { AlephiumWeb3Provider } from './alephium-web3-providers'
 import { WalletButton } from './wallet-button'
 
 function MyApp({ Component, pageProps }) {
     return (
-        <Web3Provider>
+        <AlephiumWeb3Provider>
             <div>
                 <nav className="border-b p-6">
                     <p className="text-4xl font-bold">Alpehium NFT Marketplace</p>
@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }) {
                 </nav>
                 <Component {...pageProps} />
             </div>
-        </Web3Provider>
+        </AlephiumWeb3Provider>
     )
 }
 

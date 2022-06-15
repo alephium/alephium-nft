@@ -1,13 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
-import { testAddress1 } from '../scripts/signer'
-import { provider } from '../utils/providers'
 import { NFTContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import { addressFromContractId } from '@alephium/web3'
-import { getNFTMarketplace } from '../scripts/nft-marketplace'
-import { getNFTCollection } from '../scripts/nft-collection'
+import { NFTMarketplace } from '../scripts/nft-marketplace'
+import { NFTCollection } from '../scripts/nft-collection'
 import addresses from '../configs/addresses.json'
-import { WalletConnectContext } from './alephium-providers'
+import { AlephiumWeb3Context } from './alephium-web3-providers'
 
 import axios from 'axios'
 
@@ -22,62 +20,83 @@ interface NFT {
 export default function Home() {
     const [nfts, setNfts] = useState([] as NFT[])
     const [loadingState, setLoadingState] = useState('not-loaded')
-    const context = useContext(WalletConnectContext)
+    const context = useContext(AlephiumWeb3Context)
 
     console.log('accounts in my nft', context.accounts)
 
     useEffect(() => {
         loadNFTs()
-    }, [])
+    }, [context.accounts])
 
     async function loadNFT(tokenId: string): undefined | NFT {
         var nftState = undefined
-        try {
-            nftState = await provider.contracts.getContractsAddressState(
-                addressFromContractId(tokenId),
-                { group: 0 }
-            )
-        } catch (e) {
-            console.debug(`error fetching state for ${tokenId}`, e)
-        }
 
-        if (nftState && nftState.codeHash === NFTContract.codeHash) {
-            const metadataUri = hexToString(nftState.fields[3].value)
-            const metadata = (await axios.get(metadataUri)).data
-            return {
-                name: metadata.name,
-                description: metadata.description,
-                image: metadata.image,
-                tokenId: tokenId,
-                collectionAddress: nftState.fields[4].value
+        if (context.nodeProvider) {
+            try {
+                nftState = await context.nodeProvider.contracts.getContractsAddressState(
+                    addressFromContractId(tokenId),
+                    { group: 0 }
+                )
+            } catch (e) {
+                console.debug(`error fetching state for ${tokenId}`, e)
+            }
+
+            if (nftState && nftState.codeHash === NFTContract.codeHash) {
+                const metadataUri = hexToString(nftState.fields[3].value)
+                const metadata = (await axios.get(metadataUri)).data
+                return {
+                    name: metadata.name,
+                    description: metadata.description,
+                    image: metadata.image,
+                    tokenId: tokenId,
+                    collectionAddress: nftState.fields[4].value
+                }
             }
         }
     }
 
     async function loadNFTs() {
-        const utxos = await provider.addresses.getAddressesAddressUtxos(testAddress1)
-        const tokens = utxos.utxos
-            .flatMap((utxo) => utxo.tokens)
-            .filter((token) => token.amount == 1)
-            .map((token) => token.id)
-
         const items = []
-        for (var token of tokens) {
-            const nft = await loadNFT(token)
-            nft && items.push(nft)
+
+        if (context.nodeProvider && context.accounts && context.accounts[0]) {
+            const utxos = await context.nodeProvider.addresses.getAddressesAddressUtxos(
+                context.accounts[0].address
+            )
+
+            const tokens = utxos.utxos
+                .flatMap((utxo) => utxo.tokens)
+                .filter((token) => token.amount == 1)
+                .map((token) => token.id)
+
+            for (var token of tokens) {
+                const nft = await loadNFT(token)
+                nft && items.push(nft)
+            }
+
+            setNfts(items)
         }
 
-        setNfts(items)
         setLoadingState('loaded')
     }
 
     async function sellNft(nft) {
-        const nftMarketplace = await getNFTMarketplace()
-        const nftCollection = await getNFTCollection()
-        const depositNFTResult = await nftCollection.depositNFT(nft.tokenId)
-        const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
+        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+            const nftMarketplace = new NFTMarketplace(
+                context.nodeProvider,
+                context.signerProvider,
+                context.accounts[0].address
+            )
+            const nftCollection = new NFTCollection(
+                context.nodeProvider,
+                context.signerProvider,
+                context.accounts[0].address
+            )
 
-        loadNFTs()
+            const depositNFTResult = await nftCollection.depositNFT(nft.tokenId)
+            const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
+
+            await loadNFTs()
+        }
     }
 
     if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)

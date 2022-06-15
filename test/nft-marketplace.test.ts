@@ -1,16 +1,16 @@
 import * as web3 from '@alephium/web3'
 import { verifyContractState, timeout } from '../scripts/utils'
-import { testAddress1, testAddress2 } from '../scripts/signer'
-import { getNFTCollection } from '../scripts/nft-collection'
-import { getNFTMarketplace, NFTMarketplace } from '../scripts/nft-marketplace'
+import { testWallet1, testAddress1, testAddress2 } from './signers'
+import { NFTCollection } from '../scripts/nft-collection'
+import { NFTMarketplace } from '../scripts/nft-marketplace'
 import { NodeProvider } from '@alephium/web3'
-import { provider } from '../utils/providers'
 
 describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
-    const nftCollection = await getNFTCollection(true)
-    const nftMarketplace = await getNFTMarketplace(true)
+    const signer = await testWallet1(provider)
+    const nftCollection = new NFTCollection(provider, signer, testAddress1, true)
+    const nftMarketplace = new NFTMarketplace(provider, signer, testAddress1, true)
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
@@ -123,15 +123,15 @@ describe('nft marketplace', function() {
 
     // Withdraw & Deposit NFT
     {
-      expect((await getTokens(testAddress1))).not.toContain(tokenId)
+      expect((await getTokens(provider, testAddress1))).not.toContain(tokenId)
 
       await nftCollection.withdrawNFT(nftContractId)
 
-      expect((await getTokens(testAddress1))).toContain(tokenId)
+      expect((await getTokens(provider, testAddress1))).toContain(tokenId)
 
       await nftCollection.depositNFT(nftContractId)
 
-      expect((await getTokens(testAddress1))).not.toContain(tokenId)
+      expect((await getTokens(provider, testAddress1))).not.toContain(tokenId)
     }
 
     // Cancel the listing
@@ -169,7 +169,8 @@ describe('nft marketplace', function() {
 
   test('Update metadata in the NFT marketplace', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
-    const nftMarketplace = await getNFTMarketplace(true)
+    const signer = await testWallet1(provider)
+    const nftMarketplace = new NFTMarketplace(provider, signer, testAddress1, true)
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
@@ -279,7 +280,10 @@ describe('nft marketplace', function() {
     }
   }
 
-  async function getTokens(address: string): Promise<string[]> {
+  async function getTokens(
+    provider: NodeProvider,
+    address: string
+  ): Promise<string[]> {
     const utxos = await provider.addresses.getAddressesAddressUtxos(address)
     return utxos.utxos.flatMap((utxo) => utxo.tokens).map((token) => token.id)
   }

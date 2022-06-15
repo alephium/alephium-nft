@@ -1,9 +1,9 @@
 import WalletConnectProvider from '@alephium/walletconnect-provider'
 import { useContext, useEffect, useState } from "react"
-import { WalletConnectContext } from './alephium-providers'
+import { AlephiumWeb3Context } from './alephium-web3-providers'
 
 export const WalletButton = () => {
-    const context = useContext(WalletConnectContext)
+    const context = useContext(AlephiumWeb3Context)
     const provider = context.provider
     async function connect() {
         provider && await provider.connect()

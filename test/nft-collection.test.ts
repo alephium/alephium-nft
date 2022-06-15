@@ -1,13 +1,12 @@
 import * as web3 from '@alephium/web3'
 import * as utils from '../scripts/utils'
-import { getNFTCollection, NFTCollection } from '../scripts/nft-collection'
-import { testWallet1, testAddress1 } from '../scripts/signer'
+import { NFTCollection } from '../scripts/nft-collection'
+import { testAddress1, testWallet1 } from './signers'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
     const signer = await testWallet1(provider)
-
     const nftCollection = new NFTCollection(provider, signer, testAddress1, true)
 
     const nftCollectionDeployTx = await nftCollection.create(
