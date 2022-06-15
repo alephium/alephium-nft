@@ -13,10 +13,6 @@ import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 
 export class NFTMarketplace extends DeployHelpers {
 
-  updateSigner(signer: web3.NodeWallet): any {
-    this.signer = signer
-  }
-
   async create(): Promise<web3.DeployContractTransaction> {
     const nftListingContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :

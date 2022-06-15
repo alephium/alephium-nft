@@ -1,21 +1,29 @@
 import WalletConnectProvider from '@alephium/walletconnect-provider'
-import { useContext, useEffect, useState } from "react"
+import { useContext } from "react"
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 
 export const WalletButton = () => {
     const context = useContext(AlephiumWeb3Context)
-    const provider = context.provider
+
     async function connect() {
-        provider && await provider.connect()
+        if (context.signerProvider instanceof WalletConnectProvider) {
+            await context.signerProvider.connect()
+        }
     }
 
     async function disconnect() {
-        provider && await provider.disconnect()
+        if (context.signerProvider instanceof WalletConnectProvider) {
+            await context.signerProvider.disconnect()
+        }
     }
 
+    console.log('typeof context.signerProvider', context.signerProvider instanceof WalletConnectProvider)
     return (
-        context.accounts && context.accounts.length === 0 ?
-            <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={connect}>Connect</button> :
-            <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={disconnect}>Disconnect</button>
+        context.signerProvider instanceof WalletConnectProvider ?
+            (
+                context.accounts && context.accounts.length === 0 ?
+                    <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={connect}>Connect</button> :
+                    <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={disconnect}>Disconnect</button>
+            ) : null
     )
 }

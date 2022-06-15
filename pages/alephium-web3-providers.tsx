@@ -118,7 +118,7 @@ export const AlephiumWeb3Provider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
     async function loadProvider() {
-        const config = getConfig("development1")
+        const config = getConfig("development2")
         const nodeProvider = new NodeProvider(config.nodeUrl)
         dispatch({
             type: 'SET_NODE_PROVIDER',
@@ -222,5 +222,5 @@ export async function getWalletConnectProvider(
         console.log('disconnect', code, reason)
     })
 
-    return provider.connect()
+    return provider
 }
