@@ -6,7 +6,7 @@ import mintNFTArtifact from '../artifacts/mint_nft.ral.json'
 import burnNFTArtifact from '../artifacts/burn_nft.ral.json'
 import depositNFTArtifact from '../artifacts/deposit_nft.ral.json'
 import withdrawNFTArtifact from '../artifacts/withdraw_nft.ral.json'
-import { testWallet1 } from '../utils/signers'
+import { testAddress1, testWallet1 } from '../utils/signers'
 
 export class NFTCollection extends Web3Helpers {
 
@@ -26,6 +26,7 @@ export class NFTCollection extends Web3Helpers {
     const nftCollectionDeployTx = await this.createContract(
       nftCollectionContract,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftByteCode: nftContract.bytecode,
           collectionName: web3.stringToHex(collectionName),
@@ -51,6 +52,7 @@ export class NFTCollection extends Web3Helpers {
     await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftCollectionContractId: nftCollectionContractId,
           name: web3.stringToHex(nftName),
@@ -70,6 +72,7 @@ export class NFTCollection extends Web3Helpers {
     await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftContractId: nftContractId
         },
@@ -87,6 +90,7 @@ export class NFTCollection extends Web3Helpers {
     await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftContractId: nftContractId
         },
@@ -104,6 +108,7 @@ export class NFTCollection extends Web3Helpers {
     await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftContractId: nftContractId
         },
@@ -118,5 +123,5 @@ export async function getNFTCollection(isTest: boolean = false): Promise<NFTColl
   const provider = new web3.NodeProvider('http://127.0.0.1:22973')
   const signer = await testWallet1(provider)
 
-  return new NFTCollection(provider, signer, isTest)
+  return new NFTCollection(provider, signer, testAddress1, isTest)
 }

@@ -1,6 +1,6 @@
 import * as web3 from '@alephium/web3'
 import * as utils from '../scripts/utils'
-import { NFTCollection } from '../scripts/nft-collection'
+import { getNFTCollection, NFTCollection } from '../scripts/nft-collection'
 import { testWallet1, testAddress1 } from '../scripts/signer'
 
 describe('nft collection', function() {
@@ -8,7 +8,7 @@ describe('nft collection', function() {
     const provider = new web3.NodeProvider('http://127.0.0.1:22973')
     const signer = await testWallet1(provider)
 
-    const nftCollection = new NFTCollection(provider, signer, true)
+    const nftCollection = new NFTCollection(provider, signer, testAddress1, true)
 
     const nftCollectionDeployTx = await nftCollection.create(
       "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"

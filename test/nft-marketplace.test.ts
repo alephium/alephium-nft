@@ -72,7 +72,7 @@ describe('nft marketplace', function() {
     // Update the price
     const newPrice = 2000
     {
-      await nftMarketplace.updateNFTPrice(newPrice, nftListingContractId, testAddress1)
+      await nftMarketplace.updateNFTPrice(newPrice, nftListingContractId)
       await verifyContractState(provider, nftListingContractAddress, (state) => {
         expect(+state.fields[0].value).toEqual(newPrice)
       })

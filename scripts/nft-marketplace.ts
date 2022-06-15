@@ -9,7 +9,7 @@ import updateAdminArtifact from '../artifacts/update_admin.ral.json'
 import updateCommissionRateArtifact from '../artifacts/update_commission_rate.ral.json'
 import nftListingArtifact from '../artifacts/nft_listing.ral.json'
 import nftMarketplaceArtifact from '../artifacts/nft_marketplace.ral.json'
-import { testWallet1 } from '../utils/signers'
+import { testWallet1, testAddress1 } from '../utils/signers'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 
 export class NFTMarketplace extends Web3Helpers {
@@ -18,7 +18,7 @@ export class NFTMarketplace extends Web3Helpers {
     this.signer = signer
   }
 
-  async create(signerAddress?: string): Promise<web3.DeployContractTransaction> {
+  async create(): Promise<web3.DeployContractTransaction> {
     const nftListingContract = this.isTest ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :
       await web3.Contract.fromJson(nftListingArtifact)
@@ -32,14 +32,14 @@ export class NFTMarketplace extends Web3Helpers {
     const nftMarketplaceDeployTx = await this.createContract(
       nftMarketplaceContract,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftListingByteCode: nftListingContract.bytecode,
           admin: adminAccount.address,
           listingPrice: 10,    // Listing price default to 10 ALPH
           commissionRate: 200  // 200 basis point: 2%
         }
-      },
-      signerAddress
+      }
     )
 
     return nftMarketplaceDeployTx
@@ -48,8 +48,7 @@ export class NFTMarketplace extends Web3Helpers {
   async listNFT(
     tokenId: string,
     price: number,
-    marketPlaceContractId: string,
-    signerAddress?: string
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'list_nft.ral') :
@@ -58,20 +57,19 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           tokenId: tokenId,
           price: price,
           marketPlaceContractId: marketPlaceContractId
         }
-      },
-      signerAddress
+      }
     )
   }
 
   async updateNFTPrice(
     price: number,
     nftListingContractId: string,
-    signerAddress?: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'update_nft_price.ral') :
@@ -80,20 +78,19 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           price: price,
           nftListingContractId: nftListingContractId
         }
-      },
-      signerAddress
+      }
     )
   }
 
   async buyNFT(
     totalPayment: number,
     marketPlaceContractId: string,
-    nftListingContractId: string,
-    signerAddress?: string
+    nftListingContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'buy_nft.ral') :
@@ -102,20 +99,19 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           totalPayment: totalPayment,
           nftListingContractId: nftListingContractId,
           nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 200000  // TODO: set appropriately
-      },
-      signerAddress
+      }
     )
   }
 
   async cancelNFTListing(
-    nftListingContractId: string,
-    signerAddress?: string
+    nftListingContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'cancel_listing.ral') :
@@ -124,19 +120,18 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           nftListingContractId: nftListingContractId
         },
         gasAmount: 300000  // TODO: set appropriately
-      },
-      signerAddress
+      }
     )
   }
 
   async updateListingPrice(
     price: number,
-    marketPlaceContractId: string,
-    signerAddress?: string
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'update_listing_price.ral') :
@@ -145,20 +140,19 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           price: price,
           nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 300000
-      },
-      signerAddress
+      }
     )
   }
 
   async updateAdmin(
     admin: string,
-    marketPlaceContractId: string,
-    signerAddress?: string
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'update_admin.ral') :
@@ -167,20 +161,19 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           newAdmin: admin,
           nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 300000
-      },
-      signerAddress
+      }
     )
   }
 
   async updateCommissionRate(
     commissionRate: number,
-    marketPlaceContractId: string,
-    signerAddress?: string
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.isTest ?
       await web3.Script.fromSource(this.provider, 'update_commission_rate.ral') :
@@ -189,13 +182,13 @@ export class NFTMarketplace extends Web3Helpers {
     return await this.callTxScript(
       script,
       {
+        signerAddress: this.signerAddress,
         initialFields: {
           newCommissionRate: commissionRate,
           nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 300000
-      },
-      signerAddress
+      }
     )
   }
 
@@ -213,5 +206,5 @@ export async function getNFTMarketplace(isTest: boolean = false): Promise<NFTMar
   const provider = new web3.NodeProvider('http://127.0.0.1:22973')
   const signer = await testWallet1(provider)
 
-  return new NFTMarketplace(provider, signer, isTest)
+  return new NFTMarketplace(provider, signer, testAddress1, isTest)
 }
