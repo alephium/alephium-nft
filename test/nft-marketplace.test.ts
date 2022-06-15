@@ -1,8 +1,8 @@
 import * as web3 from '@alephium/web3'
 import { verifyContractState, timeout } from '../utils'
 import { testWallet1, testAddress1, testAddress2 } from './signers'
-import { NFTCollection } from '../scripts/nft-collection'
-import { NFTMarketplace } from '../scripts/nft-marketplace'
+import { NFTCollection } from '../utils/nft-collection'
+import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NodeProvider } from '@alephium/web3'
 
 describe('nft marketplace', function() {

@@ -1,6 +1,6 @@
 import * as web3 from '@alephium/web3'
 import * as utils from '../utils'
-import { NFTCollection } from '../scripts/nft-collection'
+import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
 
 describe('nft collection', function() {

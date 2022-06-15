@@ -1,5 +1,5 @@
 import * as web3 from '@alephium/web3'
-import { Web3Helpers } from '../scripts/web3-helpers'
+import { DeployHelpers } from './deploy-helpers'
 import nftArtifact from '../artifacts/nft.ral.json'
 import nftCollectionArtifact from '../artifacts/nft_collection.ral.json'
 import mintNFTArtifact from '../artifacts/mint_nft.ral.json'
@@ -7,7 +7,7 @@ import burnNFTArtifact from '../artifacts/burn_nft.ral.json'
 import depositNFTArtifact from '../artifacts/deposit_nft.ral.json'
 import withdrawNFTArtifact from '../artifacts/withdraw_nft.ral.json'
 
-export class NFTCollection extends Web3Helpers {
+export class NFTCollection extends DeployHelpers {
 
   async create(
     collectionName: string,

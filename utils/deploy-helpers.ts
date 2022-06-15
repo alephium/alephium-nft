@@ -1,6 +1,6 @@
 import * as web3 from '@alephium/web3'
 
-export class Web3Helpers {
+export class DeployHelpers {
   provider: web3.NodeProvider
   signer: web3.SignerProvider
   signerAddress: string

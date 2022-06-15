@@ -2,7 +2,7 @@ import { useState, useContext } from 'react'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
 import { stringToHex, subContractId } from '@alephium/web3'
-import { NFTCollection } from '../scripts/nft-collection'
+import { NFTCollection } from '../utils/nft-collection'
 
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
