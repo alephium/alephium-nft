@@ -4,18 +4,18 @@ export class Web3Helpers {
   provider: web3.NodeProvider
   signer: web3.SignerProvider
   signerAddress: string
-  isTest: boolean
+  deployFromSource: boolean
 
   constructor(
     provider: web3.NodeProvider,
     signer: web3.NodeWallet,
     signerAddress: string,
-    isTest: boolean = false
+    deployFromSource: boolean = false
   ) {
     this.provider = provider
     this.signer = signer
     this.signerAddress = signerAddress
-    this.isTest = isTest
+    this.deployFromSource = deployFromSource
   }
 
   async callTxScript(

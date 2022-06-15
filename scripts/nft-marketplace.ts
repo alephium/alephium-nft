@@ -18,11 +18,11 @@ export class NFTMarketplace extends Web3Helpers {
   }
 
   async create(): Promise<web3.DeployContractTransaction> {
-    const nftListingContract = this.isTest ?
+    const nftListingContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :
       await web3.Contract.fromJson(nftListingArtifact)
 
-    const nftMarketplaceContract = this.isTest ?
+    const nftMarketplaceContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_marketplace.ral') :
       await web3.Contract.fromJson(nftMarketplaceArtifact)
 
@@ -49,7 +49,7 @@ export class NFTMarketplace extends Web3Helpers {
     price: number,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'list_nft.ral') :
       await web3.Script.fromJson(listNFTArtifact)
 
@@ -70,7 +70,7 @@ export class NFTMarketplace extends Web3Helpers {
     price: number,
     nftListingContractId: string,
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_nft_price.ral') :
       await web3.Script.fromJson(updateNFTPriceArtifact)
 
@@ -91,7 +91,7 @@ export class NFTMarketplace extends Web3Helpers {
     marketPlaceContractId: string,
     nftListingContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'buy_nft.ral') :
       await web3.Script.fromJson(buyNFTArtifact)
 
@@ -112,7 +112,7 @@ export class NFTMarketplace extends Web3Helpers {
   async cancelNFTListing(
     nftListingContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'cancel_listing.ral') :
       await web3.Script.fromJson(cancelListingArtifact)
 
@@ -132,7 +132,7 @@ export class NFTMarketplace extends Web3Helpers {
     price: number,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_listing_price.ral') :
       await web3.Script.fromJson(updateListingPriceArtifact)
 
@@ -153,7 +153,7 @@ export class NFTMarketplace extends Web3Helpers {
     admin: string,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_admin.ral') :
       await web3.Script.fromJson(updateAdminArtifact)
 
@@ -174,7 +174,7 @@ export class NFTMarketplace extends Web3Helpers {
     commissionRate: number,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_commission_rate.ral') :
       await web3.Script.fromJson(updateCommissionRateArtifact)
 

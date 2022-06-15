@@ -14,11 +14,11 @@ export class NFTCollection extends Web3Helpers {
     collectionDescription: string,
     collectionUri: string
   ): Promise<web3.DeployContractTransaction> {
-    const nftContract = this.isTest ?
+    const nftContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft.ral') :
       await web3.Contract.fromJson(nftArtifact)
 
-    const nftCollectionContract = this.isTest ?
+    const nftCollectionContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_collection.ral') :
       await web3.Contract.fromJson(nftCollectionArtifact)
 
@@ -44,7 +44,7 @@ export class NFTCollection extends Web3Helpers {
     nftDescription: string,
     nftUri: string
   ) {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'mint_nft.ral') :
       await web3.Script.fromJson(mintNFTArtifact)
 
@@ -64,7 +64,7 @@ export class NFTCollection extends Web3Helpers {
   }
 
   async burnNFT(nftContractId: string, gasAmount?: number, gasPrice?: number) {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'burn_nft.ral') :
       await web3.Script.fromJson(burnNFTArtifact)
 
@@ -82,7 +82,7 @@ export class NFTCollection extends Web3Helpers {
   }
 
   async depositNFT(nftContractId: string, gasAmount?: number, gasPrice?: number) {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'deposit_nft.ral') :
       await web3.Script.fromJson(depositNFTArtifact)
 
@@ -100,7 +100,7 @@ export class NFTCollection extends Web3Helpers {
   }
 
   async withdrawNFT(nftContractId: string, gasAmount?: number, gasPrice?: number) {
-    const script = this.isTest ?
+    const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'withdraw_nft.ral') :
       await web3.Script.fromJson(withdrawNFTArtifact)
 
