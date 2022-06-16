@@ -82,7 +82,6 @@ export default function BuyNFTs() {
         //
         const items = new Map<string, NFTListing>()
 
-        console.log('context.account', context.accounts)
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
@@ -116,12 +115,18 @@ export default function BuyNFTs() {
                 context.accounts[0].address
             )
 
-            await nftMarketplace.buyNFT(
+            const buyNFTTxResult = await nftMarketplace.buyNFT(
                 2000000000000000000,
                 binToHex(contractIdFromAddress(nftListing.marketAddress)),
                 nftListing.listingContractId
             )
-            await nftCollection.withdrawNFT(nftListing.tokenId)
+            console.debug('buyNFTTxResult', buyNFTTxResult)
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            const withdrawNFTTxResult = await nftCollection.withdrawNFT(nftListing.tokenId)
+            console.debug('withdrawNFTTxResult', withdrawNFTTxResult)
+
             await loadListedNFTs()
         }
     }

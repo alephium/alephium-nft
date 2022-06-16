@@ -1,0 +1,29 @@
+module.exports = {
+  environments: {
+    development1: {
+      nodeUrl: 'http://127.0.0.1:22973',
+      signerProvider: {
+        type: 'NodeWalletProvider',
+        nodeUrl: 'http://127.0.0.1:22973',
+        walletName: 'alephium-web3-test-only-wallet',
+        password: 'alph'
+      }
+    },
+    development2: {
+      nodeUrl: 'http://127.0.0.1:22973',
+      signerProvider: {
+        type: 'WalletConnectProvider',
+        projectId: '6e2562e43678dd68a9070a62b6d52207',
+        relayUrl: 'wss://relay.walletconnect.com',
+        metadata: {
+          name: 'Alphium NFT',
+          description: 'Alpephium NFT Marketplace',
+          url: 'https://walletconnect.com/',
+          icons: ['https://walletconnect.com/walletconnect-logo.png']
+        },
+        networkId: 4,
+        chainGroup: -1
+      }
+    }
+  }
+}

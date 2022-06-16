@@ -16,11 +16,11 @@ export class NFTMarketplace extends DeployHelpers {
   async create(): Promise<web3.DeployContractTransaction> {
     const nftListingContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :
-      await web3.Contract.fromJson(nftListingArtifact)
+      web3.Contract.fromJson(nftListingArtifact)
 
     const nftMarketplaceContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_marketplace.ral') :
-      await web3.Contract.fromJson(nftMarketplaceArtifact)
+      web3.Contract.fromJson(nftMarketplaceArtifact)
 
     const adminAccount = (await this.signer.getAccounts())[0]
 
@@ -47,7 +47,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'list_nft.ral') :
-      await web3.Script.fromJson(listNFTArtifact)
+      web3.Script.fromJson(listNFTArtifact)
 
     return await this.callTxScript(
       script,
@@ -68,7 +68,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_nft_price.ral') :
-      await web3.Script.fromJson(updateNFTPriceArtifact)
+      web3.Script.fromJson(updateNFTPriceArtifact)
 
     return await this.callTxScript(
       script,
@@ -89,7 +89,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'buy_nft.ral') :
-      await web3.Script.fromJson(buyNFTArtifact)
+      web3.Script.fromJson(buyNFTArtifact)
 
     return await this.callTxScript(
       script,
@@ -110,7 +110,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'cancel_listing.ral') :
-      await web3.Script.fromJson(cancelListingArtifact)
+      web3.Script.fromJson(cancelListingArtifact)
 
     return await this.callTxScript(
       script,
@@ -130,7 +130,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_listing_price.ral') :
-      await web3.Script.fromJson(updateListingPriceArtifact)
+      web3.Script.fromJson(updateListingPriceArtifact)
 
     return await this.callTxScript(
       script,
@@ -151,7 +151,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_admin.ral') :
-      await web3.Script.fromJson(updateAdminArtifact)
+      web3.Script.fromJson(updateAdminArtifact)
 
     return await this.callTxScript(
       script,
@@ -172,7 +172,7 @@ export class NFTMarketplace extends DeployHelpers {
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_commission_rate.ral') :
-      await web3.Script.fromJson(updateCommissionRateArtifact)
+      web3.Script.fromJson(updateCommissionRateArtifact)
 
     return await this.callTxScript(
       script,

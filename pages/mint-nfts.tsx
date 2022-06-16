@@ -60,16 +60,20 @@ export default function MintNFTs() {
                 context.accounts[0].address
             )
             // TODO: Figure out UI to create collection, right now use default collection id
-
             const nftCollectionContractId = addresses.defaultNftCollectionContractId
             const nftContractId = subContractId(nftCollectionContractId, stringToHex(uri))
-            const mintNFTResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
-            const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
 
+            const mintNFTResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
             console.debug('mintNFTResult', mintNFTResult)
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
             console.debug('withdrawNFTResult', withdrawNFTResult)
 
             router.push('/my-nfts')
+        } else {
+            console.debug('context..', context)
         }
     }
 

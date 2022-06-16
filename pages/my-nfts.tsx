@@ -22,7 +22,7 @@ export default function Home() {
     const [loadingState, setLoadingState] = useState('not-loaded')
     const context = useContext(AlephiumWeb3Context)
 
-    console.log('accounts in my nft', context.accounts)
+    console.debug('Accounts in my-nft', context.accounts)
 
     useEffect(() => {
         loadNFTs()
@@ -92,8 +92,13 @@ export default function Home() {
                 context.accounts[0].address
             )
 
-            const depositNFTResult = await nftCollection.depositNFT(nft.tokenId)
+            const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
+            console.debug('depositNFTResult', depositNFTTxResult)
+
+            await new Promise(r => setTimeout(r, 2000));
+
             const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
+            console.debug('listNFTResult', listNFTTxResult)
 
             await loadNFTs()
         }

@@ -17,7 +17,6 @@ export const WalletButton = () => {
         }
     }
 
-    console.log('typeof context.signerProvider', context.signerProvider instanceof WalletConnectProvider)
     return (
         context.signerProvider instanceof WalletConnectProvider ?
             (
