@@ -1,6 +1,6 @@
 module.exports = {
   environments: {
-    development1: {
+    'development-nodewallet': {
       nodeUrl: 'http://127.0.0.1:22973',
       signerProvider: {
         type: 'NodeWalletProvider',
@@ -9,7 +9,7 @@ module.exports = {
         password: 'alph'
       }
     },
-    development2: {
+    'development-walletconnect': {
       nodeUrl: 'http://127.0.0.1:22973',
       signerProvider: {
         type: 'WalletConnectProvider',
@@ -17,7 +17,7 @@ module.exports = {
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Alphium NFT',
-          description: 'Alpephium NFT Marketplace',
+          description: 'Alephium NFT Marketplace',
           url: 'https://walletconnect.com/',
           icons: ['https://walletconnect.com/walletconnect-logo.png']
         },

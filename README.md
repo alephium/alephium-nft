@@ -54,3 +54,16 @@ Before running the application, two smart contracts need to be created:
 npm deploy:contracts
 ```
 
+## Config Environments
+There are two environments available during development:
+`development-nodewallet` and `development-walletconnect` as configured
+in [alephium-configs.ts](configs/alephium-configs.ts). In
+`development-nodewallet` environment, node wallet is used as signer
+for authentication and signing transactions. In
+`development-walletconnect` environment Wallet Connect is used
+instead.
+
+`development-nodewallet` is the default environment. To switch
+environment, update the `ENVIRONMENT` variable in
+[next.config.js](configs/next.config.js) file.
+

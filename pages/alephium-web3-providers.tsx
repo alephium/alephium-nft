@@ -91,8 +91,13 @@ function getConfig(name: string): EnvironmentConfig {
 export const AlephiumWeb3Provider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
+    useEffect(() => {
+        loadProvider()
+    }, [])
+
     async function loadProvider() {
-        const config = getConfig("development2")
+        const env = process.env.ENVIRONMENT || "development-nodewallet"
+        const config = getConfig(env)
         const nodeProvider = new NodeProvider(config.nodeUrl)
         dispatch({
             type: 'SET_NODE_PROVIDER',
@@ -120,25 +125,15 @@ export const AlephiumWeb3Provider = ({ children }) => {
                 dispatch
             )
 
+
             dispatch({
                 type: 'SET_SIGNER_PROVIDER',
                 provider
             })
 
-            if (provider.connected) {
-                const accounts = await provider.getAccounts()
-                dispatch({
-                    type: 'SET_ACCOUNTS',
-                    accounts: accounts
-                })
-            }
+            provider.connect()
         }
     }
-
-    useEffect(() => {
-        loadProvider()
-    }, [])
-
 
     return (
         <AlephiumWeb3Context.Provider
@@ -159,11 +154,15 @@ export async function getWalletConnectProvider(
     metadata: object,
     dispatch: (action: ActionType) => Dispatch<ActionType>
 ): Promise<WalletConnectProvider> {
+
+    // Sometimes initialization takes a long time or doesn't return
+    console.log('Initializaing WalletConnectClient')
     const walletConnect = await WalletConnectClient.init({
         projectId: projectId,
         relayUrl: relayUrl,
         metadata: metadata
     })
+    console.log('WalletConnectClient initialized')
 
     const provider = new WalletConnectProvider({
         networkId: 4,
