@@ -25,7 +25,7 @@ export default function Home() {
     const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
     const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
     async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
-    const [txStatusCallback, setSetTxStatusCallback] = useState(() => defaultTxStatusCallback)
+    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
 
     const context = useContext(AlephiumWeb3Context)
 
@@ -39,7 +39,7 @@ export default function Home() {
     function resetTxStatus() {
         setOngoingTxId(undefined)
         setOngoingTxDescription(undefined)
-        setSetTxStatusCallback(() => defaultTxStatusCallback)
+        setTxStatusCallback(() => defaultTxStatusCallback)
     }
 
     async function loadNFT(tokenId: string): undefined | NFT {
@@ -109,14 +109,14 @@ export default function Home() {
             const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
 
             setOngoingTxId(depositNFTTxResult.txId)
-            setOngoingTxDescription('deposit NFT')
-            setSetTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+            setOngoingTxDescription('depositting NFT')
+            setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
                 if (txStatus.type === 'Confirmed') {
                     const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
 
                     setOngoingTxId(listNFTTxResult.txId)
                     setOngoingTxDescription('listing NFT')
-                    setSetTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
+                    setTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
                         if (txStatus2.type === 'Confirmed') {
                             resetTxStatus()
                             await loadNFTs()

@@ -1,3 +1,4 @@
+import * as web3 from '@alephium/web3'
 import { useState, useContext } from 'react'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
@@ -6,6 +7,7 @@ import { NFTCollection } from '../utils/nft-collection'
 
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
+import { TxStatusAlert } from './tx-status-alert'
 
 const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
@@ -13,8 +15,19 @@ export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
     const [formInput, updateFormInput] = useState({ name: '', description: '' })
 
+    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
+    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
+    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
+    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
+
     const context = useContext(AlephiumWeb3Context)
     const router = useRouter()
+
+    function resetTxStatus() {
+        setOngoingTxId(undefined)
+        setOngoingTxDescription(undefined)
+        setTxStatusCallback(() => defaultTxStatusCallback)
+    }
 
     async function onChange(e) {
         const file = e.target.files[0]
@@ -63,48 +76,75 @@ export default function MintNFTs() {
             const nftCollectionContractId = addresses.defaultNftCollectionContractId
             const nftContractId = subContractId(nftCollectionContractId, stringToHex(uri))
 
-            const mintNFTResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
-            console.debug('mintNFTResult', mintNFTResult)
+            const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
+            console.debug('mintNFTTxResult', mintNFTTxResult)
+            setOngoingTxId(mintNFTTxResult.txId)
+            setOngoingTxDescription('minting NFT')
 
-            await new Promise(r => setTimeout(r, 2000));
+            setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                if (txStatus.type === 'Confirmed') {
+                    const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
+                    console.debug('withdrawNFTResult', withdrawNFTResult)
 
-            const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
-            console.debug('withdrawNFTResult', withdrawNFTResult)
+                    setOngoingTxId(withdrawNFTResult.txId)
+                    setOngoingTxDescription('withdrawing NFT')
+                    setTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
+                        if (txStatus2.type === 'Confirmed') {
+                            resetTxStatus()
+                            router.push('/my-nfts')
+                        } else if (txStatus2.type === 'TxNotFound') {
+                            resetTxStatus()
+                            console.error('List NFT transaction not found')
+                        }
+                    })
+                } else if (txStatus.type === 'TxNotFound') {
+                    resetTxStatus()
+                    console.error('Deposit NFT transaction not found')
+                }
+            })
 
-            router.push('/my-nfts')
+
+
+
         } else {
             console.debug('context..', context)
         }
     }
 
     return (
-        <div className="flex justify-center">
-            <div className="w-1/2 flex flex-col pb-12">
-                <input
-                    placeholder="Asset Name"
-                    className="mt-8 border rounded p-4"
-                    onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
-                />
-                <textarea
-                    placeholder="Asset Description"
-                    className="mt-2 border rounded p-4"
-                    onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
-                />
-                <input
-                    type="file"
-                    name="Asset"
-                    className="my-4"
-                    onChange={onChange}
-                />
-                {
-                    fileUrl && (
-                        <img className="rounded mt-4" width="350" src={fileUrl} />
-                    )
-                }
-                <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-                    Mint NFT
-                </button>
+        <>
+            {
+                ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
+            }
+
+            <div className="flex justify-center">
+                <div className="w-1/2 flex flex-col pb-12">
+                    <input
+                        placeholder="Asset Name"
+                        className="mt-8 border rounded p-4"
+                        onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
+                    />
+                    <textarea
+                        placeholder="Asset Description"
+                        className="mt-2 border rounded p-4"
+                        onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
+                    />
+                    <input
+                        type="file"
+                        name="Asset"
+                        className="my-4"
+                        onChange={onChange}
+                    />
+                    {
+                        fileUrl && (
+                            <img className="rounded mt-4" width="350" src={fileUrl} />
+                        )
+                    }
+                    <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
+                        Mint NFT
+                    </button>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
