@@ -57,7 +57,8 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           price: price,
           marketPlaceContractId: marketPlaceContractId
-        }
+        },
+        gasAmount: 200000  // TODO: set appropriately
       }
     )
   }

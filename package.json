@@ -11,6 +11,8 @@
     "deploy:contracts": "node scripts/deploy.js"
   },
   "dependencies": {
+    "@alephium/walletconnect-provider": "0.1.0-rc.1",
+    "@alephium/web3": "0.1.0-rc.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
@@ -21,30 +23,31 @@
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "@walletconnect/client": "2.0.0-beta.26",
-    "@walletconnect/types": "2.0.0-beta.26",
-    "@walletconnect/utils": "2.0.0-beta.26",
     "@walletconnect/qrcode-modal": "1.7.8",
     "@walletconnect/signer-connection": "2.0.0-beta.26",
-    "@alephium/walletconnect-provider": "0.1.0-rc.1",
-    "@alephium/web3": "0.1.0-rc.3",
+    "@walletconnect/types": "2.0.0-beta.26",
+    "@walletconnect/utils": "2.0.0-beta.26",
+    "axios": "^0.26.0",
+    "better-sqlite3": "^7.5.3",
+    "daisyui": "^2.15.4",
+    "ipfs-http-client": "^56.0.1",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "axios": "^0.26.0",
-    "better-sqlite3": "^7.5.3",
-    "ipfs-http-client": "^56.0.1",
+    "ts-jest": "^28.0.2",
     "ts-node": "^10.7.0",
-    "ts-jest": "^28.0.2"
+    "usehooks-ts": "^2.5.4"
   },
   "devDependencies": {
     "@types/node": "17.0.40",
     "@types/react": "18.0.12",
     "@types/react-dom": "18.0.5",
+    "autoprefixer": "^10.4.7",
     "eslint": "8.17.0",
     "eslint-config-next": "12.1.6",
-    "typescript": "4.7.3",
     "jest": "^28.1.0",
-    "postcss": "^8.3.5",
-    "tailwindcss": "^2.2.4"
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.3",
+    "typescript": "4.7.3"
   }
 }

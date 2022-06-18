@@ -21,8 +21,8 @@ export const WalletButton = () => {
         context.signerProvider instanceof WalletConnectProvider ?
             (
                 context.accounts && context.accounts.length === 0 ?
-                    <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={connect}>Connect</button> :
-                    <button className="mt-4 bg-blue-500 text-white font-bold py-2 px-12 rounded" onClick={disconnect}>Disconnect</button>
+                    <button class="btn btn-outline btn-sm btn-accent" onClick={connect}>Connect</button> :
+                    <button class="btn btn-outline btn-sm btn-secondary" onClick={disconnect}>Disconnect</button>
             ) : null
     )
 }

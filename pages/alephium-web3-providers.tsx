@@ -3,7 +3,7 @@ import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client'
 import { PairingTypes } from '@walletconnect/types'
 import WalletConnectProvider from '@alephium/walletconnect-provider'
 import QRCodeModal from "@walletconnect/qrcode-modal"
-import React, { Dispatch, useEffect, useReducer } from 'react'
+import React, { Dispatch, useCallback, useEffect, useReducer } from 'react'
 import { Account } from '@alephium/web3'
 import AlephiumConfigs from '../configs/alephium-configs'
 
@@ -91,8 +91,12 @@ function getConfig(name: string): EnvironmentConfig {
 export const AlephiumWeb3Provider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
+    const momoizedLoadProvider = useCallback(async () => {
+        await loadProvider()
+    })
+
     useEffect(() => {
-        loadProvider()
+        momoizedLoadProvider()
     }, [])
 
     async function loadProvider() {
