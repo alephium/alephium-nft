@@ -8,6 +8,29 @@ interface TxStatusAlertProps {
     txStatusCallback(status: web3.node.TxStatus): Promise<any>
 }
 
+export function useTxStatus() {
+    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
+    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
+    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
+    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
+
+    function resetTxStatus() {
+        setOngoingTxId(undefined)
+        setOngoingTxDescription(undefined)
+        setTxStatusCallback(() => defaultTxStatusCallback)
+    }
+
+    return [
+        ongoingTxId,
+        setOngoingTxId,
+        ongoingTxDescription,
+        setOngoingTxDescription,
+        txStatusCallback,
+        setTxStatusCallback,
+        resetTxStatus
+    ]
+}
+
 export const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertProps) => {
     const context = useContext(AlephiumWeb3Context)
     const [stopTimer, setStopTimer] = useState(false)

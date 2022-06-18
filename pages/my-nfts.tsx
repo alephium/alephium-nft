@@ -8,7 +8,7 @@ import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
-import { TxStatusAlert } from './tx-status-alert'
+import { TxStatusAlert, useTxStatus } from './tx-status-alert'
 
 interface NFT {
     name: string,
@@ -21,26 +21,23 @@ interface NFT {
 export default function Home() {
     const [nfts, setNfts] = useState([] as NFT[])
     const [loadingState, setLoadingState] = useState('not-loaded')
-
-    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
-    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
-    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
-    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
-
     const context = useContext(AlephiumWeb3Context)
+
+    const [
+        ongoingTxId,
+        setOngoingTxId,
+        ongoingTxDescription,
+        setOngoingTxDescription,
+        txStatusCallback,
+        setTxStatusCallback,
+        resetTxStatus
+    ] = useTxStatus()
 
     console.debug('Accounts in my-nft', context.accounts)
 
     useEffect(() => {
         loadNFTs()
     }, [context.accounts])
-
-
-    function resetTxStatus() {
-        setOngoingTxId(undefined)
-        setOngoingTxDescription(undefined)
-        setTxStatusCallback(() => defaultTxStatusCallback)
-    }
 
     async function loadNFT(tokenId: string): undefined | NFT {
         var nftState = undefined
@@ -139,6 +136,7 @@ export default function Home() {
             {
                 ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
             }
+
             <div className="flex justify-center">
                 <div className="px-4" style={{ maxWidth: '1600px' }}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">

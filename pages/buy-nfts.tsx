@@ -8,7 +8,7 @@ import { NFTListingContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { TxStatusAlert } from './tx-status-alert'
+import { TxStatusAlert, useTxStatus } from './tx-status-alert'
 import { useRouter } from 'next/router'
 
 interface NFTListing {
@@ -26,24 +26,22 @@ interface NFTListing {
 export default function BuyNFTs() {
     const [nftListings, setNftListings] = useState([] as NFTListing[])
     const [loadingState, setLoadingState] = useState('not-loaded')
-
-    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
-    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
-    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
-    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
-
     const context = useContext(AlephiumWeb3Context)
     const router = useRouter()
+
+    const [
+        ongoingTxId,
+        setOngoingTxId,
+        ongoingTxDescription,
+        setOngoingTxDescription,
+        txStatusCallback,
+        setTxStatusCallback,
+        resetTxStatus
+    ] = useTxStatus()
 
     useEffect(() => {
         loadListedNFTs()
     }, [context.accounts])
-
-    function resetTxStatus() {
-        setOngoingTxId(undefined)
-        setOngoingTxDescription(undefined)
-        setTxStatusCallback(() => defaultTxStatusCallback)
-    }
 
     async function loadListedNFT(event): NFTListing | undefined {
         const tokenId = event.fields[1].value

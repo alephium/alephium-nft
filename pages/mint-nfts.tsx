@@ -7,27 +7,25 @@ import { NFTCollection } from '../utils/nft-collection'
 
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { TxStatusAlert } from './tx-status-alert'
+import { TxStatusAlert, useTxStatus } from './tx-status-alert'
 
 const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState(null)
     const [formInput, updateFormInput] = useState({ name: '', description: '' })
-
-    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
-    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
-    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
-    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
-
     const context = useContext(AlephiumWeb3Context)
     const router = useRouter()
 
-    function resetTxStatus() {
-        setOngoingTxId(undefined)
-        setOngoingTxDescription(undefined)
-        setTxStatusCallback(() => defaultTxStatusCallback)
-    }
+    const [
+        ongoingTxId,
+        setOngoingTxId,
+        ongoingTxDescription,
+        setOngoingTxDescription,
+        txStatusCallback,
+        setTxStatusCallback,
+        resetTxStatus
+    ] = useTxStatus()
 
     async function onChange(e) {
         const file = e.target.files[0]
