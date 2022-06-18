@@ -94,7 +94,7 @@ interface AlephiumWeb3ProviderProps {
     children: React.ReactNode
 }
 
-export const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
+const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
     useEffect(() => {
@@ -212,3 +212,5 @@ export async function getWalletConnectProvider(
 
     return provider
 }
+
+export default AlephiumWeb3Provider

@@ -31,7 +31,7 @@ export function useTxStatus() {
     ] as const
 }
 
-export const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertProps) => {
+const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertProps) => {
     const context = useContext(AlephiumWeb3Context)
     const [stopTimer, setStopTimer] = useState(false)
     const [txStatus, setTxStatus] = useState<web3.node.TxStatus | undefined>(undefined)
@@ -106,3 +106,5 @@ export const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusA
         )
     }
 }
+
+export default TxStatusAlert

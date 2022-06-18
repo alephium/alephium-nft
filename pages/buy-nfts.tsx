@@ -8,7 +8,7 @@ import { NFTListingContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { TxStatusAlert, useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 import { useRouter } from 'next/router'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 

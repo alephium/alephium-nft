@@ -8,7 +8,7 @@ import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
-import { TxStatusAlert, useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 
 interface NFT {
     name: string,

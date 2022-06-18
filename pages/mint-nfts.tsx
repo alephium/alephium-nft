@@ -7,7 +7,7 @@ import { NFTCollection } from '../utils/nft-collection'
 
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { TxStatusAlert, useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 
 // @ts-ignore
 const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')

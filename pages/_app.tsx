@@ -1,8 +1,8 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import Link from 'next/link'
-import { AlephiumWeb3Provider } from './alephium-web3-providers'
-import { WalletButton } from './wallet-button'
+import AlephiumWeb3Provider from './alephium-web3-providers'
+import WalletButton from './wallet-button'
 import { AppProps } from 'next/app'
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -2,7 +2,7 @@ import WalletConnectProvider from '@alephium/walletconnect-provider'
 import { useContext, useEffect } from "react"
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 
-export const WalletButton = () => {
+const WalletButton = () => {
     const context = useContext(AlephiumWeb3Context)
 
     async function connect() {
@@ -26,3 +26,5 @@ export const WalletButton = () => {
             ) : null
     )
 }
+
+export default WalletButton
