@@ -106,7 +106,7 @@ export default function Home() {
             const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
 
             setOngoingTxId(depositNFTTxResult.txId)
-            setOngoingTxDescription('depositting NFT')
+            setOngoingTxDescription('depositing NFT')
             setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
                 if (txStatus.type === 'Confirmed') {
                     const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
