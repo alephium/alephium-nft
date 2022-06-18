@@ -9,10 +9,11 @@ import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import { TxStatusAlert, useTxStatus } from './tx-status-alert'
 
+// @ts-ignore
 const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 export default function MintNFTs() {
-    const [fileUrl, setFileUrl] = useState(null)
+    const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
     const [formInput, updateFormInput] = useState({ name: '', description: '' })
     const context = useContext(AlephiumWeb3Context)
     const router = useRouter()
@@ -27,7 +28,7 @@ export default function MintNFTs() {
         resetTxStatus
     ] = useTxStatus()
 
-    async function onChange(e) {
+    async function onChange(e: any) {
         const file = e.target.files[0]
         try {
             const added = await ipfsClient.add(
@@ -36,14 +37,14 @@ export default function MintNFTs() {
                     progress: (prog) => console.log(`received: ${prog}`)
                 }
             )
-            const url = `https://ipfs.infura.io/ipfs/${added.path}`
+            const url: string = `https://ipfs.infura.io/ipfs/${added.path}`
             setFileUrl(url)
         } catch (error) {
             console.log('Error uploading file: ', error)
         }
     }
 
-    async function uploadToIPFS(): Promise<string> {
+    async function uploadToIPFS(): Promise<string | undefined> {
         const { name, description } = formInput
         if (!name || !description || !fileUrl) return
         /* first, upload to IPFS */
@@ -64,7 +65,7 @@ export default function MintNFTs() {
         const uri = await uploadToIPFS()
         const name = formInput.name
         const description = formInput.description
-        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (uri && context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
                 context.signerProvider,

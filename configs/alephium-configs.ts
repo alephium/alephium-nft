@@ -1,3 +1,4 @@
+// @ts-ignore
 module.exports = {
   environments: {
     'development-nodewallet': {

@@ -8,7 +8,7 @@ export class DeployHelpers {
 
   constructor(
     provider: web3.NodeProvider,
-    signer: web3.NodeWallet,
+    signer: web3.SignerProvider,
     signerAddress: string,
     deployFromSource: boolean = false
   ) {

@@ -39,7 +39,7 @@ export default function Home() {
         loadNFTs()
     }, [context.accounts])
 
-    async function loadNFT(tokenId: string): undefined | NFT {
+    async function loadNFT(tokenId: string): Promise<NFT | undefined> {
         var nftState = undefined
 
         if (context.nodeProvider) {
@@ -60,7 +60,7 @@ export default function Home() {
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    collectionAddress: nftState.fields[4].value
+                    collectionAddress: nftState.fields[4].value.toString()
                 }
             }
         }
@@ -76,7 +76,7 @@ export default function Home() {
 
             const tokens = utxos.utxos
                 .flatMap((utxo) => utxo.tokens)
-                .filter((token) => token.amount == 1)
+                .filter((token) => +token.amount == 1)
                 .map((token) => token.id)
 
             for (var token of tokens) {
@@ -90,7 +90,7 @@ export default function Home() {
         setLoadingState('loaded')
     }
 
-    async function sellNFT(nft) {
+    async function sellNFT(nft: NFT) {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,

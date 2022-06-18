@@ -1,15 +1,16 @@
 import { NodeProvider, NodeWallet } from '@alephium/web3'
 import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client'
-import { PairingTypes } from '@walletconnect/types'
+import { AppMetadata, PairingTypes } from '@walletconnect/types'
 import WalletConnectProvider from '@alephium/walletconnect-provider'
 import QRCodeModal from "@walletconnect/qrcode-modal"
-import React, { Dispatch, useCallback, useEffect, useReducer } from 'react'
+import React, { Dispatch, useEffect, useReducer } from 'react'
 import { Account } from '@alephium/web3'
+// @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
 
 type StateType = {
-    signerProvider?: WalletConnectProvider | NodeWallet
-    nodeProvider?: NodeProvider
+    signerProvider: WalletConnectProvider | NodeWallet | undefined
+    nodeProvider: NodeProvider | undefined
     accounts: Account[]
 }
 
@@ -31,8 +32,8 @@ type ActionType =
     }
 
 const initialState: StateType = {
-    signerProvider: null,
-    nodeProvider: null,
+    signerProvider: undefined,
+    nodeProvider: undefined,
     accounts: [] as Account[]
 }
 
@@ -73,7 +74,7 @@ type SignerProviderType =
         type: 'WalletConnectProvider'
         projectId: string
         relayUrl: string
-        metadata: object
+        metadata: AppMetadata,
         networkId: number
         chainGroup: number
     }
@@ -85,18 +86,19 @@ interface EnvironmentConfig {
 
 function getConfig(name: string): EnvironmentConfig {
     const environments: Map<string, EnvironmentConfig> = AlephiumConfigs.environments
+    // @ts-ignore
     return environments[name]
 }
 
-export const AlephiumWeb3Provider = ({ children }) => {
+interface AlephiumWeb3ProviderProps {
+    children: React.ReactNode
+}
+
+export const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
-    const momoizedLoadProvider = useCallback(async () => {
-        await loadProvider()
-    })
-
     useEffect(() => {
-        momoizedLoadProvider()
+        loadProvider()
     }, [])
 
     async function loadProvider() {
@@ -155,8 +157,8 @@ export const AlephiumWeb3Provider = ({ children }) => {
 export async function getWalletConnectProvider(
     projectId: string,
     relayUrl: string,
-    metadata: object,
-    dispatch: (action: ActionType) => Dispatch<ActionType>
+    metadata: AppMetadata,
+    dispatch: Dispatch<ActionType>
 ): Promise<WalletConnectProvider> {
 
     // Sometimes initialization takes a long time or doesn't return
@@ -188,7 +190,7 @@ export async function getWalletConnectProvider(
         console.log('session deleted')
     })
 
-    walletConnect.on(CLIENT_EVENTS.session.sync, (e) => {
+    walletConnect.on(CLIENT_EVENTS.session.sync, (e: any) => {
         QRCodeModal.close()
         console.log('session sync', e)
     })

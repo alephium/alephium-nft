@@ -3,8 +3,9 @@ import '../styles/globals.css'
 import Link from 'next/link'
 import { AlephiumWeb3Provider } from './alephium-web3-providers'
 import { WalletButton } from './wallet-button'
+import { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
     return (
         <AlephiumWeb3Provider>
             <div>

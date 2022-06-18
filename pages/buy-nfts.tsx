@@ -10,6 +10,7 @@ import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import { TxStatusAlert, useTxStatus } from './tx-status-alert'
 import { useRouter } from 'next/router'
+import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 
 interface NFTListing {
     price: number
@@ -43,9 +44,9 @@ export default function BuyNFTs() {
         loadListedNFTs()
     }, [context.accounts])
 
-    async function loadListedNFT(event): NFTListing | undefined {
-        const tokenId = event.fields[1].value
-        const listingContractId = event.fields[3].value
+    async function loadListedNFT(event: ContractEvent): Promise<NFTListing | undefined> {
+        const tokenId = event.fields[1].value.toString()
+        const listingContractId = event.fields[3].value.toString()
 
         if (context.nodeProvider) {
             var listingState = undefined
@@ -68,14 +69,14 @@ export default function BuyNFTs() {
                 const metadataUri = hexToString(nftState.fields[3].value)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
-                    price: listingState.fields[0].value,
+                    price: +listingState.fields[0].value,
                     name: metadata.name,
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    tokenOwner: listingState.fields[2].value,
-                    marketAddress: listingState.fields[3].value,
-                    commissionRate: listingState.fields[4].value,
+                    tokenOwner: listingState.fields[2].value.toString(),
+                    marketAddress: listingState.fields[3].value.toString(),
+                    commissionRate: +listingState.fields[4].value,
                     listingContractId: listingContractId
                 }
             }
@@ -98,11 +99,11 @@ export default function BuyNFTs() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider as web3.SignerProvider,
                 context.accounts[0].address
             )
             const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
-            const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
+            const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
 
             for (var event of events) {
                 const listedNFT = await loadListedNFT(event)
@@ -115,7 +116,7 @@ export default function BuyNFTs() {
         setLoadingState('loaded')
     }
 
-    async function buyNft(nftListing) {
+    async function buyNft(nftListing: NFTListing) {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
