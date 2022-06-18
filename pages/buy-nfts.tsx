@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
@@ -7,6 +8,8 @@ import { NFTListingContract } from '../utils/contracts'
 import { hexToString } from '../utils'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
+import { TxStatusAlert } from './tx-status-alert'
+import { useRouter } from 'next/router'
 
 interface NFTListing {
     price: number
@@ -23,14 +26,26 @@ interface NFTListing {
 export default function BuyNFTs() {
     const [nftListings, setNftListings] = useState([] as NFTListing[])
     const [loadingState, setLoadingState] = useState('not-loaded')
+
+    const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
+    const [ongoingTxDescription, setOngoingTxDescription] = useState<string | undefined>(undefined)
+    async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
+    const [txStatusCallback, setTxStatusCallback] = useState(() => defaultTxStatusCallback)
+
     const context = useContext(AlephiumWeb3Context)
+    const router = useRouter()
 
     useEffect(() => {
         loadListedNFTs()
     }, [context.accounts])
 
-    async function loadListedNFT(event): NFTListing | undefined {
+    function resetTxStatus() {
+        setOngoingTxId(undefined)
+        setOngoingTxDescription(undefined)
+        setTxStatusCallback(() => defaultTxStatusCallback)
+    }
 
+    async function loadListedNFT(event): NFTListing | undefined {
         const tokenId = event.fields[1].value
         const listingContractId = event.fields[3].value
 
@@ -121,40 +136,63 @@ export default function BuyNFTs() {
                 nftListing.listingContractId
             )
             console.debug('buyNFTTxResult', buyNFTTxResult)
+            setOngoingTxId(buyNFTTxResult.txId)
+            setOngoingTxDescription('buying NFT')
 
-            await new Promise(r => setTimeout(r, 2000));
+            setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                if (txStatus.type === 'Confirmed') {
+                    const withdrawNFTResult = await nftCollection.withdrawNFT(nftListing.tokenId)
+                    console.debug('withdrawNFTResult', withdrawNFTResult)
 
-            const withdrawNFTTxResult = await nftCollection.withdrawNFT(nftListing.tokenId)
-            console.debug('withdrawNFTTxResult', withdrawNFTTxResult)
-
-            await loadListedNFTs()
+                    setOngoingTxId(withdrawNFTResult.txId)
+                    setOngoingTxDescription('withdrawing NFT')
+                    setTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
+                        if (txStatus2.type === 'Confirmed') {
+                            resetTxStatus()
+                            router.push('/my-nfts')
+                        } else if (txStatus2.type === 'TxNotFound') {
+                            resetTxStatus()
+                            console.error('List NFT transaction not found')
+                        }
+                    })
+                } else if (txStatus.type === 'TxNotFound') {
+                    resetTxStatus()
+                    console.error('Deposit NFT transaction not found')
+                }
+            })
         }
     }
 
     if (loadingState === 'loaded' && !nftListings.length) return (<h1 className="px-20 py-10 text-3xl">No NFTs for sale</h1>)
     return (
-        <div className="flex justify-center">
-            <div className="px-4" style={{ maxWidth: '1600px' }}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-                    {
-                        nftListings.map((nftListing, i) => (
-                            <div key={i} className="border shadow rounded-xl overflow-hidden">
-                                <img src={nftListing.image} />
-                                <div className="p-4">
-                                    <p style={{ height: '64px' }} className="text-2xl font-semibold">{nftListing.name}</p>
-                                    <div style={{ height: '70px', overflow: 'hidden' }}>
-                                        <p className="text-gray-400">{nftListing.description}</p>
+        <>
+            {
+                ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
+            }
+
+            <div className="flex justify-center">
+                <div className="px-4" style={{ maxWidth: '1600px' }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                        {
+                            nftListings.map((nftListing, i) => (
+                                <div key={i} className="border shadow rounded-xl overflow-hidden">
+                                    <img src={nftListing.image} />
+                                    <div className="p-4">
+                                        <p style={{ height: '64px' }} className="text-2xl font-semibold">{nftListing.name}</p>
+                                        <div style={{ height: '70px', overflow: 'hidden' }}>
+                                            <p className="text-gray-400">{nftListing.description}</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 bg-black">
+                                        <p className="text-2xl font-bold text-white">{nftListing.price} ALPH </p>
+                                        <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNft(nftListing)}>Buy</button>
                                     </div>
                                 </div>
-                                <div className="p-4 bg-black">
-                                    <p className="text-2xl font-bold text-white">{nftListing.price} ALPH </p>
-                                    <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNft(nftListing)}>Buy</button>
-                                </div>
-                            </div>
-                        ))
-                    }
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }

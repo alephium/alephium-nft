@@ -102,10 +102,6 @@ export default function MintNFTs() {
                     console.error('Deposit NFT transaction not found')
                 }
             })
-
-
-
-
         } else {
             console.debug('context..', context)
         }
