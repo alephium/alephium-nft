@@ -145,11 +145,11 @@ export default function BuyNFTs() {
 
                     setOngoingTxId(withdrawNFTResult.txId)
                     setOngoingTxDescription('withdrawing NFT')
-                    setTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
-                        if (txStatus2.type === 'Confirmed') {
+                    setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                        if (txStatus.type === 'Confirmed') {
                             resetTxStatus()
                             router.push('/my-nfts')
-                        } else if (txStatus2.type === 'TxNotFound') {
+                        } else if (txStatus.type === 'TxNotFound') {
                             resetTxStatus()
                             console.error('List NFT transaction not found')
                         }

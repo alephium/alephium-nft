@@ -113,11 +113,11 @@ export default function Home() {
 
                     setOngoingTxId(listNFTTxResult.txId)
                     setOngoingTxDescription('listing NFT')
-                    setTxStatusCallback(() => async (txStatus2: web3.node.TxStatus) => {
-                        if (txStatus2.type === 'Confirmed') {
+                    setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                        if (txStatus.type === 'Confirmed') {
                             resetTxStatus()
                             await loadNFTs()
-                        } else if (txStatus2.type === 'TxNotFound') {
+                        } else if (txStatus.type === 'TxNotFound') {
                             resetTxStatus()
                             console.error('List NFT transaction not found')
                         }
