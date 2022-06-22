@@ -1,4 +1,5 @@
 import * as web3 from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus } from "@alephium/web3"
 import { useContext, useEffect, useState } from "react"
 import { AlephiumWeb3Context } from "./alephium-web3-providers"
 
@@ -33,40 +34,34 @@ export function useTxStatus() {
 
 const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertProps) => {
     const context = useContext(AlephiumWeb3Context)
-    const [stopTimer, setStopTimer] = useState(false)
     const [txStatus, setTxStatus] = useState<web3.node.TxStatus | undefined>(undefined)
 
-    async function getTransactionStatus(txId: string) {
-        const txStatus = await context.nodeProvider?.transactions.getTransactionsStatus({ txId })
-        setTxStatus(txStatus)
+    const subscriptionOptions: SubscribeOptions<web3.node.TxStatus> = {
+        provider: context.nodeProvider,
+        pollingInterval: 3000,
+        messageCallback: async (status: web3.node.TxStatus): Promise<void> => {
+            setTxStatus(status)
 
-        if (txStatus?.type === 'Confirmed' || txStatus?.type === 'TxNotFound') {
-            setStopTimer(true)
-            await new Promise(r => setTimeout(r, 3000));
-        }
+            if (status.type === 'Confirmed' || status.type === 'TxNotFound') {
+                await new Promise(r => setTimeout(r, 3000));
+            }
 
-        if (txStatus) {
-            await txStatusCallback(txStatus)
+            await txStatusCallback(status)
+        },
+        errorCallback: (error: any, subscription): Promise<void> => {
+            console.log(error)
+            subscription.unsubscribe()
+            return Promise.resolve()
         }
     }
 
     useEffect(() => {
-        setStopTimer(false)
-    }, [txId])
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            if (stopTimer) {
-                clearTimeout(timer)
-            } else {
-                getTransactionStatus(txId)
-            }
-        }, 2000)
+        const subscription = subscribeToTxStatus(subscriptionOptions, txId)
 
         return () => {
-            clearTimeout(timer)
+            subscription.unsubscribe()
         }
-    }, [stopTimer])
+    }, [txId])
 
     if (txStatus?.type === 'Confirmed') {
         return (

@@ -1,7 +1,6 @@
 import * as web3 from '@alephium/web3'
 import { useContext, useEffect, useState } from 'react'
 import { NFTContract } from '../utils/contracts'
-import { hexToString } from '../utils'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
@@ -53,7 +52,7 @@ export default function Home() {
             }
 
             if (nftState && nftState.codeHash === NFTContract.codeHash) {
-                const metadataUri = hexToString(nftState.fields[3].value)
+                const metadataUri = web3.hexToString(nftState.fields[3].value)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
                     name: metadata.name,
@@ -70,12 +69,9 @@ export default function Home() {
         const items = []
 
         if (context.nodeProvider && context.accounts && context.accounts[0]) {
-            const utxos = await context.nodeProvider.addresses.getAddressesAddressUtxos(
-                context.accounts[0].address
-            )
-
-            const tokens = utxos.utxos
-                .flatMap((utxo) => utxo.tokens)
+            const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(context.accounts[0].address)
+            const tokenBalances = balances.tokenBalances ? balances.tokenBalances : []
+            const tokens = tokenBalances
                 .filter((token) => +token.amount == 1)
                 .map((token) => token.id)
 

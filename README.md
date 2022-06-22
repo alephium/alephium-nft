@@ -38,7 +38,7 @@ npm test:contracts
 or
 
 ```
-npm test:contracts -- nft-marketplace.test.ts
+npm run test:contracts -- nft-marketplace.test.ts
 ```
 
 ## Deploy Smart Contracts
@@ -51,7 +51,7 @@ Before running the application, two smart contracts need to be created:
    collections
 
 ```
-npm deploy:contracts
+npm run deploy:contracts
 ```
 
 ## Config Environments

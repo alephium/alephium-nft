@@ -1,12 +1,7 @@
 import * as web3 from '@alephium/web3'
-import { blake2b } from 'blakejs'
-
-export function hexToString(str: any): string {
-  return Buffer.from(str.toString(), 'hex').toString()
-}
 
 export function checkHexString(value: any, expected: string) {
-  expect(hexToString(value)).toEqual(expected)
+  expect(web3.hexToString(value)).toEqual(expected)
 }
 
 export async function verifyContractState(
@@ -19,10 +14,6 @@ export async function verifyContractState(
   )
 
   verify(state)
-}
-
-export function timeout(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export function relativeDiff(a: number, b: number): number {
