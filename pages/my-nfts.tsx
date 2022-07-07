@@ -70,7 +70,7 @@ export default function Home() {
 
         if (context.nodeProvider && context.accounts && context.accounts[0]) {
             const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(context.accounts[0].address)
-            const tokenBalances = balances.tokenBalances ? balances.tokenBalances : []
+            const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
             const tokens = tokenBalances
                 .filter((token) => +token.amount == 1)
                 .map((token) => token.id)

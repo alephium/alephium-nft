@@ -32,7 +32,7 @@ npm run restart-devnet
 ## Testing Smart Contract
 
 ```
-npm test:contracts
+npm run test:contracts
 ```
 
 or

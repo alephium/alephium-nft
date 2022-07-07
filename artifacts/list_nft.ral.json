@@ -1,6 +1,6 @@
 {
-  "sourceCodeSha256": "da6128f995165ddaf6c39c243dd6c4af91bb8b22aea372c7cd6a839de757b0ee",
-  "bytecodeTemplate": "0101030003000f{2}1700b413c410a741a462780000a2{0}{1}160001011701{0}1702160116020102",
+  "sourceCodeSha256": "e0d2f2d31376afc86a374fc0c86e8278e6ac2bc46c6d0981376628d9808daf8b",
+  "bytecodeTemplate": "01010300060018{2}170016000105170113c40de0b6b3a76400001702160116022a1703b41603a2{0}{1}160001011704{0}1705160416050102",
   "fieldsSig": {
     "signature": "TxScript Main(tokenId:ByteVec,price:U256,marketPlaceContractId:ByteVec)",
     "names": [

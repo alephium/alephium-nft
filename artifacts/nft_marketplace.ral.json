@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "05b4775325fa8d63413e71268787d07e88c0d87a606297b6c3c166f76137c5c1",
-  "bytecode": "04051840644079408e40a301010204000a16001702b4170316031601a21603160201010101020601402516010c334db41702160116001602b2a0031305641703160213c40f43fc2c04ee0000a21600a0001603bf170416047717051602a002a905160116001602160416057316050201000101000ab4a001454d06a00116005f1600a10101000101000ab4a001454d07a00216005f1600a10201000101000ab4a001454d08a00316005f1600a103",
-  "codeHash": "766be8a22e12efc3df6bcac7eddc5e6b2c1e98367097583943329fb0c54e1f8b",
+  "sourceCodeSha256": "d3902df2289d7d67f694266cd765c8b999761fdaf0a808de587cb957ba58a305",
+  "bytecode": "040618406e4083409840ad40b601010204000a16001702b4170316031601a21603160201010101020701402b16010c334db417021600170316030101170416041602454d160116001602b2a0031305641705160213c40de0b6b3a7640000a21600a0001605bf17061602a002a9051601160016021606611606770201000101000ab4a001454d06a00116005f1600a10101000101000ab4a001454d07a00216005f1600a10201000101000ab4a001454d08a00316005f1600a103010000000102a00202",
+  "codeHash": "17f31fc47f17cfd7888e9383f5fc3ff2ef458d64ea932b5165b9b1d7f28bede1",
   "fieldsSig": {
     "signature": "TxContract NFTMarketPlace(nftListingByteCode:ByteVec,mut admin:Address,mut listingPrice:U256,mut commissionRate:U256)",
     "names": [
@@ -20,20 +20,18 @@
   "eventsSig": [
     {
       "name": "NFTListed",
-      "signature": "event NFTListed(price:U256,tokenId:ByteVec,tokenOwner:Address,listingContractId:ByteVec,listingContractAddress:Address)",
+      "signature": "event NFTListed(price:U256,tokenId:ByteVec,tokenOwner:Address,listingContractId:ByteVec)",
       "fieldNames": [
         "price",
         "tokenId",
         "tokenOwner",
-        "listingContractId",
-        "listingContractAddress"
+        "listingContractId"
       ],
       "fieldTypes": [
         "U256",
         "ByteVec",
         "Address",
-        "ByteVec",
-        "Address"
+        "ByteVec"
       ]
     },
     {
@@ -134,6 +132,15 @@
         "U256"
       ],
       "returnTypes": []
+    },
+    {
+      "name": "getListingPrice",
+      "signature": "pub getListingPrice()->(U256)",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": [
+        "U256"
+      ]
     }
   ]
 }

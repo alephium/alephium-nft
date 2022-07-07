@@ -47,11 +47,16 @@ TxContract NFT(
 
     @using(preapprovedAssets=true, assetsInContract = true)
     pub fn deposit() -> () {
-        assert!(callerAddress!() == owner)
+        let depositor = callerAddress!()
 
-        emit NFTDeposited(owner)
+        if (depositor != owner) {
+            emit NFTOwnerUpdated(owner, depositor)
+            owner = depositor
+        }
 
-        transferTokenToSelf!(owner, selfContractId!(), 1)
+        emit NFTDeposited(depositor)
+
+        transferTokenToSelf!(depositor, selfContractId!(), 1)
     }
 
     @using(assetsInContract = true)
@@ -67,8 +72,12 @@ TxContract NFT(
     pub fn burn() -> () {
         assert!(callerAddress!() == owner)
 
+        // Token needs to be owned by the contract when NFT is burnt
+        assert!(tokenRemaining!(selfAddress!(), selfContractId!()) == 1)
+
         emit NFTBurnt(owner)
 
+        burnToken!(selfAddress!(), selfContractId!(), 1)
         destroySelf!(owner)
     }
 }

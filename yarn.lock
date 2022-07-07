@@ -18,6 +18,22 @@
     "@walletconnect/utils" "^2.0.0-beta.23"
     "eventemitter3" "^4.0.7"
 
+"@alephium/web3@0.0.1-test.2":
+  "integrity" "sha512-OiLjcJVXshLK/dBk608ZEqmYlapY1vF4PmmrMqJuUWY5gcslDQ8bZqYvwziAdUzZxL9pHI7YdSVnpB4B/MeHMA=="
+  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.0.1-test.2.tgz"
+  "version" "0.0.1-test.2"
+  dependencies:
+    "base-x" "4.0.0"
+    "blakejs" "1.2.1"
+    "buffer" "^6.0.3"
+    "commander" "^9.1.0"
+    "cross-fetch" "^3.1.5"
+    "crypto-js" "4.1.1"
+    "elliptic" "6.5.4"
+    "eventemitter3" "^4.0.7"
+    "find-up" "^2.1.0"
+    "fs-extra" "^10.0.1"
+
 "@alephium/web3@0.1.0-rc.3":
   "integrity" "sha512-wcTYLgMpt1xpS66NKIr+1tKAIhOGpRC4T6tPEF0ApLoz1owP8cUEr56PmUwxDIPa8Ss82trZ8IIuy/xzZL7E/Q=="
   "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.1.0-rc.3.tgz"

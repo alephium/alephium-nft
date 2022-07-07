@@ -31,6 +31,8 @@ TxContract NFTListing(
 
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buy(buyer: Address) -> () {
+        assert!(callerAddress!() == marketAddress)
+
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
         if (commission > 0) {

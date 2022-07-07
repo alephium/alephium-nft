@@ -10,6 +10,7 @@ import updateCommissionRateArtifact from '../artifacts/update_commission_rate.ra
 import nftListingArtifact from '../artifacts/nft_listing.ral.json'
 import nftMarketplaceArtifact from '../artifacts/nft_marketplace.ral.json'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
+import { Number256 } from '@alephium/web3'
 
 export class NFTMarketplace extends DeployHelpers {
 
@@ -42,7 +43,7 @@ export class NFTMarketplace extends DeployHelpers {
 
   async listNFT(
     tokenId: string,
-    price: number,
+    price: Number256,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
@@ -64,8 +65,8 @@ export class NFTMarketplace extends DeployHelpers {
   }
 
   async updateNFTPrice(
-    price: number,
-    nftListingContractId: string,
+    price: Number256,
+    nftListingContractId: Number256,
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_nft_price.ral') :
