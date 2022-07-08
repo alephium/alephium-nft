@@ -26,6 +26,7 @@ export class NFTCollection extends DeployHelpers {
         signerAddress: this.signerAddress,
         initialFields: {
           owner: this.signerAddress,
+          isTokenWithdrawn: false,
           name: web3.stringToHex("template_name"),
           description: web3.stringToHex("template_description"),
           uri: web3.stringToHex("template_uri"),

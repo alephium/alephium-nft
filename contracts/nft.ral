@@ -3,6 +3,7 @@
 // Right now only 1 token is supported
 TxContract NFT(
     mut owner: Address,
+    mut isTokenWithdrawn: Bool,
     name: ByteVec,
     description: ByteVec,
     uri: ByteVec,                 // name; description; image
@@ -39,7 +40,7 @@ TxContract NFT(
         assert!(callerAddress!() == owner)
 
         // Token needs to be owned by the contract when owner is changed
-        assert!(tokenRemaining!(selfAddress!(), selfContractId!()) == 1)
+        assert!(!isTokenWithdrawn)
 
         emit NFTOwnerUpdated(owner, newOwner)
         owner = newOwner
@@ -47,13 +48,15 @@ TxContract NFT(
 
     @using(preapprovedAssets=true, assetsInContract = true)
     pub fn deposit() -> () {
-        let depositor = callerAddress!()
+        assert!(isTokenWithdrawn)
 
+        let depositor = callerAddress!()
         if (depositor != owner) {
             emit NFTOwnerUpdated(owner, depositor)
             owner = depositor
         }
 
+        isTokenWithdrawn = false
         emit NFTDeposited(depositor)
 
         transferTokenToSelf!(depositor, selfContractId!(), 1)
@@ -62,7 +65,9 @@ TxContract NFT(
     @using(assetsInContract = true)
     pub fn withdraw() -> () {
         assert!(callerAddress!() == owner)
+        assert!(!isTokenWithdrawn)
 
+        isTokenWithdrawn = true
         emit NFTWithdrawn(owner)
 
         transferTokenFromSelf!(owner, selfContractId!(), 1)
@@ -73,7 +78,7 @@ TxContract NFT(
         assert!(callerAddress!() == owner)
 
         // Token needs to be owned by the contract when NFT is burnt
-        assert!(tokenRemaining!(selfAddress!(), selfContractId!()) == 1)
+        assert!(!isTokenWithdrawn)
 
         emit NFTBurnt(owner)
 

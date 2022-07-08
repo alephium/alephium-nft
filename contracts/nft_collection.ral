@@ -28,6 +28,7 @@ TxContract NFTCollection(
 
         let initialState = encodeToByteVec!(
             minter,
+            false,
             nftName,
             nftDescription,
             nftUri,

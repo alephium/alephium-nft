@@ -52,12 +52,13 @@ describe('nft collection', function() {
     const nftContractState = await provider.contracts.getContractsAddressState(
       nftContractAddress, { group: 0 }
     )
-    expect(nftContractState.fields.length).toEqual(5)
+    expect(nftContractState.fields.length).toEqual(6)
     expect(nftContractState.fields[0].value).toEqual(testAddress1)
-    utils.checkHexString(nftContractState.fields[1].value, "CryptoPunk #0001")
-    utils.checkHexString(nftContractState.fields[2].value, "CP0001")
-    utils.checkHexString(nftContractState.fields[3].value, "https://cryptopunks.app/cryptopunks/details/1")
-    expect(nftContractState.fields[4].value).toEqual(nftCollectionContractAddress)
+    expect(Boolean(nftContractState.fields[1].value)).toEqual(false)
+    utils.checkHexString(nftContractState.fields[2].value, "CryptoPunk #0001")
+    utils.checkHexString(nftContractState.fields[3].value, "CP0001")
+    utils.checkHexString(nftContractState.fields[4].value, "https://cryptopunks.app/cryptopunks/details/1")
+    expect(nftContractState.fields[5].value).toEqual(nftCollectionContractAddress)
 
 
     // Burn NFT

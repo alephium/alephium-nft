@@ -1,11 +1,12 @@
 {
-  "sourceCodeSha256": "f336ac0540aa3109617c8946dae5bd4df4f6a3126960b0bbe2b359e1260ec9b0",
-  "bytecode": "05060f1840334056406a4086010000000405a001a002a003a00402010000000102a00002010201010010b4a000454db2b1a50d2f4d05a00016005f1600a100010100010013b417001600a000464c0605a00016005f1600a1000716005e1600b10dac01020000000bb4a000454d06a0005ea000b10dab010200000013b4a000454db2b1a50d2f4d08a0005eb2b10dbda000b0",
-  "codeHash": "64ab1f3b2186b7a335a569c5c30a8c3fcfd4010de12a052d0e0a2b4e5ec3e9ff",
+  "sourceCodeSha256": "901993be20fcd09922b8c4b0796c6418c600f94587b8a3486c01f9e81c6a0451",
+  "bytecode": "06060f184031405a4075408f010000000405a002a003a004a00502010000000102a0000201020101000db4a000454da001194d05a00016005f1600a100010100010017a0014db417001600a000464c0605a00016005f1600a10004a1010716005e1600b10dac010200000010b4a000454da001194d03a10106a0005ea000b10dab010200000010b4a000454da001194d08a0005eb2b10dbda000b0",
+  "codeHash": "928336e3d7aba370d94122f3f5e7563ee56e786029785e4df70ed1f5bc02283c",
   "fieldsSig": {
-    "signature": "TxContract NFT(mut owner:Address,name:ByteVec,description:ByteVec,uri:ByteVec,collectionAddress:Address)",
+    "signature": "TxContract NFT(mut owner:Address,mut isTokenWithdrawn:Bool,name:ByteVec,description:ByteVec,uri:ByteVec,collectionAddress:Address)",
     "names": [
       "owner",
+      "isTokenWithdrawn",
       "name",
       "description",
       "uri",
@@ -13,6 +14,7 @@
     ],
     "types": [
       "Address",
+      "Bool",
       "ByteVec",
       "ByteVec",
       "ByteVec",
