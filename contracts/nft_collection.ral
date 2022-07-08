@@ -1,7 +1,7 @@
 // The concept of a collection, which could contain different NFTs
 // e.g. Bored Ape Yacht Club collection
 TxContract NFTCollection(
-    nftByteCode: ByteVec,
+    nftTemplateId: ByteVec,
     collectionName: ByteVec,
     collectionDescription: ByteVec,
     collectionUri: ByteVec
@@ -35,7 +35,7 @@ TxContract NFTCollection(
         )
 
 
-        let contractId = createSubContractWithToken!{minter -> 1.1 alph}(nftUri, nftByteCode, initialState, 1)
+        let contractId = copyCreateSubContractWithToken!{minter -> 1.1 alph}(nftUri, nftTemplateId, initialState, 1)
 
         emit NFTMinted(
             minter,

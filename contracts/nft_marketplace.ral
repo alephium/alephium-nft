@@ -2,7 +2,7 @@ import "nft.ral"
 import "nft_listing.ral"
 
 TxContract NFTMarketPlace(
-    nftListingByteCode: ByteVec,
+    nftListingTemplateId: ByteVec,
     mut admin: Address,
     mut listingPrice: U256,
     mut commissionRate: U256   // basis point. e.g. 2.5% == 250 basis point
@@ -62,7 +62,7 @@ TxContract NFTMarketPlace(
         )
 
         // Create the listing contract
-        let nftListingContractId = createSubContract!{tokenOwner -> 1 alph}(tokenId, nftListingByteCode, initialState)
+        let nftListingContractId = copyCreateSubContract!{tokenOwner -> 1 alph}(tokenId, nftListingTemplateId, initialState)
 
         // Charge the listing fee
         transferAlphToSelf!(tokenOwner, listingPrice)

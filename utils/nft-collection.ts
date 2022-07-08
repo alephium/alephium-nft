@@ -6,8 +6,10 @@ import mintNFTArtifact from '../artifacts/mint_nft.ral.json'
 import burnNFTArtifact from '../artifacts/burn_nft.ral.json'
 import depositNFTArtifact from '../artifacts/deposit_nft.ral.json'
 import withdrawNFTArtifact from '../artifacts/withdraw_nft.ral.json'
+import { addressFromContractId } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
+  defaultNFTCollectionAddress: string = addressFromContractId("0".repeat(64))
 
   async create(
     collectionName: string,
@@ -18,6 +20,20 @@ export class NFTCollection extends DeployHelpers {
       await web3.Contract.fromSource(this.provider, 'nft.ral') :
       web3.Contract.fromJson(nftArtifact)
 
+    const nftDeployTx = await this.createContract(
+      nftContract,
+      {
+        signerAddress: this.signerAddress,
+        initialFields: {
+          owner: this.signerAddress,
+          name: web3.stringToHex("template_name"),
+          description: web3.stringToHex("template_description"),
+          uri: web3.stringToHex("template_uri"),
+          collectionAddress: this.defaultNFTCollectionAddress
+        }
+      }
+    )
+
     const nftCollectionContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_collection.ral') :
       web3.Contract.fromJson(nftCollectionArtifact)
@@ -27,7 +43,7 @@ export class NFTCollection extends DeployHelpers {
       {
         signerAddress: this.signerAddress,
         initialFields: {
-          nftByteCode: nftContract.bytecode,
+          nftTemplateId: nftDeployTx.contractId,
           collectionName: web3.stringToHex(collectionName),
           collectionDescription: web3.stringToHex(collectionDescription),
           collectionUri: web3.stringToHex(collectionUri)

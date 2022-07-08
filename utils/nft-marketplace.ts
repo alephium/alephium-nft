@@ -11,6 +11,7 @@ import nftListingArtifact from '../artifacts/nft_listing.ral.json'
 import nftMarketplaceArtifact from '../artifacts/nft_marketplace.ral.json'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { Number256 } from '@alephium/web3'
+import { randomContractAddress, randomContractId } from '.'
 
 export class NFTMarketplace extends DeployHelpers {
 
@@ -18,6 +19,20 @@ export class NFTMarketplace extends DeployHelpers {
     const nftListingContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_listing.ral') :
       web3.Contract.fromJson(nftListingArtifact)
+
+    const nftListingDeployTx = await this.createContract(
+      nftListingContract,
+      {
+        signerAddress: this.signerAddress,
+        initialFields: {
+          price: 1000,
+          tokenId: randomContractId(),
+          tokenOwner: randomContractAddress(),
+          marketAddress: randomContractAddress(),
+          commissionRate: 200  // 200 basis point: 2%
+        }
+      }
+    )
 
     const nftMarketplaceContract = this.deployFromSource ?
       await web3.Contract.fromSource(this.provider, 'nft_marketplace.ral') :
@@ -30,7 +45,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         signerAddress: this.signerAddress,
         initialFields: {
-          nftListingByteCode: nftListingContract.bytecode,
+          nftListingTemplateId: nftListingDeployTx.contractId,
           admin: adminAccount.address,
           listingPrice: 10,    // Listing price default to 10 ALPH
           commissionRate: 200  // 200 basis point: 2%
