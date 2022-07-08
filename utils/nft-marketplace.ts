@@ -81,7 +81,8 @@ export class NFTMarketplace extends DeployHelpers {
 
   async updateNFTPrice(
     price: Number256,
-    nftListingContractId: Number256,
+    tokenId: string,
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'update_nft_price.ral') :
@@ -93,7 +94,8 @@ export class NFTMarketplace extends DeployHelpers {
         signerAddress: this.signerAddress,
         initialFields: {
           price: price,
-          nftListingContractId: nftListingContractId
+          tokenId: tokenId,
+          nftMarketplaceContractId: marketPlaceContractId
         }
       }
     )

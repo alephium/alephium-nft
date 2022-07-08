@@ -87,6 +87,15 @@ TxContract NFTMarketPlace(
         nftListing.cancel()
     }
 
+    pub fn updateNFTPrice(tokenId: ByteVec, newPrice: U256) -> () {
+        let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
+        let nftListing = NFTListing(nftListingContractId)
+
+        assert!(callerAddress!() == nftListing.getTokenOwner())
+
+        nftListing.updatePrice(newPrice)
+    }
+
     pub fn updateAdmin(newAdmin: Address) -> () {
         assert!(callerAddress!() == admin)
 

@@ -1,9 +1,10 @@
-import "nft_listing.ral"
+import "nft_marketplace.ral"
 
 TxScript Main(
     price: U256,
-    nftListingContractId: ByteVec
+    tokenId: ByteVec,
+    nftMarketplaceContractId: ByteVec
 ) {
-    let nftListing = NFTListing(nftListingContractId)
-    nftListing.updatePrice(price)
+    let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketPlace.updateNFTPrice(tokenId, price)
 }
