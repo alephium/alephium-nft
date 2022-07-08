@@ -60,7 +60,6 @@ describe('nft collection', function() {
     utils.checkHexString(nftContractState.fields[4].value, "https://cryptopunks.app/cryptopunks/details/1")
     expect(nftContractState.fields[5].value).toEqual(nftCollectionContractAddress)
 
-
     // Burn NFT
     const balanceBeforeBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
 

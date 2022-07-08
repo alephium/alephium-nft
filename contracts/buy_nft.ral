@@ -2,12 +2,12 @@ import "nft_marketplace.ral"
 
 TxScript Main(
     totalPayment: U256,
-    nftListingContractId: ByteVec,
+    tokenId: ByteVec,
     nftMarketplaceContractId: ByteVec
 ) {
     assert!(totalPayment > 0)
 
     let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
 
-    nftMarketplace.buyNFT{callerAddress!() -> totalPayment}(nftListingContractId, totalPayment)
+    nftMarketplace.buyNFT{callerAddress!() -> totalPayment}(tokenId, totalPayment)
 }

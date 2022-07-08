@@ -97,7 +97,7 @@ describe('nft marketplace', function() {
         expect(state.fields[0].value).toEqual(nftListingContractAddress)
       })
 
-      await nftMarketplace.buyNFT(2000000000000000000, nftMarketplaceContractId, nftListingContractId)
+      await nftMarketplace.buyNFT(2000000000000000000, nftMarketplaceContractId, tokenId)
       await web3.timeout(3000)
 
       await verifyContractState(provider, nftContractAddress, (state) => {
