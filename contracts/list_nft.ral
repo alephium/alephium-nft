@@ -8,7 +8,7 @@ TxScript Main(
 ) {
     let marketPlace = NFTMarketPlace(marketPlaceContractId)
 
-    let listingFee = marketPlace.getListingPrice()
+    let listingFee = marketPlace.getListingFee()
     let minimalAlphInContract = 1 alph
     let approveAmount = listingFee + minimalAlphInContract
 

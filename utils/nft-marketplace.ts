@@ -4,7 +4,7 @@ import listNFTArtifact from '../artifacts/list_nft.ral.json'
 import updateNFTPriceArtifact from '../artifacts/update_nft_price.ral.json'
 import buyNFTArtifact from '../artifacts/buy_nft.ral.json'
 import cancelListingArtifact from '../artifacts/cancel_listing.ral.json'
-import updateListingPriceArtifact from '../artifacts/update_listing_price.ral.json'
+import updateListingFeeArtifact from '../artifacts/update_listing_price.ral.json'
 import updateAdminArtifact from '../artifacts/update_admin.ral.json'
 import updateCommissionRateArtifact from '../artifacts/update_commission_rate.ral.json'
 import nftListingArtifact from '../artifacts/nft_listing.ral.json'
@@ -47,7 +47,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractId,
           admin: adminAccount.address,
-          listingPrice: 10,    // Listing price default to 10 ALPH
+          listingFee: 10,    // Listing price default to 10 ALPH
           commissionRate: 200  // 200 basis point: 2%
         }
       }
@@ -143,13 +143,13 @@ export class NFTMarketplace extends DeployHelpers {
     )
   }
 
-  async updateListingPrice(
+  async updateListingFee(
     price: number,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
-      await web3.Script.fromSource(this.provider, 'update_listing_price.ral') :
-      web3.Script.fromJson(updateListingPriceArtifact)
+      await web3.Script.fromSource(this.provider, 'update_listing_fee.ral') :
+      web3.Script.fromJson(updateListingFeeArtifact)
 
     return await this.callTxScript(
       script,

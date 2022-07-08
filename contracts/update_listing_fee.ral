@@ -5,5 +5,5 @@ TxScript Main(
     nftMarketplaceContractId: ByteVec
 ) {
     let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
-    nftMarketPlace.updateListingPrice(price)
+    nftMarketPlace.updateListingFee(price)
 }

@@ -1,10 +1,10 @@
 {
-  "sourceCodeSha256": "40047967cff0c1356b667c75a7c876de50756c4cdd69ab14259c3d7e09233c24",
-  "bytecodeTemplate": "01010300010005{1}1700{0}16000105",
+  "sourceCodeSha256": "cc155c1e0998a90d8ccc1b398d15c398e018d413858a8d364bf3e2ec6a6358dc",
+  "bytecodeTemplate": "01010300010005{1}1700{0}16000104",
   "fieldsSig": {
-    "signature": "TxScript Main(newCommissionRate:U256,nftMarketplaceContractId:ByteVec)",
+    "signature": "TxScript Main(price:U256,nftMarketplaceContractId:ByteVec)",
     "names": [
-      "newCommissionRate",
+      "price",
       "nftMarketplaceContractId"
     ],
     "types": [

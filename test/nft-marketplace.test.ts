@@ -176,7 +176,7 @@ describe('nft marketplace', function() {
     const nftMarketplaceContractId = nftMarketplaceDeployTx.contractId
 
     // Update listing price
-    await checkListingPrice(
+    await checkListingFee(
       provider,
       nftMarketplace,
       nftMarketplaceContractId,
@@ -200,7 +200,7 @@ describe('nft marketplace', function() {
     )(testAddress1, testAddress2, testAddress2)
 
     // Update with the wrong admin will *not* update the values correctly
-    await checkListingPrice(
+    await checkListingFee(
       provider,
       nftMarketplace,
       nftMarketplaceContractId,
@@ -222,7 +222,7 @@ describe('nft marketplace', function() {
     )(testAddress2, testAddress1, testAddress2)
   }, 10000)
 
-  function checkListingPrice(
+  function checkListingFee(
     provider: NodeProvider,
     nftMarketplace: NFTMarketplace,
     nftMarketplaceContractId: string,
@@ -233,7 +233,7 @@ describe('nft marketplace', function() {
         expect(+state.fields[2].value).toEqual(previousValue)
       })
 
-      await nftMarketplace.updateListingPrice(updateValue, nftMarketplaceContractId)
+      await nftMarketplace.updateListingFee(updateValue, nftMarketplaceContractId)
 
       await verifyContractState(provider, nftMarketplaceContractAddress, (state) => {
         expect(+state.fields[2].value).toEqual(updatedValue)

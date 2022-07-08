@@ -1,13 +1,13 @@
 {
-  "sourceCodeSha256": "e8507c556ac9437710c58af7f4cefe916d9e99a2a2fd90292b8957e0686306c5",
+  "sourceCodeSha256": "70bf02871f776241d7b509553edcb233022f2e41a0c387d43ff42225a068784b",
   "bytecode": "040740204076409340a840bd40d240db0101020500101600b1444e4e170216021703b4170416041601a21604160301010101020701402b16010c334db417021600170316030101170416041602454d160116001602b2a0031305641705160213c40de0b6b3a7640000a21600a0001605c117061602a002a9051601160016021606611606770201000103000f1600b1444e4e170116011702b416020100454d1602010201000101000ab4a001454d06a00116005f1600a10101000101000ab4a001454d07a00216005f1600a10201000101000ab4a001454d08a00316005f1600a103010000000102a00202",
   "codeHash": "3a05052efca6e51fbab1114cbd9dafea7f1f579c0f78a2c8218275dd84a2ebef",
   "fieldsSig": {
-    "signature": "TxContract NFTMarketPlace(nftListingTemplateId:ByteVec,mut admin:Address,mut listingPrice:U256,mut commissionRate:U256)",
+    "signature": "TxContract NFTMarketPlace(nftListingTemplateId:ByteVec,mut admin:Address,mut listingFee:U256,mut commissionRate:U256)",
     "names": [
       "nftListingTemplateId",
       "admin",
-      "listingPrice",
+      "listingFee",
       "commissionRate"
     ],
     "types": [
@@ -47,8 +47,8 @@
       ]
     },
     {
-      "name": "ListingPriceUpdated",
-      "signature": "event ListingPriceUpdated(previous:U256,new:U256)",
+      "name": "ListingFeeUpdated",
+      "signature": "event ListingFeeUpdated(previous:U256,new:U256)",
       "fieldNames": [
         "previous",
         "new"
@@ -123,10 +123,10 @@
       "returnTypes": []
     },
     {
-      "name": "updateListingPrice",
-      "signature": "pub updateListingPrice(newListingPrice:U256)->()",
+      "name": "updateListingFee",
+      "signature": "pub updateListingFee(newListingFee:U256)->()",
       "argNames": [
-        "newListingPrice"
+        "newListingFee"
       ],
       "argTypes": [
         "U256"
@@ -145,8 +145,8 @@
       "returnTypes": []
     },
     {
-      "name": "getListingPrice",
-      "signature": "pub getListingPrice()->(U256)",
+      "name": "getListingFee",
+      "signature": "pub getListingFee()->(U256)",
       "argNames": [],
       "argTypes": [],
       "returnTypes": [
