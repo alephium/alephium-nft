@@ -25,8 +25,8 @@ TxContract NFTListing(
       tokenOwner: Address
     )
 
-    pub fn getMetadata() -> (U256, ByteVec, Address, Address) {
-        return price, tokenId, tokenOwner, marketAddress
+    pub fn getTokenOwner() -> Address {
+        return tokenOwner
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
@@ -55,7 +55,7 @@ TxContract NFTListing(
 
     @using(assetsInContract = true)
     pub fn cancel() -> () {
-        assert!(callerAddress!() == tokenOwner)
+        assert!(callerAddress!() == marketAddress)
 
         let nft = NFT(tokenId)
         nft.updateOwner(tokenOwner)

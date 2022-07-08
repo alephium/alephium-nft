@@ -130,8 +130,8 @@ export default function BuyNFTs() {
 
             const buyNFTTxResult = await nftMarketplace.buyNFT(
                 2000000000000000000,
-                binToHex(contractIdFromAddress(nftListing.marketAddress)),
-                nftListing.tokenId
+                nftListing.tokenId,
+                binToHex(contractIdFromAddress(nftListing.marketAddress))
             )
             console.debug('buyNFTTxResult', buyNFTTxResult)
             setOngoingTxId(buyNFTTxResult.txId)

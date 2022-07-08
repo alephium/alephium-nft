@@ -97,7 +97,7 @@ describe('nft marketplace', function() {
         expect(state.fields[0].value).toEqual(nftListingContractAddress)
       })
 
-      await nftMarketplace.buyNFT(2000000000000000000, nftMarketplaceContractId, tokenId)
+      await nftMarketplace.buyNFT(2000000000000000000, tokenId, nftMarketplaceContractId)
       await web3.timeout(3000)
 
       await verifyContractState(provider, nftContractAddress, (state) => {
@@ -155,7 +155,7 @@ describe('nft marketplace', function() {
         expect(state.fields[2].value).toEqual(testAddress1)
       })
 
-      await nftMarketplace.cancelNFTListing(nftListingContractId)
+      await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
 
       await verifyContractState(provider, nftContractAddress, (state) => {
         // Owner of the token is the NFTListingContract

@@ -101,8 +101,8 @@ export class NFTMarketplace extends DeployHelpers {
 
   async buyNFT(
     totalPayment: number,
-    marketPlaceContractId: string,
-    tokenId: string
+    tokenId: string,
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'buy_nft.ral') :
@@ -123,7 +123,8 @@ export class NFTMarketplace extends DeployHelpers {
   }
 
   async cancelNFTListing(
-    nftListingContractId: string
+    tokenId: string,
+    marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?
       await web3.Script.fromSource(this.provider, 'cancel_listing.ral') :
@@ -134,7 +135,8 @@ export class NFTMarketplace extends DeployHelpers {
       {
         signerAddress: this.signerAddress,
         initialFields: {
-          nftListingContractId: nftListingContractId
+          tokenId: tokenId,
+          nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 300000  // TODO: set appropriately
       }
