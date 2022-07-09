@@ -78,5 +78,5 @@ describe('nft collection', function() {
 
     const relativeDiff = utils.relativeDiff(alphAmountInNFT, refundedFromNFT)
     expect(relativeDiff).toBeLessThan(0.001)
-  })
+  }, 10000)
 })

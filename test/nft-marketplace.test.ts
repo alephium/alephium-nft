@@ -77,8 +77,8 @@ describe('nft marketplace', function() {
       })
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
-        nftListingContractAddress,
-        { start: 0, group: 0 }
+        nftMarketplaceContractAddress,
+        { start: 1, group: 0 }
       )
       expect(nftMarketplaceContractEvents.events.length).toEqual(1)
 
@@ -106,8 +106,8 @@ describe('nft marketplace', function() {
       })
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
-        nftListingContractAddress,
-        { start: 1, group: 0 }
+        nftMarketplaceContractAddress,
+        { start: 2, group: 0 }
       )
       expect(nftMarketplaceContractEvents.events.length).toEqual(1)
 
@@ -139,8 +139,11 @@ describe('nft marketplace', function() {
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
-        { start: 1, group: 0 }
+        { start: 3, group: 0 }
       )
+
+      expect(nftMarketplaceContractEvents.events.length).toEqual(1)
+
       const nftListedEventFields = nftMarketplaceContractEvents.events[0].fields
       const nftListingContractId = nftListedEventFields[3].value.toString()
       const nftListingContractAddress = addressFromContractId(nftListingContractId)
@@ -220,7 +223,7 @@ describe('nft marketplace', function() {
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
     )(testAddress2, testAddress1, testAddress2)
-  }, 10000)
+  }, 15000)
 
   function checkListingFee(
     provider: NodeProvider,

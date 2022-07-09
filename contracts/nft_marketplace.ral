@@ -7,12 +7,29 @@ TxContract NFTMarketPlace(
     mut listingFee: U256,
     mut commissionRate: U256   // basis point. e.g. 2.5% == 250 basis point
 ) {
-
     event NFTListed(
       price: U256,
       tokenId: ByteVec,
       tokenOwner: Address,
       listingContractId: ByteVec
+    )
+
+    event NFTSold(
+      price: U256,
+      tokenId: ByteVec,
+      previousOwner: Address,
+      newOwner: Address
+    )
+
+    event NFTListingCancelled(
+      tokenId: ByteVec,
+      tokenOwner: Address
+    )
+
+    event NFTListingPriceUpdated(
+       tokenId: ByteVec,
+       oldPrice: U256,
+       newPrice: U256
     )
 
     event AdminUpdated(
@@ -38,7 +55,11 @@ TxContract NFTMarketPlace(
         let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
         let nftListing = NFTListing(nftListingContractId)
         let buyer = callerAddress!()
+        let price = nftListing.getPrice()
+        let tokenOwner = nftListing.getTokenOwner()
+
         nftListing.buy{buyer -> totalPayment}(buyer)
+        emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
@@ -81,10 +102,12 @@ TxContract NFTMarketPlace(
     pub fn cancelNFTListing(tokenId: ByteVec) -> () {
         let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
         let nftListing = NFTListing(nftListingContractId)
+        let tokenOwner = nftListing.getTokenOwner()
 
-        assert!(callerAddress!() == nftListing.getTokenOwner())
+        assert!(callerAddress!() == tokenOwner)
 
         nftListing.cancel()
+        emit NFTListingCancelled(tokenId, tokenOwner)
     }
 
     pub fn updateNFTPrice(tokenId: ByteVec, newPrice: U256) -> () {
@@ -93,28 +116,31 @@ TxContract NFTMarketPlace(
 
         assert!(callerAddress!() == nftListing.getTokenOwner())
 
+        let price = nftListing.getPrice()
+
         nftListing.updatePrice(newPrice)
+        emit NFTListingPriceUpdated(tokenId, price, newPrice)
     }
 
     pub fn updateAdmin(newAdmin: Address) -> () {
         assert!(callerAddress!() == admin)
 
-        emit AdminUpdated(admin, newAdmin)
         admin = newAdmin
+        emit AdminUpdated(admin, newAdmin)
     }
 
     pub fn updateListingFee(newListingFee: U256) -> () {
         assert!(callerAddress!() == admin)
 
-        emit ListingFeeUpdated(listingFee, newListingFee)
         listingFee = newListingFee
+        emit ListingFeeUpdated(listingFee, newListingFee)
     }
 
     pub fn updateCommissionRate(newCommissionRate: U256) -> () {
         assert!(callerAddress!() == admin)
 
-        emit CommissionRateUpdated(commissionRate, newCommissionRate)
         commissionRate = newCommissionRate
+        emit CommissionRateUpdated(commissionRate, newCommissionRate)
     }
 
     pub fn getListingFee() -> U256 {

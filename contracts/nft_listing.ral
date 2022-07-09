@@ -7,26 +7,12 @@ TxContract NFTListing(
     marketAddress: Address,
     commissionRate: U256
 ) {
-    event NFTListingPriceUpdated(
-       tokenId: ByteVec,
-       oldPrice: U256,
-       newPrice: U256
-    )
-
-    event NFTSold(
-      price: U256,
-      tokenId: ByteVec,
-      previousOwner: Address,
-      newOwner: Address
-    )
-
-    event NFTListingCancelled(
-      tokenId: ByteVec,
-      tokenOwner: Address
-    )
-
     pub fn getTokenOwner() -> Address {
         return tokenOwner
+    }
+
+    pub fn getPrice() -> U256 {
+        return price
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
@@ -48,8 +34,6 @@ TxContract NFTListing(
         let nft = NFT(tokenId)
         nft.updateOwner(buyer)
 
-        emit NFTSold(price, tokenId, tokenOwner, buyer)
-
         destroySelf!(tokenOwner)
     }
 
@@ -60,16 +44,11 @@ TxContract NFTListing(
         let nft = NFT(tokenId)
         nft.updateOwner(tokenOwner)
 
-        emit NFTListingCancelled(tokenId, tokenOwner)
-
         destroySelf!(tokenOwner)
     }
 
     pub fn updatePrice(newPrice: U256) -> () {
         assert!(callerAddress!() == marketAddress)
-
-        emit NFTListingPriceUpdated(tokenId, price, newPrice)
-
         price = newPrice
     }
 }

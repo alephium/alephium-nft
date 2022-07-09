@@ -1,7 +1,7 @@
 {
-  "sourceCodeSha256": "d040112beadae3e8a80e07e65eb7bdd095a185e70c1717e70cfd0c2f2145f420",
-  "bytecode": "050409405240704087010000000102a0020201010103004027b4a003454da000a0042c1367102d170116010c334c041600a0031601a71600a002464c041600a002a000a7a001170216001602010206a000a001a002160061a002b001020001000fb4a003454da0011700a0021600010207a001a0025fa002b001000101000bb4a003454d05a001a0001600601600a100",
-  "codeHash": "368d4405133f0e513d9303a9a76bd777bd6bc7b812db9b5446f209bb610da158",
+  "sourceCodeSha256": "2df957e146b38ecca22097a329ece3a8e9a80a928dffaf09ed69b2d8e0489411",
+  "bytecode": "05050912405140694078010000000102a00202010000000102a0000201010103004021b4a003454da000a0042c1367102d170116010c334c041600a0031601a71600a002464c041600a002a000a7a0011702160016020102a002b001020001000bb4a003454da0011700a00216000102a002b0010001010006b4a003454d1600a100",
+  "codeHash": "a7d5efe72689acec0c511d0bb06318252f8b2433728c1607426746b075996774",
   "fieldsSig": {
     "signature": "TxContract NFTListing(mut price:U256,tokenId:ByteVec,tokenOwner:Address,marketAddress:Address,commissionRate:U256)",
     "names": [
@@ -19,50 +19,7 @@
       "U256"
     ]
   },
-  "eventsSig": [
-    {
-      "name": "NFTListingPriceUpdated",
-      "signature": "event NFTListingPriceUpdated(tokenId:ByteVec,oldPrice:U256,newPrice:U256)",
-      "fieldNames": [
-        "tokenId",
-        "oldPrice",
-        "newPrice"
-      ],
-      "fieldTypes": [
-        "ByteVec",
-        "U256",
-        "U256"
-      ]
-    },
-    {
-      "name": "NFTSold",
-      "signature": "event NFTSold(price:U256,tokenId:ByteVec,previousOwner:Address,newOwner:Address)",
-      "fieldNames": [
-        "price",
-        "tokenId",
-        "previousOwner",
-        "newOwner"
-      ],
-      "fieldTypes": [
-        "U256",
-        "ByteVec",
-        "Address",
-        "Address"
-      ]
-    },
-    {
-      "name": "NFTListingCancelled",
-      "signature": "event NFTListingCancelled(tokenId:ByteVec,tokenOwner:Address)",
-      "fieldNames": [
-        "tokenId",
-        "tokenOwner"
-      ],
-      "fieldTypes": [
-        "ByteVec",
-        "Address"
-      ]
-    }
-  ],
+  "eventsSig": [],
   "functions": [
     {
       "name": "getTokenOwner",
@@ -71,6 +28,15 @@
       "argTypes": [],
       "returnTypes": [
         "Address"
+      ]
+    },
+    {
+      "name": "getPrice",
+      "signature": "pub getPrice()->(U256)",
+      "argNames": [],
+      "argTypes": [],
+      "returnTypes": [
+        "U256"
       ]
     },
     {
