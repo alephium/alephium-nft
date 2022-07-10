@@ -36,7 +36,7 @@ TxContract NFTCollection(
         )
 
 
-        let contractId = copyCreateSubContractWithToken!{minter -> 1.1 alph}(nftUri, nftTemplateId, initialState, 1)
+        let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1)
 
         emit NFTMinted(
             minter,
