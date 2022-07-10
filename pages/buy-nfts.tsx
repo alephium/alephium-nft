@@ -65,7 +65,7 @@ export default function BuyNFTs() {
                     { group: 0 }
                 )
 
-                const metadataUri = hexToString(nftState.fields[3].value)
+                const metadataUri = hexToString(nftState.fields[4].value)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
                     price: +listingState.fields[0].value,

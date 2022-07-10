@@ -52,7 +52,7 @@ export default function Home() {
             }
 
             if (nftState && nftState.codeHash === NFTContract.codeHash) {
-                const metadataUri = web3.hexToString(nftState.fields[3].value)
+                const metadataUri = web3.hexToString(nftState.fields[4].value)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
                     name: metadata.name,
