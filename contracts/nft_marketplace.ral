@@ -47,7 +47,7 @@ TxContract NFTMarketPlace(
         new: U256
     )
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(preapprovedAssets = true)
     pub fn buyNFT(
         tokenId: ByteVec,
         totalPayment: U256
@@ -60,6 +60,12 @@ TxContract NFTMarketPlace(
 
         nftListing.buy{buyer -> totalPayment}(buyer)
         emit NFTSold(price, tokenId, tokenOwner, buyer)
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = true)
+    pub fn payCommission(buyer: Address, commission: U256) -> () {
+        assert!(commission > 0)
+        transferAlph!(buyer, selfAddress!(), commission)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)

@@ -144,7 +144,7 @@ export class NFTMarketplace extends DeployHelpers {
   }
 
   async updateListingFee(
-    price: number,
+    price: Number256,
     marketPlaceContractId: string
   ): Promise<web3.SubmissionResult> {
     const script = this.deployFromSource ?

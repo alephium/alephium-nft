@@ -1,4 +1,5 @@
 import "nft.ral"
+import "nft_marketplace.ral"
 
 TxContract NFTListing(
     mut price: U256,
@@ -22,16 +23,16 @@ TxContract NFTListing(
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
         if (commission > 0) {
-            transferAlph!(buyer, marketAddress, commission)
+            NFTMarketPlace(callerContractId!()).payCommission{
+                buyer -> commission
+            }(buyer, commission)
         }
 
         if (buyer != tokenOwner) {
             transferAlph!(buyer, tokenOwner, price)
         }
 
-        let nft = NFT(tokenId)
-        let nftAddress = contractIdToAddress!(tokenId)
-        nft.transferOwnershipAndAsset{buyer -> 1 alph}(buyer)
+        NFT(tokenId).transferOwnershipAndAsset{buyer -> 1 alph}(buyer)
 
         destroySelf!(tokenOwner)
     }
