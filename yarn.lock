@@ -18,10 +18,10 @@
     "@walletconnect/utils" "^2.0.0-beta.23"
     "eventemitter3" "^4.0.7"
 
-"@alephium/web3@0.0.1-test.2":
-  "integrity" "sha512-OiLjcJVXshLK/dBk608ZEqmYlapY1vF4PmmrMqJuUWY5gcslDQ8bZqYvwziAdUzZxL9pHI7YdSVnpB4B/MeHMA=="
-  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.0.1-test.2.tgz"
-  "version" "0.0.1-test.2"
+"@alephium/web3@0.1.0-rc.3":
+  "integrity" "sha512-wcTYLgMpt1xpS66NKIr+1tKAIhOGpRC4T6tPEF0ApLoz1owP8cUEr56PmUwxDIPa8Ss82trZ8IIuy/xzZL7E/Q=="
+  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.1.0-rc.3.tgz"
+  "version" "0.1.0-rc.3"
   dependencies:
     "base-x" "4.0.0"
     "blakejs" "1.2.1"
@@ -34,10 +34,10 @@
     "find-up" "^2.1.0"
     "fs-extra" "^10.0.1"
 
-"@alephium/web3@0.1.0-rc.3":
-  "integrity" "sha512-wcTYLgMpt1xpS66NKIr+1tKAIhOGpRC4T6tPEF0ApLoz1owP8cUEr56PmUwxDIPa8Ss82trZ8IIuy/xzZL7E/Q=="
-  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.1.0-rc.3.tgz"
-  "version" "0.1.0-rc.3"
+"@alephium/web3@0.2.0-test.0":
+  "integrity" "sha512-kP/ZVmXub2YjtTUbhJocmnVRSk1Iod2qy1RtAfEJScrLYwSn/zsN6sEfDCuGrGbVkb5ystFaJ50EKgLrql93DQ=="
+  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-test.0.tgz"
+  "version" "0.2.0-test.0"
   dependencies:
     "base-x" "4.0.0"
     "blakejs" "1.2.1"

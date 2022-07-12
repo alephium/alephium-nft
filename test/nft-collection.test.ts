@@ -2,6 +2,7 @@ import * as web3 from '@alephium/web3'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
+import { NFTContract } from '../utils/contracts'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
@@ -49,16 +50,14 @@ describe('nft collection', function() {
     expect(nftMintedEventFields[5].value).toEqual(nftContractId)
     expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
 
-    const nftContractState = await provider.contracts.getContractsAddressState(
-      nftContractAddress, { group: 0 }
-    )
-    expect(nftContractState.fields.length).toEqual(6)
-    expect(nftContractState.fields[0].value).toEqual(testAddress1)
-    expect(Boolean(nftContractState.fields[1].value)).toEqual(false)
-    utils.checkHexString(nftContractState.fields[2].value, "CryptoPunk #0001")
-    utils.checkHexString(nftContractState.fields[3].value, "CP0001")
-    utils.checkHexString(nftContractState.fields[4].value, "https://cryptopunks.app/cryptopunks/details/1")
-    expect(nftContractState.fields[5].value).toEqual(nftCollectionContractAddress)
+    const nftContractState = await NFTContract.fetchState(provider, nftContractAddress, 0)
+
+    expect(nftContractState.fields.owner).toEqual(testAddress1)
+    expect(nftContractState.fields.isTokenWithdrawn).toEqual(false)
+    utils.checkHexString(nftContractState.fields.name, "CryptoPunk #0001")
+    utils.checkHexString(nftContractState.fields.description, "CP0001")
+    utils.checkHexString(nftContractState.fields.uri, "https://cryptopunks.app/cryptopunks/details/1")
+    expect(nftContractState.fields.collectionAddress).toEqual(nftCollectionContractAddress)
 
     // Burn NFT
     const balanceBeforeBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
@@ -72,7 +71,7 @@ describe('nft collection', function() {
       gasPrice
     )
 
-    const alphAmountInNFT = +nftContractState.asset.attoAlphAmount
+    const alphAmountInNFT = +nftContractState.asset.alphAmount.toString()
     const balanceAfterBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
     const refundedFromNFT = +balanceAfterBurning.balance + totalGas - +balanceBeforeBurning.balance
 
