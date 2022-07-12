@@ -4,7 +4,7 @@ import { addressFromContractId, binToHex, contractIdFromAddress, hexToString } f
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
-import { NFTListingContract } from '../utils/contracts'
+import { NFTListingContract, NFTContract } from '../utils/contracts'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
@@ -51,31 +51,29 @@ export default function BuyNFTs() {
             var listingState = undefined
 
             try {
-                listingState = await context.nodeProvider.contracts.getContractsAddressState(
-                    addressFromContractId(listingContractId),
-                    { group: 0 }
+                listingState = await NFTListingContract.fetchState(
+                    context.nodeProvider, addressFromContractId(listingContractId), 0
                 )
             } catch (e) {
                 console.log(`error fetching state for ${tokenId}`, e)
             }
 
             if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
-                const nftState = await context.nodeProvider.contracts.getContractsAddressState(
-                    addressFromContractId(tokenId),
-                    { group: 0 }
+                const nftState = await NFTContract.fetchState(
+                    context.nodeProvider, addressFromContractId(tokenId), 0
                 )
 
-                const metadataUri = hexToString(nftState.fields[4].value)
+                const metadataUri = hexToString(nftState.fields.uri)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
-                    price: +listingState.fields[0].value,
+                    price: listingState.fields.price,
                     name: metadata.name,
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    tokenOwner: listingState.fields[2].value.toString(),
-                    marketAddress: listingState.fields[3].value.toString(),
-                    commissionRate: +listingState.fields[4].value,
+                    tokenOwner: listingState.fields.tokenOwner,
+                    marketAddress: listingState.fields.marketAddress,
+                    commissionRate: listingState.fields.commissionRate,
                     listingContractId: listingContractId
                 }
             }
@@ -115,7 +113,7 @@ export default function BuyNFTs() {
         setLoadingState('loaded')
     }
 
-    async function buyNft(nftListing: NFTListing) {
+    async function buyNFT(nftListing: NFTListing) {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
@@ -183,7 +181,7 @@ export default function BuyNFTs() {
                                     </div>
                                     <div className="p-4 bg-black">
                                         <p className="text-2xl font-bold text-white">{nftListing.price} ALPH </p>
-                                        <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNft(nftListing)}>Buy</button>
+                                        <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nftListing)}>Buy</button>
                                     </div>
                                 </div>
                             ))

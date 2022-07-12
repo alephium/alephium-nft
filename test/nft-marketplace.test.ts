@@ -1,5 +1,4 @@
 import * as web3 from '@alephium/web3'
-import { verifyContractState } from '../utils'
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
