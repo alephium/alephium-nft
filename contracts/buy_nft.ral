@@ -5,7 +5,7 @@ TxScript Main(
     tokenId: ByteVec,
     nftMarketplaceContractId: ByteVec
 ) {
-    assert!(totalPayment > 0)
+    assert!(totalPayment > 0, 0)
 
     let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
 

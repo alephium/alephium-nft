@@ -1,7 +1,7 @@
 // Who can change the metadata of this NFT? Maybe it should just be fixed
 // when it is created, to reduce complexity
 // Right now only 1 token is supported
-TxContract NFT(
+Contract NFT(
     mut owner: Address,
     mut isTokenWithdrawn: Bool,
     name: ByteVec,
@@ -27,6 +27,12 @@ TxContract NFT(
       owner: Address
     )
 
+    enum ErrorCodes {
+        OwnerAllowedOnly = 0
+        TokenAlreadyWithdrawn = 1
+        TokenAlreadyDeposited = 2
+    }
+
     pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
         return name, description, uri, collectionAddress
     }
@@ -35,29 +41,28 @@ TxContract NFT(
         return owner
     }
 
-    @using(assetsInContract = true)
     pub fn transferOwnership(newOwner: Address) -> () {
-        assert!(callerAddress!() == owner)
+        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(preapprovedAssets = true)
     pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
-        assert!(callerAddress!() == owner)
+        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
         transferAlph!(newOwner, owner, 1 alph)
     }
 
     fn updateOwner(newOwner: Address) -> () {
         // Token needs to be owned by the contract when owner is changed
-        assert!(!isTokenWithdrawn)
+        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
         emit NFTOwnerUpdated(owner, newOwner)
         owner = newOwner
     }
 
     @using(preapprovedAssets=true, assetsInContract = true)
     pub fn deposit() -> () {
-        assert!(isTokenWithdrawn)
+        assert!(isTokenWithdrawn, ErrorCodes.TokenAlreadyDeposited)
 
         let depositor = callerAddress!()
         if (depositor != owner) {
@@ -73,8 +78,8 @@ TxContract NFT(
 
     @using(assetsInContract = true)
     pub fn withdraw() -> () {
-        assert!(callerAddress!() == owner)
-        assert!(!isTokenWithdrawn)
+        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
 
         isTokenWithdrawn = true
         emit NFTWithdrawn(owner)
@@ -84,10 +89,10 @@ TxContract NFT(
 
     @using(assetsInContract = true)
     pub fn burn() -> () {
-        assert!(callerAddress!() == owner)
+        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
 
         // Token needs to be owned by the contract when NFT is burnt
-        assert!(!isTokenWithdrawn)
+        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
 
         emit NFTBurnt(owner)
 

@@ -1,6 +1,6 @@
 // The concept of a collection, which could contain different NFTs
 // e.g. Bored Ape Yacht Club collection
-TxContract NFTCollection(
+Contract NFTCollection(
     nftTemplateId: ByteVec,
     collectionName: ByteVec,
     collectionDescription: ByteVec,

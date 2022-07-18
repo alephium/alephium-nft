@@ -1,13 +1,18 @@
 import "nft.ral"
 import "nft_marketplace.ral"
 
-TxContract NFTListing(
+Contract NFTListing(
     mut price: U256,
     tokenId: ByteVec,
     tokenOwner: Address,
     marketAddress: Address,
     commissionRate: U256
 ) {
+
+    enum ErrorCodes {
+        MarketplaceAllowedOnly = 0
+    }
+
     pub fn getTokenOwner() -> Address {
         return tokenOwner
     }
@@ -18,7 +23,7 @@ TxContract NFTListing(
 
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buy(buyer: Address) -> () {
-        assert!(callerAddress!() == marketAddress)
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
@@ -39,7 +44,7 @@ TxContract NFTListing(
 
     @using(assetsInContract = true)
     pub fn cancel() -> () {
-        assert!(callerAddress!() == marketAddress)
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
         let nft = NFT(tokenId)
         nft.transferOwnership(tokenOwner)
@@ -48,7 +53,7 @@ TxContract NFTListing(
     }
 
     pub fn updatePrice(newPrice: U256) -> () {
-        assert!(callerAddress!() == marketAddress)
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
         price = newPrice
     }
 }

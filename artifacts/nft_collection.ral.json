@@ -1,9 +1,9 @@
 {
-  "sourceCodeSha256": "5ed1184480c9be472a2e2de0233eae328ee84b76da1e41fa2b853cd5f7731207",
+  "sourceCodeSha256": "131c04f9e00f5faac6fec56579e08661784c1be053a3e87222bdd96555565eab",
   "bytecode": "0401404801010307014022b41703b2170416030416001601160216041306641705160313c40de0b6b3a7640000a21602a00016050dc217060516031604160016011602160616067775160602",
   "codeHash": "36e85dce371a4993e5b22d7c49eb4a79e00947d7d9682e3454635181195ef37a",
   "fieldsSig": {
-    "signature": "TxContract NFTCollection(nftTemplateId:ByteVec,collectionName:ByteVec,collectionDescription:ByteVec,collectionUri:ByteVec)",
+    "signature": "Contract NFTCollection(nftTemplateId:ByteVec,collectionName:ByteVec,collectionDescription:ByteVec,collectionUri:ByteVec)",
     "names": [
       "nftTemplateId",
       "collectionName",

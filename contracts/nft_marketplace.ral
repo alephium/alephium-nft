@@ -1,7 +1,7 @@
 import "nft.ral"
 import "nft_listing.ral"
 
-TxContract NFTMarketPlace(
+Contract NFTMarketPlace(
     nftListingTemplateId: ByteVec,
     mut admin: Address,
     mut listingFee: U256,
@@ -47,12 +47,19 @@ TxContract NFTMarketPlace(
         new: U256
     )
 
+    enum ErrorCodes {
+        AdminAllowedOnly = 0
+        TokenOwnerAllowedOnly = 1
+        NFTPriceIsZero = 2
+        CommissionIsZero = 3
+    }
+
     @using(preapprovedAssets = true)
     pub fn buyNFT(
         tokenId: ByteVec,
         totalPayment: U256
     ) -> () {
-        let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
+        let nftListingContractId = blake2b!(blake2b!(selfContractId!() ++ tokenId))
         let nftListing = NFTListing(nftListingContractId)
         let buyer = callerAddress!()
         let price = nftListing.getPrice()
@@ -64,7 +71,7 @@ TxContract NFTMarketPlace(
 
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn payCommission(buyer: Address, commission: U256) -> () {
-        assert!(commission > 0)
+        assert!(commission > 0, ErrorCodes.CommissionIsZero)
         transferAlph!(buyer, selfAddress!(), commission)
     }
 
@@ -73,13 +80,13 @@ TxContract NFTMarketPlace(
         tokenId: ByteVec,
         price: U256
     ) -> (Address) {
-        assert!(price > 0)
+        assert!(price > 0, ErrorCodes.NFTPriceIsZero)
 
         // Only owner can list the NFT
         let tokenOwner = callerAddress!()
         let nft = NFT(tokenId)
         let currentTokenOwner = nft.getOwner()
-        assert!(currentTokenOwner == tokenOwner)
+        assert!(currentTokenOwner == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
 
         let initialState = encodeToByteVec!(
             price,
@@ -106,21 +113,21 @@ TxContract NFTMarketPlace(
     }
 
     pub fn cancelNFTListing(tokenId: ByteVec) -> () {
-        let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
+        let nftListingContractId = blake2b!(blake2b!(selfContractId!() ++ tokenId))
         let nftListing = NFTListing(nftListingContractId)
         let tokenOwner = nftListing.getTokenOwner()
 
-        assert!(callerAddress!() == tokenOwner)
+        assert!(callerAddress!() == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
 
         nftListing.cancel()
         emit NFTListingCancelled(tokenId, tokenOwner)
     }
 
     pub fn updateNFTPrice(tokenId: ByteVec, newPrice: U256) -> () {
-        let nftListingContractId = blake2b!(blake2b!(tokenId ++ selfContractId!()))
+        let nftListingContractId = blake2b!(blake2b!(selfContractId!() ++ tokenId))
         let nftListing = NFTListing(nftListingContractId)
 
-        assert!(callerAddress!() == nftListing.getTokenOwner())
+        assert!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
 
         let price = nftListing.getPrice()
 
@@ -129,21 +136,21 @@ TxContract NFTMarketPlace(
     }
 
     pub fn updateAdmin(newAdmin: Address) -> () {
-        assert!(callerAddress!() == admin)
+        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         admin = newAdmin
         emit AdminUpdated(admin, newAdmin)
     }
 
     pub fn updateListingFee(newListingFee: U256) -> () {
-        assert!(callerAddress!() == admin)
+        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         listingFee = newListingFee
         emit ListingFeeUpdated(listingFee, newListingFee)
     }
 
     pub fn updateCommissionRate(newCommissionRate: U256) -> () {
-        assert!(callerAddress!() == admin)
+        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         commissionRate = newCommissionRate
         emit CommissionRateUpdated(commissionRate, newCommissionRate)

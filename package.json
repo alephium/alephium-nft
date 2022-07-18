@@ -11,8 +11,8 @@
     "deploy:contracts": "node scripts/deploy.js"
   },
   "dependencies": {
-    "@alephium/walletconnect-provider": "0.1.0-rc.1",
-    "@alephium/web3": "0.2.0-test.0",
+    "@alephium/walletconnect-provider": "0.2.0-rc.1",
+    "@alephium/web3": "0.2.0-rc.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
