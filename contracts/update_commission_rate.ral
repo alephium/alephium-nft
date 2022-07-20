@@ -1,0 +1,9 @@
+import "nft_marketplace.ral"
+
+TxScript Main(
+    newCommissionRate: U256,
+    nftMarketplaceContractId: ByteVec
+) {
+    let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketPlace.updateCommissionRate(newCommissionRate)
+}

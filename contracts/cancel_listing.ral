@@ -1,0 +1,9 @@
+import "nft_marketplace.ral"
+
+TxScript Main(
+    tokenId: ByteVec,
+    nftMarketplaceContractId: ByteVec
+) {
+    let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketplace.cancelNFTListing(tokenId)
+}

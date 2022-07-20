@@ -1,0 +1,20 @@
+import "nft_marketplace.ral"
+import "nft.ral"
+
+TxScript Main(
+    tokenId: ByteVec,
+    price: U256,
+    marketPlaceContractId: ByteVec
+) {
+    let marketPlace = NFTMarketPlace(marketPlaceContractId)
+
+    let listingFee = marketPlace.getListingFee()
+    let minimalAlphInContract = 1 alph
+    let approveAmount = listingFee + minimalAlphInContract
+
+    let nftListingContractAddress = marketPlace.listNFT{callerAddress!() -> approveAmount}(tokenId, price)
+
+    // Update owner of the NFT to the listing contract
+    let nft = NFT(tokenId)
+    nft.transferOwnership(nftListingContractAddress)
+}

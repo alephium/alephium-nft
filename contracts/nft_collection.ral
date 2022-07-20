@@ -1,0 +1,53 @@
+// The concept of a collection, which could contain different NFTs
+// e.g. Bored Ape Yacht Club collection
+Contract NFTCollection(
+    nftTemplateId: ByteVec,
+    collectionName: ByteVec,
+    collectionDescription: ByteVec,
+    collectionUri: ByteVec
+) {
+    event NFTMinted(
+      minter: Address,
+      collectionAddress: Address,
+      name: ByteVec,
+      description: ByteVec,
+      uri: ByteVec,
+      tokenId: ByteVec,
+      nftContractAddress: Address
+    )
+
+    @using(preapprovedAssets = true, assetsInContract = true)
+    pub fn mint(
+        nftName: ByteVec,
+        nftDescription: ByteVec,
+        nftUri: ByteVec
+    ) -> (ByteVec) {
+        let minter = callerAddress!()
+
+        let collectionAddress = selfAddress!()
+
+        let initialState = encodeToByteVec!(
+            minter,
+            false,
+            nftName,
+            nftDescription,
+            nftUri,
+            collectionAddress
+        )
+
+
+        let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1)
+
+        emit NFTMinted(
+            minter,
+            collectionAddress,
+            nftName,
+            nftDescription,
+            nftUri,
+            contractId,
+            contractIdToAddress!(contractId)
+        )
+
+        return contractId
+    }
+}

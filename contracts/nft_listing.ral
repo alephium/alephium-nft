@@ -1,0 +1,59 @@
+import "nft.ral"
+import "nft_marketplace.ral"
+
+Contract NFTListing(
+    mut price: U256,
+    tokenId: ByteVec,
+    tokenOwner: Address,
+    marketAddress: Address,
+    commissionRate: U256
+) {
+
+    enum ErrorCodes {
+        MarketplaceAllowedOnly = 0
+    }
+
+    pub fn getTokenOwner() -> Address {
+        return tokenOwner
+    }
+
+    pub fn getPrice() -> U256 {
+        return price
+    }
+
+    @using(preapprovedAssets = true, assetsInContract = true)
+    pub fn buy(buyer: Address) -> () {
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+
+        // Charge a commission for the marketplace
+        let commission = (price * commissionRate) / 10000
+        if (commission > 0) {
+            NFTMarketPlace(callerContractId!()).payCommission{
+                buyer -> commission
+            }(buyer, commission)
+        }
+
+        if (buyer != tokenOwner) {
+            transferAlph!(buyer, tokenOwner, price)
+        }
+
+        NFT(tokenId).transferOwnershipAndAsset{buyer -> 1 alph}(buyer)
+
+        destroySelf!(tokenOwner)
+    }
+
+    @using(assetsInContract = true)
+    pub fn cancel() -> () {
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+
+        let nft = NFT(tokenId)
+        nft.transferOwnership(tokenOwner)
+
+        destroySelf!(tokenOwner)
+    }
+
+    pub fn updatePrice(newPrice: U256) -> () {
+        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        price = newPrice
+    }
+}
