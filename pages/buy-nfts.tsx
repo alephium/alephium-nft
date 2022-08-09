@@ -96,7 +96,7 @@ export default function BuyNFTs() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider as web3.SignerProvider,
+                context.signerProvider.provider as web3.SignerProvider,
                 context.accounts[0].address
             )
             const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
@@ -117,12 +117,12 @@ export default function BuyNFTs() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider.provider,
                 context.accounts[0].address
             )
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider.provider,
                 context.accounts[0].address
             )
 

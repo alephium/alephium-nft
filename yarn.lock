@@ -2,26 +2,26 @@
 # yarn lockfile v1
 
 
-"@alephium/walletconnect-provider@0.1.0-rc.1":
-  "integrity" "sha512-oosclfYCKZTG8+av1UZnsiZkHqiq+hHXkdhzsvpLQOMkZzkjZSPjmSoZj1EPVToO2OowMY6csE5POk/B2Mcgtw=="
-  "resolved" "https://registry.npmjs.org/@alephium/walletconnect-provider/-/walletconnect-provider-0.1.0-rc.1.tgz"
-  "version" "0.1.0-rc.1"
+"@alephium/walletconnect-provider@0.2.0-rc.1":
+  "integrity" "sha512-uFygsZsZiEnj5UiYZ2mAENgr0kvmR9EFbifUOoEDNcFV0wWVEW4Nb5LenJWrmS5sxaYhHmXMGZ6PB/WxCcs3EQ=="
+  "resolved" "https://registry.npmjs.org/@alephium/walletconnect-provider/-/walletconnect-provider-0.2.0-rc.1.tgz"
+  "version" "0.2.0-rc.1"
   dependencies:
-    "@alephium/web3" "0.1.0-rc.3"
-    "@walletconnect/client" "^2.0.0-beta.23"
+    "@alephium/web3" "^0.2.0-rc.1"
+    "@walletconnect/client" "2.0.0-beta.26"
     "@walletconnect/jsonrpc-http-connection" "^1.0.0"
     "@walletconnect/jsonrpc-provider" "^1.0.2"
     "@walletconnect/jsonrpc-types" "^1.0.0"
     "@walletconnect/jsonrpc-utils" "^1.0.0"
-    "@walletconnect/signer-connection" "^2.0.0-beta.23"
-    "@walletconnect/types" "^2.0.0-beta.23"
-    "@walletconnect/utils" "^2.0.0-beta.23"
+    "@walletconnect/signer-connection" "2.0.0-beta.26"
+    "@walletconnect/types" "2.0.0-beta.26"
+    "@walletconnect/utils" "2.0.0-beta.26"
     "eventemitter3" "^4.0.7"
 
-"@alephium/web3@0.1.0-rc.3":
-  "integrity" "sha512-wcTYLgMpt1xpS66NKIr+1tKAIhOGpRC4T6tPEF0ApLoz1owP8cUEr56PmUwxDIPa8Ss82trZ8IIuy/xzZL7E/Q=="
-  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.1.0-rc.3.tgz"
-  "version" "0.1.0-rc.3"
+"@alephium/web3@^0.2.0-rc.1", "@alephium/web3@0.2.0-rc.1":
+  "integrity" "sha512-y8jF3S7Q8UbmRDykxgnxeQf16owJwxOBMbgGZveHZkbzufO0ykNgNkmZjlW5gtrOL4bfQJR6SOWrQIEI4whJTA=="
+  "resolved" "https://registry.npmjs.org/@alephium/web3/-/web3-0.2.0-rc.1.tgz"
+  "version" "0.2.0-rc.1"
   dependencies:
     "base-x" "4.0.0"
     "blakejs" "1.2.1"
@@ -368,6 +368,14 @@
     "js-yaml" "^4.1.0"
     "minimatch" "^3.1.2"
     "strip-json-comments" "^3.1.1"
+
+"@h0ngcha0/get-alephium@0.0.4":
+  "integrity" "sha512-tpe3Km6X5iXApqXHG8ZXGEg2Oh6iB5JNOuSY4Haiml+NAFP2GiqXcPlAKsf5dE4/+YZ6KA7961uJMgTXpAlUVg=="
+  "resolved" "https://registry.npmjs.org/@h0ngcha0/get-alephium/-/get-alephium-0.0.4.tgz"
+  "version" "0.0.4"
+  dependencies:
+    "@alephium/web3" "0.2.0-test.0"
+    "bowser" "^2.11.0"
 
 "@hapi/bourne@^2.0.0":
   "integrity" "sha512-i1BpaNDVLJdRBEKeJWkVO6tYX6DMFBuwMhSuWqLsY4ufeTKGVuV5rBsUhxPayXqnnWHgXUAmWK16H/ykO5Wj4Q=="
@@ -1220,7 +1228,7 @@
     "@walletconnect/window-metadata" "1.0.0"
     "detect-browser" "5.2.0"
 
-"@walletconnect/client@^2.0.0-beta.23", "@walletconnect/client@^2.0.0-beta.26", "@walletconnect/client@2.0.0-beta.26":
+"@walletconnect/client@^2.0.0-beta.26", "@walletconnect/client@2.0.0-beta.26":
   "integrity" "sha512-BQNLS+kQyxOEIECwHN0sW+iF0CGWLECorSwmPGnadv/7kX3xGIEzv6mBOjBJisyIoea50RfADmKZNa//H1khxw=="
   "resolved" "https://registry.npmjs.org/@walletconnect/client/-/client-2.0.0-beta.26.tgz"
   "version" "2.0.0-beta.26"
@@ -1381,7 +1389,7 @@
   "resolved" "https://registry.npmjs.org/@walletconnect/safe-json/-/safe-json-1.0.0.tgz"
   "version" "1.0.0"
 
-"@walletconnect/signer-connection@^2.0.0-beta.23", "@walletconnect/signer-connection@2.0.0-beta.26":
+"@walletconnect/signer-connection@2.0.0-beta.26":
   "integrity" "sha512-Viswih5kz5zZ4P1wJ+tG3OsuRQXt+/A+GDF+8Smx+vuBZhMLbt4nqGCgGnp4oWL9dnJU/23RhV1TxmnchbHH2g=="
   "resolved" "https://registry.npmjs.org/@walletconnect/signer-connection/-/signer-connection-2.0.0-beta.26.tgz"
   "version" "2.0.0-beta.26"
@@ -1414,7 +1422,7 @@
     "pino" "^6.7.0"
     "pino-pretty" "^4.3.0"
 
-"@walletconnect/types@^2.0.0-beta.23", "@walletconnect/types@^2.0.0-beta.26", "@walletconnect/types@2.0.0-beta.26":
+"@walletconnect/types@^2.0.0-beta.26", "@walletconnect/types@2.0.0-beta.26":
   "integrity" "sha512-wVtgEEgBLxrmKhaZ1UqHVQgKuZiYdPF4vo910RqrSOZbbPRNBtrHY37JvhQdZKe2Ake1r1x66tPyOR+WaMp1Zg=="
   "resolved" "https://registry.npmjs.org/@walletconnect/types/-/types-2.0.0-beta.26.tgz"
   "version" "2.0.0-beta.26"
@@ -1426,7 +1434,7 @@
     "pino" "^6.7.0"
     "pino-pretty" "^4.3.0"
 
-"@walletconnect/utils@^2.0.0-beta.23", "@walletconnect/utils@^2.0.0-beta.26", "@walletconnect/utils@2.0.0-beta.26":
+"@walletconnect/utils@^2.0.0-beta.26", "@walletconnect/utils@2.0.0-beta.26":
   "integrity" "sha512-RjADvX6d8K3eqLcxFIiQDFV9ajiI7kQX4+iVV63uf5rlC+HnIX+jwIYJWlD+eR6JPmfIIskoG5/m0RqK/iphjA=="
   "resolved" "https://registry.npmjs.org/@walletconnect/utils/-/utils-2.0.0-beta.26.tgz"
   "version" "2.0.0-beta.26"
@@ -1807,6 +1815,11 @@
   "resolved" "https://registry.npmjs.org/bn.js/-/bn.js-4.12.0.tgz"
   "version" "4.12.0"
 
+"bowser@^2.11.0":
+  "integrity" "sha512-AlcaJBi/pqqJBIQ8U9Mcpc9i8Aqxn88Skv5d+xBX006BY5u8N3mGLHa5Lgppa7L/HfwgwLgZ6NYs+Ag6uUmJRA=="
+  "resolved" "https://registry.npmjs.org/bowser/-/bowser-2.11.0.tgz"
+  "version" "2.11.0"
+
 "brace-expansion@^1.1.7":
   "integrity" "sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA=="
   "resolved" "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz"
@@ -2092,9 +2105,9 @@
     "color-string" "^1.9.0"
 
 "commander@^9.1.0":
-  "integrity" "sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw=="
-  "resolved" "https://registry.npmjs.org/commander/-/commander-9.3.0.tgz"
-  "version" "9.3.0"
+  "integrity" "sha512-sRPT+umqkz90UA8M1yqYfnHlZA7fF6nSphDtxeywPZ49ysjxDQybzk13CL+mXekDRG92skbcqCLVovuCusNmFw=="
+  "resolved" "https://registry.npmjs.org/commander/-/commander-9.4.0.tgz"
+  "version" "9.4.0"
 
 "concat-map@0.0.1":
   "integrity" "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg=="

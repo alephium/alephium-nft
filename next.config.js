@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     //ENVIRONMENT: "development-walletconnect"
-    ENVIRONMENT: "development-nodewallet"
+    //ENVIRONMENT: "development-nodewallet"
+    ENVIRONMENT: "browser-extension"
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

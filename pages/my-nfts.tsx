@@ -65,7 +65,8 @@ export default function Home() {
     async function loadNFTs() {
         const items = []
 
-        if (context.nodeProvider && context.accounts && context.accounts[0]) {
+        console.log("load nft", context.accounts)
+        if (context.nodeProvider && context.accounts && context.accounts[0] && context.accounts[0].address) {
             const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(context.accounts[0].address)
             const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
             const tokens = tokenBalances
@@ -87,12 +88,12 @@ export default function Home() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider.provider,
                 context.accounts[0].address
             )
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider.provider,
                 context.accounts[0].address
             )
 

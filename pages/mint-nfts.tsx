@@ -67,7 +67,7 @@ export default function MintNFTs() {
         if (uri && context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider,
+                context.signerProvider.provider,
                 context.accounts[0].address
             )
             // TODO: Figure out UI to create collection, right now use default collection id

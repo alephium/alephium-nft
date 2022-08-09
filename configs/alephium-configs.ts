@@ -10,6 +10,12 @@ module.exports = {
         password: 'alph'
       }
     },
+    'browser-extension': {
+      nodeUrl: 'http://127.0.0.1:22973',
+      signerProvider: {
+        type: 'BrowserExtensionProvider',
+      }
+    },
     'development-walletconnect': {
       nodeUrl: 'http://127.0.0.1:22973',
       signerProvider: {
