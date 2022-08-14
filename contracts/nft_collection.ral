@@ -2,9 +2,9 @@
 // e.g. Bored Ape Yacht Club collection
 Contract NFTCollection(
     nftTemplateId: ByteVec,
-    collectionName: ByteVec,
-    collectionDescription: ByteVec,
-    collectionUri: ByteVec
+    @unused collectionName: ByteVec,
+    @unused collectionDescription: ByteVec,
+    @unused collectionUri: ByteVec
 ) {
     event NFTMinted(
       minter: Address,

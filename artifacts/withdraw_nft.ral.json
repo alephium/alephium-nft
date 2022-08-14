@@ -2,20 +2,25 @@
   "sourceCodeSha256": "aade9716d4033abf18af79d66df67b39588917d7d459dc6a80a37c1ac7eb995a",
   "bytecodeTemplate": "01010300010006{0}17000c0c16000106",
   "fieldsSig": {
-    "signature": "TxScript Main(nftContractId:ByteVec)",
     "names": [
       "nftContractId"
     ],
     "types": [
       "ByteVec"
+    ],
+    "isMutable": [
+      false
     ]
   },
   "functions": [
     {
       "name": "main",
-      "signature": "@using(preapprovedAssets=true) pub main()->()",
-      "argNames": [],
-      "argTypes": [],
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
       "returnTypes": []
     }
   ]

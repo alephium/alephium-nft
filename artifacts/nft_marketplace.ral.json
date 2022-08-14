@@ -3,7 +3,6 @@
   "bytecode": "0409403d404f40a940d54109411f4135414c415501030207004022b11600444e4e170216021703b417040c0d1603010117050c0d16030100170616041601a216040d0c160301020616051600160616046101010202000916010c330f7b1600b21601a70101020701402f16010c330e7bb41702160017030c0d16030101170416041602450d7b160116001602b2a0031305641705160213c40de0b6b3a7640000a21600a0001605c117061602a002a9051601160016021606611606770201000104001ab11600444e4e1701160117020c0d160201001703b41603450d7b0c0c1602010307160016035f01000205001fb11600444e4e170216021703b40c0d16030100450d7b0c0d16030101170416010d0c16030104081600160416016001000101000bb4a001450c7b1600a10109a00116005f01000101000bb4a001450c7b1600a1020aa00216005f01000101000bb4a001450c7b1600a1031206a00316005f010000000102a00202",
   "codeHash": "0e7cdc1eec3979200c1864c3248ef4cde08e3bac8bb61ab64cd96fa8f3d48c0a",
   "fieldsSig": {
-    "signature": "Contract NFTMarketPlace(nftListingTemplateId:ByteVec,mut admin:Address,mut listingFee:U256,mut commissionRate:U256)",
     "names": [
       "nftListingTemplateId",
       "admin",
@@ -15,12 +14,17 @@
       "Address",
       "U256",
       "U256"
+    ],
+    "isMutable": [
+      false,
+      true,
+      true,
+      true
     ]
   },
   "eventsSig": [
     {
       "name": "NFTListed",
-      "signature": "event NFTListed(price:U256,tokenId:ByteVec,tokenOwner:Address,listingContractId:ByteVec)",
       "fieldNames": [
         "price",
         "tokenId",
@@ -36,7 +40,6 @@
     },
     {
       "name": "NFTSold",
-      "signature": "event NFTSold(price:U256,tokenId:ByteVec,previousOwner:Address,newOwner:Address)",
       "fieldNames": [
         "price",
         "tokenId",
@@ -52,7 +55,6 @@
     },
     {
       "name": "NFTListingCancelled",
-      "signature": "event NFTListingCancelled(tokenId:ByteVec,tokenOwner:Address)",
       "fieldNames": [
         "tokenId",
         "tokenOwner"
@@ -64,7 +66,6 @@
     },
     {
       "name": "NFTListingPriceUpdated",
-      "signature": "event NFTListingPriceUpdated(tokenId:ByteVec,oldPrice:U256,newPrice:U256)",
       "fieldNames": [
         "tokenId",
         "oldPrice",
@@ -78,7 +79,6 @@
     },
     {
       "name": "AdminUpdated",
-      "signature": "event AdminUpdated(previous:Address,new:Address)",
       "fieldNames": [
         "previous",
         "new"
@@ -90,7 +90,6 @@
     },
     {
       "name": "ListingFeeUpdated",
-      "signature": "event ListingFeeUpdated(previous:U256,new:U256)",
       "fieldNames": [
         "previous",
         "new"
@@ -102,7 +101,6 @@
     },
     {
       "name": "CommissionRateUpdated",
-      "signature": "event CommissionRateUpdated(previous:U256,new:U256)",
       "fieldNames": [
         "previous",
         "new"
@@ -116,40 +114,58 @@
   "functions": [
     {
       "name": "buyNFT",
-      "signature": "@using(preapprovedAssets=true) pub buyNFT(tokenId:ByteVec,totalPayment:U256)->()",
-      "argNames": [
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "tokenId",
         "totalPayment"
       ],
-      "argTypes": [
+      "paramTypes": [
         "ByteVec",
         "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "payCommission",
-      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub payCommission(buyer:Address,commission:U256)->()",
-      "argNames": [
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
         "buyer",
         "commission"
       ],
-      "argTypes": [
+      "paramTypes": [
         "Address",
         "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "listNFT",
-      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub listNFT(tokenId:ByteVec,price:U256)->(Address)",
-      "argNames": [
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
         "tokenId",
         "price"
       ],
-      "argTypes": [
+      "paramTypes": [
         "ByteVec",
         "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
       ],
       "returnTypes": [
         "Address"
@@ -157,66 +173,95 @@
     },
     {
       "name": "cancelNFTListing",
-      "signature": "pub cancelNFTListing(tokenId:ByteVec)->()",
-      "argNames": [
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "tokenId"
       ],
-      "argTypes": [
+      "paramTypes": [
         "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "updateNFTPrice",
-      "signature": "pub updateNFTPrice(tokenId:ByteVec,newPrice:U256)->()",
-      "argNames": [
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "tokenId",
         "newPrice"
       ],
-      "argTypes": [
+      "paramTypes": [
         "ByteVec",
         "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "updateAdmin",
-      "signature": "pub updateAdmin(newAdmin:Address)->()",
-      "argNames": [
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "newAdmin"
       ],
-      "argTypes": [
+      "paramTypes": [
         "Address"
+      ],
+      "paramIsMutable": [
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "updateListingFee",
-      "signature": "pub updateListingFee(newListingFee:U256)->()",
-      "argNames": [
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "newListingFee"
       ],
-      "argTypes": [
+      "paramTypes": [
         "U256"
+      ],
+      "paramIsMutable": [
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "updateCommissionRate",
-      "signature": "pub updateCommissionRate(newCommissionRate:U256)->()",
-      "argNames": [
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
         "newCommissionRate"
       ],
-      "argTypes": [
+      "paramTypes": [
         "U256"
+      ],
+      "paramIsMutable": [
+        false
       ],
       "returnTypes": []
     },
     {
       "name": "getListingFee",
-      "signature": "pub getListingFee()->(U256)",
-      "argNames": [],
-      "argTypes": [],
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
       "returnTypes": [
         "U256"
       ]

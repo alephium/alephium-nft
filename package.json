@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@alephium/walletconnect-provider": "0.2.0-rc.1",
-    "@alephium/web3": "0.2.0-rc.1",
+    "@alephium/web3": "0.2.0-rc.3",
     "@h0ngcha0/get-alephium": "0.0.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
@@ -28,7 +28,7 @@
     "axios": "^0.26.0",
     "better-sqlite3": "^7.5.3",
     "daisyui": "^2.15.4",
-    "ipfs-http-client": "^56.0.1",
+    "ipfs-http-client": "^57.0.3",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",

@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { AlephiumWeb3Context, connectWallet, getAccounts, instanceOfIAlephiumWindowObject } from './alephium-web3-providers'
-import { disconnect as extensionDisconnect } from "@h0ngcha0/get-alephium"
+import { disconnect as extensionDisconnect, connect as extensionConnect } from "@h0ngcha0/get-alephium"
 
 const WalletButton = () => {
     const context = useContext(AlephiumWeb3Context)
@@ -12,7 +12,7 @@ const WalletButton = () => {
             }
 
             case 'BrowserExtensionProvider': {
-                const windowAlephium = await connect({
+                const windowAlephium = await extensionConnect({
                     include: ["alephium"],
                 })
                 await windowAlephium?.enable()

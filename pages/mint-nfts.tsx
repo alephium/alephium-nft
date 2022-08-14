@@ -1,15 +1,12 @@
 import * as web3 from '@alephium/web3'
 import { useState, useContext } from 'react'
-import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
 import { stringToHex, subContractId } from '@alephium/web3'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
-
-// @ts-ignore
-const ipfsClient = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+import { ipfsClient } from '../utils/ipfs'
 
 export default function MintNFTs() {
     const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -36,7 +33,8 @@ export default function MintNFTs() {
                     progress: (prog) => console.log(`received: ${prog}`)
                 }
             )
-            const url: string = `https://ipfs.infura.io/ipfs/${added.path}`
+            console.log("added", added)
+            const url: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
             setFileUrl(url)
         } catch (error) {
             console.log('Error uploading file: ', error)
@@ -52,7 +50,7 @@ export default function MintNFTs() {
         })
         try {
             const added = await ipfsClient.add(data)
-            const url = `https://ipfs.infura.io/ipfs/${added.path}`
+            const url = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
             /* after file is uploaded to IPFS, return the URL to use it in the transaction */
             return url
         } catch (error) {

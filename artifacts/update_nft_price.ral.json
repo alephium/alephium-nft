@@ -2,7 +2,6 @@
   "sourceCodeSha256": "8807535b794f6ef7250f866c4f3b32966997461f8f73eee199586c7636bf29c1",
   "bytecodeTemplate": "01010300010008{2}1700{1}{0}0e0c16000104",
   "fieldsSig": {
-    "signature": "TxScript Main(price:U256,tokenId:ByteVec,nftMarketplaceContractId:ByteVec)",
     "names": [
       "price",
       "tokenId",
@@ -12,14 +11,22 @@
       "U256",
       "ByteVec",
       "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false
     ]
   },
   "functions": [
     {
       "name": "main",
-      "signature": "@using(preapprovedAssets=true) pub main()->()",
-      "argNames": [],
-      "argTypes": [],
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
       "returnTypes": []
     }
   ]

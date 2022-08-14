@@ -1,9 +1,8 @@
 {
-  "sourceCodeSha256": "131c04f9e00f5faac6fec56579e08661784c1be053a3e87222bdd96555565eab",
+  "sourceCodeSha256": "9cfabb285fc4dfe8e6c8fd2916b124401c86494f27b011c9dcc7d926f72addaf",
   "bytecode": "0401404801010307014022b41703b2170416030416001601160216041306641705160313c40de0b6b3a7640000a21602a00016050dc217060516031604160016011602160616067775160602",
   "codeHash": "36e85dce371a4993e5b22d7c49eb4a79e00947d7d9682e3454635181195ef37a",
   "fieldsSig": {
-    "signature": "Contract NFTCollection(nftTemplateId:ByteVec,collectionName:ByteVec,collectionDescription:ByteVec,collectionUri:ByteVec)",
     "names": [
       "nftTemplateId",
       "collectionName",
@@ -15,12 +14,17 @@
       "ByteVec",
       "ByteVec",
       "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false
     ]
   },
   "eventsSig": [
     {
       "name": "NFTMinted",
-      "signature": "event NFTMinted(minter:Address,collectionAddress:Address,name:ByteVec,description:ByteVec,uri:ByteVec,tokenId:ByteVec,nftContractAddress:Address)",
       "fieldNames": [
         "minter",
         "collectionAddress",
@@ -44,16 +48,23 @@
   "functions": [
     {
       "name": "mint",
-      "signature": "@using(preapprovedAssets=true,assetsInContract=true) pub mint(nftName:ByteVec,nftDescription:ByteVec,nftUri:ByteVec)->(ByteVec)",
-      "argNames": [
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
         "nftName",
         "nftDescription",
         "nftUri"
       ],
-      "argTypes": [
+      "paramTypes": [
         "ByteVec",
         "ByteVec",
         "ByteVec"
+      ],
+      "paramIsMutable": [
+        false,
+        false,
+        false
       ],
       "returnTypes": [
         "ByteVec"
