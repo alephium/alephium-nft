@@ -11,7 +11,6 @@
     "deploy:contracts": "node scripts/deploy.js"
   },
   "dependencies": {
-    "@alephium/walletconnect-provider": "0.2.0-rc.1",
     "@alephium/web3": "0.2.0-rc.3",
     "@h0ngcha0/get-alephium": "0.0.4",
     "@testing-library/jest-dom": "^5.16.4",
@@ -20,11 +19,6 @@
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "@walletconnect/client": "2.0.0-beta.26",
-    "@walletconnect/qrcode-modal": "1.7.8",
-    "@walletconnect/signer-connection": "2.0.0-beta.26",
-    "@walletconnect/types": "2.0.0-beta.26",
-    "@walletconnect/utils": "2.0.0-beta.26",
     "axios": "^0.26.0",
     "better-sqlite3": "^7.5.3",
     "daisyui": "^2.15.4",

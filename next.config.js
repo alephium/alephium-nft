@@ -2,7 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    //ENVIRONMENT: "development-walletconnect"
     //ENVIRONMENT: "development-nodewallet"
     ENVIRONMENT: "browser-extension"
   },

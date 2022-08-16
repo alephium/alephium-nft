@@ -56,11 +56,11 @@ npm run deploy:contracts
 
 ## Config Environments
 There are two environments available during development:
-`development-nodewallet` and `development-walletconnect` as configured
+`development-nodewallet` and `browser-extension` as configured
 in [alephium-configs.ts](configs/alephium-configs.ts). In
 `development-nodewallet` environment, node wallet is used as signer
 for authentication and signing transactions. In
-`development-walletconnect` environment Wallet Connect is used
+`browser-extension` environment Wallet Connect is used
 instead.
 
 `development-nodewallet` is the default environment. To switch

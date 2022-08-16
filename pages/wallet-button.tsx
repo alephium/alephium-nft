@@ -7,10 +7,6 @@ const WalletButton = () => {
 
     async function connect() {
         switch (context.signerProvider?.type) {
-            case 'WalletConnectProvider': {
-                await context.signerProvider.provider.connect()
-            }
-
             case 'BrowserExtensionProvider': {
                 const windowAlephium = await extensionConnect({
                     include: ["alephium"],
@@ -27,10 +23,6 @@ const WalletButton = () => {
 
     async function disconnect() {
         switch (context.signerProvider?.type) {
-            case 'WalletConnectProvider': {
-                await context.signerProvider.provider.disconnect()
-            }
-
             case 'BrowserExtensionProvider': {
                 extensionDisconnect()
             }
@@ -38,7 +30,6 @@ const WalletButton = () => {
     }
 
     const showButton = context.signerProvider && (
-        context.signerProvider.type === 'WalletConnectProvider' ||
         context.signerProvider.type === 'BrowserExtensionProvider'
     )
 
