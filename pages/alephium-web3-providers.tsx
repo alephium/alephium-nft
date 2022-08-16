@@ -23,7 +23,7 @@ type SignerProvider =
         provider: IAlephiumWindowObject | undefined
     }
 
-type SetSignerProviderFunc = (provider: SignerProvider) => void
+type SetSignerProviderFunc = (provider: IAlephiumWindowObject) => void
 type SetAccountsFunc = (accounts: Account[]) => void
 type StateType = {
     signerProvider?: SignerProvider
@@ -48,11 +48,11 @@ type ActionType =
     }
     | {
         type: 'SET_SIGNER_PROVIDER_FUNC'
-        func: StateType['setSignerProvider']
+        func: StateType['setSignerProviderFunc']
     }
     | {
         type: 'SET_ACCOUNTS_FUNC'
-        func: StateType['setAccounts']
+        func: StateType['setAccountsFunc']
     }
     | {
         type: 'DISCONNECT'
@@ -204,7 +204,7 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
             case 'BrowserExtensionProvider': {
                 dispatch({
                     type: 'SET_SIGNER_PROVIDER_FUNC',
-                    func: (provider: SignerProvider) => {
+                    func: (provider: IAlephiumWindowObject) => {
                         dispatch({
                             type: 'SET_SIGNER_PROVIDER',
                             signerProvider: {

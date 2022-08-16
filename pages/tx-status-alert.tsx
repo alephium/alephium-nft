@@ -1,5 +1,5 @@
 import * as web3 from "@alephium/web3"
-import { SubscribeOptions, subscribeToTxStatus } from "@alephium/web3"
+import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription } from "@alephium/web3"
 import { useContext, useEffect, useState } from "react"
 import { AlephiumWeb3Context } from "./alephium-web3-providers"
 
@@ -36,7 +36,7 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
     const context = useContext(AlephiumWeb3Context)
     const [txStatus, setTxStatus] = useState<web3.node.TxStatus | undefined>(undefined)
 
-    const subscriptionOptions: SubscribeOptions<web3.node.TxStatus> = {
+    const subscriptionOptions: SubscribeOptions<web3.node.TxStatus> | undefined = context?.nodeProvider && {
         provider: context.nodeProvider,
         pollingInterval: 3000,
         messageCallback: async (status: web3.node.TxStatus): Promise<void> => {
@@ -56,12 +56,17 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
     }
 
     useEffect(() => {
-        const subscription = subscribeToTxStatus(subscriptionOptions, txId)
+        var subscription: TxStatusSubscription | undefined = undefined
+        if (subscriptionOptions) {
+            subscription = subscribeToTxStatus(subscriptionOptions, txId)
+        }
 
         return () => {
-            subscription.unsubscribe()
+            if (subscription) {
+                subscription.unsubscribe()
+            }
         }
-    }, [txId])
+    })
 
     if (txStatus?.type === 'Confirmed') {
         return (

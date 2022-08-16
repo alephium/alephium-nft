@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AlephiumWeb3Context, connectWallet, getAccounts, instanceOfIAlephiumWindowObject } from './alephium-web3-providers'
+import { AlephiumWeb3Context } from './alephium-web3-providers'
 import { disconnect as extensionDisconnect, connect as extensionConnect } from "@h0ngcha0/get-alephium"
 
 const WalletButton = () => {
@@ -28,7 +28,7 @@ const WalletButton = () => {
     async function disconnect() {
         switch (context.signerProvider?.type) {
             case 'WalletConnectProvider': {
-                await context.signerProvider.disconnect()
+                await context.signerProvider.provider.disconnect()
             }
 
             case 'BrowserExtensionProvider': {

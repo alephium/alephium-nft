@@ -35,7 +35,6 @@ Contract NFTCollection(
             collectionAddress
         )
 
-
         let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1, minter)
 
         emit NFTMinted(

@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { useContext, useEffect, useState } from 'react'
 import { NFTContract } from '../utils/contracts'
-import { addressFromContractId } from '@alephium/web3'
+import { addressFromContractId, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
@@ -52,15 +52,15 @@ export default function Home() {
             }
 
             if (nftState && nftState.codeHash === NFTContract.codeHash) {
-                const metadataUri = web3.hexToString(nftState.fields.uri)
+                const metadataUri = web3.hexToString(nftState.fields.uri as string)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
                     name: metadata.name,
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    collectionAddress: nftState.fields.collectionAddress,
-                    owner: nftState.fields.owner
+                    collectionAddress: nftState.fields.collectionAddress as string,
+                    owner: nftState.fields.owner as string
                 }
             }
         }
@@ -87,8 +87,7 @@ export default function Home() {
         if (context.nodeProvider) {
             const mintNftEvents = await context.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
             for (var event of mintNftEvents.events) {
-                const tokenId = event.fields[5].value
-                console.log("tokenId", tokenId)
+                const tokenId = event.fields[5].value as string
                 const nft = await loadNFT(tokenId)
                 nft && items.push(nft)
             }
@@ -103,15 +102,17 @@ export default function Home() {
     async function loadAllSelfCustodiedNFTsForAddress(address: string) {
         const items = []
 
-        const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(address)
-        const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
-        const tokenIds = tokenBalances
-            .filter((token) => +token.amount == 1)
-            .map((token) => token.id)
+        if (context?.nodeProvider) {
+            const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(address)
+            const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
+            const tokenIds = tokenBalances
+                .filter((token) => +token.amount == 1)
+                .map((token) => token.id)
 
-        for (var tokenId of tokenIds) {
-            const nft = await loadNFT(tokenId)
-            nft && items.push(nft)
+            for (var tokenId of tokenIds) {
+                const nft = await loadNFT(tokenId)
+                nft && items.push(nft)
+            }
         }
 
         return items;
@@ -121,12 +122,12 @@ export default function Home() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider.provider,
+                context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider.provider,
+                context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
 

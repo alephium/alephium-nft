@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
-import { addressFromContractId, binToHex, contractIdFromAddress, hexToString } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
@@ -63,17 +63,17 @@ export default function BuyNFTs() {
                     context.nodeProvider, addressFromContractId(tokenId), 0
                 )
 
-                const metadataUri = hexToString(nftState.fields.uri)
+                const metadataUri = hexToString(nftState.fields.uri as string)
                 const metadata = (await axios.get(metadataUri)).data
                 return {
-                    price: listingState.fields.price,
+                    price: listingState.fields.price as number,
                     name: metadata.name,
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    tokenOwner: listingState.fields.tokenOwner,
-                    marketAddress: listingState.fields.marketAddress,
-                    commissionRate: listingState.fields.commissionRate,
+                    tokenOwner: listingState.fields.tokenOwner as string,
+                    marketAddress: listingState.fields.marketAddress as string,
+                    commissionRate: listingState.fields.commissionRate as number,
                     listingContractId: listingContractId
                 }
             }
@@ -117,12 +117,12 @@ export default function BuyNFTs() {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
-                context.signerProvider.provider,
+                context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider.provider,
+                context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
 

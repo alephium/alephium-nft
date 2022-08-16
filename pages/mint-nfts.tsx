@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { useState, useContext } from 'react'
 import { useRouter } from 'next/router'
-import { stringToHex, subContractId } from '@alephium/web3'
+import { SignerProvider, stringToHex, subContractId } from '@alephium/web3'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
@@ -64,7 +64,7 @@ export default function MintNFTs() {
         if (uri && context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
-                context.signerProvider.provider,
+                context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
             // TODO: Figure out UI to create collection, right now use default collection id
