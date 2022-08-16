@@ -33,7 +33,6 @@ export default function MintNFTs() {
                     progress: (prog) => console.log(`received: ${prog}`)
                 }
             )
-            console.log("added", added)
             const url: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
             setFileUrl(url)
         } catch (error) {
@@ -70,8 +69,6 @@ export default function MintNFTs() {
             )
             // TODO: Figure out UI to create collection, right now use default collection id
             const nftCollectionContractId = addresses.defaultNftCollectionContractId
-            const nftContractId = subContractId(nftCollectionContractId, stringToHex(uri))
-
             const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
             console.debug('mintNFTTxResult', mintNFTTxResult)
             setOngoingTxId(mintNFTTxResult.txId)
@@ -79,23 +76,11 @@ export default function MintNFTs() {
 
             setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
                 if (txStatus.type === 'Confirmed') {
-                    const withdrawNFTResult = await nftCollection.withdrawNFT(nftContractId)
-                    console.debug('withdrawNFTResult', withdrawNFTResult)
-
-                    setOngoingTxId(withdrawNFTResult.txId)
-                    setOngoingTxDescription('withdrawing NFT')
-                    setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
-                        if (txStatus.type === 'Confirmed') {
-                            resetTxStatus()
-                            router.push('/my-nfts')
-                        } else if (txStatus.type === 'TxNotFound') {
-                            resetTxStatus()
-                            console.error('List NFT transaction not found')
-                        }
-                    })
+                    resetTxStatus()
+                    router.push('/my-nfts')
                 } else if (txStatus.type === 'TxNotFound') {
                     resetTxStatus()
-                    console.error('Deposit NFT transaction not found')
+                    console.error('Mint NFT transaction not found')
                 }
             })
         } else {

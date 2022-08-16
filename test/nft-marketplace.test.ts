@@ -38,6 +38,9 @@ describe('nft marketplace', function() {
     const nftListingContractId = web3.subContractId(nftMarketplaceContractId, tokenId)
     const nftListingContractAddress = web3.addressFromContractId(nftListingContractId)
 
+    // Deposit NFT since it is withdrawn automatically when minted
+    await nftCollection.depositNFT(nftContractId)
+
     // list NFT
     {
       await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId)

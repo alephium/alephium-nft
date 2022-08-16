@@ -14,8 +14,11 @@ interface NFT {
     description: string,
     image: string,
     tokenId: string,
-    collectionAddress: string
+    collectionAddress: string,
+    owner: string
 }
+
+const defaultNftCollectionAddress = addressFromContractId(addresses.defaultNftCollectionContractId)
 
 export default function Home() {
     const [nfts, setNfts] = useState([] as NFT[])
@@ -56,32 +59,62 @@ export default function Home() {
                     description: metadata.description,
                     image: metadata.image,
                     tokenId: tokenId,
-                    collectionAddress: nftState.fields.collectionAddress
+                    collectionAddress: nftState.fields.collectionAddress,
+                    owner: nftState.fields.owner
                 }
             }
         }
     }
 
     async function loadNFTs() {
-        const items = []
-
         console.log("load nft", context.accounts)
         if (context.nodeProvider && context.accounts && context.accounts[0] && context.accounts[0].address) {
-            const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(context.accounts[0].address)
-            const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
-            const tokens = tokenBalances
-                .filter((token) => +token.amount == 1)
-                .map((token) => token.id)
-
-            for (var token of tokens) {
-                const nft = await loadNFT(token)
-                nft && items.push(nft)
-            }
-
-            setNfts(items)
+            const allNFTsForAddress = await loadAllNFTsForAddress(context.accounts[0].address)
+            setNfts(allNFTsForAddress)
         }
 
         setLoadingState('loaded')
+    }
+
+    async function loadAllNFTsForAddress(address: string) {
+        const allNFTs = await loadAllNFTs()
+        return allNFTs.filter((nft) => nft.owner === address)
+    }
+
+    async function loadAllNFTs() {
+        console.log("load all nfts")
+        const items = []
+        if (context.nodeProvider) {
+            const mintNftEvents = await context.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
+            for (var event of mintNftEvents.events) {
+                const tokenId = event.fields[5].value
+                console.log("tokenId", tokenId)
+                const nft = await loadNFT(tokenId)
+                nft && items.push(nft)
+            }
+
+        }
+
+        return items;
+    }
+
+    // NOTE: This fetches NFTs transferred to owners UTXOs, not counting the ones
+    //       still custodied in the NFT contract
+    async function loadAllSelfCustodiedNFTsForAddress(address: string) {
+        const items = []
+
+        const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(address)
+        const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
+        const tokenIds = tokenBalances
+            .filter((token) => +token.amount == 1)
+            .map((token) => token.id)
+
+        for (var tokenId of tokenIds) {
+            const nft = await loadNFT(tokenId)
+            nft && items.push(nft)
+        }
+
+        return items;
     }
 
     async function sellNFT(nft: NFT) {
@@ -97,6 +130,8 @@ export default function Home() {
                 context.accounts[0].address
             )
 
+            // If the token is self custodied, then we should deposit, otherwise
+            // we should just sell
             const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
 
             setOngoingTxId(depositNFTTxResult.txId)

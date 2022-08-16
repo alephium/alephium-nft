@@ -28,7 +28,7 @@ Contract NFTCollection(
 
         let initialState = encodeToByteVec!(
             minter,
-            false,
+            true,
             nftName,
             nftDescription,
             nftUri,
@@ -36,7 +36,7 @@ Contract NFTCollection(
         )
 
 
-        let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1)
+        let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1, minter)
 
         emit NFTMinted(
             minter,

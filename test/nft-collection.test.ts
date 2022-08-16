@@ -53,11 +53,14 @@ describe('nft collection', function() {
     const nftContractState = await NFTContract.fetchState(provider, nftContractAddress, 0)
 
     expect(nftContractState.fields.owner).toEqual(testAddress1)
-    expect(nftContractState.fields.isTokenWithdrawn).toEqual(false)
+    expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
     utils.checkHexString(nftContractState.fields.name, "CryptoPunk #0001")
     utils.checkHexString(nftContractState.fields.description, "CP0001")
     utils.checkHexString(nftContractState.fields.uri, "https://cryptopunks.app/cryptopunks/details/1")
     expect(nftContractState.fields.collectionAddress).toEqual(nftCollectionContractAddress)
+
+    // Deposit NFT since it is withdrawn automatically when minted
+    await nftCollection.depositNFT(nftContractId)
 
     // Burn NFT
     const balanceBeforeBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
