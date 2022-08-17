@@ -36,11 +36,11 @@ export default function Home() {
         resetTxStatus
     ] = useTxStatus()
 
-    console.debug('Accounts in my-nft', context.accounts)
+    console.debug('selected account in my-nft', context.selectedAccount)
 
     useEffect(() => {
         loadNFTs()
-    }, [context.accounts])
+    }, [context.selectedAccount])
 
     async function loadNFT(tokenId: string): Promise<NFT | undefined> {
         var nftState = undefined
@@ -69,9 +69,8 @@ export default function Home() {
     }
 
     async function loadNFTs() {
-        console.log("load nft", context.accounts)
-        if (context.nodeProvider && context.accounts && context.accounts[0] && context.accounts[0].address) {
-            const allNFTsForAddress = await loadAllNFTsForAddress(context.accounts[0].address)
+        if (context.nodeProvider && context.selectedAccount) {
+            const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAccount.address)
             setNfts(allNFTsForAddress)
         }
 
@@ -121,21 +120,21 @@ export default function Home() {
     }
 
     function getNFTMarketplace(): NFTMarketplace | undefined {
-        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
             return new NFTMarketplace(
                 context.nodeProvider,
                 context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
+                context.selectedAccount.address
             )
         }
     }
 
     function getNFTCollection(): NFTCollection | undefined {
-        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
             return new NFTCollection(
                 context.nodeProvider,
                 context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
+                context.selectedAccount.address
             )
         }
     }

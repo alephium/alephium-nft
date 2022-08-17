@@ -61,11 +61,11 @@ export default function MintNFTs() {
         const uri = await uploadToIPFS()
         const name = formInput.name
         const description = formInput.description
-        if (uri && context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (uri && context.nodeProvider && context.signerProvider && context.selectedAccount) {
             const nftCollection = new NFTCollection(
                 context.nodeProvider,
                 context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
+                context.selectedAccount.address
             )
             // TODO: Figure out UI to create collection, right now use default collection id
             const nftCollectionContractId = addresses.defaultNftCollectionContractId

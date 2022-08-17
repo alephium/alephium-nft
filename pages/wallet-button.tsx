@@ -12,10 +12,10 @@ const WalletButton = () => {
                     include: ["alephium"],
                 })
                 await windowAlephium?.enable()
-                if (windowAlephium && context.setSignerProviderFunc && context.setAccountsFunc) {
+                if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAccountFunc) {
                     context.setSignerProviderFunc(windowAlephium)
-                    const addresses = await windowAlephium.getAccounts()
-                    context.setAccountsFunc(addresses)
+                    windowAlephium.selectedAccount &&
+                        context.setSelectedAccountFunc(windowAlephium.selectedAccount)
                 }
             }
         }
@@ -36,7 +36,7 @@ const WalletButton = () => {
     return (
         showButton ?
             (
-                context.accounts && context.accounts.length === 0 ?
+                !context.selectedAccount ?
                     <button className="btn btn-outline btn-sm btn-accent" onClick={connect}>Connect</button> :
                     <button className="btn btn-outline btn-sm btn-secondary" onClick={disconnect}>Disconnect</button>
             ) : null

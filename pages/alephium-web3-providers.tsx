@@ -16,19 +16,19 @@ type SignerProvider =
     }
 
 type SetSignerProviderFunc = (provider: IAlephiumWindowObject) => void
-type SetAccountsFunc = (accounts: Account[]) => void
+type SetSelectedAccountFunc = (accounts: Account) => void
 type StateType = {
     signerProvider?: SignerProvider
     nodeProvider?: NodeProvider
-    accounts: Account[]
+    selectedAccount?: Account,
     setSignerProviderFunc?: SetSignerProviderFunc
-    setAccountsFunc?: SetAccountsFunc
+    setSelectedAccountFunc?: SetSelectedAccountFunc
 }
 
 type ActionType =
     | {
-        type: 'SET_ACCOUNTS'
-        accounts: StateType['accounts']
+        type: 'SET_SELECTED_ACCOUNT'
+        selectedAccount: StateType['selectedAccount']
     }
     | {
         type: 'SET_SIGNER_PROVIDER'
@@ -43,8 +43,8 @@ type ActionType =
         func: StateType['setSignerProviderFunc']
     }
     | {
-        type: 'SET_ACCOUNTS_FUNC'
-        func: StateType['setAccountsFunc']
+        type: 'SET_SELECTED_ACCOUNT_FUNC'
+        func: StateType['setSelectedAccountFunc']
     }
     | {
         type: 'DISCONNECT'
@@ -53,19 +53,19 @@ type ActionType =
 const initialState: StateType = {
     signerProvider: undefined,
     nodeProvider: undefined,
-    accounts: [] as Account[],
+    selectedAccount: undefined,
     setSignerProviderFunc: undefined,
-    setAccountsFunc: undefined
+    setSelectedAccountFunc: undefined
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
-    console.log("received action", action)
     switch (action.type) {
-        case 'SET_ACCOUNTS':
+        case 'SET_SELECTED_ACCOUNT':
             return {
                 ...state,
-                accounts: action.accounts
+                selectedAccount: action.selectedAccount
             }
+
         case 'SET_SIGNER_PROVIDER':
             return {
                 ...state,
@@ -87,10 +87,10 @@ function reducer(state: StateType, action: ActionType): StateType {
                 setSignerProviderFunc: action.func
             }
 
-        case 'SET_ACCOUNTS_FUNC':
+        case 'SET_SELECTED_ACCOUNT_FUNC':
             return {
                 ...state,
-                setAccountsFunc: action.func
+                setSelectedAccountFunc: action.func
             }
 
         default:
@@ -147,9 +147,10 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
                 const wallet = new NodeWallet(nodeProvider, config.signerProvider.walletName)
                 wallet.unlock(config.signerProvider.password)
                 const accounts = await wallet.getAccounts()
+
                 dispatch({
-                    type: 'SET_ACCOUNTS',
-                    accounts: accounts
+                    type: 'SET_SELECTED_ACCOUNT',
+                    selectedAccount: accounts[0]
                 })
 
                 dispatch({
@@ -178,11 +179,11 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
                 })
 
                 dispatch({
-                    type: 'SET_ACCOUNTS_FUNC',
-                    func: (accounts: Account[]) => {
+                    type: 'SET_SELECTED_ACCOUNT_FUNC',
+                    func: (account: Account) => {
                         dispatch({
-                            type: 'SET_ACCOUNTS',
-                            accounts: accounts
+                            type: 'SET_SELECTED_ACCOUNT',
+                            selectedAccount: account
                         })
                     }
                 })
@@ -193,9 +194,16 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
                     await windowAlephium.enable()
                     const accounts = await windowAlephium.getAccounts()
 
+                    windowAlephium.on("addressesChanged", (_data) => {
+                        dispatch({
+                            type: 'SET_SELECTED_ACCOUNT',
+                            selectedAccount: windowAlephium.selectedAccount
+                        })
+                    })
+
                     dispatch({
-                        type: 'SET_ACCOUNTS',
-                        accounts: accounts
+                        type: 'SET_SELECTED_ACCOUNT',
+                        selectedAccount: windowAlephium.selectedAccount
                     })
                 }
 
@@ -215,11 +223,11 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
     return (
         <AlephiumWeb3Context.Provider
             value={{
-                accounts: state.accounts,
+                selectedAccount: state.selectedAccount,
                 signerProvider: state.signerProvider,
                 nodeProvider: state.nodeProvider,
                 setSignerProviderFunc: state.setSignerProviderFunc,
-                setAccountsFunc: state.setAccountsFunc
+                setSelectedAccountFunc: state.setSelectedAccountFunc
             }}
         >
             {children}

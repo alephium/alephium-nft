@@ -41,7 +41,7 @@ export default function BuyNFTs() {
 
     useEffect(() => {
         loadListedNFTs()
-    }, [context.accounts])
+    }, [context.selectedAccount])
 
     async function loadListedNFT(event: ContractEvent): Promise<NFTListing | undefined> {
         const tokenId = event.fields[1].value.toString()
@@ -93,11 +93,11 @@ export default function BuyNFTs() {
         //
         const items = new Map<string, NFTListing>()
 
-        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
                 context.signerProvider.provider as web3.SignerProvider,
-                context.accounts[0].address
+                context.selectedAccount.address
             )
             const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
             const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
@@ -114,11 +114,11 @@ export default function BuyNFTs() {
     }
 
     async function buyNFT(nftListing: NFTListing) {
-        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+        if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
             const nftMarketplace = new NFTMarketplace(
                 context.nodeProvider,
                 context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
+                context.selectedAccount.address
             )
             const buyNFTTxResult = await nftMarketplace.buyNFT(
                 2000000000000000000,
