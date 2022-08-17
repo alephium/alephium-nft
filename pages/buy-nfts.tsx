@@ -120,12 +120,6 @@ export default function BuyNFTs() {
                 context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
-            const nftCollection = new NFTCollection(
-                context.nodeProvider,
-                context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
-            )
-
             const buyNFTTxResult = await nftMarketplace.buyNFT(
                 2000000000000000000,
                 nftListing.tokenId,
@@ -137,20 +131,8 @@ export default function BuyNFTs() {
 
             setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
                 if (txStatus.type === 'Confirmed') {
-                    const withdrawNFTResult = await nftCollection.withdrawNFT(nftListing.tokenId)
-                    console.debug('withdrawNFTResult', withdrawNFTResult)
-
-                    setOngoingTxId(withdrawNFTResult.txId)
-                    setOngoingTxDescription('withdrawing NFT')
-                    setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
-                        if (txStatus.type === 'Confirmed') {
-                            resetTxStatus()
-                            router.push('/my-nfts')
-                        } else if (txStatus.type === 'TxNotFound') {
-                            resetTxStatus()
-                            console.error('List NFT transaction not found')
-                        }
-                    })
+                    resetTxStatus()
+                    router.push('/my-nfts')
                 } else if (txStatus.type === 'TxNotFound') {
                     resetTxStatus()
                     console.error('Deposit NFT transaction not found')
@@ -172,7 +154,9 @@ export default function BuyNFTs() {
                         {
                             nftListings.map((nftListing, i) => (
                                 <div key={i} className="border shadow rounded-xl overflow-hidden">
-                                    <img src={nftListing.image} />
+                                    <div className="p-4 object-center">
+                                        <img src={nftListing.image} />
+                                    </div>
                                     <div className="p-4">
                                         <p style={{ height: '64px' }} className="text-2xl font-semibold">{nftListing.name}</p>
                                         <div style={{ height: '70px', overflow: 'hidden' }}>

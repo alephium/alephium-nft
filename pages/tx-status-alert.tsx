@@ -66,7 +66,7 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
                 subscription.unsubscribe()
             }
         }
-    })
+    }, [txId])
 
     if (txStatus?.type === 'Confirmed') {
         return (

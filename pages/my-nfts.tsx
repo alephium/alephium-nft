@@ -15,7 +15,8 @@ interface NFT {
     image: string,
     tokenId: string,
     collectionAddress: string,
-    owner: string
+    owner: string,
+    isTokenWithdrawn: boolean
 }
 
 const defaultNftCollectionAddress = addressFromContractId(addresses.defaultNftCollectionContractId)
@@ -60,7 +61,8 @@ export default function Home() {
                     image: metadata.image,
                     tokenId: tokenId,
                     collectionAddress: nftState.fields.collectionAddress as string,
-                    owner: nftState.fields.owner as string
+                    owner: nftState.fields.owner as string,
+                    isTokenWithdrawn: nftState.fields.isTokenWithdrawn as boolean
                 }
             }
         }
@@ -118,43 +120,76 @@ export default function Home() {
         return items;
     }
 
-    async function sellNFT(nft: NFT) {
+    function getNFTMarketplace(): NFTMarketplace | undefined {
         if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
-            const nftMarketplace = new NFTMarketplace(
+            return new NFTMarketplace(
                 context.nodeProvider,
                 context.signerProvider.provider as SignerProvider,
                 context.accounts[0].address
             )
-            const nftCollection = new NFTCollection(
-                context.nodeProvider,
-                context.signerProvider.provider as SignerProvider,
-                context.accounts[0].address
-            )
+        }
+    }
 
-            // If the token is self custodied, then we should deposit, otherwise
-            // we should just sell
+    function getNFTCollection(): NFTCollection | undefined {
+        if (context.nodeProvider && context.signerProvider && context.accounts && context.accounts[0]) {
+            return new NFTCollection(
+                context.nodeProvider,
+                context.signerProvider.provider as SignerProvider,
+                context.accounts[0].address
+            )
+        }
+    }
+
+    async function depositNFT(nft: NFT) {
+        const nftCollection = getNFTCollection()
+        if (!!nftCollection) {
             const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
-
             setOngoingTxId(depositNFTTxResult.txId)
             setOngoingTxDescription('depositing NFT')
             setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
                 if (txStatus.type === 'Confirmed') {
-                    const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
-
-                    setOngoingTxId(listNFTTxResult.txId)
-                    setOngoingTxDescription('listing NFT')
-                    setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
-                        if (txStatus.type === 'Confirmed') {
-                            resetTxStatus()
-                            await loadNFTs()
-                        } else if (txStatus.type === 'TxNotFound') {
-                            resetTxStatus()
-                            console.error('List NFT transaction not found')
-                        }
-                    })
+                    resetTxStatus()
+                    await loadNFTs()
                 } else if (txStatus.type === 'TxNotFound') {
                     resetTxStatus()
                     console.error('Deposit NFT transaction not found')
+                }
+            })
+        }
+    }
+
+    async function withdrawNFT(nft: NFT) {
+        const nftCollection = getNFTCollection()
+        if (!!nftCollection) {
+            const withdrawNFTTxResult = await nftCollection.withdrawNFT(nft.tokenId)
+            setOngoingTxId(withdrawNFTTxResult.txId)
+            setOngoingTxDescription('withdrawing NFT')
+            setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                if (txStatus.type === 'Confirmed') {
+                    resetTxStatus()
+                    await loadNFTs()
+                } else if (txStatus.type === 'TxNotFound') {
+                    resetTxStatus()
+                    console.error('Withdraw NFT transaction not found')
+                }
+            })
+        }
+    }
+
+    async function listNFT(nft: NFT) {
+        const nftMarketplace = getNFTMarketplace()
+        if (!!nftMarketplace) {
+            const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, 1000, addresses.marketplaceContractId)
+
+            setOngoingTxId(listNFTTxResult.txId)
+            setOngoingTxDescription('listing NFT')
+            setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+                if (txStatus.type === 'Confirmed') {
+                    resetTxStatus()
+                    await loadNFTs()
+                } else if (txStatus.type === 'TxNotFound') {
+                    resetTxStatus()
+                    console.error('List NFT transaction not found')
                 }
             })
         }
@@ -173,15 +208,27 @@ export default function Home() {
                         {
                             nfts.map((nft, i) => (
                                 <div key={i} className="border shadow rounded-xl overflow-hidden">
-                                    <img src={nft.image} />
+                                    <div className="p-4 object-center">
+                                        <img src={nft.image} />
+                                    </div>
                                     <div className="p-4">
                                         <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
                                         <div style={{ height: '70px', overflow: 'hidden' }}>
                                             <p className="text-gray-400">{nft.description}</p>
                                         </div>
                                     </div>
+                                    <div></div>
                                     <div className="p-4 bg-black">
-                                        <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => sellNFT(nft)}>Sell</button>
+                                        {
+                                            nft.isTokenWithdrawn ?
+                                                <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => depositNFT(nft)}>Deposit</button> :
+                                                <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => withdrawNFT(nft)}>Withdrawn</button>
+                                        }
+                                        {
+                                            nft.isTokenWithdrawn ?
+                                                <button className="mt-4 bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Sell</button> :
+                                                <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => listNFT(nft)}>Sell</button>
+                                        }
                                     </div>
                                 </div>
                             ))
