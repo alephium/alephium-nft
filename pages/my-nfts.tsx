@@ -8,6 +8,7 @@ import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
+import { convertAlphToSet } from '@alephium/sdk'
 
 interface NFT {
   name: string,
@@ -28,6 +29,7 @@ export default function Home() {
   const [loadingState, setLoadingState] = useState('not-loaded')
   const context = useContext(AlephiumWeb3Context)
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
+  const minimumNFTPrice = 0.0001 // ALPH
 
   const [
     ongoingTxId,
@@ -188,7 +190,8 @@ export default function Home() {
 
     const nftMarketplace = getNFTMarketplace()
     if (!!nftMarketplace) {
-      const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, price, addresses.marketplaceContractId)
+      const priceInSets = convertAlphToSet(price.toString())
+      const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, priceInSets, addresses.marketplaceContractId)
 
       setOngoingTxId(listNFTTxResult.txId)
       setOngoingTxDescription('listing NFT')
@@ -260,7 +263,7 @@ export default function Home() {
                   <div className="rounded-lg shadow-lg relative flex flex-col w-full bg-white">
                     <form className="bg-black shadow-md rounded px-10 pt-6 pb-8 w-full">
                       <label className="block text-white text-sm font-bold mb-1">
-                        Price
+                        Price (ALPH)
                       </label>
                       <input
                         type="number"
@@ -278,7 +281,7 @@ export default function Home() {
                         Cancel
                       </button>
                       {
-                        (nftSellingPrice && (nftSellingPrice > 0)) ?
+                        (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
                           <button
                             className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
                             type="button"

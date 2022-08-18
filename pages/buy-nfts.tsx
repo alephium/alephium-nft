@@ -2,14 +2,14 @@ import { useContext, useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
-import { NFTListingContract, NFTContract } from '../utils/contracts'
+import { NFTListingContract, NFTContract, NFTMarketplaceContract } from '../utils/contracts'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 import { useRouter } from 'next/router'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
+import { convertAlphToSet, formatAmountForDisplay } from '@alephium/sdk'
 
 interface NFTListing {
   price: number
@@ -26,6 +26,7 @@ interface NFTListing {
 export default function BuyNFTs() {
   const [nftListings, setNftListings] = useState([] as NFTListing[])
   const [loadingState, setLoadingState] = useState('not-loaded')
+  const [commissionRate, setCommissionRate] = useState<number | undefined>(undefined)
   const context = useContext(AlephiumWeb3Context)
   const router = useRouter()
 
@@ -41,7 +42,24 @@ export default function BuyNFTs() {
 
   useEffect(() => {
     loadListedNFTs()
-  }, [context.selectedAccount])
+    loadMarketplaceCommissionRate()
+  }, [context.selectedAccount, context.nodeProvider])
+
+  async function loadMarketplaceCommissionRate() {
+    if (context.nodeProvider) {
+      try {
+        const marketplaceState = await NFTMarketplaceContract.fetchState(
+          context.nodeProvider,
+          addressFromContractId(addresses.marketplaceContractId),
+          0
+        )
+
+        setCommissionRate(marketplaceState.fields.commissionRate as number)
+      } catch (e) {
+        console.debug(`error fetching state for market place`, e)
+      }
+    }
+  }
 
   async function loadListedNFT(event: ContractEvent): Promise<NFTListing | undefined> {
     const tokenId = event.fields[1].value.toString()
@@ -81,16 +99,6 @@ export default function BuyNFTs() {
   }
 
   async function loadListedNFTs() {
-    // Setup marketplace and get all the listed NFTListed
-    //
-    //   event NFTListed(
-    //     price: U256,
-    //     tokenId: ByteVec,
-    //     tokenOwner: Address,
-    //     listingContractId: ByteVec,
-    //     listingContractAddress: Address
-    //   )
-    //
     const items = new Map<string, NFTListing>()
 
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
@@ -114,14 +122,20 @@ export default function BuyNFTs() {
   }
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider && context.selectedAccount && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
+
+      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
+      console.debug("commission", commission)
+      console.debug("nftDeposit", nftDeposit)
+      console.debug("gasAmount", gasAmount)
+      console.debug("totalAmount", totalAmount)
       const buyNFTTxResult = await nftMarketplace.buyNFT(
-        2000000000000000000,
+        totalAmount,
         nftListing.tokenId,
         binToHex(contractIdFromAddress(nftListing.marketAddress))
       )
@@ -138,6 +152,14 @@ export default function BuyNFTs() {
           console.error('Deposit NFT transaction not found')
         }
       })
+    } else {
+      console.debug(
+        "can not buy NFT",
+        context.nodeProvider,
+        context.signerProvider,
+        context.selectedAccount,
+        commissionRate
+      )
     }
   }
 
@@ -164,7 +186,8 @@ export default function BuyNFTs() {
                     </div>
                   </div>
                   <div className="p-4 bg-black">
-                    <p className="text-2xl font-bold text-white">{nftListing.price} ALPH </p>
+                    <p className="text-2xl font-bold text-white">{formatAmountForDisplay(BigInt(nftListing.price))} ALPH </p>
+                    {commissionRate && showPriceBreakdowns(nftListing.price, commissionRate)}
                     <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nftListing)}>Buy</button>
                   </div>
                 </div>
@@ -174,5 +197,61 @@ export default function BuyNFTs() {
         </div>
       </div>
     </>
+  )
+}
+
+function getPriceBreakdowns(nftPrice: number, commissionRate: number) {
+  const commission = (BigInt(nftPrice) * BigInt(commissionRate)) / BigInt(10000)
+  const nftDeposit = convertAlphToSet("1")
+  const gasAmount = BigInt(200000)
+  const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
+
+  return [commission, nftDeposit, gasAmount, totalAmount]
+}
+
+function showPriceBreakdowns(nftPrice: number, commissionRate: number) {
+  const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftPrice, commissionRate)
+  return (
+    <div className="flex flex-col">
+      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8" >
+        <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+          <table className="min-w-full">
+            <thead>
+              <tr>
+                <th scope="col" className="text-sm py-4 font-bold text-white text-left">
+                  Total amount ≈ {formatAmountForDisplay(totalAmount)} ALPH
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-black">
+                <td className="whitespace-nowrap text-sm font-medium text-white">NFT Price</td>
+                <td className="text-sm text-white whitespace-nowrap">
+                  {formatAmountForDisplay(BigInt(nftPrice))}
+                </td>
+              </tr>
+              <tr className="bg-black">
+                <td className="whitespace-nowrap text-sm font-medium text-white">Commission</td>
+                <td className="text-sm text-white whitespace-nowrap">
+                  {formatAmountForDisplay(BigInt(commission))}
+                </td>
+              </tr>
+              <tr className="bg-black">
+                <td className="whitespace-nowrap text-sm font-medium text-white">NFT Contract Deposit</td>
+                <td className="text-sm text-white whitespace-nowrap">
+                  {formatAmountForDisplay(BigInt(nftDeposit))}
+                </td>
+              </tr>
+              <tr className="bg-black">
+                <td className="whitespace-nowrap text-sm font-medium text-white">Gas</td>
+                <td className="text-sm text-white whitespace-nowrap">
+                  {formatAmountForDisplay(BigInt(gasAmount), true)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   )
 }
