@@ -11,7 +11,7 @@
     "deploy:contracts": "node scripts/deploy.js"
   },
   "dependencies": {
-    "@alephium/web3": "0.2.0-rc.3",
+    "@alephium/web3": "0.2.0-rc.4",
     "@h0ngcha0/get-alephium": "0.0.5",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
