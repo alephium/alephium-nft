@@ -13,17 +13,19 @@ Contract NFTListing(
         MarketplaceAllowedOnly = 0
     }
 
+    @using(permissionCheck = false)
     pub fn getTokenOwner() -> Address {
         return tokenOwner
     }
 
+    @using(permissionCheck = false)
     pub fn getPrice() -> U256 {
         return price
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buy(buyer: Address) -> () {
-        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        checkPermission!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
         // Charge a commission for the marketplace
         let commission = (price * commissionRate) / 10000
@@ -44,7 +46,7 @@ Contract NFTListing(
 
     @using(assetsInContract = true)
     pub fn cancel() -> () {
-        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        checkPermission!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
         let nft = NFT(tokenId)
         nft.transferOwnership(tokenOwner)
@@ -53,7 +55,7 @@ Contract NFTListing(
     }
 
     pub fn updatePrice(newPrice: U256) -> () {
-        assert!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        checkPermission!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
         price = newPrice
     }
 }
