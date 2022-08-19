@@ -1,0 +1,74 @@
+{
+  "sourceCodeSha256": "63d4dfe0e98d33dc6a30c376cbdf56d7a99a02dd65b99e5494823bc1d06255ca",
+  "bytecode": "0401404a01010307014023b41703b2170416030316001601160216041306641705160313c40de0b6b3a7640000a21602a00016050d1603c917060516031604160016011602160616067775160602",
+  "codeHash": "43f290b658cf552956dc734858e128ccef35c32822d8a80fb7d70fbcc3d4781f",
+  "fieldsSig": {
+    "names": [
+      "nftTemplateId",
+      "collectionName",
+      "collectionDescription",
+      "collectionUri"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec",
+      "ByteVec",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "NFTMinted",
+      "fieldNames": [
+        "minter",
+        "collectionAddress",
+        "name",
+        "description",
+        "uri",
+        "tokenId",
+        "nftContractAddress"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address",
+        "ByteVec",
+        "ByteVec",
+        "ByteVec",
+        "ByteVec",
+        "Address"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "mint",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "nftName",
+        "nftDescription",
+        "nftUri"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "ByteVec",
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false,
+        false,
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    }
+  ]
+}

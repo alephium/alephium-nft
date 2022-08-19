@@ -33,11 +33,12 @@ Contract NFT(
         TokenAlreadyDeposited = 2
     }
 
+    @using(readonly = true)
     pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
         return name, description, uri, collectionAddress
     }
 
-    @using(permissionCheck = false)
+    @using(readonly = true)
     pub fn getOwner() -> (Address) {
         return owner
     }

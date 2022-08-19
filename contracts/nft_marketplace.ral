@@ -156,6 +156,7 @@ Contract NFTMarketPlace(
         emit CommissionRateUpdated(commissionRate, newCommissionRate)
     }
 
+    @using(readonly = true)
     pub fn getListingFee() -> U256 {
         return listingFee
     }

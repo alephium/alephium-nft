@@ -13,12 +13,12 @@ Contract NFTListing(
         MarketplaceAllowedOnly = 0
     }
 
-    @using(permissionCheck = false)
+    @using(readonly = true)
     pub fn getTokenOwner() -> Address {
         return tokenOwner
     }
 
-    @using(permissionCheck = false)
+    @using(readonly = true)
     pub fn getPrice() -> U256 {
         return price
     }
