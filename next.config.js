@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     //ENVIRONMENT: "development-nodewallet"
-    ENVIRONMENT: "browser-extension"
+    //ENVIRONMENT: "browser-extension-softfork"
+    ENVIRONMENT: "browser-extension-local"
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
