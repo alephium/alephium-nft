@@ -38,19 +38,19 @@ Contract NFT(
         return name, description, uri, collectionAddress
     }
 
-    @using(readonly = true)
+    @using(readonly = true, externalCallCheck = false)
     pub fn getOwner() -> (Address) {
         return owner
     }
 
     pub fn transferOwnership(newOwner: Address) -> () {
-        checkPermission!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
     }
 
     @using(preapprovedAssets = true)
     pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
-        checkPermission!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
         transferAlph!(newOwner, owner, 1 alph)
     }

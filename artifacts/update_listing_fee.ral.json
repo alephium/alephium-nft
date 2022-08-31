@@ -1,0 +1,30 @@
+{
+  "sourceCodeSha256": "6498f45d825511ded08bde06627cdb5985dd9b12aadf9faeae1c826c68308f70",
+  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000106",
+  "fieldsSig": {
+    "names": [
+      "price",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

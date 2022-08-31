@@ -1,0 +1,30 @@
+{
+  "sourceCodeSha256": "39391f9d4a4969eaa06f9a0bf4a74e66f316283312953040f3d0c7991b8c7c22",
+  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000105",
+  "fieldsSig": {
+    "names": [
+      "newAdmin",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "Address",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

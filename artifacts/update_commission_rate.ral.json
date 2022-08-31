@@ -1,0 +1,30 @@
+{
+  "sourceCodeSha256": "21c239d23f073abba52f5da9adffbccca75dbb6b0c0887e8371a10b269199e85",
+  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000107",
+  "fieldsSig": {
+    "names": [
+      "newCommissionRate",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "sourceCodeSha256": "5f847b324164b5e8363481c57259dbd5d289fdfa15bdabae00358565cea86e65",
+  "bytecodeTemplate": "01010300010006{0}17000c0c16000106",
+  "fieldsSig": {
+    "names": [
+      "nftContractId"
+    ],
+    "types": [
+      "ByteVec"
+    ],
+    "isMutable": [
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}
