@@ -33,22 +33,24 @@ Contract NFT(
         TokenAlreadyDeposited = 2
     }
 
+    @using(readonly = true, externalCallCheck = false)
     pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
         return name, description, uri, collectionAddress
     }
 
+    @using(readonly = true, externalCallCheck = false)
     pub fn getOwner() -> (Address) {
         return owner
     }
 
     pub fn transferOwnership(newOwner: Address) -> () {
-        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
     }
 
     @using(preapprovedAssets = true)
     pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
-        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
+        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
         transferAlph!(newOwner, owner, 1 alph)
     }

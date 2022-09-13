@@ -15,7 +15,7 @@ module.exports = {
       signerProvider: {
         type: 'BrowserExtensionProvider',
       }
-    }
+    },
     'browser-extension-softfork': {
       nodeUrl: 'https://alephium-dev.softfork.se',
       signerProvider: {

@@ -71,7 +71,7 @@ Contract NFTMarketPlace(
 
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn payCommission(buyer: Address, commission: U256) -> () {
-        assert!(commission > 0, ErrorCodes.CommissionIsZero)
+        checkCaller!(commission > 0, ErrorCodes.CommissionIsZero)
         transferAlph!(buyer, selfAddress!(), commission)
     }
 
@@ -156,6 +156,7 @@ Contract NFTMarketPlace(
         emit CommissionRateUpdated(commissionRate, newCommissionRate)
     }
 
+    @using(readonly = true)
     pub fn getListingFee() -> U256 {
         return listingFee
     }
