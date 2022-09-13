@@ -3,7 +3,7 @@ import React, { useEffect, useReducer } from 'react'
 import { Account } from '@alephium/web3'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
-import { connect, IAlephiumWindowObject } from "@h0ngcha0/get-alephium"
+import { connect, IAlephiumWindowObject } from "@alephium/get-extension-wallet"
 
 type SignerProvider =
   | {
