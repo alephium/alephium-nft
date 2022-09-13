@@ -69,7 +69,7 @@ Contract NFTMarketPlace(
         emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(preapprovedAssets = true, assetsInContract = true, externalCallCheck = false)
     pub fn payCommission(buyer: Address, commission: U256) -> () {
         checkCaller!(commission > 0, ErrorCodes.CommissionIsZero)
         transferAlph!(buyer, selfAddress!(), commission)
