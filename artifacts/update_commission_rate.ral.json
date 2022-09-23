@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "5f7b6cb31c91d170e7513bb9a9739f9db5f3e15bf07b202841b3f406f33271d0",
+  "name": "UpdateComissionRate",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000107",
   "fieldsSig": {
     "names": [

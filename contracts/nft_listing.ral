@@ -1,6 +1,3 @@
-import "nft.ral"
-import "nft_marketplace.ral"
-
 Contract NFTListing(
     mut price: U256,
     tokenId: ByteVec,

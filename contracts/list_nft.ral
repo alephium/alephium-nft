@@ -1,7 +1,4 @@
-import "nft_marketplace.ral"
-import "nft.ral"
-
-TxScript Main(
+TxScript ListNFT(
     tokenId: ByteVec,
     price: U256,
     marketPlaceContractId: ByteVec

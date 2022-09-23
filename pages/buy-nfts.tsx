@@ -103,10 +103,12 @@ export default function BuyNFTs() {
 
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider,
+        context.nodeProvider.baseUrl,
         context.signerProvider.provider as web3.SignerProvider,
         context.selectedAccount.address
       )
+      await nftMarketplace.buildProject()
+
       const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
       const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
 
@@ -124,10 +126,11 @@ export default function BuyNFTs() {
   async function buyNFT(nftListing: NFTListing) {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider,
+        context.nodeProvider.baseUrl,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
+      await nftMarketplace.buildProject()
 
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
       console.debug("commission", commission)

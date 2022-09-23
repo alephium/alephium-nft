@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "881eef80bd3983ea0b3454332740317dfe1bab45693cb4d392e3c2a79dc684ef",
+  "name": "UpdateAdmin",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000105",
   "fieldsSig": {
     "names": [

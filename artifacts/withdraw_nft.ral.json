@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "018598a5fda456da16c862d069ad2e2999bd7f1804e7965b73c48049493625b8",
+  "name": "WithdrawNFT",
   "bytecodeTemplate": "01010300010006{0}17000c0c16000106",
   "fieldsSig": {
     "names": [

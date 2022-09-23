@@ -132,7 +132,7 @@ export default function Home() {
   function getNFTMarketplace(): NFTMarketplace | undefined {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTMarketplace(
-        context.nodeProvider,
+        context.nodeProvider.baseUrl,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
@@ -142,7 +142,7 @@ export default function Home() {
   function getNFTCollection(): NFTCollection | undefined {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTCollection(
-        context.nodeProvider,
+        context.nodeProvider.baseUrl,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )

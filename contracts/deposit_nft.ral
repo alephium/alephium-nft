@@ -1,6 +1,4 @@
-import "nft.ral"
-
-TxScript Main(
+TxScript DepositNFT(
     nftContractId: ByteVec
 ) {
     let nft = NFT(nftContractId)

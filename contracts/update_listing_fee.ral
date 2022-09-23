@@ -1,6 +1,4 @@
-import "nft_marketplace.ral"
-
-TxScript Main(
+TxScript UpdateListingFee(
     price: U256,
     nftMarketplaceContractId: ByteVec
 ) {

@@ -1,6 +1,4 @@
-import "nft.ral"
-
-TxScript Main(nftContractId: ByteVec) {
+TxScript BurnNFT(nftContractId: ByteVec) {
     let nft = NFT(nftContractId)
     nft.burn()
 }

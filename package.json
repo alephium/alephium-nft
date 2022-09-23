@@ -7,19 +7,27 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:contracts": "jest -i --config ./configs/jest-contracts.config.ts",
-    "deploy:contracts": "node scripts/deploy.js"
+    "build:contracts": "npx alephium-cli project build",
+    "test:contracts": "npm run build:contracts && jest -i --config ./configs/jest-contracts.config.ts",
+    "deploy:contracts": "npm run build:contracts && node scripts/deploy.js"
   },
   "dependencies": {
-    "@alephium/web3": "0.2.0-rc.4",
+    "@alephium/web3": "0.2.0-rc.15",
+    "@alephium/web3-wallet": "0.2.0-rc.15",
     "@alephium/sdk": "0.0.13",
     "@alephium/get-extension-wallet": "0.1.4",
+    "@alephium/walletconnect-provider": "0.2.0-rc.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
+    "@walletconnect/client": "2.0.0-beta.26",
+    "@walletconnect/qrcode-modal": "1.7.8",
+    "@walletconnect/signer-connection": "2.0.0-beta.26",
+    "@walletconnect/types": "2.0.0-beta.26",
+    "@walletconnect/utils": "2.0.0-beta.26",
     "axios": "^0.26.0",
     "better-sqlite3": "^7.5.3",
     "bs58": "^5.0.0",
@@ -43,6 +51,7 @@
     "jest": "^28.1.0",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.3",
-    "typescript": "4.7.3"
+    "typescript": "4.7.3",
+    "@h0ngcha0/alephium-cli": "0.1.1"
   }
 }

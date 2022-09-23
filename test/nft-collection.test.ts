@@ -1,4 +1,4 @@
-import * as web3 from '@alephium/web3'
+import { web3, subContractId, stringToHex, addressFromContractId } from '@alephium/web3'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
@@ -6,9 +6,12 @@ import { NFTContract } from '../utils/contracts'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
-    const provider = new web3.NodeProvider('http://127.0.0.1:22973')
-    const signer = await testWallet1(provider)
-    const nftCollection = new NFTCollection(provider, signer, testAddress1, true)
+    const nodeUrl = 'http://127.0.0.1:22973'
+    web3.setCurrentNodeProvider(nodeUrl)
+    const provider = web3.getCurrentNodeProvider()
+    const signer = await testWallet1()
+    const nftCollection = new NFTCollection(nodeUrl, signer, testAddress1)
+    await nftCollection.buildProject()
 
     const nftCollectionDeployTx = await nftCollection.create(
       "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"
@@ -19,10 +22,10 @@ describe('nft collection', function() {
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = web3.subContractId(nftCollectionContractId, web3.stringToHex(nftUri))
+    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri))
     const nftName = "CryptoPunk #0001"
     const nftDescription = "CP0001"
-    const nftContractAddress = web3.addressFromContractId(nftContractId)
+    const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
       nftName,
@@ -50,7 +53,7 @@ describe('nft collection', function() {
     expect(nftMintedEventFields[5].value).toEqual(nftContractId)
     expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
 
-    const nftContractState = await NFTContract.fetchState(provider, nftContractAddress, 0)
+    const nftContractState = await NFTContract.fetchState(nftContractAddress, 0)
 
     expect(nftContractState.fields.owner).toEqual(testAddress1)
     expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
@@ -69,7 +72,7 @@ describe('nft collection', function() {
     const gasPrice = 1000000000 * 100
     const totalGas = gasAmount * gasPrice
     await nftCollection.burnNFT(
-      web3.subContractId(nftCollectionContractId, web3.stringToHex(nftUri)),
+      subContractId(nftCollectionContractId, stringToHex(nftUri)),
       gasAmount,
       gasPrice
     )

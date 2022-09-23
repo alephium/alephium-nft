@@ -1,6 +1,4 @@
-import "nft_marketplace.ral"
-
-TxScript Main(
+TxScript CancelListing(
     tokenId: ByteVec,
     nftMarketplaceContractId: ByteVec
 ) {

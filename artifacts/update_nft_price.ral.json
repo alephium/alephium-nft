@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "9067ae3b16034cc19a8d9e8b3df4f06c1bac6b1515ef1bcb79042d6d2a0056be",
+  "name": "UpdateNFTPrice",
   "bytecodeTemplate": "01010300010008{2}1700{1}{0}0e0c16000104",
   "fieldsSig": {
     "names": [

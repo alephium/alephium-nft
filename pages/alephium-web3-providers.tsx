@@ -1,11 +1,19 @@
 import { NodeProvider, NodeWallet } from '@alephium/web3'
-import React, { useEffect, useReducer } from 'react'
 import { Account } from '@alephium/web3'
+import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client'
+import { AppMetadata, PairingTypes } from '@walletconnect/types'
+import WalletConnectProvider from '@alephium/walletconnect-provider'
+import QRCodeModal from "@walletconnect/qrcode-modal"
+import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
 import { connect, IAlephiumWindowObject } from "@alephium/get-extension-wallet"
 
 type SignerProvider =
+  | {
+    type: 'WalletConnectProvider',
+    provider: WalletConnectProvider
+  }
   | {
     type: 'NodeWalletProvider',
     provider: NodeWallet
@@ -19,7 +27,7 @@ type SetSignerProviderFunc = (provider: IAlephiumWindowObject) => void
 type SetSelectedAccountFunc = (accounts: Account) => void
 type StateType = {
   signerProvider?: SignerProvider
-  nodeProvider?: NodeProvider
+  nodeProvider?: NodeProvider  // Change to baseURL
   selectedAccount?: Account,
   setSignerProviderFunc?: SetSignerProviderFunc
   setSelectedAccountFunc?: SetSelectedAccountFunc
@@ -108,6 +116,14 @@ type SignerProviderType =
     password: string
   }
   | {
+    type: 'WalletConnectProvider'
+    projectId: string
+    relayUrl: string
+    metadata: AppMetadata,
+    networkId: number
+    chainGroup: number
+  }
+  | {
     type: 'BrowserExtensionProvider'
   }
 
@@ -160,6 +176,29 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
             type: 'NodeWalletProvider'
           }
         })
+
+        return
+      }
+
+      case 'WalletConnectProvider': {
+        console.log("before getting wallet connect provider")
+        const provider = await getWalletConnectProvider(
+          config.signerProvider.projectId,
+          config.signerProvider.relayUrl,
+          config.signerProvider.metadata,
+          dispatch
+        )
+        console.log("after getting wallet connect provider")
+
+        dispatch({
+          type: 'SET_SIGNER_PROVIDER',
+          signerProvider: {
+            provider,
+            type: 'WalletConnectProvider'
+          }
+        })
+
+        provider.connect()
 
         return
       }
@@ -233,6 +272,65 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       {children}
     </AlephiumWeb3Context.Provider>
   )
+}
+
+export async function getWalletConnectProvider(
+  projectId: string,
+  relayUrl: string,
+  metadata: AppMetadata,
+  dispatch: Dispatch<ActionType>
+): Promise<WalletConnectProvider> {
+
+  // Sometimes initialization takes a long time or doesn't return
+  console.log('Initializaing WalletConnectClient')
+  const walletConnect = await WalletConnectClient.init({
+    projectId: projectId,
+    relayUrl: relayUrl,
+    metadata: metadata
+  })
+  console.log('WalletConnectClient initialized')
+
+  const provider = new WalletConnectProvider({
+    networkId: 4,
+    chainGroup: -1, // -1 means all groups, 0/1/2/3 means only the specific group is allowed
+    client: walletConnect
+  })
+
+  walletConnect.on(CLIENT_EVENTS.pairing.proposal, async (proposal: PairingTypes.Proposal) => {
+    const { uri } = proposal.signal.params
+    console.log('proposal uri', uri)
+    if (uri) {
+      QRCodeModal.open(uri, () => {
+        console.log("EVENT", "QR Code Modal closed");
+      })
+    }
+  })
+
+  walletConnect.on(CLIENT_EVENTS.session.deleted, () => {
+    console.log('session deleted')
+  })
+
+  walletConnect.on(CLIENT_EVENTS.session.sync, (e: any) => {
+    QRCodeModal.close()
+    console.log('session sync', e)
+  })
+
+  provider.on('accountsChanged', (accounts: Account[]) => {
+    dispatch({
+      type: 'SET_ACCOUNTS',
+      accounts
+    })
+    console.log('accounts changed', accounts)
+  })
+
+  provider.on('disconnect', (code: number, reason: string) => {
+    dispatch({
+      type: 'DISCONNECT'
+    })
+    console.log('disconnect', code, reason)
+  })
+
+  return provider
 }
 
 export default AlephiumWeb3Provider

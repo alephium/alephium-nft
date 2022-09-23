@@ -4,7 +4,7 @@ const web3 = require('@alephium/web3')
 const { randomBytes } = require('crypto')
 
 async function main() {
-  const provider = new web3.NodeProvider('http://127.0.0.1:22973')
+  const provider = new web3.NodeProvider('http://localhost:22973')
   const signer = await testWallet1(provider)
   const adminAccount = (await signer.getAccounts())[0]
 
@@ -19,10 +19,14 @@ async function main() {
       commissionRate: 200  // 200 basis point: 2%
     }
   })
-  await signer.submitTransaction(
-    createNFTListingTx.unsignedTx,
-    createNFTListingTx.txId
-  )
+  try {
+    await signer.submitTransaction(
+      createNFTListingTx.unsignedTx,
+      createNFTListingTx.txId
+    )
+  } catch (e) {
+    console.log("niux", e)
+  }
 
   const nftMarketplaceContract = await web3.Contract.fromSource(provider, 'nft_marketplace.ral')
   const createNFTMarketplaceTx = await nftMarketplaceContract.transactionForDeployment(signer, {

@@ -16,9 +16,7 @@ export class NFTCollection extends DeployHelpers {
     collectionDescription: string,
     collectionUri: string
   ): Promise<web3.DeployContractTransaction> {
-    const nftContract = this.deployFromSource ?
-      await web3.Contract.fromSource(this.provider, 'nft.ral') :
-      web3.Contract.fromJson(nftArtifact)
+    const nftContract = web3.Contract.fromJson(nftArtifact)
 
     const nftDeployTx = await this.createContract(
       nftContract,
@@ -35,9 +33,7 @@ export class NFTCollection extends DeployHelpers {
       }
     )
 
-    const nftCollectionContract = this.deployFromSource ?
-      await web3.Contract.fromSource(this.provider, 'nft_collection.ral') :
-      web3.Contract.fromJson(nftCollectionArtifact)
+    const nftCollectionContract = web3.Contract.fromJson(nftCollectionArtifact)
 
     const nftCollectionDeployTx = await this.createContract(
       nftCollectionContract,
@@ -61,9 +57,7 @@ export class NFTCollection extends DeployHelpers {
     nftDescription: string,
     nftUri: string
   ) {
-    const script = this.deployFromSource ?
-      await web3.Script.fromSource(this.provider, 'mint_nft.ral') :
-      web3.Script.fromJson(mintNFTArtifact)
+    const script = web3.Script.fromJson(mintNFTArtifact)
 
     return await this.callTxScript(
       script,
@@ -81,9 +75,7 @@ export class NFTCollection extends DeployHelpers {
   }
 
   async burnNFT(nftContractId: string, gasAmount?: number, gasPrice?: number) {
-    const script = this.deployFromSource ?
-      await web3.Script.fromSource(this.provider, 'burn_nft.ral') :
-      web3.Script.fromJson(burnNFTArtifact)
+    const script = web3.Script.fromJson(burnNFTArtifact)
 
     return await this.callTxScript(
       script,
@@ -103,9 +95,7 @@ export class NFTCollection extends DeployHelpers {
     gasAmount?: number,
     gasPrice?: number
   ): Promise<web3.SignExecuteScriptTxResult> {
-    const script = this.deployFromSource ?
-      await web3.Script.fromSource(this.provider, 'deposit_nft.ral') :
-      web3.Script.fromJson(depositNFTArtifact)
+    const script = web3.Script.fromJson(depositNFTArtifact)
 
     return await this.callTxScript(
       script,
@@ -125,9 +115,7 @@ export class NFTCollection extends DeployHelpers {
     gasAmount?: number,
     gasPrice?: number
   ): Promise<web3.SignExecuteScriptTxResult> {
-    const script = this.deployFromSource ?
-      await web3.Script.fromSource(this.provider, 'withdraw_nft.ral') :
-      web3.Script.fromJson(withdrawNFTArtifact)
+    const script = web3.Script.fromJson(withdrawNFTArtifact)
 
     return await this.callTxScript(
       script,

@@ -1,6 +1,4 @@
-import "nft_marketplace.ral"
-
-TxScript Main(
+TxScript BuyNFT(
     totalPayment: U256,
     tokenId: ByteVec,
     nftMarketplaceContractId: ByteVec

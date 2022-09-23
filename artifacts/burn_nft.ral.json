@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "00470e40ca568c85f4b1b68e278febe554a7c8df877b213c79445488953ca0f2",
+  "name": "BurnNFT",
   "bytecodeTemplate": "01010300010006{0}17000c0c16000107",
   "fieldsSig": {
     "names": [

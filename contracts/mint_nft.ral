@@ -1,6 +1,4 @@
-import "nft_collection.ral"
-
-TxScript Main(
+TxScript MintNFT(
     nftCollectionContractId: ByteVec,
     name: ByteVec,
     description: ByteVec,

@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "3cc61e3e1493a764c60e0f972f38d4314331f792016da292ff1e643b8f7da2d6",
+  "name": "CancelListing",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000103",
   "fieldsSig": {
     "names": [

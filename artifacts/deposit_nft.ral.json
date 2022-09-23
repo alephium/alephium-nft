@@ -1,5 +1,5 @@
 {
-  "sourceCodeSha256": "5a9670806815ac03cab19bd198e3ecdb0efbaeb306f5548665807f5fd2d3b555",
+  "name": "DepositNFT",
   "bytecodeTemplate": "0101030001000a{0}1700b4{0}0da30c0c16000105",
   "fieldsSig": {
     "names": [

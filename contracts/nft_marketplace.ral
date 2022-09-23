@@ -1,6 +1,3 @@
-import "nft.ral"
-import "nft_listing.ral"
-
 Contract NFTMarketPlace(
     nftListingTemplateId: ByteVec,
     mut admin: Address,
