@@ -1,15 +1,26 @@
 const base58 = require('bs58')
 const fs = require('fs')
-const web3 = require('@alephium/web3')
+const {
+  web3,
+  Project,
+  binToHex,
+  stringToHex,
+  contractIdFromAddress,
+  addressFromContractId
+} = require('@alephium/web3')
+const { NodeWallet } = require('@alephium/web3-wallet')
 const { randomBytes } = require('crypto')
 
 async function main() {
-  const provider = new web3.NodeProvider('http://localhost:22973')
-  const signer = await testWallet1(provider)
+  const nodeUrl = 'http://localhost:22973'
+  web3.setCurrentNodeProvider(nodeUrl)
+  const signer = await testWallet1()
   const adminAccount = (await signer.getAccounts())[0]
 
+  await Project.build()
+
   // Create NFT marketplace
-  const nftListingContract = await web3.Contract.fromSource(provider, 'nft_listing.ral')
+  const nftListingContract = Project.contract("NFTListing")
   const createNFTListingTx = await nftListingContract.transactionForDeployment(signer, {
     initialFields: {
       price: 1000,
@@ -28,7 +39,7 @@ async function main() {
     console.log("niux", e)
   }
 
-  const nftMarketplaceContract = await web3.Contract.fromSource(provider, 'nft_marketplace.ral')
+  const nftMarketplaceContract = Project.contract("NFTMarketPlace")
   const createNFTMarketplaceTx = await nftMarketplaceContract.transactionForDeployment(signer, {
     initialFields: {
       nftListingTemplateId: createNFTListingTx.contractId,
@@ -43,15 +54,15 @@ async function main() {
   )
 
   // Create the default NFT Collection
-  const nftContract = await web3.Contract.fromSource(provider, 'nft.ral')
+  const nftContract = Project.contract("NFT")
   const createNFTTx = await nftContract.transactionForDeployment(signer, {
     initialFields: {
       owner: adminAccount.address,
       isTokenWithdrawn: false,
-      name: web3.stringToHex("template_name"),
-      description: web3.stringToHex("template_description"),
-      uri: web3.stringToHex("template_uri"),
-      collectionAddress: web3.addressFromContractId("0".repeat(64))
+      name: stringToHex("template_name"),
+      description: stringToHex("template_description"),
+      uri: stringToHex("template_uri"),
+      collectionAddress: addressFromContractId("0".repeat(64))
     }
   })
   await signer.submitTransaction(
@@ -59,13 +70,13 @@ async function main() {
     createNFTTx.txId
   )
 
-  const nftCollectionContract = await web3.Contract.fromSource(provider, 'nft_collection.ral')
+  const nftCollectionContract = Project.contract("NFTCollection")
   const nftCollectionDeployTx = await nftCollectionContract.transactionForDeployment(signer, {
     initialFields: {
       nftTemplateId: createNFTTx.contractId,
-      collectionName: web3.stringToHex("DefaultCollection"),
-      collectionDescription: web3.stringToHex("Default Collection"),
-      collectionUri: web3.stringToHex("http://default.collection")
+      collectionName: stringToHex("DefaultCollection"),
+      collectionDescription: stringToHex("Default Collection"),
+      collectionUri: stringToHex("http://default.collection")
     }
   })
   await signer.submitTransaction(
@@ -84,14 +95,14 @@ async function main() {
   fs.writeFileSync('configs/addresses.json', config)
 }
 
-async function testWallet1(provider) {
-  const wallet = new web3.NodeWallet(provider, 'alephium-web3-test-only-wallet')
+async function testWallet1() {
+  const wallet = new NodeWallet('alephium-web3-test-only-wallet')
   await wallet.unlock('alph')
   return wallet
 }
 
 function randomContractId() {
-  return web3.binToHex(web3.contractIdFromAddress(randomContractAddress()))
+  return binToHex(contractIdFromAddress(randomContractAddress()))
 }
 
 function randomContractAddress() {
