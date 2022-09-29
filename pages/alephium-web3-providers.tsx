@@ -1,8 +1,14 @@
-import { NodeProvider, NodeWallet } from '@alephium/web3'
+import { web3, NodeProvider } from '@alephium/web3'
+import { NodeWallet } from '@alephium/web3-wallet'
 import { Account } from '@alephium/web3'
-import WalletConnectClient, { CLIENT_EVENTS } from '@walletconnect/client'
-import { AppMetadata, PairingTypes } from '@walletconnect/types'
-import WalletConnectProvider from '@alephium/walletconnect-provider'
+import SignerClient from '@walletconnect/sign-client'
+import {
+  SignerConnection,
+  SIGNER_EVENTS,
+  SignerConnectionClientOpts,
+} from "@walletconnect/signer-connection";
+import { SignClientTypes, PairingTypes } from '@walletconnect/types'
+import WalletConnectProvider, { signerMethods } from '@h0ngcha0/walletconnect-provider'
 import QRCodeModal from "@walletconnect/qrcode-modal"
 import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
@@ -119,7 +125,7 @@ type SignerProviderType =
     type: 'WalletConnectProvider'
     projectId: string
     relayUrl: string
-    metadata: AppMetadata,
+    metadata: SignClientTypes.Metadata,
     networkId: number
     chainGroup: number
   }
@@ -160,7 +166,8 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
 
     switch (config.signerProvider.type) {
       case 'NodeWalletProvider': {
-        const wallet = new NodeWallet(nodeProvider, config.signerProvider.walletName)
+        web3.setCurrentNodeProvider(config.signerProvider.nodeUrl)
+        const wallet = new NodeWallet(config.signerProvider.walletName)
         wallet.unlock(config.signerProvider.password)
         const accounts = await wallet.getAccounts()
 
@@ -198,7 +205,7 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
           }
         })
 
-        provider.connect()
+        //provider.connect()
 
         return
       }
@@ -277,13 +284,14 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
 export async function getWalletConnectProvider(
   projectId: string,
   relayUrl: string,
-  metadata: AppMetadata,
+  metadata: SignClientTypes.Metadata,
   dispatch: Dispatch<ActionType>
 ): Promise<WalletConnectProvider> {
 
   // Sometimes initialization takes a long time or doesn't return
   console.log('Initializaing WalletConnectClient')
-  const walletConnect = await WalletConnectClient.init({
+  const signerClient = await SignerClient.init({
+    logger: "info",
     projectId: projectId,
     relayUrl: relayUrl,
     metadata: metadata
@@ -291,36 +299,36 @@ export async function getWalletConnectProvider(
   console.log('WalletConnectClient initialized')
 
   const provider = new WalletConnectProvider({
-    networkId: 4,
-    chainGroup: -1, // -1 means all groups, 0/1/2/3 means only the specific group is allowed
-    client: walletConnect
+    permittedChains: [
+      {
+        networkId: 4,
+        chainGroup: -1 // -1 means all groups, 0/1/2/3 means only the specific group is allowed
+      }
+    ],
+    methods: signerMethods,
+    client: signerClient,
   })
 
-  walletConnect.on(CLIENT_EVENTS.pairing.proposal, async (proposal: PairingTypes.Proposal) => {
-    const { uri } = proposal.signal.params
+  provider.on('connect', (e: any) => {
+    QRCodeModal.close()
+    console.log('session sync', e)
+  })
+
+  provider.on('display_uri', async (uri: string) => {
     console.log('proposal uri', uri)
     if (uri) {
       QRCodeModal.open(uri, () => {
         console.log("EVENT", "QR Code Modal closed");
       })
     }
-  })
-
-  walletConnect.on(CLIENT_EVENTS.session.deleted, () => {
-    console.log('session deleted')
-  })
-
-  walletConnect.on(CLIENT_EVENTS.session.sync, (e: any) => {
-    QRCodeModal.close()
-    console.log('session sync', e)
-  })
+  });
 
   provider.on('accountsChanged', (accounts: Account[]) => {
     dispatch({
-      type: 'SET_ACCOUNTS',
-      accounts
+      type: 'SET_SELECTED_ACCOUNT',
+      selectedAccount: accounts[0]
     })
-    console.log('accounts changed', accounts)
+    console.log('accounts changed', accounts, accounts[0])
   })
 
   provider.on('disconnect', (code: number, reason: string) => {

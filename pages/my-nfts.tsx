@@ -1,6 +1,6 @@
-import * as web3 from '@alephium/web3'
+import { web3, hexToString, node, Project } from '@alephium/web3'
 import { useContext, useEffect, useState } from 'react'
-import { NFTContract } from '../utils/contracts'
+import { fetchState, NFTContract } from '../utils/contracts'
 import { addressFromContractId, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
@@ -58,13 +58,19 @@ export default function Home() {
 
     if (context.nodeProvider) {
       try {
-        nftState = await NFTContract.fetchState(context.nodeProvider, addressFromContractId(tokenId), 0)
+        web3.setCurrentNodeProvider(context.nodeProvider.baseUrl)
+        nftState = await fetchState(
+          context.nodeProvider,
+          NFTContract,
+          addressFromContractId(tokenId),
+          0
+        )
       } catch (e) {
         console.debug(`error fetching state for ${tokenId}`, e)
       }
 
       if (nftState && nftState.codeHash === NFTContract.codeHash) {
-        const metadataUri = web3.hexToString(nftState.fields.uri as string)
+        const metadataUri = hexToString(nftState.fields.uri as string)
         const metadata = (await axios.get(metadataUri)).data
         return {
           name: metadata.name,
@@ -155,7 +161,7 @@ export default function Home() {
       const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
       setOngoingTxId(depositNFTTxResult.txId)
       setOngoingTxDescription('depositing NFT')
-      setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetState()
           await loadNFTs()
@@ -173,7 +179,7 @@ export default function Home() {
       const withdrawNFTTxResult = await nftCollection.withdrawNFT(nft.tokenId)
       setOngoingTxId(withdrawNFTTxResult.txId)
       setOngoingTxDescription('withdrawing NFT')
-      setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetState()
           await loadNFTs()
@@ -195,7 +201,7 @@ export default function Home() {
 
       setOngoingTxId(listNFTTxResult.txId)
       setOngoingTxDescription('listing NFT')
-      setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
+      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetState()
           await loadNFTs()

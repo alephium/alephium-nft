@@ -3,7 +3,7 @@ import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import addresses from '../configs/addresses.json'
-import { NFTListingContract, NFTContract, NFTMarketplaceContract } from '../utils/contracts'
+import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
@@ -48,8 +48,9 @@ export default function BuyNFTs() {
   async function loadMarketplaceCommissionRate() {
     if (context.nodeProvider) {
       try {
-        const marketplaceState = await NFTMarketplaceContract.fetchState(
+        const marketplaceState = await fetchState(
           context.nodeProvider,
+          NFTMarketplaceContract,
           addressFromContractId(addresses.marketplaceContractId),
           0
         )
@@ -69,16 +70,22 @@ export default function BuyNFTs() {
       var listingState = undefined
 
       try {
-        listingState = await NFTListingContract.fetchState(
-          context.nodeProvider, addressFromContractId(listingContractId), 0
+        listingState = await fetchState(
+          context.nodeProvider,
+          NFTListingContract,
+          addressFromContractId(listingContractId),
+          0
         )
       } catch (e) {
         console.log(`error fetching state for ${tokenId}`, e)
       }
 
       if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
-        const nftState = await NFTContract.fetchState(
-          context.nodeProvider, addressFromContractId(tokenId), 0
+        const nftState = await fetchState(
+          context.nodeProvider,
+          NFTContract,
+          addressFromContractId(tokenId),
+          0
         )
 
         const metadataUri = hexToString(nftState.fields.uri as string)
@@ -107,7 +114,6 @@ export default function BuyNFTs() {
         context.signerProvider.provider as web3.SignerProvider,
         context.selectedAccount.address
       )
-      await nftMarketplace.buildProject()
 
       const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
       const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
@@ -130,7 +136,6 @@ export default function BuyNFTs() {
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
-      await nftMarketplace.buildProject()
 
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
       console.debug("commission", commission)

@@ -10,6 +10,7 @@ const WalletButton = () => {
     switch (context.signerProvider?.type) {
       case 'WalletConnectProvider': {
         await context.signerProvider.provider.connect()
+        break;
       }
 
       case 'BrowserExtensionProvider': {
@@ -22,6 +23,7 @@ const WalletButton = () => {
           windowAlephium.selectedAccount &&
             context.setSelectedAccountFunc(windowAlephium.selectedAccount)
         }
+        break;
       }
     }
   }

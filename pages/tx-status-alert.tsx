@@ -37,7 +37,6 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
   const [txStatus, setTxStatus] = useState<web3.node.TxStatus | undefined>(undefined)
 
   const subscriptionOptions: SubscribeOptions<web3.node.TxStatus> | undefined = context?.nodeProvider && {
-    provider: context.nodeProvider,
     pollingInterval: 3000,
     messageCallback: async (status: web3.node.TxStatus): Promise<void> => {
       setTxStatus(status)

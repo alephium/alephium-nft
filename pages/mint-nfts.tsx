@@ -67,7 +67,7 @@ export default function MintNFTs() {
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
-      await nftCollection.buildProject()
+      //      await nftCollection.buildProject()
 
       // TODO: Figure out UI to create collection, right now use default collection id
       const nftCollectionContractId = addresses.defaultNftCollectionContractId
