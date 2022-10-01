@@ -35,7 +35,7 @@ module.exports = {
           icons: ['https://walletconnect.com/walletconnect-logo.png']
         },
         networkId: 4,
-        chainGroup: -1
+        chainGroup: undefined
       }
     }
   }
