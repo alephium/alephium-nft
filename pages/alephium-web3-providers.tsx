@@ -8,7 +8,7 @@ import {
   SignerConnectionClientOpts,
 } from "@walletconnect/signer-connection";
 import { SignClientTypes, PairingTypes } from '@walletconnect/types'
-import WalletConnectProvider, { signerMethods } from '@h0ngcha0/walletconnect-provider'
+import WalletConnectProvider, { signerMethods, PROVIDER_EVENTS } from '@h0ngcha0/walletconnect-provider'
 import QRCodeModal from "@walletconnect/qrcode-modal"
 import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
@@ -205,7 +205,7 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
           }
         })
 
-        //provider.connect()
+        provider.connect()
 
         return
       }
@@ -287,21 +287,17 @@ export async function getWalletConnectProvider(
   metadata: SignClientTypes.Metadata,
   dispatch: Dispatch<ActionType>
 ): Promise<WalletConnectProvider> {
-
-  // Sometimes initialization takes a long time or doesn't return
-  console.log('Initializaing WalletConnectClient')
   const signerClient = await SignerClient.init({
     logger: "info",
     projectId: projectId,
     relayUrl: relayUrl,
     metadata: metadata
   })
-  console.log('WalletConnectClient initialized')
 
   const provider = new WalletConnectProvider({
     permittedChains: [
       {
-        networkId: 4,
+        networkId: 4,  // only request permission for devnet
         chainGroup: -1 // -1 means all groups, 0/1/2/3 means only the specific group is allowed
       }
     ],
@@ -309,13 +305,11 @@ export async function getWalletConnectProvider(
     client: signerClient,
   })
 
-  provider.on('connect', (e: any) => {
+  provider.on(PROVIDER_EVENTS.connect, (e: any) => {
     QRCodeModal.close()
-    console.log('session sync', e)
   })
 
-  provider.on('display_uri', async (uri: string) => {
-    console.log('proposal uri', uri)
+  provider.on(PROVIDER_EVENTS.displayUri, async (uri: string) => {
     if (uri) {
       QRCodeModal.open(uri, () => {
         console.log("EVENT", "QR Code Modal closed");
@@ -323,7 +317,7 @@ export async function getWalletConnectProvider(
     }
   });
 
-  provider.on('accountsChanged', (accounts: Account[]) => {
+  provider.on(PROVIDER_EVENTS.accountsChanged, (accounts: Account[]) => {
     dispatch({
       type: 'SET_SELECTED_ACCOUNT',
       selectedAccount: accounts[0]
@@ -331,7 +325,7 @@ export async function getWalletConnectProvider(
     console.log('accounts changed', accounts, accounts[0])
   })
 
-  provider.on('disconnect', (code: number, reason: string) => {
+  provider.on(PROVIDER_EVENTS.disconnect, (code: number, reason: string) => {
     dispatch({
       type: 'DISCONNECT'
     })

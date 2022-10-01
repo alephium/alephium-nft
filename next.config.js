@@ -11,6 +11,10 @@ const nextConfig = {
     if (!isServer) {
       config.resolve.fallback.fs = false;
     }
+    config.experiments = {
+      asyncWebAssembly: true,
+      syncWebAssembly: true
+    }
     return config;
   },
   async redirects() {
