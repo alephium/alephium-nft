@@ -298,7 +298,7 @@ export async function getWalletConnectProvider(
     permittedChains: [
       {
         networkId: 4,  // only request permission for devnet
-        chainGroup: undefined //  means all groups, 0/1/2/3 means only the specific group is allowed
+        chainGroup: -1 // -1 means all groups, 0/1/2/3 means only the specific group is allowed
       }
     ],
     methods: signerMethods,

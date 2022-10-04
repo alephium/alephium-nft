@@ -16,7 +16,7 @@
     "@alephium/web3-wallet": "0.2.0-rc.19",
     "@alephium/sdk": "0.1.0",
     "@alephium/get-extension-wallet": "0.1.5",
-    "@h0ngcha0/walletconnect-provider": "0.2.0-rc.6",
+    "@h0ngcha0/walletconnect-provider": "0.2.0-rc.9",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
