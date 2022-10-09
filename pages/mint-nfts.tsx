@@ -63,7 +63,7 @@ export default function MintNFTs() {
     const description = formInput.description
     if (uri && context.nodeProvider && context.signerProvider && context.selectedAccount) {
       const nftCollection = new NFTCollection(
-        context.nodeProvider.baseUrl,
+        context.nodeProvider,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )

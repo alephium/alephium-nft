@@ -7,13 +7,13 @@ import {
   SIGNER_EVENTS,
   SignerConnectionClientOpts,
 } from "@walletconnect/signer-connection";
-import { SignClientTypes, PairingTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/types'
 import WalletConnectProvider, { signerMethods, PROVIDER_EVENTS } from '@h0ngcha0/walletconnect-provider'
 import QRCodeModal from "@walletconnect/qrcode-modal"
 import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
-import { connect, IAlephiumWindowObject } from "@alephium/get-extension-wallet"
+import { connect, AlephiumWindowObject } from "@h0ngcha0/get-extension-wallet"
 
 type SignerProvider =
   | {
@@ -26,10 +26,10 @@ type SignerProvider =
   }
   | {
     type: 'BrowserExtensionProvider',
-    provider: IAlephiumWindowObject | undefined
+    provider: AlephiumWindowObject | undefined
   }
 
-type SetSignerProviderFunc = (provider: IAlephiumWindowObject) => void
+type SetSignerProviderFunc = (provider: AlephiumWindowObject) => void
 type SetSelectedAccountFunc = (accounts: Account) => void
 type StateType = {
   signerProvider?: SignerProvider
@@ -213,7 +213,7 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       case 'BrowserExtensionProvider': {
         dispatch({
           type: 'SET_SIGNER_PROVIDER_FUNC',
-          func: (provider: IAlephiumWindowObject) => {
+          func: (provider: AlephiumWindowObject) => {
             dispatch({
               type: 'SET_SIGNER_PROVIDER',
               signerProvider: {
@@ -235,21 +235,20 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
         })
 
         const windowAlephium = await connect({ showList: false })
-
         if (windowAlephium) {
           await windowAlephium.enable()
-          const accounts = await windowAlephium.getAccounts()
+          const selectedAccount = await windowAlephium.getSelectedAccount()
 
           windowAlephium.on("addressesChanged", (_data) => {
             dispatch({
               type: 'SET_SELECTED_ACCOUNT',
-              selectedAccount: windowAlephium.selectedAccount
+              selectedAccount: selectedAccount
             })
           })
 
           dispatch({
             type: 'SET_SELECTED_ACCOUNT',
-            selectedAccount: windowAlephium.selectedAccount
+            selectedAccount: selectedAccount
           })
         }
 

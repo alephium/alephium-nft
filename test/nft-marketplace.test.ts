@@ -10,8 +10,8 @@ describe('nft marketplace', function() {
     web3.setCurrentNodeProvider(nodeUrl)
     const provider = web3.getCurrentNodeProvider()
     const signer = await testWallet1()
-    const nftCollection = new NFTCollection(nodeUrl, signer, testAddress1)
-    const nftMarketplace = new NFTMarketplace(nodeUrl, signer, testAddress1)
+    const nftCollection = new NFTCollection(provider, signer, testAddress1)
+    const nftMarketplace = new NFTMarketplace(provider, signer, testAddress1)
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
@@ -163,7 +163,7 @@ describe('nft marketplace', function() {
     const nodeUrl = 'http://127.0.0.1:22973'
     const provider = new NodeProvider(nodeUrl)
     const signer = await testWallet1()
-    const nftMarketplace = new NFTMarketplace(nodeUrl, signer, testAddress1)
+    const nftMarketplace = new NFTMarketplace(provider, signer, testAddress1)
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()

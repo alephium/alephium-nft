@@ -7,6 +7,7 @@ import {
   SignExecuteScriptTxResult,
   SignDeployContractTxResult,
   Project,
+  NodeProvider,
 } from '@alephium/web3'
 
 export class DeployHelpers {
@@ -14,14 +15,14 @@ export class DeployHelpers {
   signerAddress: string
 
   constructor(
-    nodeUrl: string,
+    nodeProvider: NodeProvider,
     signer: SignerProvider,
     signerAddress: string
   ) {
     this.signer = signer
     this.signerAddress = signerAddress
 
-    web3.setCurrentNodeProvider(nodeUrl)
+    web3.setCurrentNodeProvider(nodeProvider)
   }
 
   async buildProject(errorOnWarnings: boolean = true): Promise<void> {
@@ -33,8 +34,9 @@ export class DeployHelpers {
     params: BuildExecuteScriptTx
   ): Promise<SignExecuteScriptTxResult> {
     const deployParams = await script.paramsForDeployment(params)
-    const scriptSubmitResult = await this.signer.signExecuteScriptTx(deployParams)
-    return scriptSubmitResult
+    const signResult = await this.signer.signExecuteScriptTx(deployParams)
+    await this.signer.submitTransaction(signResult.unsignedTx, signResult.signature)
+    return signResult
   }
 
   async createContract(
@@ -42,7 +44,8 @@ export class DeployHelpers {
     params: BuildExecuteScriptTx
   ): Promise<SignDeployContractTxResult> {
     const execParams = await contract.paramsForDeployment(params)
-    const submitResult = await this.signer.signDeployContractTx(execParams)
-    return submitResult
+    const signResult = await this.signer.signDeployContractTx(execParams)
+    await this.signer.submitTransaction(signResult.unsignedTx, signResult.signature)
+    return signResult
   }
 }

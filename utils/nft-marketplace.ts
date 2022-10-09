@@ -40,7 +40,7 @@ export class NFTMarketplace extends DeployHelpers {
 
     const nftMarketplaceContract = Contract.fromJson(nftMarketplaceArtifact)
 
-    const adminAccount = (await this.signer.getAccounts())[0]
+    const adminAccount = await this.signer.getSelectedAccount()
 
     const nftMarketplaceDeployTx = await this.createContract(
       nftMarketplaceContract,

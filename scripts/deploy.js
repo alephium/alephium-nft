@@ -15,7 +15,7 @@ async function main() {
   const nodeUrl = 'http://localhost:22973'
   web3.setCurrentNodeProvider(nodeUrl)
   const signer = await testWallet1()
-  const adminAccount = (await signer.getAccounts())[0]
+  const adminAccount = await signer.getSelectedAccount()
 
   await Project.build()
 
@@ -30,13 +30,11 @@ async function main() {
       commissionRate: 200  // 200 basis point: 2%
     }
   })
+
   try {
-    await signer.submitTransaction(
-      createNFTListingTx.unsignedTx,
-      createNFTListingTx.txId
-    )
+    await signAndSubmit(signer, createNFTListingTx.unsignedTx)
   } catch (e) {
-    console.log("niux", e)
+    console.log("Error creating NFT listing", e)
   }
 
   const nftMarketplaceContract = Project.contract("NFTMarketPlace")
@@ -48,12 +46,14 @@ async function main() {
       commissionRate: 200  // 200 basis point: 2%
     }
   })
-  await signer.submitTransaction(
-    createNFTMarketplaceTx.unsignedTx,
-    createNFTMarketplaceTx.txId
-  )
 
-  // Create the default NFT Collection
+  try {
+    await signAndSubmit(signer, createNFTMarketplaceTx.unsignedTx)
+  } catch (e) {
+    console.log("Error creating NFT marketplace", e)
+  }
+
+  // Create the NFT contract template
   const nftContract = Project.contract("NFT")
   const createNFTTx = await nftContract.transactionForDeployment(signer, {
     initialFields: {
@@ -65,10 +65,12 @@ async function main() {
       collectionAddress: addressFromContractId("0".repeat(64))
     }
   })
-  await signer.submitTransaction(
-    createNFTTx.unsignedTx,
-    createNFTTx.txId
-  )
+
+  try {
+    await signAndSubmit(signer, createNFTTx.unsignedTx)
+  } catch (e) {
+    console.log("Error creating NFT contract template", e)
+  }
 
   const nftCollectionContract = Project.contract("NFTCollection")
   const nftCollectionDeployTx = await nftCollectionContract.transactionForDeployment(signer, {
@@ -79,10 +81,12 @@ async function main() {
       collectionUri: stringToHex("http://default.collection")
     }
   })
-  await signer.submitTransaction(
-    nftCollectionDeployTx.unsignedTx,
-    nftCollectionDeployTx.txId
-  )
+
+  try {
+    await signAndSubmit(signer, nftCollectionDeployTx.unsignedTx)
+  } catch (e) {
+    console.log("Error creating NFT collection contract template", e)
+  }
 
   const config = JSON.stringify(
     {
@@ -93,6 +97,18 @@ async function main() {
 
   console.log('writing config', config)
   fs.writeFileSync('configs/addresses.json', config)
+}
+
+async function signAndSubmit(signer, unsignedTx) {
+  const signedTxResult = await signer.signUnsignedTx({
+    signerAddress: signer.address,
+    unsignedTx: unsignedTx
+  })
+
+  await signer.submitTransaction(
+    signedTxResult.unsignedTx,
+    signedTxResult.signature
+  )
 }
 
 async function testWallet1() {

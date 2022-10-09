@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { disconnect as extensionDisconnect, connect as extensionConnect } from "@alephium/get-extension-wallet"
+import { disconnect as extensionDisconnect, connect as extensionConnect } from "@h0ngcha0/get-extension-wallet"
 
 const WalletButton = () => {
   const context = useContext(AlephiumWeb3Context)
@@ -20,8 +20,8 @@ const WalletButton = () => {
         await windowAlephium?.enable()
         if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAccountFunc) {
           context.setSignerProviderFunc(windowAlephium)
-          windowAlephium.selectedAccount &&
-            context.setSelectedAccountFunc(windowAlephium.selectedAccount)
+          windowAlephium.defaultAddress &&
+            context.setSelectedAccountFunc(windowAlephium.defaultAddress)
         }
         break;
       }
@@ -32,10 +32,12 @@ const WalletButton = () => {
     switch (context.signerProvider?.type) {
       case 'WalletConnectProvider': {
         await context.signerProvider.provider.disconnect()
+        break;
       }
 
       case 'BrowserExtensionProvider': {
         extensionDisconnect()
+        break;
       }
     }
   }

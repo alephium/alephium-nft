@@ -110,7 +110,7 @@ export default function BuyNFTs() {
 
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider.baseUrl,
+        context.nodeProvider,
         context.signerProvider.provider as web3.SignerProvider,
         context.selectedAccount.address
       )
@@ -132,7 +132,7 @@ export default function BuyNFTs() {
   async function buyNFT(nftListing: NFTListing) {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider.baseUrl,
+        context.nodeProvider,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )

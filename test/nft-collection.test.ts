@@ -10,7 +10,7 @@ describe('nft collection', function() {
     web3.setCurrentNodeProvider(nodeUrl)
     const provider = web3.getCurrentNodeProvider()
     const signer = await testWallet1()
-    const nftCollection = new NFTCollection(nodeUrl, signer, testAddress1)
+    const nftCollection = new NFTCollection(provider, signer, testAddress1)
     await nftCollection.buildProject()
 
     const nftCollectionDeployTx = await nftCollection.create(

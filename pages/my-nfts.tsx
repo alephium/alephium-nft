@@ -58,7 +58,7 @@ export default function Home() {
 
     if (context.nodeProvider) {
       try {
-        web3.setCurrentNodeProvider(context.nodeProvider.baseUrl)
+        web3.setCurrentNodeProvider(context.nodeProvider)
         nftState = await fetchState(
           context.nodeProvider,
           NFTContract,
@@ -138,7 +138,7 @@ export default function Home() {
   function getNFTMarketplace(): NFTMarketplace | undefined {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTMarketplace(
-        context.nodeProvider.baseUrl,
+        context.nodeProvider,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
@@ -148,7 +148,7 @@ export default function Home() {
   function getNFTCollection(): NFTCollection | undefined {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTCollection(
-        context.nodeProvider.baseUrl,
+        context.nodeProvider,
         context.signerProvider.provider as SignerProvider,
         context.selectedAccount.address
       )
