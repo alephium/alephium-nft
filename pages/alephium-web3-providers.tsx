@@ -13,7 +13,7 @@ import QRCodeModal from "@walletconnect/qrcode-modal"
 import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
-import { connect, AlephiumWindowObject } from "@h0ngcha0/get-extension-wallet"
+import { connect, AlephiumWindowObject } from "@alephium/get-extension-wallet"
 
 type SignerProvider =
   | {
@@ -33,7 +33,7 @@ type SetSignerProviderFunc = (provider: AlephiumWindowObject) => void
 type SetSelectedAccountFunc = (accounts: Account) => void
 type StateType = {
   signerProvider?: SignerProvider
-  nodeProvider?: NodeProvider  // Change to baseURL
+  nodeProvider?: NodeProvider
   selectedAccount?: Account,
   setSignerProviderFunc?: SetSignerProviderFunc
   setSelectedAccountFunc?: SetSelectedAccountFunc

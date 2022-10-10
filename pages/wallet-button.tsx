@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { AlephiumWeb3Context } from './alephium-web3-providers'
-import { disconnect as extensionDisconnect, connect as extensionConnect } from "@h0ngcha0/get-extension-wallet"
+import { disconnect as extensionDisconnect, connect as extensionConnect } from "@alephium/get-extension-wallet"
 
 const WalletButton = () => {
   const context = useContext(AlephiumWeb3Context)
