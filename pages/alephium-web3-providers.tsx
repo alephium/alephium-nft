@@ -1,15 +1,7 @@
 import { web3, NodeProvider } from '@alephium/web3'
 import { NodeWallet } from '@alephium/web3-wallet'
 import { Account } from '@alephium/web3'
-import SignerClient from '@walletconnect/sign-client'
-import {
-  SignerConnection,
-  SIGNER_EVENTS,
-  SignerConnectionClientOpts,
-} from "@walletconnect/signer-connection";
-import { SignClientTypes } from '@walletconnect/types'
-import WalletConnectProvider, { signerMethods, PROVIDER_EVENTS } from '@h0ngcha0/walletconnect-provider'
-import QRCodeModal from "@walletconnect/qrcode-modal"
+import { WalletConnectProvider, QRCodeModal, ProjectMetaData, ChainGroup, NetworkId } from '@alephium/walletconnect-provider'
 import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
@@ -26,7 +18,7 @@ type SignerProvider =
   }
   | {
     type: 'BrowserExtensionProvider',
-    provider: AlephiumWindowObject | undefined
+    provider: AlephiumWindowObject
   }
 
 type SetSignerProviderFunc = (provider: AlephiumWindowObject) => void
@@ -49,10 +41,6 @@ type ActionType =
     signerProvider: StateType['signerProvider']
   }
   | {
-    type: 'SET_NODE_PROVIDER'
-    nodeProvider: StateType['nodeProvider']
-  }
-  | {
     type: 'SET_SIGNER_PROVIDER_FUNC'
     func: StateType['setSignerProviderFunc']
   }
@@ -66,7 +54,6 @@ type ActionType =
 
 const initialState: StateType = {
   signerProvider: undefined,
-  nodeProvider: undefined,
   selectedAccount: undefined,
   setSignerProviderFunc: undefined,
   setSelectedAccountFunc: undefined
@@ -83,13 +70,8 @@ function reducer(state: StateType, action: ActionType): StateType {
     case 'SET_SIGNER_PROVIDER':
       return {
         ...state,
-        signerProvider: action.signerProvider
-      }
-
-    case 'SET_NODE_PROVIDER':
-      return {
-        ...state,
-        nodeProvider: action.nodeProvider
+        signerProvider: action.signerProvider,
+        nodeProvider: action.signerProvider?.provider.nodeProvider
       }
 
     case 'DISCONNECT':
@@ -114,27 +96,26 @@ function reducer(state: StateType, action: ActionType): StateType {
 
 export const AlephiumWeb3Context = React.createContext<StateType>(initialState)
 
-type SignerProviderType =
-  | {
+type NodeWalletProviderType = {
     type: 'NodeWalletProvider'
     nodeUrl: string
     walletName: string
     password: string
   }
-  | {
-    type: 'WalletConnectProvider'
-    projectId: string
-    relayUrl: string
-    metadata: SignClientTypes.Metadata,
-    networkId: number
-    chainGroup: number
-  }
-  | {
-    type: 'BrowserExtensionProvider'
-  }
+type WalletConnectProviderType = {
+  type: 'WalletConnectProvider'
+  projectId: string
+  relayUrl: string
+  metadata: ProjectMetaData,
+  networkId: NetworkId
+  chainGroup: ChainGroup
+}
+type BrowserExtensionProviderType = {
+  type: 'BrowserExtensionProvider'
+}
+type SignerProviderType = NodeWalletProviderType | WalletConnectProviderType | BrowserExtensionProviderType
 
 interface EnvironmentConfig {
-  nodeUrl: string
   signerProvider: SignerProviderType
 }
 
@@ -158,11 +139,6 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
   async function loadProvider() {
     const env = process.env.ENVIRONMENT || "development-nodewallet"
     const config = getConfig(env)
-    const nodeProvider = new NodeProvider(config.nodeUrl)
-    dispatch({
-      type: 'SET_NODE_PROVIDER',
-      nodeProvider
-    })
 
     switch (config.signerProvider.type) {
       case 'NodeWalletProvider': {
@@ -190,9 +166,7 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       case 'WalletConnectProvider': {
         console.log("before getting wallet connect provider")
         const provider = await getWalletConnectProvider(
-          config.signerProvider.projectId,
-          config.signerProvider.relayUrl,
-          config.signerProvider.metadata,
+          config.signerProvider,
           dispatch
         )
         console.log("after getting wallet connect provider")
@@ -205,7 +179,8 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
           }
         })
 
-        provider.connect()
+        await provider.connect()
+        QRCodeModal.close()
 
         return
       }
@@ -239,6 +214,14 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
           await windowAlephium.enable()
           const selectedAccount = await windowAlephium.getSelectedAccount()
 
+          dispatch({
+            type: 'SET_SIGNER_PROVIDER',
+            signerProvider: {
+              provider: windowAlephium,
+              type: 'BrowserExtensionProvider'
+            }
+          })
+
           windowAlephium.on("addressesChanged", (_data) => {
             dispatch({
               type: 'SET_SELECTED_ACCOUNT',
@@ -251,14 +234,6 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
             selectedAccount: selectedAccount
           })
         }
-
-        dispatch({
-          type: 'SET_SIGNER_PROVIDER',
-          signerProvider: {
-            provider: windowAlephium,
-            type: 'BrowserExtensionProvider'
-          }
-        })
 
         return
       }
@@ -281,34 +256,20 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
 }
 
 export async function getWalletConnectProvider(
-  projectId: string,
-  relayUrl: string,
-  metadata: SignClientTypes.Metadata,
+  options: WalletConnectProviderType,
   dispatch: Dispatch<ActionType>
 ): Promise<WalletConnectProvider> {
-  const signerClient = await SignerClient.init({
+  const provider = await WalletConnectProvider.init({
+    networkId: options.networkId,
+    chainGroup: options.chainGroup,
+
+    projectId: options.projectId,
     logger: "info",
-    projectId: projectId,
-    relayUrl: relayUrl,
-    metadata: metadata
+    relayUrl: options.relayUrl,
+    metadata: options.metadata
   })
 
-  const provider = new WalletConnectProvider({
-    permittedChains: [
-      {
-        networkId: 4,  // only request permission for devnet
-        chainGroup: -1 // -1 means all groups, 0/1/2/3 means only the specific group is allowed
-      }
-    ],
-    methods: signerMethods,
-    client: signerClient,
-  })
-
-  provider.on(PROVIDER_EVENTS.connect, (e: any) => {
-    QRCodeModal.close()
-  })
-
-  provider.on(PROVIDER_EVENTS.displayUri, async (uri: string) => {
+  provider.on('displayUri', (uri: string) => {
     if (uri) {
       QRCodeModal.open(uri, () => {
         console.log("EVENT", "QR Code Modal closed");
@@ -316,19 +277,19 @@ export async function getWalletConnectProvider(
     }
   });
 
-  provider.on(PROVIDER_EVENTS.accountsChanged, (accounts: Account[]) => {
+  provider.on('accountChanged', (account: Account) => {
     dispatch({
       type: 'SET_SELECTED_ACCOUNT',
-      selectedAccount: accounts[0]
+      selectedAccount: account
     })
-    console.log('accounts changed', accounts, accounts[0])
+    console.log('accounts changed', account)
   })
 
-  provider.on(PROVIDER_EVENTS.disconnect, (code: number, reason: string) => {
+  provider.on('session_delete', () => {
     dispatch({
       type: 'DISCONNECT'
     })
-    console.log('disconnect', code, reason)
+    console.log('session_deleted')
   })
 
   return provider

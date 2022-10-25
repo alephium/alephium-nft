@@ -139,8 +139,7 @@ export default function Home() {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTMarketplace(
         context.nodeProvider,
-        context.signerProvider.provider as SignerProvider,
-        context.selectedAccount.address
+        context.signerProvider.provider
       )
     }
   }
@@ -149,8 +148,7 @@ export default function Home() {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       return new NFTCollection(
         context.nodeProvider,
-        context.signerProvider.provider as SignerProvider,
-        context.selectedAccount.address
+        context.signerProvider.provider
       )
     }
   }

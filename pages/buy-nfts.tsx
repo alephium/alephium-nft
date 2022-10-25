@@ -12,21 +12,21 @@ import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { convertAlphToSet, formatAmountForDisplay } from '@alephium/sdk'
 
 interface NFTListing {
-  price: number
+  price: bigint
   name: string,
   description: string,
   image: string,
   tokenId: string,
   tokenOwner: string,
   marketAddress: string
-  commissionRate: number,
+  commissionRate: bigint,
   listingContractId: string
 }
 
 export default function BuyNFTs() {
   const [nftListings, setNftListings] = useState([] as NFTListing[])
   const [loadingState, setLoadingState] = useState('not-loaded')
-  const [commissionRate, setCommissionRate] = useState<number | undefined>(undefined)
+  const [commissionRate, setCommissionRate] = useState<bigint | undefined>(undefined)
   const context = useContext(AlephiumWeb3Context)
   const router = useRouter()
 
@@ -55,7 +55,7 @@ export default function BuyNFTs() {
           0
         )
 
-        setCommissionRate(marketplaceState.fields.commissionRate as number)
+        setCommissionRate(marketplaceState.fields.commissionRate as bigint)
       } catch (e) {
         console.debug(`error fetching state for market place`, e)
       }
@@ -91,14 +91,14 @@ export default function BuyNFTs() {
         const metadataUri = hexToString(nftState.fields.uri as string)
         const metadata = (await axios.get(metadataUri)).data
         return {
-          price: listingState.fields.price as number,
+          price: listingState.fields.price as bigint,
           name: metadata.name,
           description: metadata.description,
           image: metadata.image,
           tokenId: tokenId,
           tokenOwner: listingState.fields.tokenOwner as string,
           marketAddress: listingState.fields.marketAddress as string,
-          commissionRate: listingState.fields.commissionRate as number,
+          commissionRate: listingState.fields.commissionRate as bigint,
           listingContractId: listingContractId
         }
       }
@@ -111,8 +111,7 @@ export default function BuyNFTs() {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
-        context.signerProvider.provider as web3.SignerProvider,
-        context.selectedAccount.address
+        context.signerProvider.provider as web3.SignerProvider
       )
 
       const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
@@ -133,8 +132,7 @@ export default function BuyNFTs() {
     if (context.nodeProvider && context.signerProvider && context.selectedAccount && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
-        context.signerProvider.provider as SignerProvider,
-        context.selectedAccount.address
+        context.signerProvider.provider
       )
 
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
@@ -194,8 +192,8 @@ export default function BuyNFTs() {
                     </div>
                   </div>
                   <div className="p-4 bg-black">
-                    <p className="text-2xl font-bold text-white">{formatAmountForDisplay(BigInt(nftListing.price))} ALPH </p>
-                    {commissionRate && showPriceBreakdowns(nftListing.price, commissionRate)}
+                    <p className="text-2xl font-bold text-white">{formatAmountForDisplay(nftListing.price)} ALPH </p>
+                    {commissionRate?.toString() && showPriceBreakdowns(nftListing.price, commissionRate)}
                     <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nftListing)}>Buy</button>
                   </div>
                 </div>
@@ -208,8 +206,8 @@ export default function BuyNFTs() {
   )
 }
 
-function getPriceBreakdowns(nftPrice: number, commissionRate: number) {
-  const commission = (BigInt(nftPrice) * BigInt(commissionRate)) / BigInt(10000)
+function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
+  const commission = (nftPrice * commissionRate) / BigInt(10000)
   const nftDeposit = convertAlphToSet("1")
   const gasAmount = BigInt(200000)
   const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
@@ -217,7 +215,7 @@ function getPriceBreakdowns(nftPrice: number, commissionRate: number) {
   return [commission, nftDeposit, gasAmount, totalAmount]
 }
 
-function showPriceBreakdowns(nftPrice: number, commissionRate: number) {
+function showPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
   const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftPrice, commissionRate)
   return (
     <div className="flex flex-col">
