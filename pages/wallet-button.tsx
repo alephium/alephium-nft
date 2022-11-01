@@ -17,11 +17,12 @@ const WalletButton = () => {
         const windowAlephium = await extensionConnect({
           include: ["alephium"],
         })
+
         await windowAlephium?.enable()
         if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAccountFunc) {
           context.setSignerProviderFunc(windowAlephium)
-          windowAlephium.defaultAddress &&
-            context.setSelectedAccountFunc(windowAlephium.defaultAddress)
+          const selectedAccount = await windowAlephium.getSelectedAccount()
+          context.setSelectedAccountFunc(selectedAccount)
         }
         break;
       }
@@ -42,10 +43,7 @@ const WalletButton = () => {
     }
   }
 
-  const showButton = context.signerProvider && (
-    context.signerProvider.type === 'WalletConnectProvider' ||
-    context.signerProvider.type === 'BrowserExtensionProvider'
-  )
+  const showButton = !(context.signerProvider && context.signerProvider.type === 'NodeWalletProvider')
 
   return (
     showButton ?

@@ -40,7 +40,6 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
     pollingInterval: 3000,
     messageCallback: async (status: web3.node.TxStatus): Promise<void> => {
       setTxStatus(status)
-
       if (status.type === 'Confirmed' || status.type === 'TxNotFound') {
         await new Promise(r => setTimeout(r, 3000));
       }

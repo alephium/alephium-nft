@@ -1,4 +1,4 @@
-import { web3, hexToString, node, Project } from '@alephium/web3'
+import { web3, hexToString, node, Project, NodeProvider } from '@alephium/web3'
 import { useContext, useEffect, useState } from 'react'
 import { fetchState, NFTContract } from '../utils/contracts'
 import { addressFromContractId, SignerProvider } from '@alephium/web3'

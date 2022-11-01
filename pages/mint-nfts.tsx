@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { useState, useContext } from 'react'
 import { useRouter } from 'next/router'
-import { SignerProvider } from '@alephium/web3'
+import { NodeProvider, SignerProvider } from '@alephium/web3'
 import { NFTCollection } from '../utils/nft-collection'
 import addresses from '../configs/addresses.json'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
