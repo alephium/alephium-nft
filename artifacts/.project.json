@@ -10,62 +10,92 @@
   "infos": {
     "contracts/nft.ral": {
       "sourceCodeHash": "629d4bd22e88668464f9f8397e2598f930ebe8a9ed32f805464626511e576632",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "113f294843e4288892a6a8f6b7f643417e361e620286483bbc75cd9dbde64ddf",
       "warnings": []
     },
     "contracts/nft_collection.ral": {
       "sourceCodeHash": "63d4dfe0e98d33dc6a30c376cbdf56d7a99a02dd65b99e5494823bc1d06255ca",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "43f290b658cf552956dc734858e128ccef35c32822d8a80fb7d70fbcc3d4781f",
       "warnings": []
     },
     "contracts/nft_listing.ral": {
       "sourceCodeHash": "7ffd0d562d0f14006b0bac81ab5e30645fdcc6e8e5add491b22e71f3628e1aa6",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "c0b1b3019b7938a51910f6692ca3e38fa866b1deb282543e2fe9c0810fc64f25",
       "warnings": []
     },
     "contracts/nft_marketplace.ral": {
       "sourceCodeHash": "b88dc0225820bc7bb9f96214a83f1f1cd518338c998ce93a1da08f6e7706aa85",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "0e7cdc1eec3979200c1864c3248ef4cde08e3bac8bb61ab64cd96fa8f3d48c0a",
       "warnings": []
     },
     "contracts/burn_nft.ral": {
       "sourceCodeHash": "6ca730b81cf9cbedbc61f5134df7dbe4a93c0c8af605c0055ff417d0ea04e3b9",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/buy_nft.ral": {
       "sourceCodeHash": "bfa84887fe0e18bec6d82990f088c61fcedf52add0f94002c4130056b157a4d9",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/cancel_listing.ral": {
       "sourceCodeHash": "e80d8105ec5a4f930e5b52a1ca339a6dc7a6f3b0780639dae4e96aaa36b92000",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/deposit_nft.ral": {
       "sourceCodeHash": "d9c67701af982c66d482e0cbb98d1d665a606c8df6d32c42cc67f23507f6a16d",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/list_nft.ral": {
       "sourceCodeHash": "8f6019c489447d1efa795d06d44a68280f20ad449fe3f9ab04ced33274ba21bf",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/mint_nft.ral": {
       "sourceCodeHash": "e4b65d66104ca7ef6dec538a7e4a97d95aafc3a6782946bfe704905b5626c078",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/update_admin.ral": {
       "sourceCodeHash": "2f81329e3992553bee5c8cd28357f0abe81d3f609270d959b08daa01915d43bb",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/update_commission_rate.ral": {
       "sourceCodeHash": "a5a35e793047d4e27a7de631ca67261e3f7365f6cc4d5eedb56ff5c7d35f3602",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/update_listing_fee.ral": {
       "sourceCodeHash": "574e0ccefc851762bd3a42891d876eb3eb3af03ede3e3c63088ec5d2d848419a",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/update_nft_price.ral": {
       "sourceCodeHash": "dafc25e5af790073ed287bb33feea9b371b01a8548e77d312471a91e9a2a5b05",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     },
     "contracts/withdraw_nft.ral": {
       "sourceCodeHash": "83583d3d592df33caa9321b5af88108890c6da711ef7fc8aa1041e16a04cf680",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
       "warnings": []
     }
   }
