@@ -262,10 +262,11 @@ export function handleWindowAlephiumEvents(
   dispatch: Dispatch<ActionType>
 ) {
   windowAlephium.on("addressesChanged", (_data) => {
-    dispatch({
-      type: 'SET_SELECTED_ACCOUNT',
-      selectedAccount: windowAlephium.getSelectedAccount()
-    })
+    windowAlephium.getSelectedAccount().then((selectedAccount) =>
+      dispatch({
+        type: 'SET_SELECTED_ACCOUNT',
+        selectedAccount: selectedAccount
+      }))
   })
 
   windowAlephium.on("networkChanged", (_network) => {

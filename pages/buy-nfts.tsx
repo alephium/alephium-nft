@@ -129,7 +129,7 @@ export default function BuyNFTs() {
   }
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.nodeProvider && context.signerProvider && context.selectedAccount && commissionRate) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider

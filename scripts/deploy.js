@@ -76,7 +76,7 @@ async function main() {
 }
 
 async function testWallet1() {
-  const wallet = new NodeWallet('alephium-web3-test-only-wallet')
+  const wallet = new NodeWallet('alephium-web3-test-only-wallet', web3.getCurrentNodeProvider())
   await wallet.unlock('alph')
   return wallet
 }
