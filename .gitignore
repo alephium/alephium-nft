@@ -36,6 +36,4 @@ yarn-error.log*
 
 dev
 
-configs/addresses.json
-
 .deployments.*.json

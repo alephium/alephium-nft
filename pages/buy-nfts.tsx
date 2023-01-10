@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import addresses from '../configs/addresses.json'
+import { marketplaceContractId } from '../configs/addresses'
 import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
@@ -51,7 +51,7 @@ export default function BuyNFTs() {
         const marketplaceState = await fetchState(
           context.nodeProvider,
           NFTMarketplaceContract,
-          addressFromContractId(addresses.marketplaceContractId),
+          addressFromContractId(marketplaceContractId),
           0
         )
 
@@ -114,7 +114,7 @@ export default function BuyNFTs() {
         context.signerProvider.provider as web3.SignerProvider
       )
 
-      const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
       const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
 
       for (var event of events) {
