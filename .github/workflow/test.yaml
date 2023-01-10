@@ -1,6 +1,10 @@
 name: Unit-Test
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - upgrade-web3-stack
 
 jobs:
   build:
