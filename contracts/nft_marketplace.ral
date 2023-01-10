@@ -51,7 +51,7 @@ Contract NFTMarketPlace(
         CommissionIsZero = 3
     }
 
-    @using(preapprovedAssets = true)
+    @using(preapprovedAssets = true, updateFields = true)
     pub fn buyNFT(
         tokenId: ByteVec,
         totalPayment: U256
@@ -62,17 +62,17 @@ Contract NFTMarketPlace(
         let price = nftListing.getPrice()
         let tokenOwner = nftListing.getTokenOwner()
 
-        nftListing.buy{buyer -> ALPH: totalPayment}(buyer)
+        nftListing.buy{buyer -> totalPayment}(buyer)
         emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = true, externalCallCheck = false, updateFields = false)
     pub fn payCommission(buyer: Address, commission: U256) -> () {
         checkCaller!(commission > 0, ErrorCodes.CommissionIsZero)
-        transferToken!(buyer, selfAddress!(), ALPH, commission)
+        transferAlph!(buyer, selfAddress!(), commission)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false)
     pub fn listNFT(
         tokenId: ByteVec,
         price: U256
@@ -94,10 +94,10 @@ Contract NFTMarketPlace(
         )
 
         // Create the listing contract
-        let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph}(tokenId, nftListingTemplateId, initialState)
+        let nftListingContractId = copyCreateSubContract!{tokenOwner -> 1 alph}(tokenId, nftListingTemplateId, initialState)
 
         // Charge the listing fee
-        transferTokenToSelf!(tokenOwner, ALPH, listingFee)
+        transferAlphToSelf!(tokenOwner, listingFee)
 
         emit NFTListed(
             price,
@@ -109,6 +109,7 @@ Contract NFTMarketPlace(
         return contractIdToAddress!(nftListingContractId)
     }
 
+    @using(updateFields = true)
     pub fn cancelNFTListing(tokenId: ByteVec) -> () {
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
@@ -120,6 +121,7 @@ Contract NFTMarketPlace(
         emit NFTListingCancelled(tokenId, tokenOwner)
     }
 
+    @using(updateFields = true)
     pub fn updateNFTPrice(tokenId: ByteVec, newPrice: U256) -> () {
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
@@ -156,6 +158,7 @@ Contract NFTMarketPlace(
         emit CommissionRateUpdated(commissionRate, newCommissionRate)
     }
 
+    @using(updateFields = false)
     pub fn getListingFee() -> U256 {
         return listingFee
     }

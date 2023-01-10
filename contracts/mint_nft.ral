@@ -5,5 +5,5 @@ TxScript MintNFT(
     uri: ByteVec
 ) {
     let nftCollection = NFTCollection(nftCollectionContractId)
-    nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(name, description, uri)
+    nftCollection.mint{callerAddress!() -> 1 alph}(name, description, uri)
 }

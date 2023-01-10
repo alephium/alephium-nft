@@ -22,7 +22,7 @@ describe('nft collection', function() {
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri), 0)
+    const nftContractId = utils.subContractId(nftCollectionContractId, stringToHex(nftUri))
     const nftName = "CryptoPunk #0001"
     const nftDescription = "CP0001"
     const nftContractAddress = addressFromContractId(nftContractId)
@@ -72,7 +72,7 @@ describe('nft collection', function() {
     const gasPrice = 1000000000 * 100
     const totalGas = gasAmount * gasPrice
     await nftCollection.burnNFT(
-      subContractId(nftCollectionContractId, stringToHex(nftUri), 0),
+      utils.subContractId(nftCollectionContractId, stringToHex(nftUri)),
       gasAmount,
       BigInt(gasPrice)
     )

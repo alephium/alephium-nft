@@ -42,7 +42,7 @@ const configuration: Configuration<Settings> = {
 
     testnet: {
       networkId: 1,
-      nodeUrl: process.env.ALPH_NODE_URL as string,
+      nodeUrl: 'https://wallet.testnet.alephium.org',
       mnemonic: process.env.MNEMONIC as string,
       confirmations: 2,
       settings: loadSettings('testnet')

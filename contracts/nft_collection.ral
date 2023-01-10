@@ -16,7 +16,7 @@ Contract NFTCollection(
       nftContractAddress: Address
     )
 
-    @using(preapprovedAssets = true, assetsInContract = true)
+    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false)
     pub fn mint(
         nftName: ByteVec,
         nftDescription: ByteVec,
@@ -35,7 +35,7 @@ Contract NFTCollection(
             collectionAddress
         )
 
-        let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(nftUri, nftTemplateId, initialState, 1, minter)
+        let contractId = copyCreateSubContractWithToken!{minter -> 1 alph}(nftUri, nftTemplateId, initialState, 1, minter)
 
         emit NFTMinted(
             minter,

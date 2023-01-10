@@ -1,8 +1,8 @@
 {
   "groupIndex": 0,
   "commissionRate": 200,
-  "ListingFee": 1,
-  "defaultNftCollectionContractId":"",
-  "marketplaceContractId":"",
+  "listingFee": 1,
+  "defaultNftCollectionContractId":"9b9a51faedb5e33d870ff7e2dc382912213cfe325ce2e58ab882989f629857b3",
+  "marketplaceContractId":"8bb87227ba931b0174c179449b6005c9c6302d07c31ad8144fe86f395cca0542",
   "marketplaceAdminAddress":"1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH"
 }
