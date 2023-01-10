@@ -33,12 +33,12 @@ Contract NFT(
         TokenAlreadyDeposited = 2
     }
 
-    @using(readonly = true, externalCallCheck = false)
+    @using(checkExternalCaller = false)
     pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
         return name, description, uri, collectionAddress
     }
 
-    @using(readonly = true, externalCallCheck = false)
+    @using(checkExternalCaller = false)
     pub fn getOwner() -> (Address) {
         return owner
     }
@@ -52,9 +52,10 @@ Contract NFT(
     pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
         checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
-        transferAlph!(newOwner, owner, 1 alph)
+        transferToken!(newOwner, owner, ALPH, 1 alph)
     }
 
+    @using(updateFields = true)
     fn updateOwner(newOwner: Address) -> () {
         // Token needs to be owned by the contract when owner is changed
         assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
@@ -62,7 +63,7 @@ Contract NFT(
         owner = newOwner
     }
 
-    @using(preapprovedAssets=true, assetsInContract = true)
+    @using(preapprovedAssets=true, assetsInContract = true, updateFields = true)
     pub fn deposit() -> () {
         assert!(isTokenWithdrawn, ErrorCodes.TokenAlreadyDeposited)
 
@@ -78,7 +79,7 @@ Contract NFT(
         transferTokenToSelf!(depositor, selfContractId!(), 1)
     }
 
-    @using(assetsInContract = true)
+    @using(assetsInContract = true, updateFields = true)
     pub fn withdraw() -> () {
         assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
