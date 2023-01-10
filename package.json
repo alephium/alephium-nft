@@ -9,7 +9,7 @@
     "lint": "next lint",
     "build:contracts": "npx @alephium/cli compile",
     "test:contracts": "npm run build:contracts && jest -i --config ./configs/jest-contracts.config.ts",
-    "deploy:contracts": "node scripts/deploy.js"
+    "deploy:contracts": "npx @alephium/cli deploy"
   },
   "dependencies": {
     "@alephium/web3": "v0.3.0-rc.4",

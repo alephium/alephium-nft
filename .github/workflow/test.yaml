@@ -16,6 +16,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: start ALPH docker image
+        working-directory: ./test/docker
+        run: docker-compose up -d
       - name: Run tests
         run: |
           npm ci
