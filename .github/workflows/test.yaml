@@ -26,4 +26,6 @@ jobs:
       - name: Run tests
         run: |
           npm ci
+          npx --yes @h0ngcha0/alephium-cli wallets restore -w alephium-web3-test-only-wallet \
+            -c "vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava" -p alph
           npm run test:contracts
