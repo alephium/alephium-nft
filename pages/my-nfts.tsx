@@ -221,7 +221,7 @@ export default function Home() {
     resetState()
   }
 
-  if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
+  if (loadingState === 'loaded' && nfts.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
     <>
       {

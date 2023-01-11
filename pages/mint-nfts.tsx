@@ -73,13 +73,19 @@ export default function MintNFTs() {
       setOngoingTxId(mintNFTTxResult.txId)
       setOngoingTxDescription('minting NFT')
 
+      let txNotFoundRetries: number = 0
       setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
           router.push('/my-nfts')
         } else if (txStatus.type === 'TxNotFound') {
-          resetTxStatus()
-          console.error('Mint NFT transaction not found')
+          if (txNotFoundRetries >= 10) {
+            console.info('Mint NFT transaction not found after 30 seconds, give up.')
+            resetTxStatus()
+          } else {
+            txNotFoundRetries = txNotFoundRetries + 1
+            console.info('Mint NFT transaction not found, retrying...')
+          }
         }
       })
     } else {
