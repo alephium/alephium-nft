@@ -42,7 +42,7 @@ const configuration: Configuration<Settings> = {
 
     testnet: {
       networkId: 1,
-      nodeUrl: 'https://wallet.testnet.alephium.org',
+      nodeUrl: 'https://alephium-testnet.softfork.se',
       mnemonic: process.env.MNEMONIC as string,
       confirmations: 2,
       settings: loadSettings('testnet')

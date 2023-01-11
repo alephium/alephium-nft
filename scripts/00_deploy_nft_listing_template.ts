@@ -18,6 +18,7 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
 
   const nftListingContract = Project.contract("NFTListing")
   const result = await deployer.deployContract(nftListingContract, {
+    // @ts-ignore
     initialFields: initialFields
   })
   console.log(`NFTListing Template: ${result.contractAddress}, contract id: ${result.contractId}`)
