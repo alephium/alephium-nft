@@ -3,7 +3,7 @@
 ## Install
 
 ```
-npm install
+yarn
 ```
 
 ## Getting Started
@@ -11,32 +11,33 @@ npm install
 First, run the development server:
 
 ```
-npm run dev
-```
-
-## Start a devnet
-
-```
-npm run start-devnet // this will start a devnet for smart contract tests
+yarn run dev
 ```
 
 ## Stop/restart devnet
 
 ```
-npm run stop-devnet
-npm run restart-devnet
-```
-
-## Testing Smart Contract
-
-```
-npm run test:contracts
+npx @alephium/cli devnet start // this will start a devnet for smart contract tests
+npx @alephium/cli devnet stop
 ```
 
 or
 
 ```
-npm run test:contracts -- nft-marketplace.test.ts
+cd test/docker
+docker-compose up -d
+```
+
+## Testing Smart Contract
+
+```
+yarn run test:contracts
+```
+
+or
+
+```
+yarn run test:contracts -- nft-marketplace.test.ts
 ```
 
 ## Deploy Smart Contracts
@@ -49,7 +50,7 @@ Before running the application, two smart contracts need to be created:
    collections
 
 ```
-npm run deploy:contracts
+yarn run deploy:contracts
 ```
 
 ## Config Environments
