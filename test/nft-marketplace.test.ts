@@ -3,7 +3,6 @@ import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTContract, NFTListingContract, NFTMarketplaceContract } from '../utils/contracts'
-import * as utils from '../utils'
 
 describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
@@ -24,7 +23,7 @@ describe('nft marketplace', function() {
     const nftCollectionContractId = nftCollectionDeployTx.contractId
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = utils.subContractId(nftCollectionContractId, stringToHex(nftUri))
+    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri), 0)
     const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
@@ -38,7 +37,7 @@ describe('nft marketplace', function() {
 
     const tokenId = nftContractId
     const price = BigInt("1000000000000000000")
-    const nftListingContractId = utils.subContractId(nftMarketplaceContractId, tokenId)
+    const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
     const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
     // Deposit NFT since it is withdrawn automatically when minted
