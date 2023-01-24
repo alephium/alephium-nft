@@ -41,11 +41,11 @@ export default function Home() {
     resetTxStatus
   ] = useTxStatus()
 
-  console.debug('selected account in my-nft', context.selectedAccount)
+  console.debug('selected account in my-nft', context.selectedAddress)
 
   useEffect(() => {
     loadNFTs()
-  }, [context.selectedAccount])
+  }, [context.selectedAddress])
 
   function resetState() {
     resetTxStatus()
@@ -86,8 +86,8 @@ export default function Home() {
   }
 
   async function loadNFTs() {
-    if (context.nodeProvider && context.selectedAccount) {
-      const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAccount.address)
+    if (context.nodeProvider && context.selectedAddress) {
+      const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAddress)
       setNfts(allNFTsForAddress)
     }
 
@@ -136,7 +136,7 @@ export default function Home() {
   }
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       return new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider
@@ -145,7 +145,7 @@ export default function Home() {
   }
 
   function getNFTCollection(): NFTCollection | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       return new NFTCollection(
         context.nodeProvider,
         context.signerProvider.provider

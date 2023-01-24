@@ -60,7 +60,7 @@ export default function MintNFTs() {
     const uri = await uploadToIPFS()
     const name = formInput.name
     const description = formInput.description
-    if (uri && context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (uri && context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       const nftCollection = new NFTCollection(
         context.nodeProvider,
         context.signerProvider.provider

@@ -43,7 +43,7 @@ export default function BuyNFTs() {
   useEffect(() => {
     loadListedNFTs()
     loadMarketplaceCommissionRate()
-  }, [context.selectedAccount, context.nodeProvider])
+  }, [context.selectedAddress, context.nodeProvider])
 
   async function loadMarketplaceCommissionRate() {
     if (context.nodeProvider) {
@@ -108,7 +108,7 @@ export default function BuyNFTs() {
   async function loadListedNFTs() {
     const items = new Map<string, NFTListing>()
 
-    if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider && context.selectedAddress) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider as web3.SignerProvider
@@ -129,7 +129,7 @@ export default function BuyNFTs() {
   }
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount && commissionRate) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider
@@ -163,7 +163,7 @@ export default function BuyNFTs() {
         "can not buy NFT",
         context.nodeProvider,
         context.signerProvider,
-        context.selectedAccount,
+        context.selectedAddress,
         commissionRate
       )
     }

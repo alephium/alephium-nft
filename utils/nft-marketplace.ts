@@ -39,14 +39,14 @@ export class NFTMarketplace extends DeployHelpers {
 
     const nftMarketplaceContract = Contract.fromJson(nftMarketplaceArtifact)
 
-    const adminAccount = await this.signer.getSelectedAccount()
+    const adminAddress = await this.signer.getSelectedAddress()
 
     const nftMarketplaceDeployTx = await nftMarketplaceContract.deploy(
       this.signer,
       {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractId,
-          admin: adminAccount.address,
+          admin: adminAddress,
           listingFee: 10n,    // Listing price default to 10 ALPH
           commissionRate: 200n  // 200 basis point: 2%
         }
