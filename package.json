@@ -9,7 +9,9 @@
     "lint": "next lint",
     "build:contracts": "npx @alephium/cli compile",
     "test:contracts": "npm run build:contracts && jest -i --config ./configs/jest-contracts.config.ts",
-    "deploy:contracts": "npx @alephium/cli deploy"
+    "deploy:contracts": "npx @alephium/cli deploy",
+    "docker:testnet": "docker build . -t liuhongchao/alephium-nft-testnet:$npm_package_version --build-arg NEXT_PUBLIC_NETWORK=testnet",
+    "docker:mainnet": "docker build . -t liuhongchao/alephium-nft-testnet:$npm_package_version --build-arg NEXT_PUBLIC_NETWORK=mainnet"
   },
   "dependencies": {
     "@alephium/web3": "v0.3.0-rc.7",

@@ -42,8 +42,9 @@ const configuration: Configuration<Settings> = {
 
     testnet: {
       networkId: 1,
-      nodeUrl: 'https://alephium-testnet.softfork.se',
-      mnemonic: process.env.MNEMONIC as string,
+      nodeUrl: 'https://wallet-v16.testnet.alephium.org',
+      mnemonic:
+        'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava',
       confirmations: 2,
       settings: loadSettings('testnet')
     },

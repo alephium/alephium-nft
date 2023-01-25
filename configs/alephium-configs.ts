@@ -9,12 +9,7 @@ module.exports = {
         password: 'alph'
       }
     },
-    'browser-extension-local': {
-      signerProvider: {
-        type: 'BrowserExtensionProvider',
-      }
-    },
-    'browser-extension-softfork': {
+    'browser-extension': {
       signerProvider: {
         type: 'BrowserExtensionProvider',
       }

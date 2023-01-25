@@ -1,5 +1,5 @@
 {
-  "version": "v1.6.2",
+  "version": "v1.6.0",
   "name": "CancelListing",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000103",
   "fieldsSig": {

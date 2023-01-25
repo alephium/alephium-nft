@@ -4,8 +4,7 @@ const nextConfig = {
   env: {
     //ENVIRONMENT: "development-walletconnect"
     //ENVIRONMENT: "development-nodewallet"
-    //ENVIRONMENT: "browser-extension-softfork"
-    ENVIRONMENT: "browser-extension-local"
+    ENVIRONMENT: "browser-extension"
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
