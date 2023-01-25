@@ -22,3 +22,38 @@ services:
     volumes:
       - ./devnet.conf:/alephium-home/.alephium/user.conf
       - alephium-wallets:/alephium-home/.alephium-wallets
+
+  postgres:
+    container_name: alephium_explorer_postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-explorer}
+      PGDATA: /data/postgres
+    ports:
+      - "127.0.0.1:19974:5432"
+    restart: unless-stopped
+
+  explorer-backend:
+    container_name: alephium_explorer_backend
+    image: alephium/explorer-backend:v1.11.2
+    depends_on:
+      - alephium
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - EXPLORER_HOST=0.0.0.0
+      - EXPLORER_PORT=9090
+      - BLOCKFLOW_HOST=alephium
+      - BLOCKFLOW_PORT=22973
+      - BLOCKFLOW_NETWORK_ID=4
+      - DB_NAME=${POSTGRES_DB:-explorer}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - EXPLORER_READONLY=false

@@ -6,6 +6,7 @@ import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
 import { connect, AlephiumWindowObject } from "@alephium/get-extension-wallet"
+import { NETWORK } from '../configs/addresses'
 
 type SignerProvider =
   | {
@@ -22,13 +23,14 @@ type SignerProvider =
   }
 
 type SetSignerProviderFunc = (provider: AlephiumWindowObject) => void
-type SetSelectedAddressFunc = (address: Address) => void
+type SetSelectedAddressFunc = (address?: Address) => void
 type StateType = {
   signerProvider?: SignerProvider
   nodeProvider?: NodeProvider
   selectedAddress?: Address,
   setSignerProviderFunc?: SetSignerProviderFunc
   setSelectedAddressFunc?: SetSelectedAddressFunc
+  disconnectFunc?: () => void
 }
 
 type ActionType =
@@ -39,14 +41,6 @@ type ActionType =
   | {
     type: 'SET_SIGNER_PROVIDER'
     signerProvider: StateType['signerProvider']
-  }
-  | {
-    type: 'SET_SIGNER_PROVIDER_FUNC'
-    func: StateType['setSignerProviderFunc']
-  }
-  | {
-    type: 'SET_SELECTED_ADDRESS_FUNC'
-    func: StateType['setSelectedAddressFunc']
   }
   | {
     type: 'DISCONNECT'
@@ -76,18 +70,6 @@ function reducer(state: StateType, action: ActionType): StateType {
 
     case 'DISCONNECT':
       return initialState
-
-    case 'SET_SIGNER_PROVIDER_FUNC':
-      return {
-        ...state,
-        setSignerProviderFunc: action.func
-      }
-
-    case 'SET_SELECTED_ADDRESS_FUNC':
-      return {
-        ...state,
-        setSelectedAddressFunc: action.func
-      }
 
     default:
       throw new Error()
@@ -184,32 +166,18 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       }
 
       case 'BrowserExtensionProvider': {
-        dispatch({
-          type: 'SET_SIGNER_PROVIDER_FUNC',
-          func: (provider: AlephiumWindowObject) => {
-            dispatch({
-              type: 'SET_SIGNER_PROVIDER',
-              signerProvider: {
-                provider,
-                type: 'BrowserExtensionProvider'
-              }
-            })
-          }
-        })
-
-        dispatch({
-          type: 'SET_SELECTED_ADDRESS_FUNC',
-          func: (address: Address) => {
-            dispatch({
-              type: 'SET_SELECTED_ADDRESS',
-              selectedAddress: address
-            })
-          }
-        })
-
         const windowAlephium = await connect({ showList: false })
         if (windowAlephium) {
-          const selectedAddress = await windowAlephium.enable()
+          const selectedAddress = await windowAlephium.enable({
+            networkId: NETWORK,
+            onDisconnected: () => {
+              return Promise.resolve(
+                dispatch({
+                  type: 'DISCONNECT'
+                })
+              )
+            }
+          })
 
           dispatch({
             type: 'SET_SIGNER_PROVIDER',
@@ -244,8 +212,26 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
         selectedAddress: state.selectedAddress,
         signerProvider: state.signerProvider,
         nodeProvider: state.nodeProvider,
-        setSignerProviderFunc: state.setSignerProviderFunc,
-        setSelectedAddressFunc: state.setSelectedAddressFunc
+        setSignerProviderFunc: (provider: AlephiumWindowObject) => {
+          dispatch({
+            type: 'SET_SIGNER_PROVIDER',
+            signerProvider: {
+              provider,
+              type: 'BrowserExtensionProvider'
+            }
+          })
+        },
+        setSelectedAddressFunc: (address?: Address) => {
+          dispatch({
+            type: 'SET_SELECTED_ADDRESS',
+            selectedAddress: address
+          })
+        },
+        disconnectFunc: () => {
+          dispatch({
+            type: 'DISCONNECT'
+          })
+        }
       }}
     >
       {children}
