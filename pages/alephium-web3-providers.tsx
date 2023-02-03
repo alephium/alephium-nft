@@ -166,7 +166,10 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       }
 
       case 'BrowserExtensionProvider': {
-        const windowAlephium = await connect({ showList: false })
+        const windowAlephium = await connect({
+          showList: false,
+          include: ['alephium']
+        })
         if (windowAlephium) {
           const selectedAddress = await windowAlephium.enable({
             networkId: NETWORK,
