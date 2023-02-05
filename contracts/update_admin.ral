@@ -1,0 +1,7 @@
+TxScript UpdateAdmin(
+    newAdmin: Address,
+    nftMarketplaceContractId: ByteVec
+) {
+    let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketPlace.updateAdmin(newAdmin)
+}

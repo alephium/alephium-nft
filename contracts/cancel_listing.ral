@@ -1,0 +1,7 @@
+TxScript CancelListing(
+    tokenId: ByteVec,
+    nftMarketplaceContractId: ByteVec
+) {
+    let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketplace.cancelNFTListing(tokenId)
+}

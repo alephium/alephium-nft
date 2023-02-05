@@ -1,0 +1,4 @@
+TxScript BurnNFT(nftContractId: ByteVec) {
+    let nft = NFT(nftContractId)
+    nft.burn()
+}

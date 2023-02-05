@@ -1,0 +1,28 @@
+{
+  "version": "v1.6.0",
+  "name": "WithdrawNFT",
+  "bytecodeTemplate": "01010300010006{0}17000c0c16000106",
+  "fieldsSig": {
+    "names": [
+      "nftContractId"
+    ],
+    "types": [
+      "ByteVec"
+    ],
+    "isMutable": [
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

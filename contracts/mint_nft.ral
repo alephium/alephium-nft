@@ -1,0 +1,9 @@
+TxScript MintNFT(
+    nftCollectionContractId: ByteVec,
+    name: ByteVec,
+    description: ByteVec,
+    uri: ByteVec
+) {
+    let nftCollection = NFTCollection(nftCollectionContractId)
+    nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(name, description, uri)
+}

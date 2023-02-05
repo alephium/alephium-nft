@@ -1,0 +1,8 @@
+TxScript UpdateNFTPrice(
+    price: U256,
+    tokenId: ByteVec,
+    nftMarketplaceContractId: ByteVec
+) {
+    let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
+    nftMarketPlace.updateNFTPrice(tokenId, price)
+}

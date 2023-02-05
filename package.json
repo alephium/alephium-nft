@@ -1,0 +1,58 @@
+{
+  "name": "alephium-nft",
+  "version": "0.1.8",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3020",
+    "build": "next build",
+    "start": "next start -p 3020",
+    "lint": "next lint",
+    "build:contracts": "npx @alephium/cli compile",
+    "test:contracts": "npm run build:contracts && jest -i --config ./configs/jest-contracts.config.ts",
+    "deploy:contracts": "npx @alephium/cli deploy",
+    "docker:testnet": "docker build . -t liuhongchao/alephium-nft-testnet:$npm_package_version --build-arg NEXT_PUBLIC_NETWORK=testnet",
+    "docker:mainnet": "docker build . -t liuhongchao/alephium-nft-testnet:$npm_package_version --build-arg NEXT_PUBLIC_NETWORK=mainnet"
+  },
+  "dependencies": {
+    "@alephium/web3": "v0.3.0-rc.8",
+    "@alephium/web3-wallet": "v0.3.0-rc.8",
+    "@alephium/cli": "v0.3.0-rc.8",
+    "@alephium/sdk": "0.3.0",
+    "@alephium/get-extension-wallet": "0.5.0-rc.2",
+    "@alephium/walletconnect-provider": "0.2.2",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.0.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "axios": "^0.27.2",
+    "better-sqlite3": "^7.6.2",
+    "bs58": "^5.0.0",
+    "daisyui": "^2.31.0",
+    "ipfs-http-client": "^58.0.1",
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "ts-jest": "^28.0.2",
+    "ts-node": "^10.7.0",
+    "usehooks-ts": "^2.5.4",
+    "whatwg-url": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.40",
+    "@types/react": "18.0.12",
+    "@types/react-dom": "18.0.5",
+    "autoprefixer": "^10.4.7",
+    "eslint": "8.17.0",
+    "eslint-config-next": "12.1.6",
+    "jest": "^28.1.0",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.3",
+    "typescript": "4.7.3"
+  },
+  "engines": {
+    "npm": ">=8.0.0 <9.0.0",
+    "node": ">=16.0.0 <17.0.0"
+  }
+}
