@@ -10,12 +10,12 @@ Contract NFTListing(
         MarketplaceAllowedOnly = 0
     }
 
-    @using(readonly = true, externalCallCheck = false)
+    @using(checkExternalCaller = false, updateFields = false)
     pub fn getTokenOwner() -> Address {
         return tokenOwner
     }
 
-    @using(readonly = true, externalCallCheck = false)
+    @using(checkExternalCaller = false, updateFields = false)
     pub fn getPrice() -> U256 {
         return price
     }
@@ -28,15 +28,15 @@ Contract NFTListing(
         let commission = (price * commissionRate) / 10000
         if (commission > 0) {
             NFTMarketPlace(callerContractId!()).payCommission{
-                buyer -> commission
+                buyer -> ALPH: commission
             }(buyer, commission)
         }
 
         if (buyer != tokenOwner) {
-            transferAlph!(buyer, tokenOwner, price)
+            transferToken!(buyer, tokenOwner, ALPH, price)
         }
 
-        NFT(tokenId).transferOwnershipAndAsset{buyer -> 1 alph}(buyer)
+        NFT(tokenId).transferOwnershipAndAsset{buyer -> ALPH: 1 alph}(buyer)
 
         destroySelf!(tokenOwner)
     }
@@ -51,6 +51,7 @@ Contract NFTListing(
         destroySelf!(tokenOwner)
     }
 
+    @using(updateFields = true)
     pub fn updatePrice(newPrice: U256) -> () {
         checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
         price = newPrice

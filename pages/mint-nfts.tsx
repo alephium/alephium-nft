@@ -1,9 +1,8 @@
 import * as web3 from '@alephium/web3'
 import { useState, useContext } from 'react'
 import { useRouter } from 'next/router'
-import { NodeProvider, SignerProvider } from '@alephium/web3'
 import { NFTCollection } from '../utils/nft-collection'
-import addresses from '../configs/addresses.json'
+import { defaultNftCollectionContractId } from '../configs/addresses'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
@@ -61,26 +60,32 @@ export default function MintNFTs() {
     const uri = await uploadToIPFS()
     const name = formInput.name
     const description = formInput.description
-    if (uri && context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (uri && context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       const nftCollection = new NFTCollection(
         context.nodeProvider,
         context.signerProvider.provider
       )
 
       // TODO: Figure out UI to create collection, right now use default collection id
-      const nftCollectionContractId = addresses.defaultNftCollectionContractId
+      const nftCollectionContractId = defaultNftCollectionContractId
       const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
       console.debug('mintNFTTxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)
       setOngoingTxDescription('minting NFT')
 
+      let txNotFoundRetries: number = 0
       setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
           router.push('/my-nfts')
         } else if (txStatus.type === 'TxNotFound') {
-          resetTxStatus()
-          console.error('Mint NFT transaction not found')
+          if (txNotFoundRetries >= 10) {
+            console.info('Mint NFT transaction not found after 30 seconds, give up.')
+            resetTxStatus()
+          } else {
+            txNotFoundRetries = txNotFoundRetries + 1
+            console.info('Mint NFT transaction not found, retrying...')
+          }
         }
       })
     } else {

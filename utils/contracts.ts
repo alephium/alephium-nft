@@ -11,7 +11,7 @@ import {
   fromApiVals,
   fromApiNumber256,
   fromApiTokens,
-  contractIdFromAddress
+  contractIdFromAddress,
 } from '@alephium/web3'
 import mintNFT from '../artifacts/mint_nft.ral.json'
 import listNFT from '../artifacts/list_nft.ral.json'

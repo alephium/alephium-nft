@@ -1,4 +1,4 @@
-import { web3, NodeProvider } from '@alephium/web3'
+import { web3, NodeProvider, Address } from '@alephium/web3'
 import { NodeWallet } from '@alephium/web3-wallet'
 import { Account } from '@alephium/web3'
 import { WalletConnectProvider, QRCodeModal, ProjectMetaData, ChainGroup, NetworkId } from '@alephium/walletconnect-provider'
@@ -6,6 +6,7 @@ import React, { Dispatch, useEffect, useReducer } from 'react'
 // @ts-ignore
 import AlephiumConfigs from '../configs/alephium-configs'
 import { connect, AlephiumWindowObject } from "@alephium/get-extension-wallet"
+import { NETWORK } from '../configs/addresses'
 
 type SignerProvider =
   | {
@@ -22,31 +23,24 @@ type SignerProvider =
   }
 
 type SetSignerProviderFunc = (provider: AlephiumWindowObject) => void
-type SetSelectedAccountFunc = (accounts: Account) => void
+type SetSelectedAddressFunc = (address?: Address) => void
 type StateType = {
   signerProvider?: SignerProvider
   nodeProvider?: NodeProvider
-  selectedAccount?: Account,
+  selectedAddress?: Address,
   setSignerProviderFunc?: SetSignerProviderFunc
-  setSelectedAccountFunc?: SetSelectedAccountFunc
+  setSelectedAddressFunc?: SetSelectedAddressFunc
+  disconnectFunc?: () => void
 }
 
 type ActionType =
   | {
-    type: 'SET_SELECTED_ACCOUNT'
-    selectedAccount: StateType['selectedAccount']
+    type: 'SET_SELECTED_ADDRESS'
+    selectedAddress: StateType['selectedAddress']
   }
   | {
     type: 'SET_SIGNER_PROVIDER'
     signerProvider: StateType['signerProvider']
-  }
-  | {
-    type: 'SET_SIGNER_PROVIDER_FUNC'
-    func: StateType['setSignerProviderFunc']
-  }
-  | {
-    type: 'SET_SELECTED_ACCOUNT_FUNC'
-    func: StateType['setSelectedAccountFunc']
   }
   | {
     type: 'DISCONNECT'
@@ -54,17 +48,17 @@ type ActionType =
 
 const initialState: StateType = {
   signerProvider: undefined,
-  selectedAccount: undefined,
+  selectedAddress: undefined,
   setSignerProviderFunc: undefined,
-  setSelectedAccountFunc: undefined
+  setSelectedAddressFunc: undefined
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
   switch (action.type) {
-    case 'SET_SELECTED_ACCOUNT':
+    case 'SET_SELECTED_ADDRESS':
       return {
         ...state,
-        selectedAccount: action.selectedAccount
+        selectedAddress: action.selectedAddress
       }
 
     case 'SET_SIGNER_PROVIDER':
@@ -76,18 +70,6 @@ function reducer(state: StateType, action: ActionType): StateType {
 
     case 'DISCONNECT':
       return initialState
-
-    case 'SET_SIGNER_PROVIDER_FUNC':
-      return {
-        ...state,
-        setSignerProviderFunc: action.func
-      }
-
-    case 'SET_SELECTED_ACCOUNT_FUNC':
-      return {
-        ...state,
-        setSelectedAccountFunc: action.func
-      }
 
     default:
       throw new Error()
@@ -148,8 +130,8 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
         const accounts = await wallet.getAccounts()
 
         dispatch({
-          type: 'SET_SELECTED_ACCOUNT',
-          selectedAccount: accounts[0]
+          type: 'SET_SELECTED_ADDRESS',
+          selectedAddress: accounts[0].address
         })
 
         dispatch({
@@ -184,34 +166,21 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
       }
 
       case 'BrowserExtensionProvider': {
-        dispatch({
-          type: 'SET_SIGNER_PROVIDER_FUNC',
-          func: (provider: AlephiumWindowObject) => {
-            handleWindowAlephiumEvents(provider, dispatch)
-            dispatch({
-              type: 'SET_SIGNER_PROVIDER',
-              signerProvider: {
-                provider,
-                type: 'BrowserExtensionProvider'
-              }
-            })
-          }
+        const windowAlephium = await connect({
+          showList: false,
+          include: ['alephium']
         })
-
-        dispatch({
-          type: 'SET_SELECTED_ACCOUNT_FUNC',
-          func: (account: Account) => {
-            dispatch({
-              type: 'SET_SELECTED_ACCOUNT',
-              selectedAccount: account
-            })
-          }
-        })
-
-        const windowAlephium = await connect({ showList: false })
         if (windowAlephium) {
-          await windowAlephium.enable()
-          const selectedAccount = await windowAlephium.getSelectedAccount()
+          const selectedAddress = await windowAlephium.enable({
+            networkId: NETWORK,
+            onDisconnected: () => {
+              return Promise.resolve(
+                dispatch({
+                  type: 'DISCONNECT'
+                })
+              )
+            }
+          })
 
           dispatch({
             type: 'SET_SIGNER_PROVIDER',
@@ -222,11 +191,9 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
           })
 
           dispatch({
-            type: 'SET_SELECTED_ACCOUNT',
-            selectedAccount: selectedAccount
+            type: 'SET_SELECTED_ADDRESS',
+            selectedAddress: selectedAddress
           })
-
-          handleWindowAlephiumEvents(windowAlephium, dispatch)
         } else {
           dispatch({
             type: 'SET_SIGNER_PROVIDER',
@@ -245,40 +212,34 @@ const AlephiumWeb3Provider = ({ children }: AlephiumWeb3ProviderProps) => {
   return (
     <AlephiumWeb3Context.Provider
       value={{
-        selectedAccount: state.selectedAccount,
+        selectedAddress: state.selectedAddress,
         signerProvider: state.signerProvider,
         nodeProvider: state.nodeProvider,
-        setSignerProviderFunc: state.setSignerProviderFunc,
-        setSelectedAccountFunc: state.setSelectedAccountFunc
+        setSignerProviderFunc: (provider: AlephiumWindowObject) => {
+          dispatch({
+            type: 'SET_SIGNER_PROVIDER',
+            signerProvider: {
+              provider,
+              type: 'BrowserExtensionProvider'
+            }
+          })
+        },
+        setSelectedAddressFunc: (address?: Address) => {
+          dispatch({
+            type: 'SET_SELECTED_ADDRESS',
+            selectedAddress: address
+          })
+        },
+        disconnectFunc: () => {
+          dispatch({
+            type: 'DISCONNECT'
+          })
+        }
       }}
     >
       {children}
     </AlephiumWeb3Context.Provider>
   )
-}
-
-export function handleWindowAlephiumEvents(
-  windowAlephium: AlephiumWindowObject,
-  dispatch: Dispatch<ActionType>
-) {
-  windowAlephium.on("addressesChanged", (_data) => {
-    windowAlephium.getSelectedAccount().then((selectedAccount) =>
-      dispatch({
-        type: 'SET_SELECTED_ACCOUNT',
-        selectedAccount: selectedAccount
-      }))
-  })
-
-  windowAlephium.on("networkChanged", (_network) => {
-    // Reset signer provider and node provider
-    dispatch({
-      type: 'SET_SIGNER_PROVIDER',
-      signerProvider: {
-        provider: windowAlephium,
-        type: 'BrowserExtensionProvider'
-      }
-    })
-  })
 }
 
 export async function getWalletConnectProvider(
@@ -305,8 +266,8 @@ export async function getWalletConnectProvider(
 
   provider.on('accountChanged', (account: Account) => {
     dispatch({
-      type: 'SET_SELECTED_ACCOUNT',
-      selectedAccount: account
+      type: 'SET_SELECTED_ADDRESS',
+      selectedAddress: account.address
     })
     console.log('accounts changed', account)
   })

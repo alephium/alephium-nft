@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import addresses from '../configs/addresses.json'
+import { marketplaceContractId } from '../configs/addresses'
 import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
 import axios from 'axios'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
@@ -43,7 +43,7 @@ export default function BuyNFTs() {
   useEffect(() => {
     loadListedNFTs()
     loadMarketplaceCommissionRate()
-  }, [context.selectedAccount, context.nodeProvider])
+  }, [context.selectedAddress, context.nodeProvider])
 
   async function loadMarketplaceCommissionRate() {
     if (context.nodeProvider) {
@@ -51,7 +51,7 @@ export default function BuyNFTs() {
         const marketplaceState = await fetchState(
           context.nodeProvider,
           NFTMarketplaceContract,
-          addressFromContractId(addresses.marketplaceContractId),
+          addressFromContractId(marketplaceContractId),
           0
         )
 
@@ -108,13 +108,13 @@ export default function BuyNFTs() {
   async function loadListedNFTs() {
     const items = new Map<string, NFTListing>()
 
-    if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider && context.selectedAddress) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider as web3.SignerProvider
       )
 
-      const marketplaceContractAddress = addressFromContractId(addresses.marketplaceContractId)
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
       const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
 
       for (var event of events) {
@@ -129,7 +129,7 @@ export default function BuyNFTs() {
   }
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount && commissionRate) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider
@@ -163,7 +163,7 @@ export default function BuyNFTs() {
         "can not buy NFT",
         context.nodeProvider,
         context.signerProvider,
-        context.selectedAccount,
+        context.selectedAddress,
         commissionRate
       )
     }

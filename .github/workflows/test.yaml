@@ -1,0 +1,31 @@
+name: Unit-Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - upgrade-web3-stack
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: start ALPH docker image
+        working-directory: ./test/docker
+        run: docker-compose up -d
+      - name: Run tests
+        run: |
+          yarn
+          npx --yes @h0ngcha0/alephium-cli wallets restore -w alephium-web3-test-only-wallet \
+            -c "vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava" -p alph
+          yarn run test:contracts

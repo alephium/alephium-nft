@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import { disconnect as extensionDisconnect, connect as extensionConnect } from "@alephium/get-extension-wallet"
+import { NETWORK } from "../configs/addresses"
 
 const WalletButton = () => {
   const context = useContext(AlephiumWeb3Context)
@@ -18,11 +19,13 @@ const WalletButton = () => {
           include: ["alephium"],
         })
 
-        await windowAlephium?.enable()
-        if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAccountFunc) {
+        if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAddressFunc) {
+          const selectedAddress = await windowAlephium?.enable({
+            networkId: NETWORK,
+            onDisconnected: () => Promise.resolve(disconnectContext())
+          })
           context.setSignerProviderFunc(windowAlephium)
-          const selectedAccount = await windowAlephium.getSelectedAccount()
-          context.setSelectedAccountFunc(selectedAccount)
+          context.setSelectedAddressFunc(selectedAddress)
         }
         break;
       }
@@ -37,10 +40,15 @@ const WalletButton = () => {
       }
 
       case 'BrowserExtensionProvider': {
+        disconnectContext()
         extensionDisconnect()
         break;
       }
     }
+  }
+
+  function disconnectContext() {
+    context.disconnectFunc && context.disconnectFunc()
   }
 
   const showButton = !(context.signerProvider && context.signerProvider.type === 'NodeWalletProvider')
@@ -48,7 +56,7 @@ const WalletButton = () => {
   return (
     showButton ?
       (
-        !context.selectedAccount ?
+        !context.selectedAddress ?
           <button className="btn btn-outline btn-sm btn-accent" onClick={connect}>Connect</button> :
           <button className="btn btn-outline btn-sm btn-secondary" onClick={disconnect}>Disconnect</button>
       ) : null

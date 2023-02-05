@@ -22,7 +22,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          owner: (await this.signer.getSelectedAccount()).address,
+          owner: (await this.signer.getSelectedAddress()),
           isTokenWithdrawn: false,
           name: web3.stringToHex("template_name"),
           description: web3.stringToHex("template_description"),

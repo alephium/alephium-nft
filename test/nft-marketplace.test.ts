@@ -23,7 +23,7 @@ describe('nft marketplace', function() {
     const nftCollectionContractId = nftCollectionDeployTx.contractId
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri))
+    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri), 0)
     const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
@@ -37,7 +37,7 @@ describe('nft marketplace', function() {
 
     const tokenId = nftContractId
     const price = BigInt("1000000000000000000")
-    const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId)
+    const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
     const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
     // Deposit NFT since it is withdrawn automatically when minted
@@ -273,6 +273,6 @@ describe('nft marketplace', function() {
     address: string
   ): Promise<string[]> {
     const utxos = await provider.addresses.getAddressesAddressUtxos(address)
-    return utxos.utxos.flatMap((utxo) => utxo.tokens).map((token) => token.id)
+    return utxos.utxos.flatMap((utxo) => utxo.tokens || []).map((token) => token.id)
   }
 })

@@ -4,7 +4,7 @@ import { fetchState, NFTContract } from '../utils/contracts'
 import { addressFromContractId, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
-import addresses from '../configs/addresses.json'
+import { marketplaceContractId, defaultNftCollectionContractId } from '../configs/addresses'
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
@@ -20,7 +20,7 @@ interface NFT {
   isTokenWithdrawn: boolean
 }
 
-const defaultNftCollectionAddress = addressFromContractId(addresses.defaultNftCollectionContractId)
+const defaultNftCollectionAddress = addressFromContractId(defaultNftCollectionContractId)
 
 export default function Home() {
   const [nfts, setNfts] = useState([] as NFT[])
@@ -41,11 +41,11 @@ export default function Home() {
     resetTxStatus
   ] = useTxStatus()
 
-  console.debug('selected account in my-nft', context.selectedAccount)
+  console.debug('selected account in my-nft', context.selectedAddress)
 
   useEffect(() => {
     loadNFTs()
-  }, [context.selectedAccount])
+  }, [context.selectedAddress])
 
   function resetState() {
     resetTxStatus()
@@ -86,8 +86,8 @@ export default function Home() {
   }
 
   async function loadNFTs() {
-    if (context.nodeProvider && context.selectedAccount) {
-      const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAccount.address)
+    if (context.nodeProvider && context.selectedAddress) {
+      const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAddress)
       setNfts(allNFTsForAddress)
     }
 
@@ -136,7 +136,7 @@ export default function Home() {
   }
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       return new NFTMarketplace(
         context.nodeProvider,
         context.signerProvider.provider
@@ -145,7 +145,7 @@ export default function Home() {
   }
 
   function getNFTCollection(): NFTCollection | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAddress) {
       return new NFTCollection(
         context.nodeProvider,
         context.signerProvider.provider
@@ -195,7 +195,7 @@ export default function Home() {
     const nftMarketplace = getNFTMarketplace()
     if (!!nftMarketplace) {
       const priceInSets = convertAlphToSet(price.toString())
-      const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, priceInSets, addresses.marketplaceContractId)
+      const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
 
       setOngoingTxId(listNFTTxResult.txId)
       setOngoingTxDescription('listing NFT')
@@ -221,7 +221,7 @@ export default function Home() {
     resetState()
   }
 
-  if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
+  if (loadingState === 'loaded' && nfts.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
     <>
       {

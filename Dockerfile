@@ -15,9 +15,8 @@ FROM node:16.15.0-alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-ARG NODE_ENV=development
-RUN echo ${NODE_ENV}
-RUN NODE_ENV=${NODE_ENV} yarn build
+ARG NEXT_PUBLIC_NETWORK=devnet
+RUN NEXT_PUBLIC_NETWORK=${NEXT_PUBLIC_NETWORK} yarn build
 
 # Production image, copy all the files and run next
 FROM node:16.15.0-alpine AS runner
