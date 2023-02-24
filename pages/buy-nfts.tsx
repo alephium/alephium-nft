@@ -1,15 +1,15 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
-import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, prettifyExactAmount, SignerProvider } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, prettifyExactAmount } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/addresses'
 import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
 import axios from 'axios'
-import { AlephiumWeb3Context } from './alephium-web3-providers'
-import TxStatusAlert, { useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatusStates } from '../components/tx-status-alert'
 import { useRouter } from 'next/router'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
+import { useContext } from '@alephium/web3-react'
 
 interface NFTListing {
   price: bigint
@@ -27,8 +27,8 @@ export default function BuyNFTs() {
   const [nftListings, setNftListings] = useState([] as NFTListing[])
   const [loadingState, setLoadingState] = useState('not-loaded')
   const [commissionRate, setCommissionRate] = useState<bigint | undefined>(undefined)
-  const context = useContext(AlephiumWeb3Context)
   const router = useRouter()
+  const context = useContext()
 
   const [
     ongoingTxId,
@@ -38,18 +38,18 @@ export default function BuyNFTs() {
     txStatusCallback,
     setTxStatusCallback,
     resetTxStatus
-  ] = useTxStatus()
+  ] = useTxStatusStates()
 
   useEffect(() => {
     loadListedNFTs()
     loadMarketplaceCommissionRate()
-  }, [context.selectedAccount, context.nodeProvider])
+  }, [context.account])
 
   async function loadMarketplaceCommissionRate() {
-    if (context.nodeProvider) {
+    if (context.signerProvider?.nodeProvider) {
       try {
         const marketplaceState = await fetchState(
-          context.nodeProvider,
+          context.signerProvider.nodeProvider,
           NFTMarketplaceContract,
           addressFromContractId(marketplaceContractId),
           0
@@ -66,12 +66,12 @@ export default function BuyNFTs() {
     const tokenId = event.fields[1].value.toString()
     const listingContractId = event.fields[3].value.toString()
 
-    if (context.nodeProvider) {
+    if (context.signerProvider?.nodeProvider) {
       var listingState = undefined
 
       try {
         listingState = await fetchState(
-          context.nodeProvider,
+          context.signerProvider.nodeProvider,
           NFTListingContract,
           addressFromContractId(listingContractId),
           0
@@ -82,7 +82,7 @@ export default function BuyNFTs() {
 
       if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
         const nftState = await fetchState(
-          context.nodeProvider,
+          context.signerProvider.nodeProvider,
           NFTContract,
           addressFromContractId(tokenId),
           0
@@ -108,10 +108,10 @@ export default function BuyNFTs() {
   async function loadListedNFTs() {
     const items = new Map<string, NFTListing>()
 
-    if (context.nodeProvider && context.signerProvider && context.selectedAccount) {
+    if (context.signerProvider?.nodeProvider && context.signerProvider && context.account) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider,
-        context.signerProvider.provider as web3.SignerProvider
+        context.signerProvider.nodeProvider,
+        context.signerProvider
       )
 
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
@@ -129,10 +129,10 @@ export default function BuyNFTs() {
   }
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount && commissionRate) {
+    if (context.signerProvider?.nodeProvider && context.account && commissionRate) {
       const nftMarketplace = new NFTMarketplace(
-        context.nodeProvider,
-        context.signerProvider.provider
+        context.signerProvider.nodeProvider,
+        context.signerProvider
       )
 
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
@@ -161,9 +161,9 @@ export default function BuyNFTs() {
     } else {
       console.debug(
         "can not buy NFT",
-        context.nodeProvider,
+        context.signerProvider?.nodeProvider,
         context.signerProvider,
-        context.selectedAccount,
+        context.account,
         commissionRate
       )
     }

@@ -1,13 +1,12 @@
 /* pages/_app.js */
 import '../styles/globals.css'
 import Link from 'next/link'
-import AlephiumWeb3Provider from './alephium-web3-providers'
-import WalletButton from './wallet-button'
 import { AppProps } from 'next/app'
+import { AlephiumConnectButton, AlephiumConnectProvider } from '@alephium/web3-react'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AlephiumWeb3Provider>
+    <AlephiumConnectProvider useTheme="retro">
       <title>Alephium NFT Marketplace</title>
       <div>
         <nav className="border-b p-6">
@@ -28,12 +27,12 @@ function MyApp({ Component, pageProps }: AppProps) {
                 Buy NFTs
               </a>
             </Link>
-            <WalletButton />
+            <AlephiumConnectButton />
           </div>
         </nav>
         <Component {...pageProps} />
       </div>
-    </AlephiumWeb3Provider>
+    </AlephiumConnectProvider>
   )
 }
 

@@ -1,13 +1,13 @@
 import { web3, hexToString, node, ONE_ALPH } from '@alephium/web3'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchState, NFTContract } from '../utils/contracts'
-import { addressFromContractId, SignerProvider } from '@alephium/web3'
+import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
 import { marketplaceContractId, defaultNftCollectionContractId } from '../configs/addresses'
-import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
-import TxStatusAlert, { useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatusStates } from '../components/tx-status-alert'
+import { useContext } from '@alephium/web3-react'
 
 interface NFT {
   name: string,
@@ -26,7 +26,7 @@ export default function Home() {
   const [nftBeingSold, setNftBeingSold] = useState<NFT | undefined>(undefined)
   const [nftSellingPrice, setNftSellingPrice] = useState<number | undefined>(undefined)
   const [loadingState, setLoadingState] = useState('not-loaded')
-  const context = useContext(AlephiumWeb3Context)
+  const context = useContext()
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
   const minimumNFTPrice = 0.0001 // ALPH
 
@@ -38,13 +38,13 @@ export default function Home() {
     txStatusCallback,
     setTxStatusCallback,
     resetTxStatus
-  ] = useTxStatus()
+  ] = useTxStatusStates()
 
-  console.debug('selected account in my-nft', context.selectedAccount)
+  console.debug('selected account in my-nft', context.account)
 
   useEffect(() => {
     loadNFTs()
-  }, [context.selectedAccount])
+  }, [context.account])
 
   function resetState() {
     resetTxStatus()
@@ -55,11 +55,11 @@ export default function Home() {
   async function loadNFT(tokenId: string): Promise<NFT | undefined> {
     var nftState = undefined
 
-    if (context.nodeProvider) {
+    if (context.signerProvider?.nodeProvider) {
       try {
-        web3.setCurrentNodeProvider(context.nodeProvider)
+        web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
         nftState = await fetchState(
-          context.nodeProvider,
+          context.signerProvider.nodeProvider,
           NFTContract,
           addressFromContractId(tokenId),
           0
@@ -85,8 +85,8 @@ export default function Home() {
   }
 
   async function loadNFTs() {
-    if (context.nodeProvider && context.selectedAccount) {
-      const allNFTsForAddress = await loadAllNFTsForAddress(context.selectedAccount.address)
+    if (context.signerProvider?.nodeProvider && context.account) {
+      const allNFTsForAddress = await loadAllNFTsForAddress(context.account.address)
       setNfts(allNFTsForAddress)
     }
 
@@ -101,8 +101,8 @@ export default function Home() {
   async function loadAllNFTs() {
     console.log("load all nfts")
     const items = []
-    if (context.nodeProvider) {
-      const mintNftEvents = await context.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
+    if (context.signerProvider?.nodeProvider) {
+      const mintNftEvents = await context.signerProvider.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
       for (var event of mintNftEvents.events) {
         const tokenId = event.fields[5].value as string
         const nft = await loadNFT(tokenId)
@@ -118,8 +118,8 @@ export default function Home() {
   async function loadAllSelfCustodiedNFTsForAddress(address: string) {
     const items = []
 
-    if (context?.nodeProvider) {
-      const balances = await context.nodeProvider.addresses.getAddressesAddressBalance(address)
+    if (context.signerProvider?.nodeProvider) {
+      const balances = await context.signerProvider.nodeProvider.addresses.getAddressesAddressBalance(address)
       const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
       const tokenIds = tokenBalances
         .filter((token) => +token.amount == 1)
@@ -135,19 +135,19 @@ export default function Home() {
   }
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.signerProvider?.nodeProvider && context.account) {
       return new NFTMarketplace(
-        context.nodeProvider,
-        context.signerProvider.provider
+        context.signerProvider.nodeProvider,
+        context.signerProvider
       )
     }
   }
 
   function getNFTCollection(): NFTCollection | undefined {
-    if (context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (context.signerProvider?.nodeProvider && context.account) {
       return new NFTCollection(
-        context.nodeProvider,
-        context.signerProvider.provider
+        context.signerProvider.nodeProvider,
+        context.signerProvider
       )
     }
   }

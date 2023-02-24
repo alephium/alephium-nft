@@ -1,16 +1,16 @@
 import * as web3 from '@alephium/web3'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { NFTCollection } from '../utils/nft-collection'
 import { defaultNftCollectionContractId } from '../configs/addresses'
-import { AlephiumWeb3Context } from './alephium-web3-providers'
-import TxStatusAlert, { useTxStatus } from './tx-status-alert'
+import TxStatusAlert, { useTxStatusStates } from '../components/tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
+import { useContext } from '@alephium/web3-react'
 
 export default function MintNFTs() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
-  const context = useContext(AlephiumWeb3Context)
+  const context = useContext()
   const router = useRouter()
 
   const [
@@ -21,7 +21,7 @@ export default function MintNFTs() {
     txStatusCallback,
     setTxStatusCallback,
     resetTxStatus
-  ] = useTxStatus()
+  ] = useTxStatusStates()
 
   async function onChange(e: any) {
     const file = e.target.files[0]
@@ -60,10 +60,10 @@ export default function MintNFTs() {
     const uri = await uploadToIPFS()
     const name = formInput.name
     const description = formInput.description
-    if (uri && context.nodeProvider && context.signerProvider?.provider && context.selectedAccount) {
+    if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(
-        context.nodeProvider,
-        context.signerProvider.provider
+        context.signerProvider.nodeProvider,
+        context.signerProvider
       )
 
       // TODO: Figure out UI to create collection, right now use default collection id
