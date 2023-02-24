@@ -17,7 +17,6 @@
     "@alephium/web3": "v0.5.0-rc.17",
     "@alephium/web3-wallet": "v0.5.0-rc.17",
     "@alephium/cli": "v0.5.0-rc.17",
-    "@alephium/sdk": "0.4.0",
     "@alephium/get-extension-wallet": "0.5.0-rc.13",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",

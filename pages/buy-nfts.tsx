@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
-import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, SignerProvider } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, prettifyExactAmount, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/addresses'
 import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
@@ -9,7 +9,7 @@ import { AlephiumWeb3Context } from './alephium-web3-providers'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
 import { useRouter } from 'next/router'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
-import { convertAlphToSet, formatAmountForDisplay } from '@alephium/sdk'
+import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
 
 interface NFTListing {
   price: bigint
@@ -192,7 +192,7 @@ export default function BuyNFTs() {
                     </div>
                   </div>
                   <div className="p-4 bg-black">
-                    <p className="text-2xl font-bold text-white">{formatAmountForDisplay(nftListing.price)} ALPH </p>
+                    <p className="text-2xl font-bold text-white">{prettifyAttoAlphAmount(nftListing.price)} ALPH </p>
                     {commissionRate?.toString() && showPriceBreakdowns(nftListing.price, commissionRate)}
                     <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nftListing)}>Buy</button>
                   </div>
@@ -208,7 +208,7 @@ export default function BuyNFTs() {
 
 function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
   const commission = (nftPrice * commissionRate) / BigInt(10000)
-  const nftDeposit = convertAlphToSet("1")
+  const nftDeposit = ONE_ALPH
   const gasAmount = BigInt(200000)
   const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
 
@@ -225,7 +225,7 @@ function showPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
             <thead>
               <tr>
                 <th scope="col" className="text-sm py-4 font-bold text-white text-left">
-                  Total amount ≈ {formatAmountForDisplay(totalAmount)} ALPH
+                  Total amount ≈ {prettifyAttoAlphAmount(totalAmount)} ALPH
                 </th>
               </tr>
             </thead>
@@ -233,25 +233,25 @@ function showPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
               <tr className="bg-black">
                 <td className="whitespace-nowrap text-sm font-medium text-white">NFT Price</td>
                 <td className="text-sm text-white whitespace-nowrap">
-                  {formatAmountForDisplay(BigInt(nftPrice))}
+                  {prettifyAttoAlphAmount(BigInt(nftPrice))}
                 </td>
               </tr>
               <tr className="bg-black">
                 <td className="whitespace-nowrap text-sm font-medium text-white">Commission</td>
                 <td className="text-sm text-white whitespace-nowrap">
-                  {formatAmountForDisplay(BigInt(commission))}
+                  {prettifyAttoAlphAmount(BigInt(commission))}
                 </td>
               </tr>
               <tr className="bg-black">
                 <td className="whitespace-nowrap text-sm font-medium text-white">NFT Contract Deposit</td>
                 <td className="text-sm text-white whitespace-nowrap">
-                  {formatAmountForDisplay(BigInt(nftDeposit))}
+                  {prettifyAttoAlphAmount(BigInt(nftDeposit))}
                 </td>
               </tr>
               <tr className="bg-black">
                 <td className="whitespace-nowrap text-sm font-medium text-white">Gas</td>
                 <td className="text-sm text-white whitespace-nowrap">
-                  {formatAmountForDisplay(BigInt(gasAmount), true)}
+                  {prettifyExactAmount(BigInt(gasAmount), 18)}
                 </td>
               </tr>
             </tbody>

@@ -1,4 +1,4 @@
-import { web3, hexToString, node, Project, NodeProvider } from '@alephium/web3'
+import { web3, hexToString, node, ONE_ALPH } from '@alephium/web3'
 import { useContext, useEffect, useState } from 'react'
 import { fetchState, NFTContract } from '../utils/contracts'
 import { addressFromContractId, SignerProvider } from '@alephium/web3'
@@ -8,7 +8,6 @@ import { marketplaceContractId, defaultNftCollectionContractId } from '../config
 import { AlephiumWeb3Context } from './alephium-web3-providers'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatus } from './tx-status-alert'
-import { convertAlphToSet } from '@alephium/sdk'
 
 interface NFT {
   name: string,
@@ -194,7 +193,7 @@ export default function Home() {
 
     const nftMarketplace = getNFTMarketplace()
     if (!!nftMarketplace) {
-      const priceInSets = convertAlphToSet(price.toString())
+      const priceInSets = BigInt(price) * ONE_ALPH
       const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
 
       setOngoingTxId(listNFTTxResult.txId)
