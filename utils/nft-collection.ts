@@ -87,7 +87,8 @@ export class NFTCollection extends DeployHelpers {
           nftContractId: nftContractId
         },
         gasAmount: gasAmount,
-        gasPrice: gasPrice
+        gasPrice: gasPrice,
+        tokens: [{ id: nftContractId, amount: 1n }]
       }
     )
   }

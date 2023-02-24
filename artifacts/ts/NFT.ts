@@ -106,7 +106,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "f4ef07b08a1b9e5c780b0346a333323889cfc93000daac544d6390180b541263"
+    "fc60cf6b3679cc294d032070dd64c9caa0242ab50074ec6f1187a7a551aa4798"
   )
 );
 
