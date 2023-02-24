@@ -1,9 +1,9 @@
 Contract NFTListing(
-    mut price: U256,
     tokenId: ByteVec,
     tokenOwner: Address,
     marketAddress: Address,
-    commissionRate: U256
+    commissionRate: U256,
+    mut price: U256
 ) {
 
     enum ErrorCodes {

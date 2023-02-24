@@ -83,10 +83,14 @@ Contract NFTMarketPlace(
         let tokenOwner = callerAddress!()
         let nft = NFT(tokenId)
         let currentTokenOwner = nft.getOwner()
-        assert!(currentTokenOwner == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
 
-        let initialState = encodeToByteVec!(
-            price,
+       assert!(currentTokenOwner == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
+
+        let initialMutState = encodeToByteVec!(
+            price
+        )
+
+        let initialImmState = encodeToByteVec!(
             tokenId,
             tokenOwner,
             selfAddress!(),
@@ -94,7 +98,7 @@ Contract NFTMarketPlace(
         )
 
         // Create the listing contract
-        let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph}(tokenId, nftListingTemplateId, initialState)
+        let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph}(tokenId, nftListingTemplateId, initialImmState, initialMutState)
 
         // Charge the listing fee
         transferTokenToSelf!(tokenOwner, ALPH, listingFee)

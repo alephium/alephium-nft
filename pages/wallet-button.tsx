@@ -9,23 +9,18 @@ const WalletButton = () => {
   async function connect() {
     console.log("provider", context.signerProvider?.type)
     switch (context.signerProvider?.type) {
-      case 'WalletConnectProvider': {
-        await context.signerProvider.provider.connect()
-        break;
-      }
-
       case 'BrowserExtensionProvider': {
         const windowAlephium = await extensionConnect({
           include: ["alephium"],
         })
 
-        if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAddressFunc) {
-          const selectedAddress = await windowAlephium?.enable({
+        if (windowAlephium && context.setSignerProviderFunc && context.setSelectedAccountFunc) {
+          const selectedAccount = await windowAlephium?.enable({
             networkId: NETWORK,
             onDisconnected: () => Promise.resolve(disconnectContext())
           })
           context.setSignerProviderFunc(windowAlephium)
-          context.setSelectedAddressFunc(selectedAddress)
+          context.setSelectedAccountFunc(selectedAccount)
         }
         break;
       }
@@ -34,11 +29,6 @@ const WalletButton = () => {
 
   async function disconnect() {
     switch (context.signerProvider?.type) {
-      case 'WalletConnectProvider': {
-        await context.signerProvider.provider.disconnect()
-        break;
-      }
-
       case 'BrowserExtensionProvider': {
         disconnectContext()
         extensionDisconnect()
@@ -56,7 +46,7 @@ const WalletButton = () => {
   return (
     showButton ?
       (
-        !context.selectedAddress ?
+        !context.selectedAccount ?
           <button className="btn btn-outline btn-sm btn-accent" onClick={connect}>Connect</button> :
           <button className="btn btn-outline btn-sm btn-secondary" onClick={disconnect}>Disconnect</button>
       ) : null

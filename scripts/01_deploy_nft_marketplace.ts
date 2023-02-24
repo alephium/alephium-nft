@@ -1,6 +1,6 @@
-import { Project } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
+import { NFTMarketPlace } from '../artifacts/ts/NFTMarketPlace'
 
 const deployMarketplace: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -15,8 +15,7 @@ const deployMarketplace: DeployFunction<Settings> = async (
     commissionRate: network.settings.commissionRate
   }
 
-  const nftMarketplaceContract = Project.contract("NFTMarketPlace")
-  const result = await deployer.deployContract(nftMarketplaceContract, {
+  const result = await deployer.deployContract(NFTMarketPlace, {
     // @ts-ignore
     initialFields: initialFields
   })

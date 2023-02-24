@@ -1,6 +1,7 @@
-import { Project, stringToHex, addressFromContractId } from '@alephium/web3'
+import { stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
+import { NFTCollection } from '../artifacts/ts/NFTCollection'
 
 const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -14,8 +15,7 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
     collectionUri: stringToHex("http://default.collection")
   }
 
-  const nftCollectionContract = Project.contract("NFTCollection")
-  const result = await deployer.deployContract(nftCollectionContract, {
+  const result = await deployer.deployContract(NFTCollection, {
     initialFields: initialFields
   })
 

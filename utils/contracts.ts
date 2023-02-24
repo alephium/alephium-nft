@@ -41,32 +41,5 @@ export async function fetchState(
   const state = await nodeProvider.contracts.getContractsAddressState(address, {
     group: group
   })
-  return fromApiContractState(contract, state)
-}
-
-function fromApiContractState(
-  contract: Contract,
-  state: node.ContractState
-): ContractState {
-  return {
-    address: state.address,
-    contractId: binToHex(contractIdFromAddress(state.address)),
-    bytecode: state.bytecode,
-    initialStateHash: state.initialStateHash,
-    codeHash: state.codeHash,
-    fields: fromApiFields(state.fields, contract.fieldsSig),
-    fieldsSig: contract.fieldsSig,
-    asset: fromApiAsset(state.asset)
-  }
-}
-
-function fromApiFields(vals: node.Val[], fieldsSig: node.FieldsSig): Fields {
-  return fromApiVals(vals, fieldsSig.names, fieldsSig.types)
-}
-
-function fromApiAsset(asset: node.AssetState): Asset {
-  return {
-    alphAmount: fromApiNumber256(asset.attoAlphAmount),
-    tokens: fromApiTokens(asset.tokens)
-  }
+  return contract.fromApiContractState(state)
 }
