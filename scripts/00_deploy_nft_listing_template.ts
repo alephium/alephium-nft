@@ -1,8 +1,9 @@
-import { Project, binToHex, contractIdFromAddress } from '@alephium/web3'
+import { binToHex, contractIdFromAddress } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { randomBytes } from 'crypto'
 import base58 from 'bs58'
+import { NFTListing } from '../artifacts/ts/NFTListing'
 
 const deployNFTListingTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -16,8 +17,7 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
     commissionRate: network.settings.commissionRate
   }
 
-  const nftListingContract = Project.contract("NFTListing")
-  const result = await deployer.deployContract(nftListingContract, {
+  const result = await deployer.deployContract(NFTListing, {
     // @ts-ignore
     initialFields: initialFields
   })

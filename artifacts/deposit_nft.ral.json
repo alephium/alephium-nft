@@ -1,5 +1,5 @@
 {
-  "version": "v1.6.0",
+  "version": "v1.7.1",
   "name": "DepositNFT",
   "bytecodeTemplate": "0101030001000a{0}1700b4{0}0da30c0c16000105",
   "fieldsSig": {

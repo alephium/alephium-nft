@@ -2,7 +2,8 @@ import { web3, subContractId, stringToHex, addressFromContractId } from '@alephi
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
-import { NFTContract } from '../utils/contracts'
+import { fetchState } from '../utils/contracts'
+import { NFT } from '../artifacts/ts/NFT'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
@@ -18,7 +19,7 @@ describe('nft collection', function() {
     )
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
-    const nftCollectionContractGroup = nftCollectionDeployTx.fromGroup
+    const nftCollectionContractGroup = nftCollectionDeployTx.groupIndex
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
@@ -53,7 +54,7 @@ describe('nft collection', function() {
     expect(nftMintedEventFields[5].value).toEqual(nftContractId)
     expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
 
-    const nftContractState = await NFTContract.fetchState(nftContractAddress, 0)
+    const nftContractState = await fetchState(provider, NFT.contract, nftContractAddress, 0)
 
     expect(nftContractState.fields.owner).toEqual(testAddress1)
     expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)

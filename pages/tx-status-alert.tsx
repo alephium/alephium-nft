@@ -1,7 +1,6 @@
 import * as web3 from "@alephium/web3"
-import { SubscribeOptions, subscribeToTxStatus, TxStatusSubscription } from "@alephium/web3"
-import { useContext, useEffect, useState } from "react"
-import { AlephiumWeb3Context } from "./alephium-web3-providers"
+import { useTxStatus } from "@alephium/web3-react"
+import { useState } from "react"
 
 interface TxStatusAlertProps {
   txId: string
@@ -9,7 +8,7 @@ interface TxStatusAlertProps {
   txStatusCallback(status: web3.node.TxStatus): Promise<any>
 }
 
-export function useTxStatus() {
+export function useTxStatusStates() {
   const [ongoingTxId, setOngoingTxId] = useState<string | undefined>(undefined)
   const [ongoingTxDescription, setOngoingTxDescription] = useState<string>("")
   async function defaultTxStatusCallback(status: web3.node.TxStatus) { }
@@ -33,38 +32,17 @@ export function useTxStatus() {
 }
 
 const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertProps) => {
-  const context = useContext(AlephiumWeb3Context)
-  const [txStatus, setTxStatus] = useState<web3.node.TxStatus | undefined>(undefined)
+  let numberOfChecks = 0
+  const { txStatus } = useTxStatus(txId, (status) => {
+    numberOfChecks = numberOfChecks + 1
 
-  const subscriptionOptions: SubscribeOptions<web3.node.TxStatus> | undefined = context?.nodeProvider && {
-    pollingInterval: 3000,
-    messageCallback: async (status: web3.node.TxStatus): Promise<void> => {
-      setTxStatus(status)
-      if (status.type === 'Confirmed' || status.type === 'TxNotFound') {
-        await new Promise(r => setTimeout(r, 3000));
-      }
-
-      await txStatusCallback(status)
-    },
-    errorCallback: (error: any, subscription): Promise<void> => {
-      console.log(error)
-      subscription.unsubscribe()
-      return Promise.resolve()
-    }
-  }
-
-  useEffect(() => {
-    var subscription: TxStatusSubscription | undefined = undefined
-    if (subscriptionOptions) {
-      subscription = subscribeToTxStatus(subscriptionOptions, txId)
+    console.log("txstatus", status)
+    if ((status.type === 'Confirmed' && numberOfChecks > 2) || (status.type === 'TxNotFound' && numberOfChecks > 3)) {
+      txStatusCallback(status)
     }
 
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe()
-      }
-    }
-  }, [txId])
+    return Promise.resolve()
+  })
 
   if (txStatus?.type === 'Confirmed') {
     return (

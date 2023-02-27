@@ -34,24 +34,23 @@ const configuration: Configuration<Settings> = {
     devnet: {
       networkId: 4,
       nodeUrl: 'http://localhost:22973',
-      mnemonic:
-        'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava',
+      privateKeys: [
+        'a642942e67258589cd2b1822c631506632db5a12aabcf413604e785300d762a5'
+      ],
       confirmations: 1,
       settings: loadSettings('devnet')
     },
 
     testnet: {
-      networkId: 1,
-      nodeUrl: 'https://wallet-v16.testnet.alephium.org',
-      mnemonic: process.env.MNEMONIC as string,
+      nodeUrl: process.env.NODE_URL as string,
+      privateKeys: process.env.PRIVATE_KEYS === undefined ? [] : process.env.PRIVATE_KEYS.split(','),
       confirmations: 2,
       settings: loadSettings('testnet')
     },
 
     mainnet: {
-      networkId: 0,
-      nodeUrl: process.env.ALPH_NODE_URL as string,
-      mnemonic: process.env.MNEMONIC as string,
+      nodeUrl: process.env.NODE_URL as string,
+      privateKeys: process.env.PRIVATE_KEYS === undefined ? [] : process.env.PRIVATE_KEYS.split(','),
       confirmations: 2,
       settings: loadSettings('mainnet')
     }

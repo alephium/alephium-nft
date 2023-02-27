@@ -1,12 +1,12 @@
-import { Project, stringToHex, addressFromContractId } from '@alephium/web3'
+import { stringToHex, addressFromContractId } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
+import { NFT } from '../artifacts/ts/NFT'
 
 const deployNFTContractTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
   network: Network<Settings>
 ): Promise<void> => {
-  const nftContract = Project.contract("NFT")
   const initialFields = {
     owner: network.settings.marketplaceAdminAddress,
     isTokenWithdrawn: false,
@@ -16,7 +16,7 @@ const deployNFTContractTemplate: DeployFunction<Settings> = async (
     collectionAddress: addressFromContractId("0".repeat(64))
   }
 
-  const result = await deployer.deployContract(nftContract, {
+  const result = await deployer.deployContract(NFT, {
     initialFields: initialFields
   })
 
