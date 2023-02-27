@@ -6,7 +6,7 @@ import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
 import { marketplaceContractId, defaultNftCollectionContractId } from '../configs/addresses'
 import axios from 'axios'
-import TxStatusAlert, { useTxStatusStates } from '../components/tx-status-alert'
+import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
 
 interface NFT {

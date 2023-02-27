@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { NFTCollection } from '../utils/nft-collection'
 import { defaultNftCollectionContractId } from '../configs/addresses'
-import TxStatusAlert, { useTxStatusStates } from '../components/tx-status-alert'
+import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
 

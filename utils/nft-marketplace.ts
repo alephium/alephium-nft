@@ -54,7 +54,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
-          price: price,
+          price: BigInt(price),
           marketPlaceContractId: marketPlaceContractId
         }
       }
@@ -70,7 +70,7 @@ export class NFTMarketplace extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          price: price,
+          price: BigInt(price),
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
         }
@@ -87,7 +87,7 @@ export class NFTMarketplace extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          totalPayment: totalPayment,
+          totalPayment: BigInt(totalPayment),
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
         }
@@ -118,7 +118,7 @@ export class NFTMarketplace extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          price: price,
+          price: BigInt(price),
           nftMarketplaceContractId: marketPlaceContractId
         },
         gasAmount: 200000
