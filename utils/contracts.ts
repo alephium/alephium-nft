@@ -1,22 +1,13 @@
 import {
-  Asset,
   Contract,
   ContractState,
   NodeProvider,
   Script,
-  binToHex,
-  node,
-  Fields,
-  FieldsSig,
-  fromApiVals,
-  fromApiNumber256,
-  fromApiTokens,
-  contractIdFromAddress,
 } from '@alephium/web3'
-import mintNFT from '../artifacts/mint_nft.ral.json'
-import listNFT from '../artifacts/list_nft.ral.json'
-import buyNFT from '../artifacts/buy_nft.ral.json'
-import withdrawNFT from '../artifacts/withdraw_nft.ral.json'
+import mintNFT from '../artifacts/scripts/mint_nft.ral.json'
+import listNFT from '../artifacts/scripts/list_nft.ral.json'
+import buyNFT from '../artifacts/scripts/buy_nft.ral.json'
+import withdrawNFT from '../artifacts/scripts/withdraw_nft.ral.json'
 import NFTMarketplace from '../artifacts/nft_marketplace.ral.json'
 import NFTListing from '../artifacts/nft_listing.ral.json'
 import NFTCollection from '../artifacts/nft_collection.ral.json'

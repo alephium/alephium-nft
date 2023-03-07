@@ -9,17 +9,17 @@ import {
   SignerProvider,
   HexString,
 } from "@alephium/web3";
-import { default as BurnNFTScriptJson } from "../burn_nft.ral.json";
-import { default as BuyNFTScriptJson } from "../buy_nft.ral.json";
-import { default as CancelListingScriptJson } from "../cancel_listing.ral.json";
-import { default as DepositNFTScriptJson } from "../deposit_nft.ral.json";
-import { default as ListNFTScriptJson } from "../list_nft.ral.json";
-import { default as MintNFTScriptJson } from "../mint_nft.ral.json";
-import { default as UpdateAdminScriptJson } from "../update_admin.ral.json";
-import { default as UpdateComissionRateScriptJson } from "../update_commission_rate.ral.json";
-import { default as UpdateListingFeeScriptJson } from "../update_listing_fee.ral.json";
-import { default as UpdateNFTPriceScriptJson } from "../update_nft_price.ral.json";
-import { default as WithdrawNFTScriptJson } from "../withdraw_nft.ral.json";
+import { default as BurnNFTScriptJson } from "../scripts/burn_nft.ral.json";
+import { default as BuyNFTScriptJson } from "../scripts/buy_nft.ral.json";
+import { default as CancelListingScriptJson } from "../scripts/cancel_listing.ral.json";
+import { default as DepositNFTScriptJson } from "../scripts/deposit_nft.ral.json";
+import { default as ListNFTScriptJson } from "../scripts/list_nft.ral.json";
+import { default as MintNFTScriptJson } from "../scripts/mint_nft.ral.json";
+import { default as UpdateAdminScriptJson } from "../scripts/update_admin.ral.json";
+import { default as UpdateComissionRateScriptJson } from "../scripts/update_commission_rate.ral.json";
+import { default as UpdateListingFeeScriptJson } from "../scripts/update_listing_fee.ral.json";
+import { default as UpdateNFTPriceScriptJson } from "../scripts/update_nft_price.ral.json";
+import { default as WithdrawNFTScriptJson } from "../scripts/withdraw_nft.ral.json";
 
 export namespace BurnNFT {
   export async function execute(

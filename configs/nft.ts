@@ -2,7 +2,7 @@ export const NETWORK: string = process.env.NEXT_PUBLIC_NETWORK || 'devnet'
 
 import devnetDeployment from '../.deployments.devnet.json'
 
-const devnetConfig = {
+export const devnetConfig = {
   "groupIndex": 0,
   "commissionRate": 200,
   "listingFee": 10,
@@ -11,7 +11,7 @@ const devnetConfig = {
   "marketplaceAdminAddress": "1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH"
 }
 
-const testnetConfig = {
+export const testnetConfig = {
   "groupIndex": 0,
   "commissionRate": 200,
   "listingFee": 1,
@@ -20,7 +20,7 @@ const testnetConfig = {
   "marketplaceAdminAddress": ""
 }
 
-const mainnetConfig = {
+export const mainnetConfig = {
   "groupIndex": 0,
   "commissionRate": 200,
   "listingFee": 1,
