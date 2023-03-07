@@ -6,6 +6,7 @@ import { defaultNftCollectionContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
+import { SignerProvider } from '@alephium/web3'
 
 export default function MintNFTs() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -63,7 +64,7 @@ export default function MintNFTs() {
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(
         context.signerProvider.nodeProvider,
-        context.signerProvider
+        context.signerProvider as SignerProvider
       )
 
       // TODO: Figure out UI to create collection, right now use default collection id

@@ -4,8 +4,9 @@
 Contract NFT(
     name: ByteVec,
     description: ByteVec,
-    uri: ByteVec,                 // name; description; image
+    uri: ByteVec,            // name; description; image
     collectionId: ByteVec,   // The collection address, 0 when no collection
+    tokenIndex: U256,
     mut owner: Address,
     mut isTokenWithdrawn: Bool
 ) implements INFT {
@@ -55,7 +56,7 @@ Contract NFT(
     }
 
     pub fn getTokenIndex() -> U256 {
-        return 0
+        return tokenIndex
     }
 
     @using(preapprovedAssets = true)

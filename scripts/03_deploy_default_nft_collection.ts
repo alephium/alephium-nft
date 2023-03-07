@@ -10,9 +10,9 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   const nftTemplateResult = deployer.getDeployContractResult('NFT')
   const initialFields = {
     nftTemplateId: nftTemplateResult.contractId,
-    collectionName: stringToHex("DefaultCollection"),
-    collectionDescription: stringToHex("Default Collection"),
-    collectionUri: stringToHex("http://default.collection")
+    currentTokenIndex: 0n,
+    name: stringToHex("DefaultCollection"),
+    symbol: stringToHex("Default Collection")
   }
 
   const result = await deployer.deployContract(NFTCollection, {

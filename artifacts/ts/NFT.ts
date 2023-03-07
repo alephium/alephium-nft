@@ -32,6 +32,7 @@ export namespace NFTTypes {
     description: HexString;
     uri: HexString;
     collectionId: HexString;
+    tokenIndex: bigint;
     owner: HexString;
     isTokenWithdrawn: boolean;
   };
@@ -125,7 +126,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "a45682cae2b455ccea81177b07be1851194a0f0dcca9debe16ef2007cc556932"
+    "adb86bb004c0c36f2751f29e22d282a4b84d3e3e6b2a93e0f7caddc3ed9dbfd9"
   )
 );
 

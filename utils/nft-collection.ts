@@ -3,15 +3,14 @@ import { DeployHelpers } from './deploy-helpers'
 import { NFTCollection as NFTCollectionFactory, NFTCollectionInstance } from '../artifacts/ts/NFTCollection'
 import { NFT } from '../artifacts/ts/NFT'
 import { MintNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
-import { addressFromContractId, DeployContractResult } from '@alephium/web3'
+import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
-  defaultNFTCollectionAddress: string = addressFromContractId("0".repeat(64))
+  defaultNFTCollectionId: string = "0".repeat(64)
 
   async create(
     collectionName: string,
-    collectionDescription: string,
-    collectionUri: string
+    collectionSymbol: string
   ): Promise<DeployContractResult<NFTCollectionInstance>> {
 
     const nftDeployResult = await NFT.deploy(
@@ -23,7 +22,8 @@ export class NFTCollection extends DeployHelpers {
           name: web3.stringToHex("template_name"),
           description: web3.stringToHex("template_description"),
           uri: web3.stringToHex("template_uri"),
-          collectionAddress: this.defaultNFTCollectionAddress
+          collectionId: this.defaultNFTCollectionId,
+          tokenIndex: 0n
         }
       }
     )
@@ -33,9 +33,9 @@ export class NFTCollection extends DeployHelpers {
       {
         initialFields: {
           nftTemplateId: nftDeployResult.contractId,
-          collectionName: web3.stringToHex(collectionName),
-          collectionDescription: web3.stringToHex(collectionDescription),
-          collectionUri: web3.stringToHex(collectionUri)
+          name: web3.stringToHex(collectionName),
+          symbol: web3.stringToHex(collectionSymbol),
+          currentTokenIndex: 0n
         }
       }
     )

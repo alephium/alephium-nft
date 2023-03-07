@@ -1,6 +1,6 @@
 {
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": true,
+    "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -66,16 +66,16 @@
     },
     "NFT": {
       "sourceFile": "nft.ral",
-      "sourceCodeHash": "efe8d3d6cbb5abfbb37ee473d254c54871073bfa18cf22aae830d0a21ae57f8a",
+      "sourceCodeHash": "7cd4e54e9420e1f8ed3c386d781df92b8f4e5d13d4aa299f2e25494eb6059e2f",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "a45682cae2b455ccea81177b07be1851194a0f0dcca9debe16ef2007cc556932",
+      "codeHashDebug": "adb86bb004c0c36f2751f29e22d282a4b84d3e3e6b2a93e0f7caddc3ed9dbfd9",
       "warnings": []
     },
     "NFTCollection": {
       "sourceFile": "nft_collection.ral",
-      "sourceCodeHash": "4442626ea98af3e78850a3363d09218cb603de63312cb3de519ca5723cc7e455",
+      "sourceCodeHash": "57f2edd9e6db4bbb29a7bdecc9cd7bdef4e8bb9322ef4bfcbf7df7e4d08e5c31",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "41093c973d20cb6e19937793d431781b84aa341d4e566a5742689349f31cb05d",
+      "codeHashDebug": "5af44924560e049d719396709278d347d14bb23d6a3646225f9debada48313eb",
       "warnings": []
     },
     "NFTListing": {

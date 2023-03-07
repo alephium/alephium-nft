@@ -57,7 +57,8 @@ Contract NFTCollection(
             nftName,
             nftDescription,
             nftUri,
-            collectionId
+            collectionId,
+            currentTokenIndex
         )
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(

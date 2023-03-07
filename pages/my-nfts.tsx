@@ -1,4 +1,4 @@
-import { web3, hexToString, node, ONE_ALPH } from '@alephium/web3'
+import { web3, hexToString, node, ONE_ALPH, SignerProvider } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { fetchState, NFTContract } from '../utils/contracts'
 import { addressFromContractId } from '@alephium/web3'
@@ -147,7 +147,7 @@ export default function Home() {
     if (context.signerProvider?.nodeProvider && context.account) {
       return new NFTCollection(
         context.signerProvider.nodeProvider,
-        context.signerProvider
+        context.signerProvider as SignerProvider
       )
     }
   }

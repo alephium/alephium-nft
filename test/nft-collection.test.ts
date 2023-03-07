@@ -4,6 +4,7 @@ import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
 import { fetchState } from '../utils/contracts'
 import { NFT } from '../artifacts/ts/NFT'
+import { NFTCollection as NFTCollection2 } from '../artifacts/ts/NFTCollection'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
@@ -14,16 +15,17 @@ describe('nft collection', function() {
     const nftCollection = new NFTCollection(provider, signer)
     await nftCollection.buildProject()
 
-    const nftCollectionDeployTx = await nftCollection.create(
-      "CryptoPunk", "CP", "https://www.larvalabs.com/cryptopunks"
-    )
+    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP")
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
     const nftCollectionContractGroup = nftCollectionDeployTx.groupIndex
 
+    const nftCollectionContractState = await fetchState(provider, NFTCollection2.contract, nftCollectionContractAddress, 0)
+    expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
+
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri), 0)
+    const nftContractId = subContractId(nftCollectionContractId, 0n.toString(), 0)
     const nftName = "CryptoPunk #0001"
     const nftDescription = "CP0001"
     const nftContractAddress = addressFromContractId(nftContractId)
@@ -45,7 +47,7 @@ describe('nft collection', function() {
     // Check minter address
     expect(nftMintedEventFields[0].value).toEqual(testAddress1)
     // Check collection address
-    expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractAddress)
+    expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractId)
     // Check info of the minted NFT
     expect(utils.checkHexString(nftMintedEventFields[2].value, nftName))
     expect(utils.checkHexString(nftMintedEventFields[3].value, nftDescription))
