@@ -1,7 +1,5 @@
 import { Configuration } from '@alephium/cli'
-import { default as devnetConfig } from './configs/devnet.json'
-import { default as testnetConfig } from './configs/testnet.json'
-import { default as mainnetConfig } from './configs/mainnet.json'
+import { devnetConfig, testnetConfig, mainnetConfig } from './configs/nft'
 
 export type Settings = {
   marketplaceContractId: string

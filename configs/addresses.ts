@@ -1,8 +1,33 @@
 export const NETWORK: string = process.env.NEXT_PUBLIC_NETWORK || 'devnet'
 
-import { default as devnetConfig } from './devnet.json'
-import { default as testnetConfig } from './testnet.json'
-import { default as mainnetConfig } from './mainnet.json'
+import devnetDeployment from '../.deployments.devnet.json'
+
+const devnetConfig = {
+  "groupIndex": 0,
+  "commissionRate": 200,
+  "listingFee": 10,
+  "defaultNftCollectionContractId": devnetDeployment.contracts.NFTCollection.contractId,
+  "marketplaceContractId": devnetDeployment.contracts.NFTMarketPlace.contractId,
+  "marketplaceAdminAddress": "1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH"
+}
+
+const testnetConfig = {
+  "groupIndex": 0,
+  "commissionRate": 200,
+  "listingFee": 1,
+  "defaultNftCollectionContractId": "",
+  "marketplaceContractId": "",
+  "marketplaceAdminAddress": ""
+}
+
+const mainnetConfig = {
+  "groupIndex": 0,
+  "commissionRate": 200,
+  "listingFee": 1,
+  "defaultNftCollectionContractId": "",
+  "marketplaceContractId": "",
+  "marketplaceAdminAddress": ""
+}
 
 export const defaultNftCollectionContractId: string =
   NETWORK === 'mainnet'
