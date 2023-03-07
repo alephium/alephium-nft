@@ -36,7 +36,7 @@ Contract NFTListing(
             transferToken!(buyer, tokenOwner, ALPH, price)
         }
 
-        NFT(tokenId).transferOwnershipAndAsset{buyer -> ALPH: 1 alph}(buyer)
+        NFT(tokenId).transferAndWithdraw{buyer -> ALPH: 1 alph}(buyer)
 
         destroySelf!(tokenOwner)
     }
@@ -46,7 +46,7 @@ Contract NFTListing(
         checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
         let nft = NFT(tokenId)
-        nft.transferOwnership(tokenOwner)
+        nft.transfer(tokenOwner)
 
         destroySelf!(tokenOwner)
     }

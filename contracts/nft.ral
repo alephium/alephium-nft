@@ -5,10 +5,10 @@ Contract NFT(
     name: ByteVec,
     description: ByteVec,
     uri: ByteVec,                 // name; description; image
-    collectionAddress: Address,   // The collection address, 0 when no collection
+    collectionId: ByteVec,   // The collection address, 0 when no collection
     mut owner: Address,
     mut isTokenWithdrawn: Bool
-) {
+) implements INFT {
 
     event NFTOwnerUpdated(
       previousOwner: Address,
@@ -33,23 +33,33 @@ Contract NFT(
         TokenAlreadyDeposited = 2
     }
 
-    @using(checkExternalCaller = false, updateFields = false)
-    pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, Address) {
-        return name, description, uri, collectionAddress
+    pub fn getMetadata() -> (ByteVec, ByteVec, ByteVec, ByteVec) {
+        return name, description, uri, collectionId
     }
 
-    @using(checkExternalCaller = false, updateFields = false)
-    pub fn getOwner() -> (Address) {
+    pub fn getOwner() -> Address {
         return owner
     }
 
-    pub fn transferOwnership(newOwner: Address) -> () {
+    pub fn getTokenUri() -> ByteVec {
+        return uri
+    }
+
+    pub fn getCollectionId() -> ByteVec {
+        return collectionId
+    }
+
+    pub fn transfer(to: Address) -> () {
         checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-        updateOwner(newOwner)
+        updateOwner(to)
+    }
+
+    pub fn getTokenIndex() -> U256 {
+        return 0
     }
 
     @using(preapprovedAssets = true)
-    pub fn transferOwnershipAndAsset(newOwner: Address) -> () {
+    pub fn transferAndWithdraw(newOwner: Address) -> () {
         checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(newOwner)
         transferToken!(newOwner, owner, ALPH, 1 alph)

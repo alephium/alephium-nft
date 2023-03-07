@@ -31,13 +31,14 @@ export namespace NFTTypes {
     name: HexString;
     description: HexString;
     uri: HexString;
-    collectionAddress: HexString;
+    collectionId: HexString;
     owner: HexString;
     isTokenWithdrawn: boolean;
   };
 
   export type State = ContractState<Fields>;
 
+  export type TransferEvent = ContractEvent<{ from: HexString; to: HexString }>;
   export type NFTOwnerUpdatedEvent = ContractEvent<{
     previousOwner: HexString;
     newOwner: HexString;
@@ -52,28 +53,46 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     return new NFTInstance(address);
   }
 
-  async testGetMetadataMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<[HexString, HexString, HexString, HexString]>> {
-    return testMethod(this, "getMetadata", params);
-  }
-
   async testGetOwnerMethod(
     params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "getOwner", params);
   }
 
-  async testTransferOwnershipMethod(
-    params: TestContractParams<NFTTypes.Fields, { newOwner: HexString }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "transferOwnership", params);
+  async testGetTokenUriMethod(
+    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "getTokenUri", params);
   }
 
-  async testTransferOwnershipAndAssetMethod(
+  async testGetTokenIndexMethod(
+    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+  ): Promise<TestContractResult<bigint>> {
+    return testMethod(this, "getTokenIndex", params);
+  }
+
+  async testGetCollectionIdMethod(
+    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "getCollectionId", params);
+  }
+
+  async testTransferMethod(
+    params: TestContractParams<NFTTypes.Fields, { to: HexString }>
+  ): Promise<TestContractResult<null>> {
+    return testMethod(this, "transfer", params);
+  }
+
+  async testGetMetadataMethod(
+    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+  ): Promise<TestContractResult<[HexString, HexString, HexString, HexString]>> {
+    return testMethod(this, "getMetadata", params);
+  }
+
+  async testTransferAndWithdrawMethod(
     params: TestContractParams<NFTTypes.Fields, { newOwner: HexString }>
   ): Promise<TestContractResult<null>> {
-    return testMethod(this, "transferOwnershipAndAsset", params);
+    return testMethod(this, "transferAndWithdraw", params);
   }
 
   async testUpdateOwnerMethod(
@@ -106,7 +125,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "fc60cf6b3679cc294d032070dd64c9caa0242ab50074ec6f1187a7a551aa4798"
+    "a45682cae2b455ccea81177b07be1851194a0f0dcca9debe16ef2007cc556932"
   )
 );
 
@@ -122,6 +141,19 @@ export class NFTInstance extends ContractInstance {
 
   async getContractEventsCurrentCount(): Promise<number> {
     return getContractEventsCurrentCount(this.address);
+  }
+
+  subscribeTransferEvent(
+    options: SubscribeOptions<NFTTypes.TransferEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      NFT.contract,
+      this,
+      options,
+      "Transfer",
+      fromCount
+    );
   }
 
   subscribeNFTOwnerUpdatedEvent(
@@ -178,6 +210,7 @@ export class NFTInstance extends ContractInstance {
 
   subscribeAllEvents(
     options: SubscribeOptions<
+      | NFTTypes.TransferEvent
       | NFTTypes.NFTOwnerUpdatedEvent
       | NFTTypes.NFTWithdrawnEvent
       | NFTTypes.NFTDepositedEvent
@@ -188,17 +221,6 @@ export class NFTInstance extends ContractInstance {
     return subscribeContractEvents(NFT.contract, this, options, fromCount);
   }
 
-  async callGetMetadataMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<[HexString, HexString, HexString, HexString]>> {
-    return callMethod(
-      NFT,
-      this,
-      "getMetadata",
-      params === undefined ? {} : params
-    );
-  }
-
   async callGetOwnerMethod(
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<HexString>> {
@@ -206,6 +228,50 @@ export class NFTInstance extends ContractInstance {
       NFT,
       this,
       "getOwner",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetTokenUriMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<HexString>> {
+    return callMethod(
+      NFT,
+      this,
+      "getTokenUri",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetTokenIndexMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<bigint>> {
+    return callMethod(
+      NFT,
+      this,
+      "getTokenIndex",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetCollectionIdMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<HexString>> {
+    return callMethod(
+      NFT,
+      this,
+      "getCollectionId",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetMetadataMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<[HexString, HexString, HexString, HexString]>> {
+    return callMethod(
+      NFT,
+      this,
+      "getMetadata",
       params === undefined ? {} : params
     );
   }

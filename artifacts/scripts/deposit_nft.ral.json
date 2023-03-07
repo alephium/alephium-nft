@@ -1,7 +1,7 @@
 {
   "version": "v1.7.1",
   "name": "DepositNFT",
-  "bytecodeTemplate": "0101030001000a{0}1700b4{0}0da30c0c16000105",
+  "bytecodeTemplate": "0101030001000a{0}1700b4{0}0da30c0c16000108",
   "fieldsSig": {
     "names": [
       "nftContractId"

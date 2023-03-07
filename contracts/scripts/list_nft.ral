@@ -13,5 +13,5 @@ TxScript ListNFT(
 
     // Update owner of the NFT to the listing contract
     let nft = NFT(tokenId)
-    nft.transferOwnership(nftListingContractAddress)
+    nft.transfer(nftListingContractAddress)
 }

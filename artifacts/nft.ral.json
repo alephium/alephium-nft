@@ -1,14 +1,14 @@
 {
   "version": "v1.7.1",
   "name": "NFT",
-  "bytecode": "06080f1840284047405c408640a340bf010000000405ce00ce01ce02ce0302010000000102a00002010001020007b4a000450c7b1600000401030101000bb4a000450c7b160000041600a00013c40de0b6b3a7640000a700000101000aa001190d7b05a00016005f1600a100010100010018a0010e7bb417001600a000464c0605a00016005f1600a10004a1010716005e1600b10dac010200000012b4a000450c7ba001190d7b03a10106a0005ea000b10dab010200000012b4a000450c7ba001190d7b08a0005eb2b10dbda000b0",
-  "codeHash": "fc60cf6b3679cc294d032070dd64c9caa0242ab50074ec6f1187a7a551aa4798",
+  "bytecode": "060b09121a4023403340424061407640a040bd40d9010000000102a00002010000000102ce02020100000001020c02010000000102ce0302010001020007b4a000450c7b16000007010000000405ce00ce01ce02ce030201030101000bb4a000450c7b160000071600a00013c40de0b6b3a7640000a700000101000aa001190d7b06a00016005f1600a100010100010018a0010e7bb417001600a000464c0606a00016005f1600a10004a1010816005e1600b10dac010200000012b4a000450c7ba001190d7b03a10107a0005ea000b10dab010200000012b4a000450c7ba001190d7b09a0005eb2b10dbda000b0",
+  "codeHash": "a45682cae2b455ccea81177b07be1851194a0f0dcca9debe16ef2007cc556932",
   "fieldsSig": {
     "names": [
       "name",
       "description",
       "uri",
-      "collectionAddress",
+      "collectionId",
       "owner",
       "isTokenWithdrawn"
     ],
@@ -16,7 +16,7 @@
       "ByteVec",
       "ByteVec",
       "ByteVec",
-      "Address",
+      "ByteVec",
       "Address",
       "Bool"
     ],
@@ -30,6 +30,17 @@
     ]
   },
   "eventsSig": [
+    {
+      "name": "Transfer",
+      "fieldNames": [
+        "from",
+        "to"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address"
+      ]
+    },
     {
       "name": "NFTOwnerUpdated",
       "fieldNames": [
@@ -71,21 +82,6 @@
   ],
   "functions": [
     {
-      "name": "getMetadata",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "ByteVec",
-        "ByteVec",
-        "ByteVec",
-        "Address"
-      ]
-    },
-    {
       "name": "getOwner",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
@@ -98,12 +94,48 @@
       ]
     },
     {
-      "name": "transferOwnership",
+      "name": "getTokenUri",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getTokenIndex",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "getCollectionId",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "transfer",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
       "paramNames": [
-        "newOwner"
+        "to"
       ],
       "paramTypes": [
         "Address"
@@ -114,7 +146,22 @@
       "returnTypes": []
     },
     {
-      "name": "transferOwnershipAndAsset",
+      "name": "getMetadata",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec",
+        "ByteVec",
+        "ByteVec",
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "transferAndWithdraw",
       "usePreapprovedAssets": true,
       "useAssetsInContract": false,
       "isPublic": true,

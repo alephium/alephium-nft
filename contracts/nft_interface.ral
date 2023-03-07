@@ -1,0 +1,13 @@
+Interface INFT {
+    event Transfer(from: Address, to: Address)
+
+    pub fn getOwner() -> Address
+
+    pub fn getTokenUri() -> ByteVec
+
+    pub fn getTokenIndex() -> U256
+
+    pub fn getCollectionId() -> ByteVec
+
+    pub fn transfer(to: Address) -> ()
+}

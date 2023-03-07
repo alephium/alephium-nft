@@ -1,7 +1,7 @@
 {
   "version": "v1.7.1",
   "name": "WithdrawNFT",
-  "bytecodeTemplate": "01010300010006{0}17000c0c16000106",
+  "bytecodeTemplate": "01010300010006{0}17000c0c16000109",
   "fieldsSig": {
     "names": [
       "nftContractId"

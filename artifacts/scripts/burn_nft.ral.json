@@ -1,7 +1,7 @@
 {
   "version": "v1.7.1",
   "name": "BurnNFT",
-  "bytecodeTemplate": "01010300010006{0}17000c0c16000107",
+  "bytecodeTemplate": "01010300010006{0}17000c0c1600010a",
   "fieldsSig": {
     "names": [
       "nftContractId"

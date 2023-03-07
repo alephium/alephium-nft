@@ -2,13 +2,13 @@
 // e.g. Bored Ape Yacht Club collection
 Contract NFTCollection(
     nftTemplateId: ByteVec,
-    @unused collectionName: ByteVec,
-    @unused collectionDescription: ByteVec,
-    @unused collectionUri: ByteVec
+    mut currentTokenIndex: U256,
+    @unused name: ByteVec,
+    @unused symbol: ByteVec
 ) {
     event NFTMinted(
       minter: Address,
-      collectionAddress: Address,
+      collectionId: ByteVec,
       name: ByteVec,
       description: ByteVec,
       uri: ByteVec,
@@ -16,7 +16,29 @@ Contract NFTCollection(
       nftContractAddress: Address
     )
 
-    @using(preapprovedAssets = true, assetsInContract = true, updateFields = false)
+    enum ErrorCodes {
+        IncorrectTokenIndex = 0
+    }
+
+    pub fn getName() -> ByteVec {
+        return name
+    }
+
+    pub fn getSymbol() -> ByteVec {
+        return symbol
+    }
+
+    // Lets say only 10000 NFTs
+    pub fn totalSupply() -> U256 {
+        return 10000
+    }
+
+    pub fn tokenIdByIndex(index: U256) -> ByteVec {
+        assert!(index < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+        return subContractId!(toByteVec!(index))
+    }
+
+    @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(
         nftName: ByteVec,
         nftDescription: ByteVec,
@@ -24,7 +46,7 @@ Contract NFTCollection(
     ) -> (ByteVec) {
         let minter = callerAddress!()
 
-        let collectionAddress = selfAddress!()
+        let collectionId = selfContractId!()
 
         let initialMutState = encodeToByteVec!(
             minter,
@@ -35,14 +57,23 @@ Contract NFTCollection(
             nftName,
             nftDescription,
             nftUri,
-            collectionAddress
+            collectionId
         )
 
-        let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(nftUri, nftTemplateId, initialImmState, initialMutState, 1, minter)
+        let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
+            toByteVec!(currentTokenIndex),
+            nftTemplateId,
+            initialImmState,
+            initialMutState,
+            1,
+            minter
+        )
+
+        currentTokenIndex = currentTokenIndex + 1
 
         emit NFTMinted(
             minter,
-            collectionAddress,
+            collectionId,
             nftName,
             nftDescription,
             nftUri,

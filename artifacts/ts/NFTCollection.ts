@@ -29,16 +29,16 @@ import { default as NFTCollectionContractJson } from "../nft_collection.ral.json
 export namespace NFTCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
-    collectionName: HexString;
-    collectionDescription: HexString;
-    collectionUri: HexString;
+    currentTokenIndex: bigint;
+    name: HexString;
+    symbol: HexString;
   };
 
   export type State = ContractState<Fields>;
 
   export type NFTMintedEvent = ContractEvent<{
     minter: HexString;
-    collectionAddress: HexString;
+    collectionId: HexString;
     name: HexString;
     description: HexString;
     uri: HexString;
@@ -53,6 +53,39 @@ class Factory extends ContractFactory<
 > {
   at(address: string): NFTCollectionInstance {
     return new NFTCollectionInstance(address);
+  }
+
+  async testGetNameMethod(
+    params: Omit<
+      TestContractParams<NFTCollectionTypes.Fields, never>,
+      "testArgs"
+    >
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "getName", params);
+  }
+
+  async testGetSymbolMethod(
+    params: Omit<
+      TestContractParams<NFTCollectionTypes.Fields, never>,
+      "testArgs"
+    >
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "getSymbol", params);
+  }
+
+  async testTotalSupplyMethod(
+    params: Omit<
+      TestContractParams<NFTCollectionTypes.Fields, never>,
+      "testArgs"
+    >
+  ): Promise<TestContractResult<bigint>> {
+    return testMethod(this, "totalSupply", params);
+  }
+
+  async testTokenIdByIndexMethod(
+    params: TestContractParams<NFTCollectionTypes.Fields, { index: bigint }>
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "tokenIdByIndex", params);
   }
 
   async testMintMethod(
@@ -70,7 +103,7 @@ export const NFTCollection = new Factory(
   Contract.fromJson(
     NFTCollectionContractJson,
     "",
-    "df97f4357169d38012417bccaca6ee7940d097752c240787cdf2b32dbc2b596e"
+    "41093c973d20cb6e19937793d431781b84aa341d4e566a5742689349f31cb05d"
   )
 );
 
@@ -99,6 +132,45 @@ export class NFTCollectionInstance extends ContractInstance {
       "NFTMinted",
       fromCount
     );
+  }
+
+  async callGetNameMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<HexString>> {
+    return callMethod(
+      NFTCollection,
+      this,
+      "getName",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetSymbolMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<HexString>> {
+    return callMethod(
+      NFTCollection,
+      this,
+      "getSymbol",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callTotalSupplyMethod(
+    params?: Omit<CallContractParams<{}>, "args">
+  ): Promise<CallContractResult<bigint>> {
+    return callMethod(
+      NFTCollection,
+      this,
+      "totalSupply",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callTokenIdByIndexMethod(
+    params: CallContractParams<{ index: bigint }>
+  ): Promise<CallContractResult<HexString>> {
+    return callMethod(NFTCollection, this, "tokenIdByIndex", params);
   }
 
   async callMintMethod(
