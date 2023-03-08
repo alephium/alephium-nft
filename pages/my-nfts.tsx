@@ -104,7 +104,7 @@ export default function Home() {
     if (context.signerProvider?.nodeProvider) {
       const mintNftEvents = await context.signerProvider.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
       for (var event of mintNftEvents.events) {
-        const tokenId = event.fields[5].value as string
+        const tokenId = event.fields[3].value as string
         const nft = await loadNFT(tokenId)
         nft && items.push(nft)
       }

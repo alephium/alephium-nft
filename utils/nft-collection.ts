@@ -19,8 +19,6 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           owner: (await this.signer.getSelectedAccount()).address,
           isTokenWithdrawn: false,
-          name: web3.stringToHex("template_name"),
-          description: web3.stringToHex("template_description"),
           uri: web3.stringToHex("template_uri"),
           collectionId: this.defaultNFTCollectionId,
           tokenIndex: 0n
@@ -45,8 +43,6 @@ export class NFTCollection extends DeployHelpers {
 
   async mintNFT(
     nftCollectionContractId: string,
-    nftName: string,
-    nftDescription: string,
     nftUri: string
   ) {
     return await MintNFT.execute(
@@ -54,8 +50,6 @@ export class NFTCollection extends DeployHelpers {
       {
         initialFields: {
           nftCollectionContractId: nftCollectionContractId,
-          name: web3.stringToHex(nftName),
-          description: web3.stringToHex(nftDescription),
           uri: web3.stringToHex(nftUri)
         }
       }

@@ -1,10 +1,10 @@
-import { web3, subContractId, stringToHex, addressFromContractId } from '@alephium/web3'
+import { web3, subContractId, addressFromContractId, encodeU256, binToHex } from '@alephium/web3'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
 import { fetchState } from '../utils/contracts'
 import { NFT } from '../artifacts/ts/NFT'
-import { NFTCollection as NFTCollection2 } from '../artifacts/ts/NFTCollection'
+import { NFTCollection as NFTCollectionFactory } from '../artifacts/ts/NFTCollection'
 
 describe('nft collection', function() {
   it('should test nft collection', async () => {
@@ -20,19 +20,16 @@ describe('nft collection', function() {
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
     const nftCollectionContractGroup = nftCollectionDeployTx.groupIndex
 
-    const nftCollectionContractState = await fetchState(provider, NFTCollection2.contract, nftCollectionContractAddress, 0)
+    const nftCollectionContractState = await fetchState(provider, NFTCollectionFactory.contract, nftCollectionContractAddress, 0)
     expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     // Mint NFT
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, 0n.toString(), 0)
-    const nftName = "CryptoPunk #0001"
-    const nftDescription = "CP0001"
+
+    const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
     const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
-      nftName,
-      nftDescription,
       nftUri
     )
 
@@ -49,25 +46,21 @@ describe('nft collection', function() {
     // Check collection address
     expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractId)
     // Check info of the minted NFT
-    expect(utils.checkHexString(nftMintedEventFields[2].value, nftName))
-    expect(utils.checkHexString(nftMintedEventFields[3].value, nftDescription))
-    expect(utils.checkHexString(nftMintedEventFields[4].value, nftUri))
+    expect(utils.checkHexString(nftMintedEventFields[2].value, nftUri))
 
-    expect(nftMintedEventFields[5].value).toEqual(nftContractId)
-    expect(nftMintedEventFields[6].value).toEqual(nftContractAddress)
+    expect(nftMintedEventFields[3].value).toEqual(nftContractId)
+    expect(nftMintedEventFields[4].value).toEqual(binToHex(encodeU256(0n)))
 
     const nftContractState = await fetchState(provider, NFT.contract, nftContractAddress, 0)
 
     expect(nftContractState.fields.owner).toEqual(testAddress1)
     expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
-    utils.checkHexString(nftContractState.fields.name, "CryptoPunk #0001")
-    utils.checkHexString(nftContractState.fields.description, "CP0001")
     utils.checkHexString(nftContractState.fields.uri, "https://cryptopunks.app/cryptopunks/details/1")
-    expect(nftContractState.fields.collectionAddress).toEqual(nftCollectionContractAddress)
+    expect(nftContractState.fields.collectionId).toEqual(nftCollectionContractId)
+    expect(nftContractState.fields.tokenIndex).toEqual(0n)
 
     // Deposit NFT since it is withdrawn automatically when minted
     await nftCollection.depositNFT(nftContractId)
-
     // Burn NFT
     const balanceBeforeBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
 
@@ -75,7 +68,7 @@ describe('nft collection', function() {
     const gasPrice = 1000000000 * 100
     const totalGas = gasAmount * gasPrice
     await nftCollection.burnNFT(
-      subContractId(nftCollectionContractId, stringToHex(nftUri), 0),
+      subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0),
       gasAmount,
       BigInt(gasPrice)
     )
@@ -86,5 +79,5 @@ describe('nft collection', function() {
 
     const relativeDiff = utils.relativeDiff(alphAmountInNFT, refundedFromNFT)
     expect(relativeDiff).toBeLessThan(0.001)
-  }, 10000)
+  }, 20000)
 })

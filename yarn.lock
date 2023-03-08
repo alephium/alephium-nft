@@ -45,7 +45,7 @@
     resize-observer-polyfill "^1.5.1"
     styled-components "^5.3.5"
 
-"@alephium/web3-wallet@0.6.2", "@alephium/web3-wallet@^0.6.2":
+"@alephium/web3-wallet@^0.6.2", "@alephium/web3-wallet@v0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.6.2.tgz#8d5b54244d9475f2cadef94cf6d37b197198b446"
   integrity sha512-qw3uoqwP+OA2c/XchMtGBJE6mixApw2eBaKaPKHD6XeThMplBW2laMr6PM9qKk9bDYASboMQAGMCFltR8DzOQQ==

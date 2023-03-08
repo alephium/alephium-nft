@@ -39,11 +39,9 @@ export namespace NFTCollectionTypes {
   export type NFTMintedEvent = ContractEvent<{
     minter: HexString;
     collectionId: HexString;
-    name: HexString;
-    description: HexString;
     uri: HexString;
     tokenId: HexString;
-    nftContractAddress: HexString;
+    tokenIndex: HexString;
   }>;
 }
 
@@ -89,10 +87,7 @@ class Factory extends ContractFactory<
   }
 
   async testMintMethod(
-    params: TestContractParams<
-      NFTCollectionTypes.Fields,
-      { nftName: HexString; nftDescription: HexString; nftUri: HexString }
-    >
+    params: TestContractParams<NFTCollectionTypes.Fields, { nftUri: HexString }>
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "mint", params);
   }
@@ -103,7 +98,7 @@ export const NFTCollection = new Factory(
   Contract.fromJson(
     NFTCollectionContractJson,
     "",
-    "5af44924560e049d719396709278d347d14bb23d6a3646225f9debada48313eb"
+    "a576ec83eb23ffc285906516af93daf163e9238fc27f3b7827fd96958adbecfd"
   )
 );
 
@@ -174,11 +169,7 @@ export class NFTCollectionInstance extends ContractInstance {
   }
 
   async callMintMethod(
-    params: CallContractParams<{
-      nftName: HexString;
-      nftDescription: HexString;
-      nftUri: HexString;
-    }>
+    params: CallContractParams<{ nftUri: HexString }>
   ): Promise<CallContractResult<HexString>> {
     return callMethod(NFTCollection, this, "mint", params);
   }

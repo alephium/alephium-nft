@@ -97,8 +97,6 @@ export namespace MintNFT {
     signer: SignerProvider,
     params: ExecuteScriptParams<{
       nftCollectionContractId: HexString;
-      name: HexString;
-      description: HexString;
       uri: HexString;
     }>
   ): Promise<ExecuteScriptResult> {

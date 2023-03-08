@@ -1,6 +1,6 @@
 {
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -59,30 +59,30 @@
     },
     "MintNFT": {
       "sourceFile": "scripts/mint_nft.ral",
-      "sourceCodeHash": "f1902dcee2a5285eb34806e4164e0bb7c88b4517f449012ca00c359ee434b8b3",
+      "sourceCodeHash": "7f68429b64d8be9d30691373f568edda56a1f1d520b9dcbce8e0fae3e3998696",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "NFT": {
       "sourceFile": "nft.ral",
-      "sourceCodeHash": "7cd4e54e9420e1f8ed3c386d781df92b8f4e5d13d4aa299f2e25494eb6059e2f",
+      "sourceCodeHash": "76160e1fec9ee93e6c9b81129fcab65494fb8710c15b093b995c630019f8bff1",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "adb86bb004c0c36f2751f29e22d282a4b84d3e3e6b2a93e0f7caddc3ed9dbfd9",
+      "codeHashDebug": "08ec7d3945d889757a03191422b17b3a845eced9b6c52d5d5dd96dad50eb5008",
       "warnings": []
     },
     "NFTCollection": {
       "sourceFile": "nft_collection.ral",
-      "sourceCodeHash": "57f2edd9e6db4bbb29a7bdecc9cd7bdef4e8bb9322ef4bfcbf7df7e4d08e5c31",
+      "sourceCodeHash": "b24cba6e65765eb134ab5cb5805d2dcaa7b02f6ecfc200002c3dd033061c1ac9",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "5af44924560e049d719396709278d347d14bb23d6a3646225f9debada48313eb",
+      "codeHashDebug": "a576ec83eb23ffc285906516af93daf163e9238fc27f3b7827fd96958adbecfd",
       "warnings": []
     },
     "NFTListing": {
       "sourceFile": "nft_listing.ral",
       "sourceCodeHash": "d2deb88c19f347be618f98a77a47925b6cae8e8a528823cc5c72c011a4662ed3",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "3ccc0e1413b3a6ebfb091c0e59d9eac5b9bb3859fe237c6dd5fb348471b78cc9",
+      "codeHashDebug": "313d3f5677ef8aa35febd96927b5fcb6466fc884e7a042678f49755dc0c451fa",
       "warnings": []
     },
     "NFTMarketPlace": {

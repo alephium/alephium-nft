@@ -59,8 +59,6 @@ export default function MintNFTs() {
 
   async function mintNFT() {
     const uri = await uploadToIPFS()
-    const name = formInput.name
-    const description = formInput.description
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(
         context.signerProvider.nodeProvider,
@@ -69,7 +67,7 @@ export default function MintNFTs() {
 
       // TODO: Figure out UI to create collection, right now use default collection id
       const nftCollectionContractId = defaultNftCollectionContractId
-      const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, name, description, uri)
+      const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, uri)
       console.debug('mintNFTTxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)
       setOngoingTxDescription('minting NFT')

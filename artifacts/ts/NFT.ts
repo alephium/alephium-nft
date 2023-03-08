@@ -28,8 +28,6 @@ import { default as NFTContractJson } from "../nft.ral.json";
 // Custom types for the contract
 export namespace NFTTypes {
   export type Fields = {
-    name: HexString;
-    description: HexString;
     uri: HexString;
     collectionId: HexString;
     tokenIndex: bigint;
@@ -84,12 +82,6 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     return testMethod(this, "transfer", params);
   }
 
-  async testGetMetadataMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<[HexString, HexString, HexString, HexString]>> {
-    return testMethod(this, "getMetadata", params);
-  }
-
   async testTransferAndWithdrawMethod(
     params: TestContractParams<NFTTypes.Fields, { newOwner: HexString }>
   ): Promise<TestContractResult<null>> {
@@ -126,7 +118,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "adb86bb004c0c36f2751f29e22d282a4b84d3e3e6b2a93e0f7caddc3ed9dbfd9"
+    "08ec7d3945d889757a03191422b17b3a845eced9b6c52d5d5dd96dad50eb5008"
   )
 );
 
@@ -262,17 +254,6 @@ export class NFTInstance extends ContractInstance {
       NFT,
       this,
       "getCollectionId",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetMetadataMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<[HexString, HexString, HexString, HexString]>> {
-    return callMethod(
-      NFT,
-      this,
-      "getMetadata",
       params === undefined ? {} : params
     );
   }

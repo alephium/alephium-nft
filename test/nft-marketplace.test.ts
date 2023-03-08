@@ -1,4 +1,4 @@
-import { web3, subContractId, stringToHex, addressFromContractId, sleep, NodeProvider } from '@alephium/web3'
+import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep, NodeProvider } from '@alephium/web3'
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
@@ -6,6 +6,7 @@ import { fetchState } from '../utils/contracts'
 import { NFT } from '../artifacts/ts/NFT'
 import { NFTListing } from '../artifacts/ts/NFTListing'
 import { NFTMarketPlace } from '../artifacts/ts/NFTMarketPlace'
+import { NFTCollection as NFTCollectionFactory } from '../artifacts/ts/NFTCollection'
 
 describe('nft marketplace', function() {
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
@@ -22,14 +23,16 @@ describe('nft marketplace', function() {
     const nftMarketplaceContractId = nftMarketplaceDeployResult.contractId
     const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP")
     const nftCollectionContractId = nftCollectionDeployTx.contractId
+    const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
+
+    const nftCollectionContractState = await fetchState(provider, NFTCollectionFactory.contract, nftCollectionContractAddress, 0)
+    expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nftContractId = subContractId(nftCollectionContractId, stringToHex(nftUri), 0)
+    const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
     const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintNFT(
       nftCollectionContractId,
-      "CryptoPunk #0001",
-      "CP0001",
       nftUri
     )
 
@@ -216,7 +219,7 @@ describe('nft marketplace', function() {
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
     )(testAddress2, testAddress1, testAddress2)
-  }, 15000)
+  }, 30000)
 
   function checkListingFee(
     provider: NodeProvider,

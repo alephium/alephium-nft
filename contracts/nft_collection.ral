@@ -9,11 +9,9 @@ Contract NFTCollection(
     event NFTMinted(
       minter: Address,
       collectionId: ByteVec,
-      name: ByteVec,
-      description: ByteVec,
       uri: ByteVec,
       tokenId: ByteVec,
-      nftContractAddress: Address
+      tokenIndex: ByteVec
     )
 
     enum ErrorCodes {
@@ -39,11 +37,7 @@ Contract NFTCollection(
     }
 
     @using(preapprovedAssets = true, updateFields = true)
-    pub fn mint(
-        nftName: ByteVec,
-        nftDescription: ByteVec,
-        nftUri: ByteVec
-    ) -> (ByteVec) {
+    pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
 
         let collectionId = selfContractId!()
@@ -54,8 +48,6 @@ Contract NFTCollection(
         )
 
         let initialImmState = encodeToByteVec!(
-            nftName,
-            nftDescription,
             nftUri,
             collectionId,
             currentTokenIndex
@@ -70,17 +62,15 @@ Contract NFTCollection(
             minter
         )
 
-        currentTokenIndex = currentTokenIndex + 1
-
         emit NFTMinted(
             minter,
             collectionId,
-            nftName,
-            nftDescription,
             nftUri,
             contractId,
-            contractIdToAddress!(contractId)
+            toByteVec!(currentTokenIndex)
         )
+
+        currentTokenIndex = currentTokenIndex + 1
 
         return contractId
     }
