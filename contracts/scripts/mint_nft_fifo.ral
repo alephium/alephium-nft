@@ -1,4 +1,4 @@
-TxScript MintNFT(
+TxScript MintNFTFIFO(
     nftCollectionContractId: ByteVec,
     uri: ByteVec
 ) {

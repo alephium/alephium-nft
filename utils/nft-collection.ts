@@ -2,7 +2,7 @@ import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTCollectionFIFO as NFTCollectionFactory, NFTCollectionFIFOInstance } from '../artifacts/ts/NFTCollectionFIFO'
 import { NFT } from '../artifacts/ts/NFT'
-import { MintNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
+import { MintNFTFIFO, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
@@ -45,17 +45,31 @@ export class NFTCollection extends DeployHelpers {
 
   async mintNFT(
     nftCollectionContractId: string,
-    nftUri: string
+    nftUri: string,
+    tokenIndex?: bigint
   ) {
-    return await MintNFT.execute(
-      this.signer,
-      {
-        initialFields: {
-          nftCollectionContractId: nftCollectionContractId,
-          uri: web3.stringToHex(nftUri)
+    if (!!tokenIndex) {
+      return await MintNFTWithIndex.execute(
+        this.signer,
+        {
+          initialFields: {
+            nftCollectionContractId: nftCollectionContractId,
+            uri: web3.stringToHex(nftUri),
+            tokenIndex: tokenIndex
+          }
         }
-      }
-    )
+      )
+    } else {
+      return await MintNFTFIFO.execute(
+        this.signer,
+        {
+          initialFields: {
+            nftCollectionContractId: nftCollectionContractId,
+            uri: web3.stringToHex(nftUri)
+          }
+        }
+      )
+    }
   }
 
   async burnNFT(nftContractId: string, gasAmount?: number, gasPrice?: bigint) {
