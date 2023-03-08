@@ -29,9 +29,10 @@ import { default as NFTCollectionContractJson } from "../nft_collection.ral.json
 export namespace NFTCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
-    currentTokenIndex: bigint;
     name: HexString;
     symbol: HexString;
+    totalSupply: bigint;
+    currentTokenIndex: bigint;
   };
 
   export type State = ContractState<Fields>;
@@ -39,6 +40,7 @@ export namespace NFTCollectionTypes {
   export type MintedEvent = ContractEvent<{
     minter: HexString;
     tokenIndex: bigint;
+    tokenId: HexString;
   }>;
 }
 
@@ -95,7 +97,7 @@ export const NFTCollection = new Factory(
   Contract.fromJson(
     NFTCollectionContractJson,
     "",
-    "8743d3488ee5a22866603d4415b159049d4b9f995e3a59121c7597e12e02876a"
+    "35d28fa06ccc16451780c3e21d247c4bd6089f3421bfc4570fa1faa83f499826"
   )
 );
 

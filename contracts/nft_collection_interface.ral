@@ -1,5 +1,5 @@
 Interface INFTCollection {
-   event Minted(minter: Address, tokenIndex: U256)
+   event Minted(minter: Address, tokenIndex: U256, tokenId: ByteVec)
 
    pub fn getName() -> ByteVec
    pub fn getSymbol() -> ByteVec

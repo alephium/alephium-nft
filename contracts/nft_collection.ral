@@ -2,9 +2,10 @@
 // e.g. Bored Ape Yacht Club collection
 Contract NFTCollection(
     nftTemplateId: ByteVec,
-    mut currentTokenIndex: U256,
-    @unused name: ByteVec,
-    @unused symbol: ByteVec
+    name: ByteVec,
+    symbol: ByteVec,
+    totalSupply: U256,
+    mut currentTokenIndex: U256
 ) implements INFTCollection {
     enum ErrorCodes {
         IncorrectTokenIndex = 0
@@ -20,7 +21,7 @@ Contract NFTCollection(
 
     // Lets say only 10000 NFTs
     pub fn totalSupply() -> U256 {
-        return 10000
+        return totalSupply
     }
 
     pub fn nftByIndex(index: U256) -> (ByteVec, Bool) {
@@ -55,7 +56,7 @@ Contract NFTCollection(
             minter
         )
 
-        emit Minted(minter, currentTokenIndex)
+        emit Minted(minter, currentTokenIndex, contractId)
 
         currentTokenIndex = currentTokenIndex + 1
 
