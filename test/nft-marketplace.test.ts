@@ -2,17 +2,14 @@ import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { fetchState } from '../utils/contracts'
-import { NFT } from '../artifacts/ts/NFT'
-import { NFTListing } from '../artifacts/ts/NFTListing'
-import { NFTMarketPlace } from '../artifacts/ts/NFTMarketPlace'
-import { NFTCollection as NFTCollectionFactory } from '../artifacts/ts/NFTCollection'
+import { fetchNFTMarketplaceState, fetchNFTState, fetchNFTListingState, fetchNFTCollectionState } from '../utils/contracts'
 
 describe('nft marketplace', function() {
+  const nodeUrl = 'http://127.0.0.1:22973'
+  web3.setCurrentNodeProvider(nodeUrl)
+  const provider = web3.getCurrentNodeProvider()
+
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
-    const nodeUrl = 'http://127.0.0.1:22973'
-    web3.setCurrentNodeProvider(nodeUrl)
-    const provider = web3.getCurrentNodeProvider()
     const signer = await testWallet1()
     const nftCollection = new NFTCollection(provider, signer)
     const nftMarketplace = new NFTMarketplace(provider, signer)
@@ -25,7 +22,7 @@ describe('nft marketplace', function() {
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
 
-    const nftCollectionContractState = await fetchState(provider, NFTCollectionFactory.contract, nftCollectionContractAddress, 0)
+    const nftCollectionContractState = await fetchNFTCollectionState(nftCollectionContractAddress)
     expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
@@ -36,7 +33,7 @@ describe('nft marketplace', function() {
       nftUri
     )
 
-    const nftContractState = await fetchState(provider, NFT.contract, nftContractAddress, 0)
+    const nftContractState = await fetchNFTState(nftContractAddress)
     expect(nftContractState.fields.owner).toEqual(testAddress1)
 
     const tokenId = nftContractId
@@ -64,7 +61,7 @@ describe('nft marketplace', function() {
       expect(nftListedEventFields[2].value).toEqual(testAddress1)
 
       // Check the initial state for NFT listing
-      const nftListingContractState = await fetchState(provider, NFTListing.contract, nftListingContractAddress, 0)
+      const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
       expect(nftListingContractState.fields.price).toEqual(price)
       expect(nftListingContractState.fields.tokenId).toEqual(tokenId)
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
@@ -76,7 +73,7 @@ describe('nft marketplace', function() {
     const newPrice = BigInt("2000000000000000000")
     {
       await nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId)
-      const nftListingContractState = await fetchState(provider, NFTListing.contract, nftListingContractAddress, 0)
+      const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
       expect(nftListingContractState.fields.price).toEqual(newPrice)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -95,14 +92,14 @@ describe('nft marketplace', function() {
 
     // Buy the NFT
     {
-      const nftContractStateBefore = await fetchState(provider, NFT.contract, nftContractAddress, 0)
+      const nftContractStateBefore = await fetchNFTState(nftContractAddress)
       expect(nftContractStateBefore.fields.owner).toEqual(nftListingContractAddress)
 
       const totalAmount = newPrice + BigInt("1000000000000000000")
       await nftMarketplace.buyNFT(totalAmount, tokenId, nftMarketplaceContractId)
       await sleep(3000)
 
-      const nftContractStateAfter = await fetchState(provider, NFT.contract, nftContractAddress, 0)
+      const nftContractStateAfter = await fetchNFTState(nftContractAddress)
       expect(nftContractStateAfter.fields.owner).toEqual(testAddress1)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -148,15 +145,15 @@ describe('nft marketplace', function() {
       const nftListingContractId = nftListedEventFields[3].value.toString()
       const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
-      const nftContractStateBefore = await fetchState(provider, NFT.contract, nftContractAddress, 0)
+      const nftContractStateBefore = await fetchNFTState(nftContractAddress)
       expect(nftContractStateBefore.fields.owner).toEqual(nftListingContractAddress)
 
-      const nftListingContractState = await fetchState(provider, NFTListing.contract, nftListingContractAddress, 0)
+      const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
 
       await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
 
-      const nftContractStateAfter = await fetchState(provider, NFT.contract, nftContractAddress, 0)
+      const nftContractStateAfter = await fetchNFTState(nftContractAddress)
       expect(nftContractStateAfter.fields.owner).toEqual(testAddress1)
 
       // TODO: Verify NFTListingContract is gone
@@ -176,7 +173,6 @@ describe('nft marketplace', function() {
 
     // Update listing price
     await checkListingFee(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
@@ -184,7 +180,6 @@ describe('nft marketplace', function() {
 
     // Update Commission Rate
     await checkCommissionRate(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
@@ -192,7 +187,6 @@ describe('nft marketplace', function() {
 
     // Update Admin
     await checkUpdateAdmin(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
@@ -200,21 +194,18 @@ describe('nft marketplace', function() {
 
     // Update with the wrong admin will *not* update the values correctly
     await checkListingFee(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
     )(20, 10, 20)
 
     await checkCommissionRate(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
     )(250, 200, 250)
 
     await checkUpdateAdmin(
-      provider,
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
@@ -222,52 +213,49 @@ describe('nft marketplace', function() {
   }, 30000)
 
   function checkListingFee(
-    provider: NodeProvider,
     nftMarketplace: NFTMarketplace,
     nftMarketplaceContractId: string,
     nftMarketplaceContractAddress: string
   ) {
     return async (previousValue: number, updateValue: number, updatedValue: number) => {
-      const stateBefore = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateBefore = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateBefore.fields.listingFee).toEqual(BigInt(previousValue))
 
       await nftMarketplace.updateListingFee(BigInt(updateValue), nftMarketplaceContractId)
 
-      const stateAfter = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateAfter = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateAfter.fields.listingFee).toEqual(BigInt(updatedValue))
     }
   }
 
   function checkCommissionRate(
-    provider: NodeProvider,
     nftMarketplace: NFTMarketplace,
     nftMarketplaceContractId: string,
     nftMarketplaceContractAddress: string
   ) {
     return async (previousValue: number, updateValue: number, updatedValue: number) => {
-      const stateBefore = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateBefore = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateBefore.fields.commissionRate).toEqual(BigInt(previousValue))
 
       await nftMarketplace.updateCommissionRate(BigInt(updateValue), nftMarketplaceContractId)
 
-      const stateAfter = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateAfter = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateAfter.fields.commissionRate).toEqual(BigInt(updatedValue))
     }
   }
 
   function checkUpdateAdmin(
-    provider: NodeProvider,
     nftMarketplace: NFTMarketplace,
     nftMarketplaceContractId: string,
     nftMarketplaceContractAddress: string
   ) {
     return async (previousValue: string, updateValue: string, updatedValue: string) => {
-      const stateBefore = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateBefore = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateBefore.fields.admin).toEqual(previousValue)
 
       await nftMarketplace.updateAdmin(updateValue, nftMarketplaceContractId)
 
-      const stateAfter = await fetchState(provider, NFTMarketPlace.contract, nftMarketplaceContractAddress, 0)
+      const stateAfter = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateAfter.fields.admin).toEqual(updatedValue)
     }
   }

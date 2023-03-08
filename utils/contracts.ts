@@ -1,36 +1,22 @@
-import {
-  Contract,
-  ContractState,
-  NodeProvider,
-  Script,
-} from '@alephium/web3'
-import mintNFT from '../artifacts/scripts/mint_nft.ral.json'
-import listNFT from '../artifacts/scripts/list_nft.ral.json'
-import buyNFT from '../artifacts/scripts/buy_nft.ral.json'
-import withdrawNFT from '../artifacts/scripts/withdraw_nft.ral.json'
-import NFTMarketplace from '../artifacts/nft_marketplace.ral.json'
-import NFTListing from '../artifacts/nft_listing.ral.json'
-import NFTCollection from '../artifacts/nft_collection.ral.json'
-import NFT from '../artifacts/nft.ral.json'
+import { fetchContractState } from '@alephium/web3'
 
-export const mintNFTScript = Script.fromJson(mintNFT)
-export const listNFTScript = Script.fromJson(listNFT)
-export const buyNFTScript = Script.fromJson(buyNFT)
-export const withdrawNFTScript = Script.fromJson(withdrawNFT)
+import { NFT, NFTInstance } from '../artifacts/ts/NFT'
+import { NFTListing, NFTListingInstance } from '../artifacts/ts/NFTListing'
+import { NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts/NFTMarketPlace'
+import { NFTCollection, NFTCollectionInstance } from '../artifacts/ts/NFTCollection'
 
-export const NFTMarketplaceContract = Contract.fromJson(NFTMarketplace)
-export const NFTListingContract = Contract.fromJson(NFTListing)
-export const NFTCollectionContract = Contract.fromJson(NFTCollection)
-export const NFTContract = Contract.fromJson(NFT)
+export async function fetchNFTMarketplaceState(address: string) {
+  return await fetchContractState(NFTMarketPlace, new NFTMarketPlaceInstance(address))
+}
 
-export async function fetchState(
-  nodeProvider: NodeProvider,
-  contract: Contract,
-  address: string,
-  group: number
-): Promise<ContractState> {
-  const state = await nodeProvider.contracts.getContractsAddressState(address, {
-    group: group
-  })
-  return contract.fromApiContractState(state)
+export async function fetchNFTCollectionState(address: string) {
+  return await fetchContractState(NFTCollection, new NFTCollectionInstance(address))
+}
+
+export async function fetchNFTListingState(address: string) {
+  return await fetchContractState(NFTListing, new NFTListingInstance(address))
+}
+
+export async function fetchNFTState(address: string) {
+  return await fetchContractState(NFT, new NFTInstance(address))
 }

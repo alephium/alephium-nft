@@ -3,13 +3,14 @@ import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, prettifyExactAmount, SignerProvider } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
-import { NFTListingContract, NFTContract, NFTMarketplaceContract, fetchState } from '../utils/contracts'
+import { NFTListing as NFTListingFactory } from '../artifacts/ts/NFTListing'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useRouter } from 'next/router'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
 import { useContext } from '@alephium/web3-react'
+import { fetchNFTListingState, fetchNFTMarketplaceState, fetchNFTState } from '../utils/contracts'
 
 interface NFTListing {
   price: bigint
@@ -48,11 +49,8 @@ export default function BuyNFTs() {
   async function loadMarketplaceCommissionRate() {
     if (context.signerProvider?.nodeProvider) {
       try {
-        const marketplaceState = await fetchState(
-          context.signerProvider.nodeProvider,
-          NFTMarketplaceContract,
-          addressFromContractId(marketplaceContractId),
-          0
+        const marketplaceState = await fetchNFTMarketplaceState(
+          addressFromContractId(marketplaceContractId)
         )
 
         setCommissionRate(marketplaceState.fields.commissionRate as bigint)
@@ -70,22 +68,16 @@ export default function BuyNFTs() {
       var listingState = undefined
 
       try {
-        listingState = await fetchState(
-          context.signerProvider.nodeProvider,
-          NFTListingContract,
-          addressFromContractId(listingContractId),
-          0
+        listingState = await fetchNFTListingState(
+          addressFromContractId(listingContractId)
         )
       } catch (e) {
         console.log(`error fetching state for ${tokenId}`, e)
       }
 
-      if (listingState && listingState.codeHash === NFTListingContract.codeHash) {
-        const nftState = await fetchState(
-          context.signerProvider.nodeProvider,
-          NFTContract,
-          addressFromContractId(tokenId),
-          0
+      if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
+        const nftState = await fetchNFTState(
+          addressFromContractId(tokenId)
         )
 
         const metadataUri = hexToString(nftState.fields.uri as string)

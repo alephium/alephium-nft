@@ -1,6 +1,7 @@
 import { web3, hexToString, node, ONE_ALPH, SignerProvider } from '@alephium/web3'
 import { useEffect, useState } from 'react'
-import { fetchState, NFTContract } from '../utils/contracts'
+import { fetchNFTState } from '../utils/contracts'
+import { NFT as NFTFactory } from '../artifacts/ts/NFT'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
@@ -58,17 +59,14 @@ export default function Home() {
     if (context.signerProvider?.nodeProvider) {
       try {
         web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
-        nftState = await fetchState(
-          context.signerProvider.nodeProvider,
-          NFTContract,
-          addressFromContractId(tokenId),
-          0
+        nftState = await fetchNFTState(
+          addressFromContractId(tokenId)
         )
       } catch (e) {
         console.debug(`error fetching state for ${tokenId}`, e)
       }
 
-      if (nftState && nftState.codeHash === NFTContract.codeHash) {
+      if (nftState && nftState.codeHash === NFTFactory.contract.codeHash) {
         const metadataUri = hexToString(nftState.fields.uri as string)
         const metadata = (await axios.get(metadataUri)).data
         return {
@@ -76,7 +74,7 @@ export default function Home() {
           description: metadata.description,
           image: metadata.image,
           tokenId: tokenId,
-          collectionAddress: nftState.fields.collectionAddress as string,
+          collectionAddress: nftState.fields.collectionId as string,
           owner: nftState.fields.owner as string,
           isTokenWithdrawn: nftState.fields.isTokenWithdrawn as boolean
         }

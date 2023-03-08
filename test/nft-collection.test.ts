@@ -2,15 +2,14 @@ import { web3, subContractId, addressFromContractId, encodeU256, binToHex } from
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
-import { fetchState } from '../utils/contracts'
-import { NFT } from '../artifacts/ts/NFT'
-import { NFTCollection as NFTCollectionFactory } from '../artifacts/ts/NFTCollection'
+import { fetchNFTCollectionState, fetchNFTState } from '../utils/contracts'
 
 describe('nft collection', function() {
+  const nodeUrl = 'http://127.0.0.1:22973'
+  web3.setCurrentNodeProvider(nodeUrl)
+  const provider = web3.getCurrentNodeProvider()
+
   it('should test nft collection', async () => {
-    const nodeUrl = 'http://127.0.0.1:22973'
-    web3.setCurrentNodeProvider(nodeUrl)
-    const provider = web3.getCurrentNodeProvider()
     const signer = await testWallet1()
     const nftCollection = new NFTCollection(provider, signer)
     await nftCollection.buildProject()
@@ -18,9 +17,8 @@ describe('nft collection', function() {
     const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP")
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
-    const nftCollectionContractGroup = nftCollectionDeployTx.groupIndex
 
-    const nftCollectionContractState = await fetchState(provider, NFTCollectionFactory.contract, nftCollectionContractAddress, 0)
+    const nftCollectionContractState = await fetchNFTCollectionState(nftCollectionContractAddress)
     expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     // Mint NFT
@@ -35,24 +33,24 @@ describe('nft collection', function() {
 
     const nftCollectionContractEvents = await provider.events.getEventsContractContractaddress(
       nftCollectionContractAddress,
-      { start: 0, group: nftCollectionContractGroup }
+      { start: 0 }
     )
 
     expect(nftCollectionContractEvents.events.length).toEqual(1)
 
     const nftMintedEventFields = nftCollectionContractEvents.events[0].fields
-    // Check minter address
+    // Minter address
     expect(nftMintedEventFields[0].value).toEqual(testAddress1)
-    // Check collection address
+    // NFT collection contract id
     expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractId)
-    // Check info of the minted NFT
+    // Info of the minted NFT
     expect(utils.checkHexString(nftMintedEventFields[2].value, nftUri))
-
+    // NFT contract id
     expect(nftMintedEventFields[3].value).toEqual(nftContractId)
+    // Current token index
     expect(nftMintedEventFields[4].value).toEqual(binToHex(encodeU256(0n)))
 
-    const nftContractState = await fetchState(provider, NFT.contract, nftContractAddress, 0)
-
+    const nftContractState = await fetchNFTState(nftContractAddress)
     expect(nftContractState.fields.owner).toEqual(testAddress1)
     expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
     utils.checkHexString(nftContractState.fields.uri, "https://cryptopunks.app/cryptopunks/details/1")
