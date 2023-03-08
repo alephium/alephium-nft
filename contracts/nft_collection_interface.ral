@@ -1,17 +1,8 @@
 Interface INFTCollection {
-   event Minted(
-     minter: Address,
-     uri: ByteVec,
-     tokenIndex: U256
-   )
+   event Minted(minter: Address, tokenIndex: U256)
 
-    pub fn getName() -> ByteVec
-
-    pub fn getSymbol() -> ByteVec
-
-    pub fn totalSupply() -> U256
-
-    pub fn nftByIndex(index: U256) -> ByteVec
-
-    // pub fn mint(tokenIndex: U256, tokenUri: ByteVec) -> Address
+   pub fn getName() -> ByteVec
+   pub fn getSymbol() -> ByteVec
+   pub fn totalSupply() -> U256
+   pub fn nftByIndex(index: U256) -> (ByteVec, Bool)
 }

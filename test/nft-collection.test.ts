@@ -58,14 +58,8 @@ async function mintAndVerify(
   const nftMintedEventFields = nftCollectionContractEvents.events[0].fields
   // Minter address
   expect(nftMintedEventFields[0].value).toEqual(testAddress1)
-  // NFT collection contract id
-  expect(nftMintedEventFields[1].value).toEqual(nftCollectionContractId)
-  // Info of the minted NFT
-  expect(utils.checkHexString(nftMintedEventFields[2].value, nftUri))
-  // NFT contract id
-  expect(nftMintedEventFields[3].value).toEqual(nftContractId)
-  // Current token index
-  expect(nftMintedEventFields[4].value).toEqual(binToHex(encodeU256(tokenIndex)))
+  // NFT token index
+  expect(nftMintedEventFields[1].value).toEqual(tokenIndex.toString())
 
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
   expect(nftContractState.fields.owner).toEqual(testAddress1)

@@ -38,10 +38,6 @@ export namespace NFTTypes {
   export type State = ContractState<Fields>;
 
   export type TransferEvent = ContractEvent<{ from: HexString; to: HexString }>;
-  export type NFTOwnerUpdatedEvent = ContractEvent<{
-    previousOwner: HexString;
-    newOwner: HexString;
-  }>;
   export type NFTWithdrawnEvent = ContractEvent<{ owner: HexString }>;
   export type NFTDepositedEvent = ContractEvent<{ owner: HexString }>;
   export type NFTBurntEvent = ContractEvent<{ owner: HexString }>;
@@ -118,7 +114,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "08ec7d3945d889757a03191422b17b3a845eced9b6c52d5d5dd96dad50eb5008"
+    "e4136b65683f27fc0efd6bcde605fd8dfb2c946c2d646e3c933135979f6d3628"
   )
 );
 
@@ -145,19 +141,6 @@ export class NFTInstance extends ContractInstance {
       this,
       options,
       "Transfer",
-      fromCount
-    );
-  }
-
-  subscribeNFTOwnerUpdatedEvent(
-    options: SubscribeOptions<NFTTypes.NFTOwnerUpdatedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFT.contract,
-      this,
-      options,
-      "NFTOwnerUpdated",
       fromCount
     );
   }
@@ -204,7 +187,6 @@ export class NFTInstance extends ContractInstance {
   subscribeAllEvents(
     options: SubscribeOptions<
       | NFTTypes.TransferEvent
-      | NFTTypes.NFTOwnerUpdatedEvent
       | NFTTypes.NFTWithdrawnEvent
       | NFTTypes.NFTDepositedEvent
       | NFTTypes.NFTBurntEvent

@@ -5,15 +5,7 @@ Contract NFTCollection(
     mut currentTokenIndex: U256,
     @unused name: ByteVec,
     @unused symbol: ByteVec
-) {
-    event NFTMinted(
-      minter: Address,
-      collectionId: ByteVec,
-      uri: ByteVec,
-      tokenId: ByteVec,
-      tokenIndex: ByteVec
-    )
-
+) implements INFTCollection {
     enum ErrorCodes {
         IncorrectTokenIndex = 0
     }
@@ -31,9 +23,10 @@ Contract NFTCollection(
         return 10000
     }
 
-    pub fn tokenIdByIndex(index: U256) -> ByteVec {
-        assert!(index < totalSupply(), ErrorCodes.IncorrectTokenIndex)
-        return subContractId!(toByteVec!(index))
+    pub fn nftByIndex(index: U256) -> (ByteVec, Bool) {
+        checkCaller!(index < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+        let nftTokenId = subContractId!(toByteVec!(index))
+        return nftTokenId, contractExists!(nftTokenId)
     }
 
     @using(preapprovedAssets = true, updateFields = true)
@@ -62,13 +55,7 @@ Contract NFTCollection(
             minter
         )
 
-        emit NFTMinted(
-            minter,
-            collectionId,
-            nftUri,
-            contractId,
-            toByteVec!(currentTokenIndex)
-        )
+        emit Minted(minter, currentTokenIndex)
 
         currentTokenIndex = currentTokenIndex + 1
 

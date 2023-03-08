@@ -36,12 +36,9 @@ export namespace NFTCollectionTypes {
 
   export type State = ContractState<Fields>;
 
-  export type NFTMintedEvent = ContractEvent<{
+  export type MintedEvent = ContractEvent<{
     minter: HexString;
-    collectionId: HexString;
-    uri: HexString;
-    tokenId: HexString;
-    tokenIndex: HexString;
+    tokenIndex: bigint;
   }>;
 }
 
@@ -80,10 +77,10 @@ class Factory extends ContractFactory<
     return testMethod(this, "totalSupply", params);
   }
 
-  async testTokenIdByIndexMethod(
+  async testNftByIndexMethod(
     params: TestContractParams<NFTCollectionTypes.Fields, { index: bigint }>
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "tokenIdByIndex", params);
+  ): Promise<TestContractResult<[HexString, boolean]>> {
+    return testMethod(this, "nftByIndex", params);
   }
 
   async testMintMethod(
@@ -98,7 +95,7 @@ export const NFTCollection = new Factory(
   Contract.fromJson(
     NFTCollectionContractJson,
     "",
-    "a576ec83eb23ffc285906516af93daf163e9238fc27f3b7827fd96958adbecfd"
+    "8743d3488ee5a22866603d4415b159049d4b9f995e3a59121c7597e12e02876a"
   )
 );
 
@@ -116,15 +113,15 @@ export class NFTCollectionInstance extends ContractInstance {
     return getContractEventsCurrentCount(this.address);
   }
 
-  subscribeNFTMintedEvent(
-    options: SubscribeOptions<NFTCollectionTypes.NFTMintedEvent>,
+  subscribeMintedEvent(
+    options: SubscribeOptions<NFTCollectionTypes.MintedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
       NFTCollection.contract,
       this,
       options,
-      "NFTMinted",
+      "Minted",
       fromCount
     );
   }
@@ -162,10 +159,10 @@ export class NFTCollectionInstance extends ContractInstance {
     );
   }
 
-  async callTokenIdByIndexMethod(
+  async callNftByIndexMethod(
     params: CallContractParams<{ index: bigint }>
-  ): Promise<CallContractResult<HexString>> {
-    return callMethod(NFTCollection, this, "tokenIdByIndex", params);
+  ): Promise<CallContractResult<[HexString, boolean]>> {
+    return callMethod(NFTCollection, this, "nftByIndex", params);
   }
 
   async callMintMethod(

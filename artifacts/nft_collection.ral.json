@@ -1,8 +1,8 @@
 {
   "version": "v1.7.1",
   "name": "NFTCollection",
-  "bytecode": "040509121c402e4080010000000102ce0102010000000102ce02020100000001021367100201000101010916000002310c7b160040cb0201030106014029b41701b11702160103130264170316001602a0001303641704160113c40de0b6b3a7640000a2a00040ce00160416030d1601c91705051601160216001605a0004073a0000d2aa100160502",
-  "codeHash": "a576ec83eb23ffc285906516af93daf163e9238fc27f3b7827fd96958adbecfd",
+  "bytecode": "040509121c40354080010000000102ce0102010000000102ce02020100000001021367100201000102020d16000002310c7b160040cb170116011601c50201030106014025b41701b11702160103130264170316001602a0001303641704160113c40de0b6b3a7640000a2a00040ce00160416030d1601c91705051601a0005fa0000d2aa100160502",
+  "codeHash": "8743d3488ee5a22866603d4415b159049d4b9f995e3a59121c7597e12e02876a",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
@@ -25,20 +25,14 @@
   },
   "eventsSig": [
     {
-      "name": "NFTMinted",
+      "name": "Minted",
       "fieldNames": [
         "minter",
-        "collectionId",
-        "uri",
-        "tokenId",
         "tokenIndex"
       ],
       "fieldTypes": [
         "Address",
-        "ByteVec",
-        "ByteVec",
-        "ByteVec",
-        "ByteVec"
+        "U256"
       ]
     }
   ],
@@ -80,7 +74,7 @@
       ]
     },
     {
-      "name": "tokenIdByIndex",
+      "name": "nftByIndex",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
@@ -94,7 +88,8 @@
         false
       ],
       "returnTypes": [
-        "ByteVec"
+        "ByteVec",
+        "Bool"
       ]
     },
     {

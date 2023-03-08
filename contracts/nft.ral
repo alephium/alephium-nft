@@ -9,11 +9,6 @@ Contract NFT(
     mut isTokenWithdrawn: Bool
 ) implements INFT {
 
-    event NFTOwnerUpdated(
-      previousOwner: Address,
-      newOwner: Address
-    )
-
     event NFTWithdrawn(
       owner: Address
     )
@@ -64,7 +59,7 @@ Contract NFT(
     fn updateOwner(newOwner: Address) -> () {
         // Token needs to be owned by the contract when owner is changed
         assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
-        emit NFTOwnerUpdated(owner, newOwner)
+        emit Transfer(owner, newOwner)
         owner = newOwner
     }
 
@@ -74,7 +69,7 @@ Contract NFT(
 
         let depositor = callerAddress!()
         if (depositor != owner) {
-            emit NFTOwnerUpdated(owner, depositor)
+            emit Transfer(owner, depositor)
             owner = depositor
         }
 
