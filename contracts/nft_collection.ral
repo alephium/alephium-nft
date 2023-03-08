@@ -32,6 +32,8 @@ Contract NFTCollection(
 
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
+        assert!(currentTokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+
         let minter = callerAddress!()
 
         let collectionId = selfContractId!()

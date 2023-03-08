@@ -3,6 +3,7 @@ import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { fetchNFTMarketplaceState, fetchNFTState, fetchNFTListingState, fetchNFTCollectionState } from '../utils/contracts'
+import { maxU256 } from '../utils'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -18,7 +19,7 @@ describe('nft marketplace', function() {
     const nftMarketplaceDeployResult = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployResult.contractAddress
     const nftMarketplaceContractId = nftMarketplaceDeployResult.contractId
-    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP")
+    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP", maxU256)
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
 

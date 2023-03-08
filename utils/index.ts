@@ -20,3 +20,5 @@ export function randomContractAddress(): string {
   const bytes = Buffer.concat([prefix, randomBytes(32)])
   return base58.encode(bytes)
 }
+
+export const maxU256 = (1n << 256n) - 1n

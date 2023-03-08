@@ -73,9 +73,9 @@
     },
     "NFTCollection": {
       "sourceFile": "nft_collection.ral",
-      "sourceCodeHash": "3b8486e95bdeacfc6b52bbd6b4d211cb03af7c3f40571a9cc354bdaba7863907",
+      "sourceCodeHash": "c2519dbcb8af5ea6dd0202370c33074f3015aac94d0998e4ec5d850d548002cc",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "35d28fa06ccc16451780c3e21d247c4bd6089f3421bfc4570fa1faa83f499826",
+      "codeHashDebug": "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82",
       "warnings": []
     },
     "NFTListing": {

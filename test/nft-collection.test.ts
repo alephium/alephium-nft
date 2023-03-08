@@ -14,29 +14,28 @@ describe('nft collection', function() {
     const nftCollection = new NFTCollection(provider, signer)
     await nftCollection.buildProject()
 
-    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP")
+    const totalSupply = 3n
+    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP", totalSupply)
     const nftCollectionContractId = nftCollectionDeployTx.contractId
 
-    // Mint 1st NFT
-    const nft1Uri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nft1ContractState = await mintAndVerify(nftCollection, nftCollectionContractId, 0n, nft1Uri)
-    // Burn and verify
-    await burnAndVerify(nftCollection, nftCollectionContractId, 0n, nft1ContractState)
+    // First 3 NFTs should be ok
+    await mintAndVerify(nftCollection, nftCollectionContractId, 0n)
+    await mintAndVerify(nftCollection, nftCollectionContractId, 1n)
+    await mintAndVerify(nftCollection, nftCollectionContractId, 2n)
 
-    // Mint 2nd NFT
-    const nft2Uri = "https://cryptopunks.app/cryptopunks/details/1"
-    const nft2ContractState = await mintAndVerify(nftCollection, nftCollectionContractId, 1n, nft2Uri)
-    // Burn and verify
-    await burnAndVerify(nftCollection, nftCollectionContractId, 1n, nft2ContractState)
+    // The 4th should *not* be ok
+    console.log("the fourth")
+    const nftUri = "https://cryptopunks.app/cryptopunks/details/3"
+    await expect(nftCollection.mintNFT(nftCollectionContractId, nftUri)).rejects.toThrow(Error)
   }, 60000)
 })
 
 async function mintAndVerify(
   nftCollection: NFTCollection,
   nftCollectionContractId: string,
-  tokenIndex: bigint,
-  nftUri: string,
+  tokenIndex: bigint
 ) {
+  const nftUri = `https://cryptopunks.app/cryptopunks/details/${tokenIndex}`
   const nftCollectionContractAddress = addressFromContractId(nftCollectionContractId)
 
   const nftCollectionContractState = await fetchNFTCollectionState(nftCollectionContractAddress)
@@ -64,11 +63,11 @@ async function mintAndVerify(
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
   expect(nftContractState.fields.owner).toEqual(testAddress1)
   expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
-  utils.checkHexString(nftContractState.fields.uri, "https://cryptopunks.app/cryptopunks/details/1")
+  utils.checkHexString(nftContractState.fields.uri, nftUri)
   expect(nftContractState.fields.collectionId).toEqual(nftCollectionContractId)
   expect(nftContractState.fields.tokenIndex).toEqual(tokenIndex)
 
-  return nftContractState
+  await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
 }
 
 async function burnAndVerify(

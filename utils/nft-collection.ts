@@ -10,7 +10,8 @@ export class NFTCollection extends DeployHelpers {
 
   async create(
     collectionName: string,
-    collectionSymbol: string
+    collectionSymbol: string,
+    totalSupply: bigint
   ): Promise<DeployContractResult<NFTCollectionInstance>> {
 
     const nftDeployResult = await NFT.deploy(
@@ -26,7 +27,6 @@ export class NFTCollection extends DeployHelpers {
       }
     )
 
-    const maxValue = (1n << 256n) - 1n
     const nftCollectionDeployTx = await NFTCollectionFactory.deploy(
       this.signer,
       {
@@ -34,7 +34,7 @@ export class NFTCollection extends DeployHelpers {
           nftTemplateId: nftDeployResult.contractId,
           name: web3.stringToHex(collectionName),
           symbol: web3.stringToHex(collectionSymbol),
-          totalSupply: maxValue,
+          totalSupply,
           currentTokenIndex: 0n
         }
       }
