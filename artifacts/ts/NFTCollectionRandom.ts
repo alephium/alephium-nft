@@ -23,16 +23,15 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTCollectionContractJson } from "../nft_collection.ral.json";
+import { default as NFTCollectionRandomContractJson } from "../nft_collection_random.ral.json";
 
 // Custom types for the contract
-export namespace NFTCollectionTypes {
+export namespace NFTCollectionRandomTypes {
   export type Fields = {
     nftTemplateId: HexString;
     name: HexString;
     symbol: HexString;
     totalSupply: bigint;
-    currentTokenIndex: bigint;
   };
 
   export type State = ContractState<Fields>;
@@ -45,16 +44,16 @@ export namespace NFTCollectionTypes {
 }
 
 class Factory extends ContractFactory<
-  NFTCollectionInstance,
-  NFTCollectionTypes.Fields
+  NFTCollectionRandomInstance,
+  NFTCollectionRandomTypes.Fields
 > {
-  at(address: string): NFTCollectionInstance {
-    return new NFTCollectionInstance(address);
+  at(address: string): NFTCollectionRandomInstance {
+    return new NFTCollectionRandomInstance(address);
   }
 
   async testGetNameMethod(
     params: Omit<
-      TestContractParams<NFTCollectionTypes.Fields, never>,
+      TestContractParams<NFTCollectionRandomTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<HexString>> {
@@ -63,7 +62,7 @@ class Factory extends ContractFactory<
 
   async testGetSymbolMethod(
     params: Omit<
-      TestContractParams<NFTCollectionTypes.Fields, never>,
+      TestContractParams<NFTCollectionRandomTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<HexString>> {
@@ -72,7 +71,7 @@ class Factory extends ContractFactory<
 
   async testTotalSupplyMethod(
     params: Omit<
-      TestContractParams<NFTCollectionTypes.Fields, never>,
+      TestContractParams<NFTCollectionRandomTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<bigint>> {
@@ -80,35 +79,41 @@ class Factory extends ContractFactory<
   }
 
   async testNftByIndexMethod(
-    params: TestContractParams<NFTCollectionTypes.Fields, { index: bigint }>
+    params: TestContractParams<
+      NFTCollectionRandomTypes.Fields,
+      { index: bigint }
+    >
   ): Promise<TestContractResult<[HexString, boolean]>> {
     return testMethod(this, "nftByIndex", params);
   }
 
   async testMintMethod(
-    params: TestContractParams<NFTCollectionTypes.Fields, { nftUri: HexString }>
+    params: TestContractParams<
+      NFTCollectionRandomTypes.Fields,
+      { nftUri: HexString; index: bigint }
+    >
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "mint", params);
   }
 }
 
 // Use this object to test and deploy the contract
-export const NFTCollection = new Factory(
+export const NFTCollectionRandom = new Factory(
   Contract.fromJson(
-    NFTCollectionContractJson,
+    NFTCollectionRandomContractJson,
     "",
-    "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82"
+    "c85f94872b29fa87500cc8e765082f605819fa700b2e47ce3dcdff72a86db978"
   )
 );
 
 // Use this class to interact with the blockchain
-export class NFTCollectionInstance extends ContractInstance {
+export class NFTCollectionRandomInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<NFTCollectionTypes.State> {
-    return fetchContractState(NFTCollection, this);
+  async fetchState(): Promise<NFTCollectionRandomTypes.State> {
+    return fetchContractState(NFTCollectionRandom, this);
   }
 
   async getContractEventsCurrentCount(): Promise<number> {
@@ -116,11 +121,11 @@ export class NFTCollectionInstance extends ContractInstance {
   }
 
   subscribeMintedEvent(
-    options: SubscribeOptions<NFTCollectionTypes.MintedEvent>,
+    options: SubscribeOptions<NFTCollectionRandomTypes.MintedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      NFTCollection.contract,
+      NFTCollectionRandom.contract,
       this,
       options,
       "Minted",
@@ -132,7 +137,7 @@ export class NFTCollectionInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<HexString>> {
     return callMethod(
-      NFTCollection,
+      NFTCollectionRandom,
       this,
       "getName",
       params === undefined ? {} : params
@@ -143,7 +148,7 @@ export class NFTCollectionInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<HexString>> {
     return callMethod(
-      NFTCollection,
+      NFTCollectionRandom,
       this,
       "getSymbol",
       params === undefined ? {} : params
@@ -154,7 +159,7 @@ export class NFTCollectionInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<bigint>> {
     return callMethod(
-      NFTCollection,
+      NFTCollectionRandom,
       this,
       "totalSupply",
       params === undefined ? {} : params
@@ -164,12 +169,12 @@ export class NFTCollectionInstance extends ContractInstance {
   async callNftByIndexMethod(
     params: CallContractParams<{ index: bigint }>
   ): Promise<CallContractResult<[HexString, boolean]>> {
-    return callMethod(NFTCollection, this, "nftByIndex", params);
+    return callMethod(NFTCollectionRandom, this, "nftByIndex", params);
   }
 
   async callMintMethod(
-    params: CallContractParams<{ nftUri: HexString }>
+    params: CallContractParams<{ nftUri: HexString; index: bigint }>
   ): Promise<CallContractResult<HexString>> {
-    return callMethod(NFTCollection, this, "mint", params);
+    return callMethod(NFTCollectionRandom, this, "mint", params);
   }
 }

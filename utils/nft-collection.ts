@@ -1,6 +1,6 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFTCollection as NFTCollectionFactory, NFTCollectionInstance } from '../artifacts/ts/NFTCollection'
+import { NFTCollectionFIFO as NFTCollectionFactory, NFTCollectionFIFOInstance } from '../artifacts/ts/NFTCollectionFIFO'
 import { NFT } from '../artifacts/ts/NFT'
 import { MintNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
@@ -12,7 +12,7 @@ export class NFTCollection extends DeployHelpers {
     collectionName: string,
     collectionSymbol: string,
     totalSupply: bigint
-  ): Promise<DeployContractResult<NFTCollectionInstance>> {
+  ): Promise<DeployContractResult<NFTCollectionFIFOInstance>> {
 
     const nftDeployResult = await NFT.deploy(
       this.signer,

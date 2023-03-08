@@ -3,7 +3,8 @@
 /* eslint-disable */
 
 export * from "./NFT";
-export * from "./NFTCollection";
+export * from "./NFTCollectionFIFO";
+export * from "./NFTCollectionRandom";
 export * from "./NFTListing";
 export * from "./NFTMarketPlace";
 export * from "./scripts";

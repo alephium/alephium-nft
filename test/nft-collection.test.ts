@@ -24,7 +24,6 @@ describe('nft collection', function() {
     await mintAndVerify(nftCollection, nftCollectionContractId, 2n)
 
     // The 4th should *not* be ok
-    console.log("the fourth")
     const nftUri = "https://cryptopunks.app/cryptopunks/details/3"
     await expect(nftCollection.mintNFT(nftCollectionContractId, nftUri)).rejects.toThrow(Error)
   }, 60000)

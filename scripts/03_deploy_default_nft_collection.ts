@@ -1,7 +1,7 @@
 import { stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { NFTCollection } from '../artifacts/ts/NFTCollection'
+import { NFTCollectionFIFO } from '../artifacts/ts/NFTCollectionFIFO'
 
 const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -15,7 +15,7 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
     symbol: stringToHex("Default Collection")
   }
 
-  const result = await deployer.deployContract(NFTCollection, {
+  const result = await deployer.deployContract(NFTCollectionFIFO, {
     initialFields: initialFields
   })
 

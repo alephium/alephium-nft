@@ -1,0 +1,27 @@
+Abstract Contract NFTCollectionBase(
+    name: ByteVec,
+    symbol: ByteVec,
+    totalSupply: U256
+) implements INFTCollection {
+    enum ErrorCodes {
+        IncorrectTokenIndex = 0
+    }
+
+    pub fn getName() -> ByteVec {
+        return name
+    }
+
+    pub fn getSymbol() -> ByteVec {
+        return symbol
+    }
+
+    pub fn totalSupply() -> U256 {
+        return totalSupply
+    }
+
+    pub fn nftByIndex(index: U256) -> (ByteVec, Bool) {
+        checkCaller!(index < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+        let nftTokenId = subContractId!(toByteVec!(index))
+        return nftTokenId, contractExists!(nftTokenId)
+    }
+}
