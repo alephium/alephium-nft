@@ -15,7 +15,7 @@ describe('nft collection', function() {
     await nftCollection.buildProject()
 
     const totalSupply = 3n
-    const nftCollectionDeployTx = await nftCollection.create("CryptoPunk", "CP", totalSupply)
+    const nftCollectionDeployTx = await nftCollection.createFIFOCollection("CryptoPunk", "CP", totalSupply)
     const nftCollectionContractId = nftCollectionDeployTx.contractId
 
     // First 3 NFTs should be ok

@@ -1,17 +1,62 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFT, NFTCollectionFIFO as NFTCollectionFactory, NFTCollectionFIFOInstance } from '../artifacts/ts'
+import { NFT, NFTCollectionFIFO, NFTCollectionFIFOInstance, NFTCollectionRandom, NFTCollectionRandomInstance } from '../artifacts/ts'
 import { MintNFTFIFO, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)
+  nftTemplateId: string | undefined = undefined
 
-  async create(
+  async createFIFOCollection(
     collectionName: string,
     collectionSymbol: string,
     totalSupply: bigint
   ): Promise<DeployContractResult<NFTCollectionFIFOInstance>> {
+
+    const nftTemplateId = await this.createNFTTemplate()
+    const nftCollectionDeployTx = await NFTCollectionFIFO.deploy(
+      this.signer,
+      {
+        initialFields: {
+          nftTemplateId,
+          name: web3.stringToHex(collectionName),
+          symbol: web3.stringToHex(collectionSymbol),
+          totalSupply,
+          currentTokenIndex: 0n
+        }
+      }
+    )
+
+    return nftCollectionDeployTx
+  }
+
+  async createRandomCollection(
+    collectionName: string,
+    collectionSymbol: string,
+    totalSupply: bigint
+  ): Promise<DeployContractResult<NFTCollectionRandomInstance>> {
+
+    const nftTemplateId = await this.createNFTTemplate()
+    const nftCollectionDeployTx = await NFTCollectionRandom.deploy(
+      this.signer,
+      {
+        initialFields: {
+          nftTemplateId,
+          name: web3.stringToHex(collectionName),
+          symbol: web3.stringToHex(collectionSymbol),
+          totalSupply,
+        }
+      }
+    )
+
+    return nftCollectionDeployTx
+  }
+
+  async createNFTTemplate() {
+    if (!!this.nftTemplateId) {
+      return Promise.resolve(this.nftTemplateId)
+    }
 
     const nftDeployResult = await NFT.deploy(
       this.signer,
@@ -26,20 +71,8 @@ export class NFTCollection extends DeployHelpers {
       }
     )
 
-    const nftCollectionDeployTx = await NFTCollectionFactory.deploy(
-      this.signer,
-      {
-        initialFields: {
-          nftTemplateId: nftDeployResult.contractId,
-          name: web3.stringToHex(collectionName),
-          symbol: web3.stringToHex(collectionSymbol),
-          totalSupply,
-          currentTokenIndex: 0n
-        }
-      }
-    )
-
-    return nftCollectionDeployTx
+    this.nftTemplateId = nftDeployResult.contractId
+    return this.nftTemplateId
   }
 
   async mintNFT(
