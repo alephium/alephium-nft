@@ -2,7 +2,7 @@ import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
-import { DeployContractResult } from '@alephium/web3'
+import { binToHex, DeployContractResult, encodeU256, stringToHex } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)

@@ -7,15 +7,21 @@ import {
   NFTMarketPlace,
   NFTMarketPlaceInstance,
   NFTOpenCollection,
-  NFTOpenCollectionInstance
+  NFTOpenCollectionInstance,
+  NFTPreDesignedCollection,
+  NFTPreDesignedCollectionInstance
 } from '../artifacts/ts'
 
 export async function fetchNFTMarketplaceState(address: string) {
   return await fetchContractState(NFTMarketPlace, new NFTMarketPlaceInstance(address))
 }
 
-export async function fetchNFTCollectionState(address: string) {
+export async function fetchNFTOpenCollectionState(address: string) {
   return await fetchContractState(NFTOpenCollection, new NFTOpenCollectionInstance(address))
+}
+
+export async function fetchNFTPreDesignedCollectionState(address: string) {
+  return await fetchContractState(NFTPreDesignedCollection, new NFTPreDesignedCollectionInstance(address))
 }
 
 export async function fetchNFTListingState(address: string) {
