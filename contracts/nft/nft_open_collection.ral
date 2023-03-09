@@ -1,6 +1,6 @@
 // This is for the scenario where someone to create a collection and starts
 // to mint NFTs one-by-one
-Contract NFTCollectionFIFO(
+Contract NFTOpenCollection(
     nftTemplateId: ByteVec,
     name: ByteVec,
     symbol: ByteVec,

@@ -1,21 +1,21 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFT, NFTCollectionFIFO, NFTCollectionFIFOInstance, NFTCollectionRandom, NFTCollectionRandomInstance } from '../artifacts/ts'
-import { MintNFTFIFO, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
+import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTCollectionRandom, NFTCollectionRandomInstance } from '../artifacts/ts'
+import { MintOpenNFT, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)
   nftTemplateId: string | undefined = undefined
 
-  async createFIFOCollection(
+  async createOpenCollection(
     collectionName: string,
     collectionSymbol: string,
     totalSupply: bigint
-  ): Promise<DeployContractResult<NFTCollectionFIFOInstance>> {
+  ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
     const nftTemplateId = await this.createNFTTemplate()
-    const nftCollectionDeployTx = await NFTCollectionFIFO.deploy(
+    const nftCollectionDeployTx = await NFTOpenCollection.deploy(
       this.signer,
       {
         initialFields: {
@@ -92,7 +92,7 @@ export class NFTCollection extends DeployHelpers {
         }
       )
     } else {
-      return await MintNFTFIFO.execute(
+      return await MintOpenNFT.execute(
         this.signer,
         {
           initialFields: {

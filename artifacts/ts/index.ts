@@ -5,6 +5,6 @@
 export * from "./NFTListing";
 export * from "./NFTMarketPlace";
 export * from "./NFT";
-export * from "./NFTCollectionFIFO";
 export * from "./NFTCollectionRandom";
+export * from "./NFTOpenCollection";
 export * from "./scripts";

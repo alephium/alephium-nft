@@ -14,8 +14,8 @@ import { default as BuyNFTScriptJson } from "../scripts/buy_nft.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/cancel_listing.ral.json";
 import { default as DepositNFTScriptJson } from "../scripts/deposit_nft.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/list_nft.ral.json";
-import { default as MintNFTFIFOScriptJson } from "../scripts/mint_nft_fifo.ral.json";
 import { default as MintNFTWithIndexScriptJson } from "../scripts/mint_nft_with_index.ral.json";
+import { default as MintOpenNFTScriptJson } from "../scripts/mint_open_nft.ral.json";
 import { default as UpdateAdminScriptJson } from "../scripts/update_admin.ral.json";
 import { default as UpdateComissionRateScriptJson } from "../scripts/update_commission_rate.ral.json";
 import { default as UpdateListingFeeScriptJson } from "../scripts/update_listing_fee.ral.json";
@@ -93,21 +93,6 @@ export namespace ListNFT {
   export const script = Script.fromJson(ListNFTScriptJson);
 }
 
-export namespace MintNFTFIFO {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      nftCollectionContractId: HexString;
-      uri: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(MintNFTFIFOScriptJson);
-}
-
 export namespace MintNFTWithIndex {
   export async function execute(
     signer: SignerProvider,
@@ -122,6 +107,21 @@ export namespace MintNFTWithIndex {
   }
 
   export const script = Script.fromJson(MintNFTWithIndexScriptJson);
+}
+
+export namespace MintOpenNFT {
+  export async function execute(
+    signer: SignerProvider,
+    params: ExecuteScriptParams<{
+      nftCollectionContractId: HexString;
+      uri: HexString;
+    }>
+  ): Promise<ExecuteScriptResult> {
+    const signerParams = await script.txParamsForExecution(signer, params);
+    return await signer.signAndSubmitExecuteScriptTx(signerParams);
+  }
+
+  export const script = Script.fromJson(MintOpenNFTScriptJson);
 }
 
 export namespace UpdateAdmin {

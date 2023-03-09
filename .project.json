@@ -57,16 +57,16 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "MintNFTFIFO": {
-      "sourceFile": "scripts/mint_nft_fifo.ral",
-      "sourceCodeHash": "d8ab10be7d331bf29b41b870d56ac120a12bd4ba6bc15198f4340d4a2889bc4d",
+    "MintNFTWithIndex": {
+      "sourceFile": "scripts/mint_nft_with_index.ral",
+      "sourceCodeHash": "f4e56bd96348d610cb22f88ec85093ede880999c0a9efb776d3e9ca594858c2c",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
-    "MintNFTWithIndex": {
-      "sourceFile": "scripts/mint_nft_with_index.ral",
-      "sourceCodeHash": "f4e56bd96348d610cb22f88ec85093ede880999c0a9efb776d3e9ca594858c2c",
+    "MintOpenNFT": {
+      "sourceFile": "scripts/mint_open_nft.ral",
+      "sourceCodeHash": "e825f1a159a8fe5afc3113605611ea5eb544152ef3f0c4a7bd9f0186c352154e",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -83,13 +83,6 @@
       "sourceCodeHash": "48b0a6931492e934cff8718669e6ff449b28a63e58351f368b6d1f4308a3f88a",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
-      "warnings": []
-    },
-    "NFTCollectionFIFO": {
-      "sourceFile": "nft/nft_collection_fifo.ral",
-      "sourceCodeHash": "662e20391b1d0eb843ef0bf8a27422cb1196b0749121d7687bfd3414b6cf91bc",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82",
       "warnings": []
     },
     "NFTCollectionRandom": {
@@ -111,6 +104,13 @@
       "sourceCodeHash": "37dd0402c43fba4f80cbc00032c98046456bfd8b91d939edb040926540972da8",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "049c3c68475084d65fed590cb364769235076dae10a724bcebfa079765a7e30f",
+      "warnings": []
+    },
+    "NFTOpenCollection": {
+      "sourceFile": "nft/nft_open_collection.ral",
+      "sourceCodeHash": "54a5380cc639ede9b9b2f2c4f6e923a704db9a0e704d95b5881e50ab44a12a2e",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82",
       "warnings": []
     },
     "UpdateAdmin": {

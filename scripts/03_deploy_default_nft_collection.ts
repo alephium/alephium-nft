@@ -1,7 +1,7 @@
 import { stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { NFTCollectionFIFO } from '../artifacts/ts'
+import { NFTOpenCollection } from '../artifacts/ts'
 
 const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -15,7 +15,7 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
     symbol: stringToHex("Default Collection")
   }
 
-  const result = await deployer.deployContract(NFTCollectionFIFO, {
+  const result = await deployer.deployContract(NFTOpenCollection, {
     initialFields: initialFields
   })
 

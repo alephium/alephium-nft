@@ -23,10 +23,10 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTCollectionFIFOContractJson } from "../nft/nft_collection_fifo.ral.json";
+import { default as NFTOpenCollectionContractJson } from "../nft/nft_open_collection.ral.json";
 
 // Custom types for the contract
-export namespace NFTCollectionFIFOTypes {
+export namespace NFTOpenCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
     name: HexString;
@@ -45,16 +45,16 @@ export namespace NFTCollectionFIFOTypes {
 }
 
 class Factory extends ContractFactory<
-  NFTCollectionFIFOInstance,
-  NFTCollectionFIFOTypes.Fields
+  NFTOpenCollectionInstance,
+  NFTOpenCollectionTypes.Fields
 > {
-  at(address: string): NFTCollectionFIFOInstance {
-    return new NFTCollectionFIFOInstance(address);
+  at(address: string): NFTOpenCollectionInstance {
+    return new NFTOpenCollectionInstance(address);
   }
 
   async testGetNameMethod(
     params: Omit<
-      TestContractParams<NFTCollectionFIFOTypes.Fields, never>,
+      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<HexString>> {
@@ -63,7 +63,7 @@ class Factory extends ContractFactory<
 
   async testGetSymbolMethod(
     params: Omit<
-      TestContractParams<NFTCollectionFIFOTypes.Fields, never>,
+      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<HexString>> {
@@ -72,7 +72,7 @@ class Factory extends ContractFactory<
 
   async testTotalSupplyMethod(
     params: Omit<
-      TestContractParams<NFTCollectionFIFOTypes.Fields, never>,
+      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
       "testArgs"
     >
   ): Promise<TestContractResult<bigint>> {
@@ -80,14 +80,14 @@ class Factory extends ContractFactory<
   }
 
   async testNftByIndexMethod(
-    params: TestContractParams<NFTCollectionFIFOTypes.Fields, { index: bigint }>
+    params: TestContractParams<NFTOpenCollectionTypes.Fields, { index: bigint }>
   ): Promise<TestContractResult<[HexString, boolean]>> {
     return testMethod(this, "nftByIndex", params);
   }
 
   async testMintMethod(
     params: TestContractParams<
-      NFTCollectionFIFOTypes.Fields,
+      NFTOpenCollectionTypes.Fields,
       { nftUri: HexString }
     >
   ): Promise<TestContractResult<HexString>> {
@@ -96,22 +96,22 @@ class Factory extends ContractFactory<
 }
 
 // Use this object to test and deploy the contract
-export const NFTCollectionFIFO = new Factory(
+export const NFTOpenCollection = new Factory(
   Contract.fromJson(
-    NFTCollectionFIFOContractJson,
+    NFTOpenCollectionContractJson,
     "",
     "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82"
   )
 );
 
 // Use this class to interact with the blockchain
-export class NFTCollectionFIFOInstance extends ContractInstance {
+export class NFTOpenCollectionInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<NFTCollectionFIFOTypes.State> {
-    return fetchContractState(NFTCollectionFIFO, this);
+  async fetchState(): Promise<NFTOpenCollectionTypes.State> {
+    return fetchContractState(NFTOpenCollection, this);
   }
 
   async getContractEventsCurrentCount(): Promise<number> {
@@ -119,11 +119,11 @@ export class NFTCollectionFIFOInstance extends ContractInstance {
   }
 
   subscribeMintedEvent(
-    options: SubscribeOptions<NFTCollectionFIFOTypes.MintedEvent>,
+    options: SubscribeOptions<NFTOpenCollectionTypes.MintedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
-      NFTCollectionFIFO.contract,
+      NFTOpenCollection.contract,
       this,
       options,
       "Minted",
@@ -135,7 +135,7 @@ export class NFTCollectionFIFOInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<HexString>> {
     return callMethod(
-      NFTCollectionFIFO,
+      NFTOpenCollection,
       this,
       "getName",
       params === undefined ? {} : params
@@ -146,7 +146,7 @@ export class NFTCollectionFIFOInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<HexString>> {
     return callMethod(
-      NFTCollectionFIFO,
+      NFTOpenCollection,
       this,
       "getSymbol",
       params === undefined ? {} : params
@@ -157,7 +157,7 @@ export class NFTCollectionFIFOInstance extends ContractInstance {
     params?: Omit<CallContractParams<{}>, "args">
   ): Promise<CallContractResult<bigint>> {
     return callMethod(
-      NFTCollectionFIFO,
+      NFTOpenCollection,
       this,
       "totalSupply",
       params === undefined ? {} : params
@@ -167,12 +167,12 @@ export class NFTCollectionFIFOInstance extends ContractInstance {
   async callNftByIndexMethod(
     params: CallContractParams<{ index: bigint }>
   ): Promise<CallContractResult<[HexString, boolean]>> {
-    return callMethod(NFTCollectionFIFO, this, "nftByIndex", params);
+    return callMethod(NFTOpenCollection, this, "nftByIndex", params);
   }
 
   async callMintMethod(
     params: CallContractParams<{ nftUri: HexString }>
   ): Promise<CallContractResult<HexString>> {
-    return callMethod(NFTCollectionFIFO, this, "mint", params);
+    return callMethod(NFTOpenCollection, this, "mint", params);
   }
 }

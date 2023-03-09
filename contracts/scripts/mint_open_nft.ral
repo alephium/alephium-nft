@@ -1,7 +1,7 @@
-TxScript MintNFTFIFO(
+TxScript MintOpenNFT(
     nftCollectionContractId: ByteVec,
     uri: ByteVec
 ) {
-    let nftCollection = NFTCollectionFIFO(nftCollectionContractId)
+    let nftCollection = NFTOpenCollection(nftCollectionContractId)
     nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(uri)
 }
