@@ -135,7 +135,7 @@ async function verifyNFTState(nftCollectionContractId: string, nftContractId: st
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
   expect(nftContractState.fields.owner).toEqual(testAddress1)
   expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
-  //utils.checkHexString(nftContractState.fields.uri, getNftUri(tokenIndex))
+  utils.checkHexString(nftContractState.fields.uri, getNftUri(tokenIndex))
   expect(nftContractState.fields.collectionId).toEqual(nftCollectionContractId)
   expect(nftContractState.fields.tokenIndex).toEqual(tokenIndex)
   return nftContractState

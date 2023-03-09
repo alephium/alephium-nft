@@ -108,9 +108,9 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "e5d7d8377a01728ffc9bbd491d21189e03b529d7c779a79ece58106ddde3319e",
+      "sourceCodeHash": "e840f7be80f22b6410d59e761fa78c5669f569ccb27faff9619e24a51eeafbbe",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "db8442414d5246e47cfd8dddb6af69cd4c35e75b0221207d8f245528faae6b92",
+      "codeHashDebug": "882b13c079ed3784be0d9653489e65a968680e5571bd69358a4d9706de99da21",
       "warnings": []
     },
     "UpdateAdmin": {
