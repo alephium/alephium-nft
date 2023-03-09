@@ -2,7 +2,7 @@ import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { fetchNFTMarketplaceState, fetchNFTState, fetchNFTListingState, fetchNFTCollectionState } from '../utils/contracts'
+import { fetchNFTMarketplaceState, fetchNFTState, fetchNFTListingState, fetchNFTOpenCollectionState } from '../utils/contracts'
 import { maxU256 } from '../utils'
 
 describe('nft marketplace', function() {
@@ -23,7 +23,7 @@ describe('nft marketplace', function() {
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
 
-    const nftCollectionContractState = await fetchNFTCollectionState(nftCollectionContractAddress)
+    const nftCollectionContractState = await fetchNFTOpenCollectionState(nftCollectionContractAddress)
     expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"

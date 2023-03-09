@@ -35,7 +35,7 @@ describe('nft collection', function() {
     await testPreDesignedNFT([2n, 1n, 0n])
   }, 60000)
 
-  it('should nft in pre designed collection can not be minted twice', async () => {
+  it('should test that nft in pre designed collection can not be minted twice', async () => {
     const nftCollection = await getNftCollection()
     const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
       "CryptoPunk",
