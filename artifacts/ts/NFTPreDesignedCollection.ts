@@ -32,6 +32,7 @@ export namespace NFTPreDesignedCollectionTypes {
     name: HexString;
     symbol: HexString;
     totalSupply: bigint;
+    baseUri: HexString;
   };
 
   export type State = ContractState<Fields>;
@@ -90,7 +91,7 @@ class Factory extends ContractFactory<
   async testMintMethod(
     params: TestContractParams<
       NFTPreDesignedCollectionTypes.Fields,
-      { nftUri: HexString; index: bigint }
+      { tokenIndex: bigint }
     >
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "mint", params);
@@ -102,7 +103,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "c85f94872b29fa87500cc8e765082f605819fa700b2e47ce3dcdff72a86db978"
+    "db8442414d5246e47cfd8dddb6af69cd4c35e75b0221207d8f245528faae6b92"
   )
 );
 
@@ -173,7 +174,7 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   async callMintMethod(
-    params: CallContractParams<{ nftUri: HexString; index: bigint }>
+    params: CallContractParams<{ tokenIndex: bigint }>
   ): Promise<CallContractResult<HexString>> {
     return callMethod(NFTPreDesignedCollection, this, "mint", params);
   }

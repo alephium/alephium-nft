@@ -31,9 +31,10 @@ export class NFTCollection extends DeployHelpers {
     return nftCollectionDeployTx
   }
 
-  async createRandomCollection(
+  async createPreDesignedCollection(
     collectionName: string,
     collectionSymbol: string,
+    baseUri: string,
     totalSupply: bigint
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
 
@@ -45,7 +46,8 @@ export class NFTCollection extends DeployHelpers {
           nftTemplateId,
           name: web3.stringToHex(collectionName),
           symbol: web3.stringToHex(collectionSymbol),
-          totalSupply,
+          baseUri: web3.stringToHex(baseUri),
+          totalSupply
         }
       }
     )
@@ -75,33 +77,34 @@ export class NFTCollection extends DeployHelpers {
     return this.nftTemplateId
   }
 
-  async mintNFT(
+  async mintOpenNFT(
     nftCollectionContractId: string,
     nftUri: string,
-    tokenIndex?: bigint
   ) {
-    if (!!tokenIndex) {
-      return await MintPreDesignedNFT.execute(
-        this.signer,
-        {
-          initialFields: {
-            nftCollectionContractId: nftCollectionContractId,
-            uri: web3.stringToHex(nftUri),
-            tokenIndex: tokenIndex
-          }
+    return await MintOpenNFT.execute(
+      this.signer,
+      {
+        initialFields: {
+          nftCollectionContractId: nftCollectionContractId,
+          uri: web3.stringToHex(nftUri)
         }
-      )
-    } else {
-      return await MintOpenNFT.execute(
-        this.signer,
-        {
-          initialFields: {
-            nftCollectionContractId: nftCollectionContractId,
-            uri: web3.stringToHex(nftUri)
-          }
+      }
+    )
+  }
+
+  async mintPreDesignedNFT(
+    nftCollectionContractId: string,
+    tokenIndex: bigint
+  ) {
+    return await MintPreDesignedNFT.execute(
+      this.signer,
+      {
+        initialFields: {
+          nftCollectionContractId: nftCollectionContractId,
+          tokenIndex: tokenIndex
         }
-      )
-    }
+      }
+    )
   }
 
   async burnNFT(nftContractId: string, gasAmount?: number, gasPrice?: bigint) {

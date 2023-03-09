@@ -113,7 +113,6 @@ export namespace MintPreDesignedNFT {
     signer: SignerProvider,
     params: ExecuteScriptParams<{
       nftCollectionContractId: HexString;
-      uri: HexString;
       tokenIndex: bigint;
     }>
   ): Promise<ExecuteScriptResult> {

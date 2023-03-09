@@ -9,7 +9,7 @@ describe('nft collection', function() {
   web3.setCurrentNodeProvider(nodeUrl)
   const provider = web3.getCurrentNodeProvider()
 
-  it('should test nft collection', async () => {
+  it('should test nft open collection', async () => {
     const signer = await testWallet1()
     const nftCollection = new NFTCollection(provider, signer)
     await nftCollection.buildProject()
@@ -18,23 +18,62 @@ describe('nft collection', function() {
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("CryptoPunk", "CP", totalSupply)
     const nftCollectionContractId = nftCollectionDeployTx.contractId
 
+    const mintNFT = (tokenIndex: bigint) => {
+      return nftCollection.mintOpenNFT(
+        nftCollectionContractId,
+        getNftUri(tokenIndex)
+      )
+    }
     // First 3 NFTs should be ok
-    await mintAndVerify(nftCollection, nftCollectionContractId, 0n)
-    await mintAndVerify(nftCollection, nftCollectionContractId, 1n)
-    await mintAndVerify(nftCollection, nftCollectionContractId, 2n)
+    await mintAndVerify(nftCollection, nftCollectionContractId, 0n, mintNFT)
+    await mintAndVerify(nftCollection, nftCollectionContractId, 1n, mintNFT)
+    await mintAndVerify(nftCollection, nftCollectionContractId, 2n, mintNFT)
 
     // The 4th should *not* be ok
-    const nftUri = "https://cryptopunks.app/cryptopunks/details/3"
-    await expect(nftCollection.mintNFT(nftCollectionContractId, nftUri)).rejects.toThrow(Error)
+    await expect(nftCollection.mintOpenNFT(
+      nftCollectionContractId,
+      getNftUri(3n)
+    )).rejects.toThrow(Error)
   }, 60000)
+
+  //  it('should test nft pre designed collection', async () => {
+  //    const signer = await testWallet1()
+  //    const nftCollection = new NFTCollection(provider, signer)
+  //    await nftCollection.buildProject()
+  //
+  //    const totalSupply = 3n
+  //    const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
+  //      "CryptoPunk",
+  //      "CP",
+  //      "https://cryptopunks.app/cryptopunks/details/",
+  //      totalSupply
+  //    )
+  //    const nftCollectionContractId = nftCollectionDeployTx.contractId
+  //
+  //    const mintNFT = (tokenIndex: bigint) => {
+  //      return nftCollection.mintPreDesignedNFT(
+  //        nftCollectionContractId,
+  //        tokenIndex
+  //      )
+  //    }
+  //
+  //    // First 3 NFTs should be ok
+  //    await mintAndVerify(nftCollection, nftCollectionContractId, 0n, mintNFT)
+  //    await mintAndVerify(nftCollection, nftCollectionContractId, 1n, mintNFT)
+  //    await mintAndVerify(nftCollection, nftCollectionContractId, 2n, mintNFT)
+  //
+  //    // The 4th should *not* be ok
+  //    await expect(nftCollection.mintPreDesignedNFT(nftCollectionContractId, 3n)).rejects.toThrow(Error)
+  //  }, 60000)
 })
 
 async function mintAndVerify(
   nftCollection: NFTCollection,
   nftCollectionContractId: string,
-  tokenIndex: bigint
+  tokenIndex: bigint,
+  mintNFT: (tokenIndex: bigint) => Promise<any>
 ) {
-  const nftUri = `https://cryptopunks.app/cryptopunks/details/${tokenIndex}`
+  const nftUri = getNftUri(tokenIndex)
   const nftCollectionContractAddress = addressFromContractId(nftCollectionContractId)
 
   const nftCollectionContractState = await fetchNFTCollectionState(nftCollectionContractAddress)
@@ -42,10 +81,8 @@ async function mintAndVerify(
 
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(tokenIndex)), group)
-  await nftCollection.mintNFT(
-    nftCollectionContractId,
-    nftUri
-  )
+
+  await mintNFT(tokenIndex)
 
   const nftCollectionContractEvents = await web3.getCurrentNodeProvider().events.getEventsContractContractaddress(
     nftCollectionContractAddress, { start: Number(tokenIndex) }
@@ -96,4 +133,9 @@ async function burnAndVerify(
 
   const relativeDiff = utils.relativeDiff(alphAmountInNFT, refundedFromNFT)
   expect(relativeDiff).toBeLessThan(0.001)
+}
+
+const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
+function getNftUri(tokenIndex: bigint): string {
+  return `${nftBaseUri}${tokenIndex}`
 }

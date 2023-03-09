@@ -1,6 +1,6 @@
 {
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -66,7 +66,7 @@
     },
     "MintPreDesignedNFT": {
       "sourceFile": "scripts/mint_pre_designed_nft.ral",
-      "sourceCodeHash": "b41dae5a1a5f2bb3d1b055535d9cbf3a93c34dc2a29f697f7f487b015c1f31ea",
+      "sourceCodeHash": "12d65721e5f262c14c91dea29f321cf823d46b8ea5eaefc5ec3c92b356fd552b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -108,9 +108,9 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "cde6c3ac87bb3eed576670f2bc115bcb339f6a692e074b9346c6dfa101df48c0",
+      "sourceCodeHash": "e5d7d8377a01728ffc9bbd491d21189e03b529d7c779a79ece58106ddde3319e",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "c85f94872b29fa87500cc8e765082f605819fa700b2e47ce3dcdff72a86db978",
+      "codeHashDebug": "db8442414d5246e47cfd8dddb6af69cd4c35e75b0221207d8f245528faae6b92",
       "warnings": []
     },
     "UpdateAdmin": {

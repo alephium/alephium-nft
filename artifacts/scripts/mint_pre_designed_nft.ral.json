@@ -1,20 +1,17 @@
 {
   "version": "v1.7.1",
   "name": "MintPreDesignedNFT",
-  "bytecodeTemplate": "0101030001000c{0}1700b413c40de0b6b3a7640000a2{1}{2}0e0d1600010418",
+  "bytecodeTemplate": "0101030001000b{0}1700b413c40de0b6b3a7640000a2{1}0d0d1600010418",
   "fieldsSig": {
     "names": [
       "nftCollectionContractId",
-      "uri",
       "tokenIndex"
     ],
     "types": [
       "ByteVec",
-      "ByteVec",
       "U256"
     ],
     "isMutable": [
-      false,
       false,
       false
     ]

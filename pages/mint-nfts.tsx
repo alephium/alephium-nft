@@ -67,7 +67,7 @@ export default function MintNFTs() {
 
       // TODO: Figure out UI to create collection, right now use default collection id
       const nftCollectionContractId = defaultNftCollectionContractId
-      const mintNFTTxResult = await nftCollection.mintNFT(nftCollectionContractId, uri)
+      const mintNFTTxResult = await nftCollection.mintOpenNFT(nftCollectionContractId, uri)
       console.debug('mintNFTTxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)
       setOngoingTxDescription('minting NFT')

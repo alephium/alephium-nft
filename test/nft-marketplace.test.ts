@@ -29,7 +29,7 @@ describe('nft marketplace', function() {
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
     const nftContractAddress = addressFromContractId(nftContractId)
-    await nftCollection.mintNFT(
+    await nftCollection.mintOpenNFT(
       nftCollectionContractId,
       nftUri
     )

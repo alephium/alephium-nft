@@ -1,8 +1,7 @@
 TxScript MintPreDesignedNFT(
     nftCollectionContractId: ByteVec,
-    uri: ByteVec,
     tokenIndex: U256
 ) {
     let nftCollection = NFTPreDesignedCollection(nftCollectionContractId)
-    nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(uri, tokenIndex)
+    nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(tokenIndex)
 }
