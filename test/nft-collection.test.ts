@@ -34,6 +34,22 @@ describe('nft collection', function() {
   it('should test minting nft in pre designed collection randomly', async () => {
     await testPreDesignedNFT([2n, 1n, 0n])
   }, 60000)
+
+  it('should nft in pre designed collection can not be minted twice', async () => {
+    const nftCollection = await getNftCollection()
+    const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
+      "CryptoPunk",
+      "CP",
+      "https://cryptopunks.app/cryptopunks/details/",
+      3n
+    )
+    const nftCollectionContractId = nftCollectionDeployTx.contractId
+    await nftCollection.mintPreDesignedNFT(nftCollectionContractId, 1n)
+    await expect(nftCollection.mintPreDesignedNFT(
+      nftCollectionContractId,
+      1n
+    )).rejects.toThrow(Error)
+  }, 60000)
 })
 
 async function mintOpenNFTAndVerify(
@@ -60,7 +76,6 @@ async function mintOpenNFTAndVerify(
 
 async function testPreDesignedNFT(tokenIndexes: bigint[]) {
   const nftCollection = await getNftCollection()
-
   const totalSupply = BigInt(tokenIndexes.length)
   const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
     "CryptoPunk",
