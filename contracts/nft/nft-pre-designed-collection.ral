@@ -1,6 +1,6 @@
 // This is for the scenario where an artist to create a collection with pre-defined
 // artworks sell to the buyer to mint them.
-Contract NFTCollectionRandom(
+Contract NFTPreDesignedCollection(
     nftTemplateId: ByteVec,
     name: ByteVec,
     symbol: ByteVec,

@@ -1,8 +1,8 @@
-TxScript MintNFTWithIndex(
+TxScript MintPreDesignedNFT(
     nftCollectionContractId: ByteVec,
     uri: ByteVec,
     tokenIndex: U256
 ) {
-    let nftCollection = NFTCollectionRandom(nftCollectionContractId)
+    let nftCollection = NFTPreDesignedCollection(nftCollectionContractId)
     nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(uri, tokenIndex)
 }

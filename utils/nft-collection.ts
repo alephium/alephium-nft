@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTCollectionRandom, NFTCollectionRandomInstance } from '../artifacts/ts'
-import { MintOpenNFT, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
+import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
+import { MintOpenNFT, MintPreDesignedNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
@@ -35,10 +35,10 @@ export class NFTCollection extends DeployHelpers {
     collectionName: string,
     collectionSymbol: string,
     totalSupply: bigint
-  ): Promise<DeployContractResult<NFTCollectionRandomInstance>> {
+  ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
 
     const nftTemplateId = await this.createNFTTemplate()
-    const nftCollectionDeployTx = await NFTCollectionRandom.deploy(
+    const nftCollectionDeployTx = await NFTPreDesignedCollection.deploy(
       this.signer,
       {
         initialFields: {
@@ -81,7 +81,7 @@ export class NFTCollection extends DeployHelpers {
     tokenIndex?: bigint
   ) {
     if (!!tokenIndex) {
-      return await MintNFTWithIndex.execute(
+      return await MintPreDesignedNFT.execute(
         this.signer,
         {
           initialFields: {
