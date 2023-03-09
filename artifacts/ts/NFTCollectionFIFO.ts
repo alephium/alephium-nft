@@ -23,7 +23,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTCollectionFIFOContractJson } from "../nft_collection_fifo.ral.json";
+import { default as NFTCollectionFIFOContractJson } from "../nft/nft_collection_fifo.ral.json";
 
 // Custom types for the contract
 export namespace NFTCollectionFIFOTypes {

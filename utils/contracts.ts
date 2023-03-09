@@ -1,9 +1,14 @@
 import { fetchContractState } from '@alephium/web3'
-
-import { NFT, NFTInstance } from '../artifacts/ts/NFT'
-import { NFTListing, NFTListingInstance } from '../artifacts/ts/NFTListing'
-import { NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts/NFTMarketPlace'
-import { NFTCollectionFIFO, NFTCollectionFIFOInstance } from '../artifacts/ts/NFTCollectionFIFO'
+import {
+  NFT,
+  NFTInstance,
+  NFTListing,
+  NFTListingInstance,
+  NFTMarketPlace,
+  NFTMarketPlaceInstance,
+  NFTCollectionFIFO,
+  NFTCollectionFIFOInstance
+} from '../artifacts/ts'
 
 export async function fetchNFTMarketplaceState(address: string) {
   return await fetchContractState(NFTMarketPlace, new NFTMarketPlaceInstance(address))

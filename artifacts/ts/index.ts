@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export * from "./NFTListing";
+export * from "./NFTMarketPlace";
 export * from "./NFT";
 export * from "./NFTCollectionFIFO";
 export * from "./NFTCollectionRandom";
-export * from "./NFTListing";
-export * from "./NFTMarketPlace";
 export * from "./scripts";

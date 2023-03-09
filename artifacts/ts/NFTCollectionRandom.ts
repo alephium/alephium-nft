@@ -23,7 +23,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTCollectionRandomContractJson } from "../nft_collection_random.ral.json";
+import { default as NFTCollectionRandomContractJson } from "../nft/nft_collection_random.ral.json";
 
 // Custom types for the contract
 export namespace NFTCollectionRandomTypes {

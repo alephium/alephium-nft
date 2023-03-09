@@ -3,7 +3,7 @@ import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { randomBytes } from 'crypto'
 import base58 from 'bs58'
-import { NFTListing } from '../artifacts/ts/NFTListing'
+import { NFTListing } from '../artifacts/ts'
 
 const deployNFTListingTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,

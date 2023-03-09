@@ -1,7 +1,6 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFTCollectionFIFO as NFTCollectionFactory, NFTCollectionFIFOInstance } from '../artifacts/ts/NFTCollectionFIFO'
-import { NFT } from '../artifacts/ts/NFT'
+import { NFT, NFTCollectionFIFO as NFTCollectionFactory, NFTCollectionFIFOInstance } from '../artifacts/ts'
 import { MintNFTFIFO, MintNFTWithIndex, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 

@@ -1,7 +1,7 @@
 import { web3, hexToString, node, ONE_ALPH, SignerProvider } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { fetchNFTState } from '../utils/contracts'
-import { NFT as NFTFactory } from '../artifacts/ts/NFT'
+import { NFT as NFTFactory } from '../artifacts/ts'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'

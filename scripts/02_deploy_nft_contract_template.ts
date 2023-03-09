@@ -1,7 +1,7 @@
 import { stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { NFT } from '../artifacts/ts/NFT'
+import { NFT } from '../artifacts/ts'
 
 const deployNFTContractTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,

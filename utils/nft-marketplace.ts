@@ -5,8 +5,7 @@ import {
   ExecuteScriptResult
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFTListing } from '../artifacts/ts/NFTListing'
-import { NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts/NFTMarketPlace'
+import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
 import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate } from '../artifacts/ts/scripts'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'

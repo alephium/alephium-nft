@@ -1,6 +1,6 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { NFTMarketPlace } from '../artifacts/ts/NFTMarketPlace'
+import { NFTMarketPlace } from '../artifacts/ts'
 
 const deployMarketplace: DeployFunction<Settings> = async (
   deployer: Deployer,

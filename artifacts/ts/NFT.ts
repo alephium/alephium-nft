@@ -23,7 +23,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTContractJson } from "../nft.ral.json";
+import { default as NFTContractJson } from "../nft/nft.ral.json";
 
 // Custom types for the contract
 export namespace NFTTypes {
