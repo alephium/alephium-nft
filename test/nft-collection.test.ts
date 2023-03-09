@@ -7,12 +7,9 @@ import { fetchNFTOpenCollectionState, fetchNFTState } from '../utils/contracts'
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
   web3.setCurrentNodeProvider(nodeUrl)
-  const provider = web3.getCurrentNodeProvider()
 
-  it('should test nft open collection', async () => {
-    const signer = await testWallet1()
-    const nftCollection = new NFTCollection(provider, signer)
-    await nftCollection.buildProject()
+  it('should test minting nft in open collection', async () => {
+    const nftCollection = await getNftCollection()
 
     const totalSupply = 3n
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("CryptoPunk", "CP", totalSupply)
@@ -30,30 +27,12 @@ describe('nft collection', function() {
     )).rejects.toThrow(Error)
   }, 60000)
 
-  it('should test nft pre designed collection', async () => {
-    const signer = await testWallet1()
-    const nftCollection = new NFTCollection(provider, signer)
-    await nftCollection.buildProject()
+  it('should test minting nft in pre designed collection sequentially', async () => {
+    await testPreDesignedNFT([0n, 1n, 2n])
+  }, 60000)
 
-    const totalSupply = 3n
-    const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
-      "CryptoPunk",
-      "CP",
-      "https://cryptopunks.app/cryptopunks/details/",
-      totalSupply
-    )
-    const nftCollectionContractId = nftCollectionDeployTx.contractId
-
-    // First 3 NFTs should be ok
-    await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, 0n)
-    await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, 1n)
-    await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, 2n)
-
-    // The 4th should *not* be ok
-    await expect(nftCollection.mintPreDesignedNFT(
-      nftCollectionContractId,
-      3n
-    )).rejects.toThrow(Error)
+  it('should test minting nft in pre designed collection randomly', async () => {
+    await testPreDesignedNFT([2n, 1n, 0n])
   }, 60000)
 })
 
@@ -79,10 +58,35 @@ async function mintOpenNFTAndVerify(
   await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
 }
 
+async function testPreDesignedNFT(tokenIndexes: bigint[]) {
+  const nftCollection = await getNftCollection()
+
+  const totalSupply = BigInt(tokenIndexes.length)
+  const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
+    "CryptoPunk",
+    "CP",
+    "https://cryptopunks.app/cryptopunks/details/",
+    totalSupply
+  )
+  const nftCollectionContractId = nftCollectionDeployTx.contractId
+
+  // First 3 NFTs should be ok
+  for (const [sequence, tokenIndex] of tokenIndexes.entries()) {
+    await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, tokenIndex, sequence)
+  }
+
+  // The 4th should *not* be ok
+  await expect(nftCollection.mintPreDesignedNFT(
+    nftCollectionContractId,
+    totalSupply
+  )).rejects.toThrow(Error)
+}
+
 async function mintPreDesignedNFTAndVerify(
   nftCollection: NFTCollection,
   nftCollectionContractId: string,
-  tokenIndex: bigint
+  tokenIndex: bigint,
+  sequence: number
 ) {
   const nftCollectionContractAddress = addressFromContractId(nftCollectionContractId)
   const group = groupOfAddress(nftCollectionContractAddress)
@@ -93,7 +97,7 @@ async function mintPreDesignedNFTAndVerify(
     tokenIndex
   )
 
-  await verifyMintEvent(nftCollectionContractAddress, tokenIndex, Number(tokenIndex))
+  await verifyMintEvent(nftCollectionContractAddress, tokenIndex, sequence)
   const nftContractState = await verifyNFTState(nftCollectionContractId, nftContractId, tokenIndex)
   await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
 }
@@ -149,6 +153,11 @@ async function burnAndVerify(
 
   const relativeDiff = utils.relativeDiff(alphAmountInNFT, refundedFromNFT)
   expect(relativeDiff).toBeLessThan(0.001)
+}
+
+async function getNftCollection() {
+  const signer = await testWallet1()
+  return new NFTCollection(web3.getCurrentNodeProvider(), signer)
 }
 
 const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
