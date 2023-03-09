@@ -2,6 +2,7 @@ import { stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { NFTOpenCollection } from '../artifacts/ts'
+import { maxU256 } from '../utils'
 
 const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -12,7 +13,8 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
     nftTemplateId: nftTemplateResult.contractId,
     currentTokenIndex: 0n,
     name: stringToHex("DefaultCollection"),
-    symbol: stringToHex("Default Collection")
+    symbol: stringToHex("Default Collection"),
+    totalSupply: maxU256
   }
 
   const result = await deployer.deployContract(NFTOpenCollection, {
