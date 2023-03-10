@@ -85,12 +85,11 @@ async function testPreDesignedNFT(tokenIndexes: bigint[]) {
   )
   const nftCollectionContractId = nftCollectionDeployTx.contractId
 
-  // First 3 NFTs should be ok
   for (const [sequence, tokenIndex] of tokenIndexes.entries()) {
     await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, tokenIndex, sequence)
   }
 
-  // The 4th should *not* be ok
+  // Out-of-bound tokenIndex should *not* be ok
   await expect(nftCollection.mintPreDesignedNFT(
     nftCollectionContractId,
     totalSupply
