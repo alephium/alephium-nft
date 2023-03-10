@@ -6,8 +6,8 @@ export const devnetConfig = {
   "groupIndex": 0,
   "commissionRate": 200,
   "listingFee": 10,
-  "defaultNftCollectionContractId": devnetDeployment.contracts.NFTOpenCollection.contractId,
-  "marketplaceContractId": devnetDeployment.contracts.NFTMarketPlace.contractId,
+  "defaultNftCollectionContractId": devnetDeployment.contracts?.NFTOpenCollection.contractId,
+  "marketplaceContractId": devnetDeployment.contracts?.NFTMarketPlace.contractId,
   "marketplaceAdminAddress": "1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH"
 }
 
