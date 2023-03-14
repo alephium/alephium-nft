@@ -110,7 +110,7 @@
       "sourceFile": "nft/nft-pre-designed-collection.ral",
       "sourceCodeHash": "a43adbf7b24bcc90f6fcdd2738ee13e67c814c05e172a6da7f0a2efb186dfbb6",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "882b13c079ed3784be0d9653489e65a968680e5571bd69358a4d9706de99da21",
+      "codeHashDebug": "27f8face0119bfbfbb8081dd2f60e2e560ac218e12395d683a70690f9d911cbb",
       "warnings": []
     },
     "UpdateAdmin": {

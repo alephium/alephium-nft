@@ -193,24 +193,18 @@ describe('nft marketplace', function() {
       nftMarketplaceContractAddress
     )(testAddress1, testAddress2, testAddress2)
 
-    // Update with the wrong admin will *not* update the values correctly
-    await checkListingFee(
-      nftMarketplace,
-      nftMarketplaceContractId,
-      nftMarketplaceContractAddress
-    )(20, 10, 20)
+    // Update with the wrong admin will fail
+    await expect(
+      nftMarketplace.updateListingFee(BigInt(10), nftMarketplaceContractId)
+    ).rejects.toThrow(Error)
 
-    await checkCommissionRate(
-      nftMarketplace,
-      nftMarketplaceContractId,
-      nftMarketplaceContractAddress
-    )(250, 200, 250)
+    await expect(
+      nftMarketplace.updateCommissionRate(BigInt(200), nftMarketplaceContractId)
+    ).rejects.toThrow(Error)
 
-    await checkUpdateAdmin(
-      nftMarketplace,
-      nftMarketplaceContractId,
-      nftMarketplaceContractAddress
-    )(testAddress2, testAddress1, testAddress2)
+    await expect(
+      nftMarketplace.updateAdmin(testAddress1, nftMarketplaceContractId)
+    ).rejects.toThrow(Error)
   }, 30000)
 
   function checkListingFee(

@@ -1,5 +1,7 @@
 import { Configuration } from '@alephium/cli'
-import { devnetConfig, testnetConfig, mainnetConfig } from './configs/nft'
+import devnetConfig from './configs/nft/devnet.json'
+import testnetConfig from './configs/nft/testnet.json'
+import mainnetConfig from './configs/nft/mainnet.json'
 
 export type Settings = {
   marketplaceAdminAddress: string
