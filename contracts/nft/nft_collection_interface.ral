@@ -4,5 +4,5 @@ Interface INFTCollection {
    pub fn getName() -> ByteVec
    pub fn getSymbol() -> ByteVec
    pub fn totalSupply() -> U256
-   pub fn nftByIndex(index: U256) -> (ByteVec, Bool)
+   pub fn nftByIndex(index: U256) -> INFT
 }

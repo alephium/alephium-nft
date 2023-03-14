@@ -84,7 +84,7 @@ class Factory extends ContractFactory<
       NFTPreDesignedCollectionTypes.Fields,
       { index: bigint }
     >
-  ): Promise<TestContractResult<[HexString, boolean]>> {
+  ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "nftByIndex", params);
   }
 
@@ -103,7 +103,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "c7243c99aed3f14f50e16efd0866b2d3e747cffae96ea2792f835ddde156e7ab"
+    "11cdad1fcf7080f7b82fc9b4c2bd8e5a828e0c95555462871dbad6aad895c870"
   )
 );
 
@@ -169,7 +169,7 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
 
   async callNftByIndexMethod(
     params: CallContractParams<{ index: bigint }>
-  ): Promise<CallContractResult<[HexString, boolean]>> {
+  ): Promise<CallContractResult<HexString>> {
     return callMethod(NFTPreDesignedCollection, this, "nftByIndex", params);
   }
 
