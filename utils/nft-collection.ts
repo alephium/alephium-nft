@@ -66,9 +66,7 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           owner: (await this.signer.getSelectedAccount()).address,
           isTokenWithdrawn: false,
-          uri: web3.stringToHex("template_uri"),
-          collectionId: this.defaultNFTCollectionId,
-          tokenIndex: 0n
+          uri: web3.stringToHex("template_uri")
         }
       }
     )

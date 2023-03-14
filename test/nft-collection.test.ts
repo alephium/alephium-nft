@@ -70,7 +70,7 @@ async function mintOpenNFTAndVerify(
   )
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, Number(tokenIndex))
-  const nftContractState = await verifyNFTState(nftCollectionContractId, nftContractId, tokenIndex)
+  const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
   await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
 }
 
@@ -112,7 +112,7 @@ async function mintPreDesignedNFTAndVerify(
   )
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, sequence)
-  const nftContractState = await verifyNFTState(nftCollectionContractId, nftContractId, tokenIndex)
+  const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
   await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
 }
 
@@ -130,13 +130,11 @@ async function verifyMintEvent(nftCollectionContractAddress: string, tokenIndex:
   expect(nftMintedEventFields[1].value).toEqual(tokenIndex.toString())
 }
 
-async function verifyNFTState(nftCollectionContractId: string, nftContractId: string, tokenIndex: bigint) {
+async function verifyNFTState(nftContractId: string, tokenIndex: bigint) {
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
   expect(nftContractState.fields.owner).toEqual(testAddress1)
   expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
   utils.checkHexString(nftContractState.fields.uri, getNftUri(tokenIndex))
-  expect(nftContractState.fields.collectionId).toEqual(nftCollectionContractId)
-  expect(nftContractState.fields.tokenIndex).toEqual(tokenIndex)
   return nftContractState
 }
 

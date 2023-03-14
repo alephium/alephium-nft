@@ -3,8 +3,6 @@
 // Right now only 1 token is supported
 Contract NFT(
     uri: ByteVec,            // name; description; image
-    collectionId: ByteVec,   // The collection address, 0 when no collection
-    tokenIndex: U256,
     mut owner: Address,
     mut isTokenWithdrawn: Bool
 ) implements INFT {
@@ -35,17 +33,9 @@ Contract NFT(
         return uri
     }
 
-    pub fn getCollectionId() -> ByteVec {
-        return collectionId
-    }
-
     pub fn transfer(to: Address) -> () {
         checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
         updateOwner(to)
-    }
-
-    pub fn getTokenIndex() -> U256 {
-        return tokenIndex
     }
 
     @using(preapprovedAssets = true)

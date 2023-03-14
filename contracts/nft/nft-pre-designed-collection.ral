@@ -11,11 +11,10 @@ Contract NFTPreDesignedCollection(
     pub fn mint(tokenIndex: U256) -> (ByteVec) {
         assert!(tokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)
         let minter = callerAddress!()
-        let collectionId = selfContractId!()
         let nftUri = baseUri ++ u256ToString!(tokenIndex)
 
         let initialMutState = encodeToByteVec!(minter, true)
-        let initialImmState = encodeToByteVec!(nftUri, collectionId, tokenIndex)
+        let initialImmState = encodeToByteVec!(nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(tokenIndex),

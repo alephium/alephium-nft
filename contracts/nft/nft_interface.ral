@@ -3,7 +3,5 @@ Interface INFT {
 
    pub fn getOwner() -> Address
    pub fn getTokenUri() -> ByteVec
-   pub fn getTokenIndex() -> U256
-   pub fn getCollectionId() -> ByteVec
    pub fn transfer(to: Address) -> ()
 }

@@ -15,7 +15,6 @@ interface NFT {
   description: string,
   image: string,
   tokenId: string,
-  collectionAddress: string,
   owner: string,
   isTokenWithdrawn: boolean
 }
@@ -74,7 +73,6 @@ export default function Home() {
           description: metadata.description,
           image: metadata.image,
           tokenId: tokenId,
-          collectionAddress: nftState.fields.collectionId as string,
           owner: nftState.fields.owner as string,
           isTokenWithdrawn: nftState.fields.isTokenWithdrawn as boolean
         }

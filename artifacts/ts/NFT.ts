@@ -29,8 +29,6 @@ import { default as NFTContractJson } from "../nft/nft.ral.json";
 export namespace NFTTypes {
   export type Fields = {
     uri: HexString;
-    collectionId: HexString;
-    tokenIndex: bigint;
     owner: HexString;
     isTokenWithdrawn: boolean;
   };
@@ -58,18 +56,6 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "getTokenUri", params);
-  }
-
-  async testGetTokenIndexMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<bigint>> {
-    return testMethod(this, "getTokenIndex", params);
-  }
-
-  async testGetCollectionIdMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getCollectionId", params);
   }
 
   async testTransferMethod(
@@ -114,7 +100,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "e4136b65683f27fc0efd6bcde605fd8dfb2c946c2d646e3c933135979f6d3628"
+    "cff21141b9136797860bc590b292721adbda2ec332eb645cee054a77514087e3"
   )
 );
 
@@ -214,28 +200,6 @@ export class NFTInstance extends ContractInstance {
       NFT,
       this,
       "getTokenUri",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetTokenIndexMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<bigint>> {
-    return callMethod(
-      NFT,
-      this,
-      "getTokenIndex",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetCollectionIdMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
-    return callMethod(
-      NFT,
-      this,
-      "getCollectionId",
       params === undefined ? {} : params
     );
   }

@@ -1,6 +1,6 @@
 {
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -38,7 +38,7 @@
     },
     "INFT": {
       "sourceFile": "nft/nft_interface.ral",
-      "sourceCodeHash": "06d03287bb804b3dc3042ad69a04ebbd7318b9074e69c82c0723fc9e7d4f9a50",
+      "sourceCodeHash": "307af9190e4ba3edbd19421c98e2b45c9912dae225afaa5806f321e849204c4b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -73,9 +73,9 @@
     },
     "NFT": {
       "sourceFile": "nft/nft.ral",
-      "sourceCodeHash": "eeeeac23d7d493c78d2c07df787cf593932395886be013147c4e3b4161747d79",
+      "sourceCodeHash": "b2cc0c5ef1af37d9b23df47af1bc6410e708a456f2443377f9bd7a9a9cbcf705",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "e4136b65683f27fc0efd6bcde605fd8dfb2c946c2d646e3c933135979f6d3628",
+      "codeHashDebug": "cff21141b9136797860bc590b292721adbda2ec332eb645cee054a77514087e3",
       "warnings": []
     },
     "NFTCollectionBase": {
@@ -89,7 +89,7 @@
       "sourceFile": "marketplace/nft_listing.ral",
       "sourceCodeHash": "d2deb88c19f347be618f98a77a47925b6cae8e8a528823cc5c72c011a4662ed3",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "313d3f5677ef8aa35febd96927b5fcb6466fc884e7a042678f49755dc0c451fa",
+      "codeHashDebug": "bb183d04ec3e8824eb0bed022d73b1da14aeb9722f77724a58654c4bde117bbb",
       "warnings": []
     },
     "NFTMarketPlace": {
@@ -101,16 +101,16 @@
     },
     "NFTOpenCollection": {
       "sourceFile": "nft/nft_open_collection.ral",
-      "sourceCodeHash": "54a5380cc639ede9b9b2f2c4f6e923a704db9a0e704d95b5881e50ab44a12a2e",
+      "sourceCodeHash": "5ddaf28d3767c7a063821637e380e2e34e3292ae188e4cd3cc72553104438441",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "5616b72221cdcc946b18dfd39711e5be2ab91e0cd460745abcca4b8cf5d58b82",
+      "codeHashDebug": "1499ec930d061f7f1e147e9ac173d953ef7b3e464414dc0c939225dac84cbd9e",
       "warnings": []
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "a43adbf7b24bcc90f6fcdd2738ee13e67c814c05e172a6da7f0a2efb186dfbb6",
+      "sourceCodeHash": "de7f545a4a57e184883184108d49d3734a2b627bb7e7f8b0b8efbf2626ea4abc",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "27f8face0119bfbfbb8081dd2f60e2e560ac218e12395d683a70690f9d911cbb",
+      "codeHashDebug": "c7243c99aed3f14f50e16efd0866b2d3e747cffae96ea2792f835ddde156e7ab",
       "warnings": []
     },
     "UpdateAdmin": {
