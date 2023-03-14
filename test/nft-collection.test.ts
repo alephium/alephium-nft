@@ -3,7 +3,7 @@ import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
 import { fetchNFTOpenCollectionState, fetchNFTState } from '../utils/contracts'
-import { NFTOpenCollectionInstance } from '../artifacts/ts'
+import { NFTOpenCollectionInstance, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -96,37 +96,43 @@ async function testPreDesignedNFT(tokenIndexes: bigint[]) {
     "https://cryptopunks.app/cryptopunks/details/",
     totalSupply
   )
-  const nftCollectionContractId = nftCollectionDeployTx.contractId
+  const nftPreDesignedCollectionInstane = nftCollectionDeployTx.instance
 
   for (const [sequence, tokenIndex] of tokenIndexes.entries()) {
-    await mintPreDesignedNFTAndVerify(nftCollection, nftCollectionContractId, tokenIndex, sequence)
+    await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, tokenIndex, sequence)
   }
 
   // Out-of-bound tokenIndex should *not* be ok
   await expect(nftCollection.mintPreDesignedNFT(
-    nftCollectionContractId,
+    nftPreDesignedCollectionInstane.contractId,
     totalSupply
   )).rejects.toThrow(Error)
 }
 
 async function mintPreDesignedNFTAndVerify(
   nftCollection: NFTCollection,
-  nftCollectionContractId: string,
+  nftPreDesignedCollectionInstance: NFTPreDesignedCollectionInstance,
   tokenIndex: bigint,
   sequence: number
 ) {
-  const nftCollectionContractAddress = addressFromContractId(nftCollectionContractId)
+  const nftCollectionContractAddress = addressFromContractId(nftPreDesignedCollectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
-  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(tokenIndex)), group)
+  const nftContractId = subContractId(nftPreDesignedCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
 
   await nftCollection.mintPreDesignedNFT(
-    nftCollectionContractId,
+    nftPreDesignedCollectionInstance.contractId,
     tokenIndex
   )
 
+  // NFT just minted
+  const nftByIndexResult = await nftPreDesignedCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex } })
+  expect(nftByIndexResult.returns).toEqual(nftContractId)
+  // NFT doesn't exist yet
+  await expect(nftPreDesignedCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
+
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, sequence)
   const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
-  await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
+  await burnAndVerify(nftCollection, nftPreDesignedCollectionInstance.contractId, tokenIndex, nftContractState)
 }
 
 async function verifyMintEvent(nftCollectionContractAddress: string, tokenIndex: bigint, start: number) {
