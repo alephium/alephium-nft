@@ -3,6 +3,7 @@ import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
 import { fetchNFTOpenCollectionState, fetchNFTState } from '../utils/contracts'
+import { NFTOpenCollectionInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -10,19 +11,20 @@ describe('nft collection', function() {
 
   it('should test minting nft in open collection', async () => {
     const nftCollection = await getNftCollection()
+    nftCollection.buildProject(false)
 
     const totalSupply = 3n
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("CryptoPunk", "CP", totalSupply)
-    const nftCollectionContractId = nftCollectionDeployTx.contractId
+    const nftCollectionInstance = nftCollectionDeployTx.instance
 
     // First 3 NFTs should be ok
-    await mintOpenNFTAndVerify(nftCollection, nftCollectionContractId, 0n)
-    await mintOpenNFTAndVerify(nftCollection, nftCollectionContractId, 1n)
-    await mintOpenNFTAndVerify(nftCollection, nftCollectionContractId, 2n)
+    await mintOpenNFTAndVerify(nftCollection, nftCollectionInstance, 0n)
+    await mintOpenNFTAndVerify(nftCollection, nftCollectionInstance, 1n)
+    await mintOpenNFTAndVerify(nftCollection, nftCollectionInstance, 2n)
 
     // The 4th should *not* be ok
     await expect(nftCollection.mintOpenNFT(
-      nftCollectionContractId,
+      nftCollectionInstance.contractId,
       getNftUri(3n)
     )).rejects.toThrow(Error)
   }, 60000)
@@ -43,6 +45,7 @@ describe('nft collection', function() {
       "https://cryptopunks.app/cryptopunks/details/",
       3n
     )
+
     const nftCollectionContractId = nftCollectionDeployTx.contractId
     await nftCollection.mintPreDesignedNFT(nftCollectionContractId, 1n)
     await expect(nftCollection.mintPreDesignedNFT(
@@ -54,24 +57,34 @@ describe('nft collection', function() {
 
 async function mintOpenNFTAndVerify(
   nftCollection: NFTCollection,
-  nftCollectionContractId: string,
+  nftOpenCollectionInstance: NFTOpenCollectionInstance,
   tokenIndex: bigint
 ) {
-  const nftCollectionContractAddress = addressFromContractId(nftCollectionContractId)
+  const nftCollectionContractAddress = addressFromContractId(nftOpenCollectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
-  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(tokenIndex)), group)
+  const nftContractId = subContractId(
+    nftOpenCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group
+  )
 
   const nftCollectionContractState = await fetchNFTOpenCollectionState(nftCollectionContractAddress)
   expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(tokenIndex)
 
-  await nftCollection.mintOpenNFT(
-    nftCollectionContractId,
+  const { txId } = await nftCollection.mintOpenNFT(
+    nftOpenCollectionInstance.contractId,
     getNftUri(tokenIndex)
   )
 
+  // NFT just minted
+  const nftByIndexResult = await nftOpenCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex } })
+  expect(nftByIndexResult.returns).toEqual(nftContractId)
+  // NFT doesn't exist yet
+  await expect(nftOpenCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
+
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, Number(tokenIndex))
   const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
-  await burnAndVerify(nftCollection, nftCollectionContractId, tokenIndex, nftContractState)
+  await burnAndVerify(nftCollection, nftOpenCollectionInstance.contractId, tokenIndex, nftContractState)
+
+  return txId
 }
 
 async function testPreDesignedNFT(tokenIndexes: bigint[]) {

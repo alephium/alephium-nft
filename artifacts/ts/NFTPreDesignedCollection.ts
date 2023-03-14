@@ -19,6 +19,7 @@ import {
   subscribeContractEvents,
   testMethod,
   callMethod,
+  multicallMethods,
   fetchContractState,
   ContractInstance,
   getContractEventsCurrentCount,
@@ -42,6 +43,41 @@ export namespace NFTPreDesignedCollectionTypes {
     tokenIndex: bigint;
     tokenId: HexString;
   }>;
+
+  export interface CallMethodTable {
+    getName: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getSymbol: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    totalSupply: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    nftByIndex: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+    mint: {
+      params: CallContractParams<{ tokenIndex: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+  }
+  export type CallMethodParams<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["params"];
+  export type CallMethodResult<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["result"];
+  export type MultiCallParams = Partial<{
+    [Name in keyof CallMethodTable]: CallMethodTable[Name]["params"];
+  }>;
+  export type MultiCallResults<T extends MultiCallParams> = {
+    [MaybeName in keyof T]: MaybeName extends keyof CallMethodTable
+      ? CallMethodTable[MaybeName]["result"]
+      : undefined;
+  };
 }
 
 class Factory extends ContractFactory<
@@ -135,8 +171,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   async callGetNameMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
+    params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getName">
+  ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"getName">> {
     return callMethod(
       NFTPreDesignedCollection,
       this,
@@ -146,8 +182,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   async callGetSymbolMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
+    params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getSymbol">
+  ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"getSymbol">> {
     return callMethod(
       NFTPreDesignedCollection,
       this,
@@ -157,8 +193,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   async callTotalSupplyMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<bigint>> {
+    params?: NFTPreDesignedCollectionTypes.CallMethodParams<"totalSupply">
+  ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"totalSupply">> {
     return callMethod(
       NFTPreDesignedCollection,
       this,
@@ -168,14 +204,24 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   async callNftByIndexMethod(
-    params: CallContractParams<{ index: bigint }>
-  ): Promise<CallContractResult<HexString>> {
+    params: NFTPreDesignedCollectionTypes.CallMethodParams<"nftByIndex">
+  ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"nftByIndex">> {
     return callMethod(NFTPreDesignedCollection, this, "nftByIndex", params);
   }
 
   async callMintMethod(
-    params: CallContractParams<{ tokenIndex: bigint }>
-  ): Promise<CallContractResult<HexString>> {
+    params: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
+  ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"mint">> {
     return callMethod(NFTPreDesignedCollection, this, "mint", params);
+  }
+
+  async multicall<Calls extends NFTPreDesignedCollectionTypes.MultiCallParams>(
+    calls: Calls
+  ): Promise<NFTPreDesignedCollectionTypes.MultiCallResults<Calls>> {
+    return (await multicallMethods(
+      NFTPreDesignedCollection,
+      this,
+      calls
+    )) as NFTPreDesignedCollectionTypes.MultiCallResults<Calls>;
   }
 }

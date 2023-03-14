@@ -19,6 +19,7 @@ import {
   subscribeContractEvents,
   testMethod,
   callMethod,
+  multicallMethods,
   fetchContractState,
   ContractInstance,
   getContractEventsCurrentCount,
@@ -42,6 +43,41 @@ export namespace NFTOpenCollectionTypes {
     tokenIndex: bigint;
     tokenId: HexString;
   }>;
+
+  export interface CallMethodTable {
+    getName: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getSymbol: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    totalSupply: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    nftByIndex: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+    mint: {
+      params: CallContractParams<{ nftUri: HexString }>;
+      result: CallContractResult<HexString>;
+    };
+  }
+  export type CallMethodParams<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["params"];
+  export type CallMethodResult<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["result"];
+  export type MultiCallParams = Partial<{
+    [Name in keyof CallMethodTable]: CallMethodTable[Name]["params"];
+  }>;
+  export type MultiCallResults<T extends MultiCallParams> = {
+    [MaybeName in keyof T]: MaybeName extends keyof CallMethodTable
+      ? CallMethodTable[MaybeName]["result"]
+      : undefined;
+  };
 }
 
 class Factory extends ContractFactory<
@@ -132,8 +168,8 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   async callGetNameMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
+    params?: NFTOpenCollectionTypes.CallMethodParams<"getName">
+  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getName">> {
     return callMethod(
       NFTOpenCollection,
       this,
@@ -143,8 +179,8 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   async callGetSymbolMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
+    params?: NFTOpenCollectionTypes.CallMethodParams<"getSymbol">
+  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getSymbol">> {
     return callMethod(
       NFTOpenCollection,
       this,
@@ -154,8 +190,8 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   async callTotalSupplyMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<bigint>> {
+    params?: NFTOpenCollectionTypes.CallMethodParams<"totalSupply">
+  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"totalSupply">> {
     return callMethod(
       NFTOpenCollection,
       this,
@@ -165,14 +201,24 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   async callNftByIndexMethod(
-    params: CallContractParams<{ index: bigint }>
-  ): Promise<CallContractResult<HexString>> {
+    params: NFTOpenCollectionTypes.CallMethodParams<"nftByIndex">
+  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"nftByIndex">> {
     return callMethod(NFTOpenCollection, this, "nftByIndex", params);
   }
 
   async callMintMethod(
-    params: CallContractParams<{ nftUri: HexString }>
-  ): Promise<CallContractResult<HexString>> {
+    params: NFTOpenCollectionTypes.CallMethodParams<"mint">
+  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"mint">> {
     return callMethod(NFTOpenCollection, this, "mint", params);
+  }
+
+  async multicall<Calls extends NFTOpenCollectionTypes.MultiCallParams>(
+    calls: Calls
+  ): Promise<NFTOpenCollectionTypes.MultiCallResults<Calls>> {
+    return (await multicallMethods(
+      NFTOpenCollection,
+      this,
+      calls
+    )) as NFTOpenCollectionTypes.MultiCallResults<Calls>;
   }
 }
