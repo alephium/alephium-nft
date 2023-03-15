@@ -19,6 +19,7 @@ import {
   subscribeContractEvents,
   testMethod,
   callMethod,
+  multicallMethods,
   fetchContractState,
   ContractInstance,
   getContractEventsCurrentCount,
@@ -36,6 +37,29 @@ export namespace NFTListingTypes {
   };
 
   export type State = ContractState<Fields>;
+
+  export interface CallMethodTable {
+    getTokenOwner: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getPrice: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+  }
+  export type CallMethodParams<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["params"];
+  export type CallMethodResult<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["result"];
+  export type MultiCallParams = Partial<{
+    [Name in keyof CallMethodTable]: CallMethodTable[Name]["params"];
+  }>;
+  export type MultiCallResults<T extends MultiCallParams> = {
+    [MaybeName in keyof T]: MaybeName extends keyof CallMethodTable
+      ? CallMethodTable[MaybeName]["result"]
+      : undefined;
+  };
 }
 
 class Factory extends ContractFactory<
@@ -97,8 +121,8 @@ export class NFTListingInstance extends ContractInstance {
   }
 
   async callGetTokenOwnerMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<HexString>> {
+    params?: NFTListingTypes.CallMethodParams<"getTokenOwner">
+  ): Promise<NFTListingTypes.CallMethodResult<"getTokenOwner">> {
     return callMethod(
       NFTListing,
       this,
@@ -108,13 +132,23 @@ export class NFTListingInstance extends ContractInstance {
   }
 
   async callGetPriceMethod(
-    params?: Omit<CallContractParams<{}>, "args">
-  ): Promise<CallContractResult<bigint>> {
+    params?: NFTListingTypes.CallMethodParams<"getPrice">
+  ): Promise<NFTListingTypes.CallMethodResult<"getPrice">> {
     return callMethod(
       NFTListing,
       this,
       "getPrice",
       params === undefined ? {} : params
     );
+  }
+
+  async multicall<Calls extends NFTListingTypes.MultiCallParams>(
+    calls: Calls
+  ): Promise<NFTListingTypes.MultiCallResults<Calls>> {
+    return (await multicallMethods(
+      NFTListing,
+      this,
+      calls
+    )) as NFTListingTypes.MultiCallResults<Calls>;
   }
 }

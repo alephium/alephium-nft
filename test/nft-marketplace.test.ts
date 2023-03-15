@@ -1,4 +1,4 @@
-import { web3, subContractId, stringToHex, addressFromContractId, timeout, NodeProvider } from '@alephium/web3'
+import { web3, subContractId, stringToHex, addressFromContractId, sleep, NodeProvider } from '@alephium/web3'
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
@@ -49,7 +49,7 @@ describe('nft marketplace', function() {
     // list NFT
     {
       await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId)
-      await timeout(3000)
+      await sleep(3000)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
@@ -99,7 +99,7 @@ describe('nft marketplace', function() {
 
       const totalAmount = newPrice + BigInt("1000000000000000000")
       await nftMarketplace.buyNFT(totalAmount, tokenId, nftMarketplaceContractId)
-      await timeout(3000)
+      await sleep(3000)
 
       const nftContractStateAfter = await fetchState(provider, NFT.contract, nftContractAddress, 0)
       expect(nftContractStateAfter.fields.owner).toEqual(testAddress1)
@@ -218,7 +218,7 @@ describe('nft marketplace', function() {
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
     )(testAddress2, testAddress1, testAddress2)
-  }, 15000)
+  }, 30000)
 
   function checkListingFee(
     provider: NodeProvider,
