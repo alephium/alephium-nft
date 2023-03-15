@@ -14,10 +14,10 @@
     "docker:mainnet": "docker build . -t liuhongchao/alephium-nft-testnet:$npm_package_version --build-arg NEXT_PUBLIC_NETWORK=mainnet"
   },
   "dependencies": {
-    "@alephium/web3": "v0.5.1",
-    "@alephium/web3-wallet": "v0.5.1",
-    "@alephium/cli": "v0.5.1",
-    "@alephium/web3-react": "0.0.3-rc.8",
+    "@alephium/web3": "v0.7.0",
+    "@alephium/web3-wallet": "v0.7.0",
+    "@alephium/cli": "v0.7.0",
+    "@alephium/web3-react": "0.0.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",

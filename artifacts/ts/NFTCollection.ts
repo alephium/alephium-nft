@@ -19,6 +19,7 @@ import {
   subscribeContractEvents,
   testMethod,
   callMethod,
+  multicallMethods,
   fetchContractState,
   ContractInstance,
   getContractEventsCurrentCount,
@@ -45,6 +46,29 @@ export namespace NFTCollectionTypes {
     tokenId: HexString;
     nftContractAddress: HexString;
   }>;
+
+  export interface CallMethodTable {
+    mint: {
+      params: CallContractParams<{
+        nftName: HexString;
+        nftDescription: HexString;
+        nftUri: HexString;
+      }>;
+      result: CallContractResult<HexString>;
+    };
+  }
+  export type CallMethodParams<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["params"];
+  export type CallMethodResult<T extends keyof CallMethodTable> =
+    CallMethodTable[T]["result"];
+  export type MultiCallParams = Partial<{
+    [Name in keyof CallMethodTable]: CallMethodTable[Name]["params"];
+  }>;
+  export type MultiCallResults<T extends MultiCallParams> = {
+    [MaybeName in keyof T]: MaybeName extends keyof CallMethodTable
+      ? CallMethodTable[MaybeName]["result"]
+      : undefined;
+  };
 }
 
 class Factory extends ContractFactory<
@@ -102,12 +126,18 @@ export class NFTCollectionInstance extends ContractInstance {
   }
 
   async callMintMethod(
-    params: CallContractParams<{
-      nftName: HexString;
-      nftDescription: HexString;
-      nftUri: HexString;
-    }>
-  ): Promise<CallContractResult<HexString>> {
+    params: NFTCollectionTypes.CallMethodParams<"mint">
+  ): Promise<NFTCollectionTypes.CallMethodResult<"mint">> {
     return callMethod(NFTCollection, this, "mint", params);
+  }
+
+  async multicall<Calls extends NFTCollectionTypes.MultiCallParams>(
+    calls: Calls
+  ): Promise<NFTCollectionTypes.MultiCallResults<Calls>> {
+    return (await multicallMethods(
+      NFTCollection,
+      this,
+      calls
+    )) as NFTCollectionTypes.MultiCallResults<Calls>;
   }
 }
