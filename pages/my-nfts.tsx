@@ -1,29 +1,19 @@
-import { web3, hexToString, node, ONE_ALPH, SignerProvider } from '@alephium/web3'
+import { node, ONE_ALPH } from '@alephium/web3'
 import { useEffect, useState } from 'react'
-import { fetchNFTState } from '../utils/contracts'
-import { NFT as NFTFactory } from '../artifacts/ts'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { NFTCollection } from '../utils/nft-collection'
 import { marketplaceContractId } from '../configs/nft'
-import axios from 'axios'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
-import { fetchNFTListings } from '../components/nft-listing'
+import { fetchListedNFTs, fetchNFTsFromUTXOs, NFT } from '../components/nft'
 
-interface NFT {
-  name: string,
-  description: string,
-  image: string,
-  tokenId: string,
-  listed: boolean
-}
+type LoadingState = 'loaded' | 'not-loaded'
 
 export default function Home() {
   const [nfts, setNfts] = useState([] as NFT[])
   const [nftBeingSold, setNftBeingSold] = useState<NFT | undefined>(undefined)
   const [nftSellingPrice, setNftSellingPrice] = useState<number | undefined>(undefined)
-  const [loadingState, setLoadingState] = useState('not-loaded')
+  const [loadingState, setLoadingState] = useState<LoadingState>('not-loaded')
   const context = useContext()
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
   const minimumNFTPrice = 0.0001 // ALPH
@@ -50,98 +40,26 @@ export default function Home() {
     setNftSellingPrice(undefined)
   }
 
-  async function loadNFT(tokenId: string, listed: boolean): Promise<NFT | undefined> {
-    var nftState = undefined
-
-    if (context.signerProvider?.nodeProvider) {
-      try {
-        web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
-        nftState = await fetchNFTState(
-          addressFromContractId(tokenId)
-        )
-      } catch (e) {
-        console.debug(`error fetching state for ${tokenId}`, e)
-      }
-
-      if (nftState && nftState.codeHash === NFTFactory.contract.codeHash) {
-        const metadataUri = hexToString(nftState.fields.uri as string)
-        try {
-          const metadata = (await axios.get(metadataUri)).data
-          return {
-            name: metadata.name,
-            description: metadata.description,
-            image: metadata.image,
-            tokenId: tokenId,
-            listed
-          }
-        } catch {
-          return undefined
-        }
-      }
-    }
-  }
-
   async function loadNFTs() {
     if (context.signerProvider?.nodeProvider && context.account) {
-      const allNFTsOnUTXOs = await loadAllSelfCustodiedNFTsForAddress(context.account.address)
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
+      const allNFTsOnUTXOs = await fetchNFTsFromUTXOs(context.signerProvider, context.account.address)
       setNfts(allNFTsOnUTXOs)
-      loadAllListedNFTs(context.account.address).then((listedNfts) => {
+
+      fetchListedNFTs(
+        context.signerProvider,
+        marketplaceContractAddress,
+        context.account.address
+      ).then((listedNfts) => {
         setNfts(allNFTsOnUTXOs.concat(listedNfts))
         setLoadingState('loaded')
       })
     }
   }
 
-  async function loadAllListedNFTs(address: string) {
-    const items = []
-
-    if (context.signerProvider) {
-      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const listings = await fetchNFTListings(context.signerProvider, marketplaceContractAddress, address)
-      const tokenIds = Array.from(listings.values()).map((listing) => listing.tokenId)
-      for (var tokenId of tokenIds) {
-        const nft = await loadNFT(tokenId, true)
-        nft && items.push(nft)
-      }
-    }
-
-    return items
-  }
-
-  async function loadAllSelfCustodiedNFTsForAddress(address: string) {
-    const items = []
-
-    if (context.signerProvider?.nodeProvider) {
-      const balances = await context.signerProvider.nodeProvider.addresses.getAddressesAddressBalance(address)
-      const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
-      const tokenIds = tokenBalances
-        .filter((token) => +token.amount == 1)
-        .map((token) => token.id)
-
-      for (var tokenId of tokenIds) {
-        const nft = await loadNFT(tokenId, false)
-        nft && items.push(nft)
-      }
-    }
-
-    return items;
-  }
-
   function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.signerProvider?.nodeProvider && context.account) {
-      return new NFTMarketplace(
-        context.signerProvider.nodeProvider,
-        context.signerProvider
-      )
-    }
-  }
-
-  function getNFTCollection(): NFTCollection | undefined {
-    if (context.signerProvider?.nodeProvider && context.account) {
-      return new NFTCollection(
-        context.signerProvider.nodeProvider,
-        context.signerProvider as SignerProvider
-      )
+    if (context.signerProvider) {
+      return new NFTMarketplace(context.signerProvider)
     }
   }
 

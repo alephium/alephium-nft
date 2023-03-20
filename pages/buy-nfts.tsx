@@ -57,11 +57,7 @@ export default function BuyNFTs() {
 
   async function buyNFT(nftListing: NFTListing) {
     if (context.signerProvider?.nodeProvider && context.account && commissionRate) {
-      const nftMarketplace = new NFTMarketplace(
-        context.signerProvider.nodeProvider,
-        context.signerProvider
-      )
-
+      const nftMarketplace = new NFTMarketplace(context.signerProvider)
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
       console.debug("commission", commission)
       console.debug("nftDeposit", nftDeposit)

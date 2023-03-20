@@ -26,11 +26,7 @@ export async function fetchNFTListings(
   const items = new Map<string, NFTListing>()
 
   if (signerProvider?.nodeProvider) {
-    const nftMarketplace = new NFTMarketplace(
-      signerProvider.nodeProvider,
-      signerProvider
-    )
-
+    const nftMarketplace = new NFTMarketplace(signerProvider)
     const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
 
     for (var event of events) {
