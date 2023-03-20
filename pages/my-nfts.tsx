@@ -83,17 +83,13 @@ export default function Home() {
 
   async function loadNFTs() {
     if (context.signerProvider?.nodeProvider && context.account) {
-      const allNFTsForAddress = await loadAllNFTsForAddress(context.account.address)
-      setNfts(allNFTsForAddress)
+      const allNFTsOnUTXOs = await loadAllSelfCustodiedNFTsForAddress(context.account.address)
+      setNfts(allNFTsOnUTXOs)
+      loadAllListedNFTs(context.account.address).then((listedNfts) => {
+        setNfts(allNFTsOnUTXOs.concat(listedNfts))
+        setLoadingState('loaded')
+      })
     }
-
-    setLoadingState('loaded')
-  }
-
-  async function loadAllNFTsForAddress(address: string) {
-    const allNFTsOnUTXOs = await loadAllSelfCustodiedNFTsForAddress(address)
-    const allListedNFTs = await loadAllListedNFTs(address)
-    return allNFTsOnUTXOs.concat(allListedNFTs)
   }
 
   async function loadAllListedNFTs(address: string) {
