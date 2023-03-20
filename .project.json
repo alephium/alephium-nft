@@ -1,6 +1,6 @@
 {
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": true,
+    "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -59,7 +59,7 @@
     },
     "NFT": {
       "sourceFile": "nft/nft.ral",
-      "sourceCodeHash": "8e16b8b5d101c6c121e4e5a15b939f2684a5e0e2864ce8e8ece6423677c5cf6b",
+      "sourceCodeHash": "cfdf6eea36f0e8c14a3066337209cc9839af81b8b6e97850d9feefc226b40163",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e",
       "warnings": []

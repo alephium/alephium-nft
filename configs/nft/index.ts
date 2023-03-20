@@ -4,7 +4,7 @@ import devnetDeployment from '../../artifacts/.deployments.devnet.json'
 import testnetDeployment from '../../.deployments.testnet.json'
 import mainnetDeployment from '../../.deployments.mainnet.json'
 
-export const defaultNftCollectionContractId: string =
+export const defaultNFTCollectionContractId: string =
   NETWORK === 'mainnet'
     // @ts-ignore
     ? mainnetDeployment['contracts']?.NFTOpenCollection.contractId

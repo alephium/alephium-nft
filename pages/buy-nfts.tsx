@@ -11,7 +11,7 @@ import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { fetchNFTListings, NFTListing } from '../components/nft-listing'
 
 export default function BuyNFTs() {
-  const [nftListings, setNftListings] = useState([] as NFTListing[])
+  const [nftListings, setNFTListings] = useState([] as NFTListing[])
   const [loadingState, setLoadingState] = useState('not-loaded')
   const [commissionRate, setCommissionRate] = useState<bigint | undefined>(undefined)
   const router = useRouter()
@@ -50,7 +50,7 @@ export default function BuyNFTs() {
     if (context.signerProvider?.nodeProvider && context.account) {
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
       const items = await fetchNFTListings(context.signerProvider, marketplaceContractAddress)
-      setNftListings(Array.from(items.values()))
+      setNFTListings(Array.from(items.values()))
       setLoadingState('loaded')
     }
   }

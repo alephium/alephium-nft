@@ -1,9 +1,10 @@
-// Who can change the metadata of this NFT? Maybe it should just be fixed
-// when it is created, to reduce complexity
-// Right now only 1 token is supported
+// Only 1 token is supported
 Contract NFT(
+    // Temporarily put collection id here to keep track of the collection
+    // remove after parent contract id can be queried from explorer backend
     collectionId: ByteVec,
-    uri: ByteVec  // name; description; image
+    // name; description; image
+    uri: ByteVec
 ) implements INFT {
     pub fn getTokenUri() -> ByteVec {
         return uri

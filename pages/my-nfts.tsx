@@ -10,9 +10,9 @@ import { fetchListedNFTs, fetchNFTsFromUTXOs, mergeNFTCollections, NFT, NFTColle
 type LoadingState = 'loaded' | 'not-loaded'
 
 export default function Home() {
-  const [nftCollections, setNftCollections] = useState([] as NFTCollection[])
-  const [nftBeingSold, setNftBeingSold] = useState<NFT | undefined>(undefined)
-  const [nftSellingPrice, setNftSellingPrice] = useState<number | undefined>(undefined)
+  const [nftCollections, setNFTCollections] = useState([] as NFTCollection[])
+  const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
+  const [nftSellingPrice, setNFTSellingPrice] = useState<number | undefined>(undefined)
   const [loadingState, setLoadingState] = useState<LoadingState>('not-loaded')
   const context = useContext()
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
@@ -36,22 +36,22 @@ export default function Home() {
 
   function resetState() {
     resetTxStatus()
-    setNftBeingSold(undefined)
-    setNftSellingPrice(undefined)
+    setNFTBeingSold(undefined)
+    setNFTSellingPrice(undefined)
   }
 
   async function loadNFTs() {
     if (context.signerProvider?.nodeProvider && context.account) {
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const fetchedNftCollections = await fetchNFTsFromUTXOs(context.signerProvider, context.account.address)
-      setNftCollections(fetchedNftCollections)
+      const fetchedNFTCollections = await fetchNFTsFromUTXOs(context.signerProvider, context.account.address)
+      setNFTCollections(fetchedNFTCollections)
 
       fetchListedNFTs(
         context.signerProvider,
         marketplaceContractAddress,
         context.account.address
       ).then((listedNftCollections) => {
-        setNftCollections(mergeNFTCollections(listedNftCollections, fetchedNftCollections))
+        setNFTCollections(mergeNFTCollections(listedNftCollections, fetchedNFTCollections))
         setLoadingState('loaded')
       })
     }
@@ -86,7 +86,7 @@ export default function Home() {
   }
 
   function sellingNFT(nft: NFT) {
-    setNftBeingSold(nft)
+    setNFTBeingSold(nft)
     setShowSetPriceModal(true)
   }
 
@@ -155,7 +155,7 @@ export default function Home() {
                         <input
                           type="number"
                           min="0"
-                          onChange={e => setNftSellingPrice(+e.target.value)}
+                          onChange={e => setNFTSellingPrice(+e.target.value)}
                           className="shadow appearance-none border rounded w-full py-2 px-1 text-black"
                         />
                       </form>
@@ -170,14 +170,14 @@ export default function Home() {
                         {
                           (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
                             <button
-                              className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
+                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
                               type="button"
                               onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
                             >
                               Submit
                             </button> :
                             <button
-                              className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
+                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
                               type="button"
                               disabled
                             >

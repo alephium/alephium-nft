@@ -10,7 +10,7 @@ describe('nft collection', function() {
   web3.setCurrentNodeProvider(nodeUrl)
 
   it('should test minting nft in open collection', async () => {
-    const nftCollection = await getNftCollection()
+    const nftCollection = await getNFTCollection()
     nftCollection.buildProject(false)
 
     const totalSupply = 3n
@@ -25,7 +25,7 @@ describe('nft collection', function() {
     // The 4th should *not* be ok
     await expect(nftCollection.mintOpenNFT(
       nftCollectionInstance.contractId,
-      getNftUri(3n)
+      getNFTUri(3n)
     )).rejects.toThrow(Error)
   }, 60000)
 
@@ -39,7 +39,7 @@ describe('nft collection', function() {
   }, 60000)
 
   it('should test that nft in pre designed collection can not be minted twice', async () => {
-    const nftCollection = await getNftCollection()
+    const nftCollection = await getNFTCollection()
     const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
       "CryptoPunk",
       "CP",
@@ -72,7 +72,7 @@ async function mintOpenNFTAndVerify(
 
   const { txId } = await nftCollection.mintOpenNFT(
     nftOpenCollectionInstance.contractId,
-    getNftUri(tokenIndex)
+    getNFTUri(tokenIndex)
   )
 
   // NFT just minted
@@ -88,7 +88,7 @@ async function mintOpenNFTAndVerify(
 }
 
 async function testPreDesignedNFT(tokenIndexes: bigint[]) {
-  const nftCollection = await getNftCollection()
+  const nftCollection = await getNFTCollection()
   const totalSupply = BigInt(tokenIndexes.length)
   const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
     "CryptoPunk",
@@ -148,15 +148,15 @@ async function verifyMintEvent(nftCollectionContractAddress: string, tokenIndex:
 
 async function verifyNFTState(nftContractId: string, tokenIndex: bigint) {
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
-  utils.checkHexString(nftContractState.fields.uri, getNftUri(tokenIndex))
+  utils.checkHexString(nftContractState.fields.uri, getNFTUri(tokenIndex))
 }
 
-async function getNftCollection() {
+async function getNFTCollection() {
   const signer = await testWallet1()
   return new NFTCollection(signer)
 }
 
 const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
-function getNftUri(tokenIndex: bigint): string {
+function getNFTUri(tokenIndex: bigint): string {
   return `${nftBaseUri}${tokenIndex}`
 }

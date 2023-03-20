@@ -2,7 +2,7 @@ import * as web3 from '@alephium/web3'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { NFTCollection } from '../utils/nft-collection'
-import { defaultNftCollectionContractId } from '../configs/nft'
+import { defaultNFTCollectionContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
@@ -63,7 +63,7 @@ export default function MintNFTs() {
       const nftCollection = new NFTCollection(context.signerProvider)
 
       // TODO: Figure out UI to create collection, right now use default collection id
-      const nftCollectionContractId = defaultNftCollectionContractId
+      const nftCollectionContractId = defaultNFTCollectionContractId
       const mintNFTTxResult = await nftCollection.mintOpenNFT(nftCollectionContractId, uri)
       console.debug('mintNFTTxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)
