@@ -29,6 +29,7 @@ import { default as NFTContractJson } from "../nft/nft.ral.json";
 // Custom types for the contract
 export namespace NFTTypes {
   export type Fields = {
+    collectionId: HexString;
     uri: HexString;
   };
 
@@ -36,6 +37,10 @@ export namespace NFTTypes {
 
   export interface CallMethodTable {
     getTokenUri: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getCollectionId: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -64,6 +69,12 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "getTokenUri", params);
   }
+
+  async testGetCollectionIdMethod(
+    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+  ): Promise<TestContractResult<HexString>> {
+    return testMethod(this, "getCollectionId", params);
+  }
 }
 
 // Use this object to test and deploy the contract
@@ -71,7 +82,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "e4ac1069a1aea968d177741c290e109285ba3771c8df9c94e07d80d328a4c0c3"
+    "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e"
   )
 );
 
@@ -92,6 +103,17 @@ export class NFTInstance extends ContractInstance {
       NFT,
       this,
       "getTokenUri",
+      params === undefined ? {} : params
+    );
+  }
+
+  async callGetCollectionIdMethod(
+    params?: NFTTypes.CallMethodParams<"getCollectionId">
+  ): Promise<NFTTypes.CallMethodResult<"getCollectionId">> {
+    return callMethod(
+      NFT,
+      this,
+      "getCollectionId",
       params === undefined ? {} : params
     );
   }

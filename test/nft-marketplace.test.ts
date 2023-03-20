@@ -12,8 +12,8 @@ describe('nft marketplace', function() {
 
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
     const signer = await testWallet1()
-    const nftCollection = new NFTCollection(provider, signer)
-    const nftMarketplace = new NFTMarketplace(provider, signer)
+    const nftCollection = new NFTCollection(signer)
+    const nftMarketplace = new NFTMarketplace(signer)
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployResult = await nftMarketplace.create()
@@ -129,10 +129,8 @@ describe('nft marketplace', function() {
   }, 300000)
 
   test('Update metadata in the NFT marketplace', async () => {
-    const nodeUrl = 'http://127.0.0.1:22973'
-    const provider = new NodeProvider(nodeUrl)
     const signer = await testWallet1()
-    const nftMarketplace = new NFTMarketplace(provider, signer)
+    const nftMarketplace = new NFTMarketplace(signer)
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()

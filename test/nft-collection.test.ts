@@ -153,7 +153,7 @@ async function verifyNFTState(nftContractId: string, tokenIndex: bigint) {
 
 async function getNftCollection() {
   const signer = await testWallet1()
-  return new NFTCollection(web3.getCurrentNodeProvider(), signer)
+  return new NFTCollection(signer)
 }
 
 const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"

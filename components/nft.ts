@@ -13,8 +13,10 @@ export interface NFT {
 }
 
 export interface NFTCollection {
+  id: string,
   name: string,
-  symbol: string
+  symbol: string,
+  nfts: NFT[]
 }
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>

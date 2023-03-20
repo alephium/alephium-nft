@@ -2,9 +2,14 @@
 // when it is created, to reduce complexity
 // Right now only 1 token is supported
 Contract NFT(
+    collectionId: ByteVec,
     uri: ByteVec  // name; description; image
 ) implements INFT {
     pub fn getTokenUri() -> ByteVec {
         return uri
+    }
+
+    pub fn getCollectionId() -> ByteVec {
+        return collectionId
     }
 }

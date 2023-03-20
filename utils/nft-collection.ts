@@ -64,6 +64,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
+          collectionId: web3.stringToHex("collection_id"),
           uri: web3.stringToHex("template_uri")
         }
       }
