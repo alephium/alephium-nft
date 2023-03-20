@@ -2,94 +2,9 @@
 // when it is created, to reduce complexity
 // Right now only 1 token is supported
 Contract NFT(
-    uri: ByteVec,            // name; description; image
-    mut owner: Address,
-    mut isTokenWithdrawn: Bool
+    uri: ByteVec  // name; description; image
 ) implements INFT {
-
-    event NFTWithdrawn(
-      owner: Address
-    )
-
-    event NFTDeposited(
-      owner: Address
-    )
-
-    event NFTBurnt(
-      owner: Address
-    )
-
-    enum ErrorCodes {
-        OwnerAllowedOnly = 0
-        TokenAlreadyWithdrawn = 1
-        TokenAlreadyDeposited = 2
-    }
-
-    pub fn getOwner() -> Address {
-        return owner
-    }
-
     pub fn getTokenUri() -> ByteVec {
         return uri
-    }
-
-    pub fn transfer(to: Address) -> () {
-        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-        updateOwner(to)
-    }
-
-    @using(preapprovedAssets = true)
-    pub fn transferAndWithdraw(newOwner: Address) -> () {
-        checkCaller!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-        updateOwner(newOwner)
-        transferToken!(newOwner, owner, ALPH, 1 alph)
-    }
-
-    @using(updateFields = true)
-    fn updateOwner(newOwner: Address) -> () {
-        // Token needs to be owned by the contract when owner is changed
-        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
-        emit Transfer(owner, newOwner)
-        owner = newOwner
-    }
-
-    @using(preapprovedAssets=true, assetsInContract = true, updateFields = true)
-    pub fn deposit() -> () {
-        assert!(isTokenWithdrawn, ErrorCodes.TokenAlreadyDeposited)
-
-        let depositor = callerAddress!()
-        if (depositor != owner) {
-            emit Transfer(owner, depositor)
-            owner = depositor
-        }
-
-        isTokenWithdrawn = false
-        emit NFTDeposited(depositor)
-
-        transferTokenToSelf!(depositor, selfContractId!(), 1)
-    }
-
-    @using(assetsInContract = true, updateFields = true)
-    pub fn withdraw() -> () {
-        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
-
-        isTokenWithdrawn = true
-        emit NFTWithdrawn(owner)
-
-        transferTokenFromSelf!(owner, selfContractId!(), 1)
-    }
-
-    @using(assetsInContract = true, updateFields = false)
-    pub fn burn() -> () {
-        assert!(callerAddress!() == owner, ErrorCodes.OwnerAllowedOnly)
-
-        // Token needs to be owned by the contract when NFT is burnt
-        assert!(!isTokenWithdrawn, ErrorCodes.TokenAlreadyWithdrawn)
-
-        emit NFTBurnt(owner)
-
-        burnToken!(selfAddress!(), selfContractId!(), 1)
-        destroySelf!(owner)
     }
 }

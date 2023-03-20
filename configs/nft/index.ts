@@ -1,6 +1,6 @@
 export const NETWORK: string = process.env.NEXT_PUBLIC_NETWORK || 'devnet'
 
-import devnetDeployment from '../../.deployments.devnet.json'
+import devnetDeployment from '../../artifacts/.deployments.devnet.json'
 import testnetDeployment from '../../.deployments.testnet.json'
 import mainnetDeployment from '../../.deployments.mainnet.json'
 

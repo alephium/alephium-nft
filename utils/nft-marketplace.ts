@@ -55,7 +55,13 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           price: BigInt(price),
           marketPlaceContractId: marketPlaceContractId
-        }
+        },
+        tokens: [
+          {
+            id: tokenId,
+            amount: 1n
+          }
+        ]
       }
     )
   }

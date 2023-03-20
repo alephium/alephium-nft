@@ -1,6 +1,0 @@
-TxScript WithdrawNFT(
-    nftContractId: ByteVec
-) {
-    let nft = NFT(nftContractId)
-    nft.withdraw()
-}

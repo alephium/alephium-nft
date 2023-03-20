@@ -5,7 +5,7 @@ import { NFT as NFTFactory } from '../artifacts/ts'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTCollection } from '../utils/nft-collection'
-import { marketplaceContractId, defaultNftCollectionContractId } from '../configs/nft'
+import { marketplaceContractId } from '../configs/nft'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
@@ -15,11 +15,8 @@ interface NFT {
   description: string,
   image: string,
   tokenId: string,
-  owner: string,
-  isTokenWithdrawn: boolean
+  listed: boolean
 }
-
-const defaultNftCollectionAddress = addressFromContractId(defaultNftCollectionContractId)
 
 export default function Home() {
   const [nfts, setNfts] = useState([] as NFT[])
@@ -67,14 +64,17 @@ export default function Home() {
 
       if (nftState && nftState.codeHash === NFTFactory.contract.codeHash) {
         const metadataUri = hexToString(nftState.fields.uri as string)
-        const metadata = (await axios.get(metadataUri)).data
-        return {
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image,
-          tokenId: tokenId,
-          owner: nftState.fields.owner as string,
-          isTokenWithdrawn: nftState.fields.isTokenWithdrawn as boolean
+        try {
+          const metadata = (await axios.get(metadataUri)).data
+          return {
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+            tokenId: tokenId,
+            listed: false
+          }
+        } catch {
+          return undefined
         }
       }
     }
@@ -90,27 +90,30 @@ export default function Home() {
   }
 
   async function loadAllNFTsForAddress(address: string) {
-    const allNFTs = await loadAllNFTs()
-    return allNFTs.filter((nft) => nft.owner === address)
+    console.log("before load all nfts")
+    const allNFTs = await loadAllSelfCustodiedNFTsForAddress(address)
+    console.log("all nfts", allNFTs)
+    //return allNFTs.filter((nft) => nft.owner === address)
+    return allNFTs
   }
 
-  async function loadAllNFTs() {
-    console.log("load all nfts")
-    const items = []
-    if (context.signerProvider?.nodeProvider) {
-      const mintNftEvents = await context.signerProvider.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
-      for (var event of mintNftEvents.events) {
-        const tokenId = event.fields[2].value as string
-        const nft = await loadNFT(tokenId)
-        nft && items.push(nft)
-      }
-    }
+  // Then we need to add the NFTs from marketplace listings
 
-    return items;
-  }
+  //  async function loadAllNFTs() {
+  //    console.log("load all nfts")
+  //    const items = []
+  //    if (context.signerProvider?.nodeProvider) {
+  //      const mintNftEvents = await context.signerProvider.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
+  //      for (var event of mintNftEvents.events) {
+  //        const tokenId = event.fields[2].value as string
+  //        const nft = await loadNFT(tokenId)
+  //        nft && items.push(nft)
+  //      }
+  //    }
+  //
+  //    return items;
+  //  }
 
-  // NOTE: This fetches NFTs transferred to owners UTXOs, not counting the ones
-  //       still custodied in the NFT contract
   async function loadAllSelfCustodiedNFTsForAddress(address: string) {
     const items = []
 
@@ -145,42 +148,6 @@ export default function Home() {
         context.signerProvider.nodeProvider,
         context.signerProvider as SignerProvider
       )
-    }
-  }
-
-  async function depositNFT(nft: NFT) {
-    const nftCollection = getNFTCollection()
-    if (!!nftCollection) {
-      const depositNFTTxResult = await nftCollection.depositNFT(nft.tokenId)
-      setOngoingTxId(depositNFTTxResult.txId)
-      setOngoingTxDescription('depositing NFT')
-      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
-        if (txStatus.type === 'Confirmed') {
-          resetState()
-          await loadNFTs()
-        } else if (txStatus.type === 'TxNotFound') {
-          resetState()
-          console.error('Deposit NFT transaction not found')
-        }
-      })
-    }
-  }
-
-  async function withdrawNFT(nft: NFT) {
-    const nftCollection = getNFTCollection()
-    if (!!nftCollection) {
-      const withdrawNFTTxResult = await nftCollection.withdrawNFT(nft.tokenId)
-      setOngoingTxId(withdrawNFTTxResult.txId)
-      setOngoingTxDescription('withdrawing NFT')
-      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
-        if (txStatus.type === 'Confirmed') {
-          resetState()
-          await loadNFTs()
-        } else if (txStatus.type === 'TxNotFound') {
-          resetState()
-          console.error('Withdraw NFT transaction not found')
-        }
-      })
     }
   }
 
@@ -241,12 +208,7 @@ export default function Home() {
                   <div></div>
                   <div className="p-4 bg-black">
                     {
-                      nft.isTokenWithdrawn ?
-                        <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => depositNFT(nft)}>Deposit</button> :
-                        <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => withdrawNFT(nft)}>Withdrawn</button>
-                    }
-                    {
-                      nft.isTokenWithdrawn ?
+                      nft.listed ?
                         <button className="mt-4 bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Sell</button> :
                         <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => sellingNFT(nft)}>Sell</button>
                     }

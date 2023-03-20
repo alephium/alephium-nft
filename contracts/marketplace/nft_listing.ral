@@ -36,18 +36,13 @@ Contract NFTListing(
             transferToken!(buyer, tokenOwner, ALPH, price)
         }
 
-        NFT(tokenId).transferAndWithdraw{buyer -> ALPH: 1 alph}(buyer)
-
+        transferTokenFromSelf!(buyer, tokenId, 1)
         destroySelf!(tokenOwner)
     }
 
     @using(assetsInContract = true)
     pub fn cancel() -> () {
         checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
-
-        let nft = NFT(tokenId)
-        nft.transfer(tokenOwner)
-
         destroySelf!(tokenOwner)
     }
 

@@ -30,22 +30,11 @@ import { default as NFTContractJson } from "../nft/nft.ral.json";
 export namespace NFTTypes {
   export type Fields = {
     uri: HexString;
-    owner: HexString;
-    isTokenWithdrawn: boolean;
   };
 
   export type State = ContractState<Fields>;
 
-  export type TransferEvent = ContractEvent<{ from: HexString; to: HexString }>;
-  export type NFTWithdrawnEvent = ContractEvent<{ owner: HexString }>;
-  export type NFTDepositedEvent = ContractEvent<{ owner: HexString }>;
-  export type NFTBurntEvent = ContractEvent<{ owner: HexString }>;
-
   export interface CallMethodTable {
-    getOwner: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
-    };
     getTokenUri: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
@@ -70,52 +59,10 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     return new NFTInstance(address);
   }
 
-  async testGetOwnerMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getOwner", params);
-  }
-
   async testGetTokenUriMethod(
     params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
   ): Promise<TestContractResult<HexString>> {
     return testMethod(this, "getTokenUri", params);
-  }
-
-  async testTransferMethod(
-    params: TestContractParams<NFTTypes.Fields, { to: HexString }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "transfer", params);
-  }
-
-  async testTransferAndWithdrawMethod(
-    params: TestContractParams<NFTTypes.Fields, { newOwner: HexString }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "transferAndWithdraw", params);
-  }
-
-  async testUpdateOwnerMethod(
-    params: TestContractParams<NFTTypes.Fields, { newOwner: HexString }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updateOwner", params);
-  }
-
-  async testDepositMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "deposit", params);
-  }
-
-  async testWithdrawMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "withdraw", params);
-  }
-
-  async testBurnMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "burn", params);
   }
 }
 
@@ -124,7 +71,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "cff21141b9136797860bc590b292721adbda2ec332eb645cee054a77514087e3"
+    "e4ac1069a1aea968d177741c290e109285ba3771c8df9c94e07d80d328a4c0c3"
   )
 );
 
@@ -136,85 +83,6 @@ export class NFTInstance extends ContractInstance {
 
   async fetchState(): Promise<NFTTypes.State> {
     return fetchContractState(NFT, this);
-  }
-
-  async getContractEventsCurrentCount(): Promise<number> {
-    return getContractEventsCurrentCount(this.address);
-  }
-
-  subscribeTransferEvent(
-    options: SubscribeOptions<NFTTypes.TransferEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFT.contract,
-      this,
-      options,
-      "Transfer",
-      fromCount
-    );
-  }
-
-  subscribeNFTWithdrawnEvent(
-    options: SubscribeOptions<NFTTypes.NFTWithdrawnEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFT.contract,
-      this,
-      options,
-      "NFTWithdrawn",
-      fromCount
-    );
-  }
-
-  subscribeNFTDepositedEvent(
-    options: SubscribeOptions<NFTTypes.NFTDepositedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFT.contract,
-      this,
-      options,
-      "NFTDeposited",
-      fromCount
-    );
-  }
-
-  subscribeNFTBurntEvent(
-    options: SubscribeOptions<NFTTypes.NFTBurntEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFT.contract,
-      this,
-      options,
-      "NFTBurnt",
-      fromCount
-    );
-  }
-
-  subscribeAllEvents(
-    options: SubscribeOptions<
-      | NFTTypes.TransferEvent
-      | NFTTypes.NFTWithdrawnEvent
-      | NFTTypes.NFTDepositedEvent
-      | NFTTypes.NFTBurntEvent
-    >,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvents(NFT.contract, this, options, fromCount);
-  }
-
-  async callGetOwnerMethod(
-    params?: NFTTypes.CallMethodParams<"getOwner">
-  ): Promise<NFTTypes.CallMethodResult<"getOwner">> {
-    return callMethod(
-      NFT,
-      this,
-      "getOwner",
-      params === undefined ? {} : params
-    );
   }
 
   async callGetTokenUriMethod(

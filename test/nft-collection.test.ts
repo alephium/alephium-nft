@@ -1,4 +1,4 @@
-import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, ContractState } from '@alephium/web3'
+import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress } from '@alephium/web3'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testAddress1, testWallet1 } from './signers'
@@ -28,6 +28,7 @@ describe('nft collection', function() {
       getNftUri(3n)
     )).rejects.toThrow(Error)
   }, 60000)
+
 
   it('should test minting nft in pre designed collection sequentially', async () => {
     await testPreDesignedNFT([0n, 1n, 2n])
@@ -81,8 +82,7 @@ async function mintOpenNFTAndVerify(
   await expect(nftOpenCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, Number(tokenIndex))
-  const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
-  await burnAndVerify(nftCollection, nftOpenCollectionInstance.contractId, tokenIndex, nftContractState)
+  await verifyNFTState(nftContractId, tokenIndex)
 
   return txId
 }
@@ -127,12 +127,9 @@ async function mintPreDesignedNFTAndVerify(
   // NFT just minted
   const nftByIndexResult = await nftPreDesignedCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
-  // NFT doesn't exist yet
-  await expect(nftPreDesignedCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, sequence)
-  const nftContractState = await verifyNFTState(nftContractId, tokenIndex)
-  await burnAndVerify(nftCollection, nftPreDesignedCollectionInstance.contractId, tokenIndex, nftContractState)
+  await verifyNFTState(nftContractId, tokenIndex)
 }
 
 async function verifyMintEvent(nftCollectionContractAddress: string, tokenIndex: bigint, start: number) {
@@ -151,39 +148,7 @@ async function verifyMintEvent(nftCollectionContractAddress: string, tokenIndex:
 
 async function verifyNFTState(nftContractId: string, tokenIndex: bigint) {
   const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
-  expect(nftContractState.fields.owner).toEqual(testAddress1)
-  expect(nftContractState.fields.isTokenWithdrawn).toEqual(true)
   utils.checkHexString(nftContractState.fields.uri, getNftUri(tokenIndex))
-  return nftContractState
-}
-
-async function burnAndVerify(
-  nftCollection: NFTCollection,
-  nftCollectionContractId: string,
-  tokenIndex: bigint,
-  nftContractState: ContractState
-) {
-  const provider = web3.getCurrentNodeProvider()
-  // Deposit NFT since it is withdrawn automatically when minted
-  await nftCollection.depositNFT(nftContractState.contractId)
-  // Burn NFT
-  const balanceBeforeBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
-
-  const gasAmount = 20000
-  const gasPrice = 1000000000 * 100
-  const totalGas = gasAmount * gasPrice
-  await nftCollection.burnNFT(
-    subContractId(nftCollectionContractId, binToHex(encodeU256(tokenIndex)), 0),
-    gasAmount,
-    BigInt(gasPrice)
-  )
-
-  const alphAmountInNFT = +nftContractState.asset.alphAmount.toString()
-  const balanceAfterBurning = await provider.addresses.getAddressesAddressBalance(testAddress1)
-  const refundedFromNFT = +balanceAfterBurning.balance + totalGas - +balanceBeforeBurning.balance
-
-  const relativeDiff = utils.relativeDiff(alphAmountInNFT, refundedFromNFT)
-  expect(relativeDiff).toBeLessThan(0.001)
 }
 
 async function getNftCollection() {

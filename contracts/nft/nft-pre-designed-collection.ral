@@ -13,14 +13,13 @@ Contract NFTPreDesignedCollection(
         let minter = callerAddress!()
         let nftUri = baseUri ++ u256ToString!(tokenIndex)
 
-        let initialMutState = encodeToByteVec!(minter, true)
         let initialImmState = encodeToByteVec!(nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(tokenIndex),
             nftTemplateId,
             initialImmState,
-            initialMutState,
+            #00,
             1,
             minter
         )

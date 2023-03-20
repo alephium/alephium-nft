@@ -12,14 +12,13 @@ Contract NFTOpenCollection(
         assert!(currentTokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)
         let minter = callerAddress!()
 
-        let initialMutState = encodeToByteVec!(minter, true)
         let initialImmState = encodeToByteVec!(nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(currentTokenIndex),
             nftTemplateId,
             initialImmState,
-            initialMutState,
+            #00,
             1,
             minter
         )

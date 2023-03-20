@@ -1,6 +1,0 @@
-TxScript DepositNFT(
-    nftContractId: ByteVec
-) {
-    let nft = NFT(nftContractId)
-    nft.deposit{callerAddress!() -> nftContractId:1}()
-}

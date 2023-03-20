@@ -2,7 +2,7 @@ import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { fetchNFTMarketplaceState, fetchNFTState, fetchNFTListingState, fetchNFTOpenCollectionState } from '../utils/contracts'
+import { fetchNFTMarketplaceState, fetchNFTListingState, fetchNFTOpenCollectionState } from '../utils/contracts'
 import { maxU256 } from '../utils'
 
 describe('nft marketplace', function() {
@@ -28,22 +28,15 @@ describe('nft marketplace', function() {
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
-    const nftContractAddress = addressFromContractId(nftContractId)
     await nftCollection.mintOpenNFT(
       nftCollectionContractId,
       nftUri
     )
 
-    const nftContractState = await fetchNFTState(nftContractAddress)
-    expect(nftContractState.fields.owner).toEqual(testAddress1)
-
     const tokenId = nftContractId
     const price = BigInt("1000000000000000000")
     const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
     const nftListingContractAddress = addressFromContractId(nftListingContractId)
-
-    // Deposit NFT since it is withdrawn automatically when minted
-    await nftCollection.depositNFT(nftContractId)
 
     // list NFT
     {
@@ -93,15 +86,9 @@ describe('nft marketplace', function() {
 
     // Buy the NFT
     {
-      const nftContractStateBefore = await fetchNFTState(nftContractAddress)
-      expect(nftContractStateBefore.fields.owner).toEqual(nftListingContractAddress)
-
       const totalAmount = newPrice + BigInt("1000000000000000000")
       await nftMarketplace.buyNFT(totalAmount, tokenId, nftMarketplaceContractId)
       await sleep(3000)
-
-      const nftContractStateAfter = await fetchNFTState(nftContractAddress)
-      expect(nftContractStateAfter.fields.owner).toEqual(testAddress1)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
@@ -116,19 +103,6 @@ describe('nft marketplace', function() {
       expect(nftPriceUpdatedEventFields[3].value).toEqual(testAddress1)
 
       // TODO: Verify NFTListingContract is gone
-    }
-
-    // Withdraw & Deposit NFT
-    {
-      expect((await getTokens(provider, testAddress1))).not.toContain(tokenId)
-
-      await nftCollection.withdrawNFT(nftContractId)
-
-      expect((await getTokens(provider, testAddress1))).toContain(tokenId)
-
-      await nftCollection.depositNFT(nftContractId)
-
-      expect((await getTokens(provider, testAddress1))).not.toContain(tokenId)
     }
 
     // Cancel the listing
@@ -146,17 +120,10 @@ describe('nft marketplace', function() {
       const nftListingContractId = nftListedEventFields[3].value.toString()
       const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
-      const nftContractStateBefore = await fetchNFTState(nftContractAddress)
-      expect(nftContractStateBefore.fields.owner).toEqual(nftListingContractAddress)
-
       const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
 
       await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
-
-      const nftContractStateAfter = await fetchNFTState(nftContractAddress)
-      expect(nftContractStateAfter.fields.owner).toEqual(testAddress1)
-
       // TODO: Verify NFTListingContract is gone
     }
   }, 300000)

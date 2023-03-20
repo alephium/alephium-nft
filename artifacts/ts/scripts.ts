@@ -9,10 +9,8 @@ import {
   SignerProvider,
   HexString,
 } from "@alephium/web3";
-import { default as BurnNFTScriptJson } from "../scripts/burn_nft.ral.json";
 import { default as BuyNFTScriptJson } from "../scripts/buy_nft.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/cancel_listing.ral.json";
-import { default as DepositNFTScriptJson } from "../scripts/deposit_nft.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/list_nft.ral.json";
 import { default as MintOpenNFTScriptJson } from "../scripts/mint_open_nft.ral.json";
 import { default as MintPreDesignedNFTScriptJson } from "../scripts/mint_pre_designed_nft.ral.json";
@@ -20,19 +18,6 @@ import { default as UpdateAdminScriptJson } from "../scripts/update_admin.ral.js
 import { default as UpdateComissionRateScriptJson } from "../scripts/update_commission_rate.ral.json";
 import { default as UpdateListingFeeScriptJson } from "../scripts/update_listing_fee.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/update_nft_price.ral.json";
-import { default as WithdrawNFTScriptJson } from "../scripts/withdraw_nft.ral.json";
-
-export namespace BurnNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftContractId: HexString }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(BurnNFTScriptJson);
-}
 
 export namespace BuyNFT {
   export async function execute(
@@ -63,18 +48,6 @@ export namespace CancelListing {
   }
 
   export const script = Script.fromJson(CancelListingScriptJson);
-}
-
-export namespace DepositNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftContractId: HexString }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(DepositNFTScriptJson);
 }
 
 export namespace ListNFT {
@@ -182,16 +155,4 @@ export namespace UpdateNFTPrice {
   }
 
   export const script = Script.fromJson(UpdateNFTPriceScriptJson);
-}
-
-export namespace WithdrawNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftContractId: HexString }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(WithdrawNFTScriptJson);
 }

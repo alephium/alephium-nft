@@ -6,7 +6,7 @@ import { AlephiumConnectButton, AlephiumConnectProvider } from '@alephium/web3-r
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AlephiumConnectProvider useTheme="retro">
+    <AlephiumConnectProvider useTheme="retro" addressGroup={0}>
       <title>Alephium NFT Marketplace</title>
       <div>
         <nav className="border-b p-6">

@@ -1,8 +1,8 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
-import { MintOpenNFT, MintPreDesignedNFT, BurnNFT, DepositNFT, WithdrawNFT } from '../artifacts/ts/scripts'
-import { binToHex, DeployContractResult, encodeU256, stringToHex } from '@alephium/web3'
+import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
+import { DeployContractResult } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)
@@ -64,8 +64,6 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          owner: (await this.signer.getSelectedAccount()).address,
-          isTokenWithdrawn: false,
           uri: web3.stringToHex("template_uri")
         }
       }
@@ -101,54 +99,6 @@ export class NFTCollection extends DeployHelpers {
           nftCollectionContractId: nftCollectionContractId,
           tokenIndex: tokenIndex
         }
-      }
-    )
-  }
-
-  async burnNFT(nftContractId: string, gasAmount?: number, gasPrice?: bigint) {
-    return await BurnNFT.execute(
-      this.signer,
-      {
-        initialFields: {
-          nftContractId: nftContractId
-        },
-        gasAmount: gasAmount,
-        gasPrice: gasPrice
-      }
-    )
-  }
-
-  async depositNFT(
-    nftContractId: string,
-    gasAmount?: number,
-    gasPrice?: bigint
-  ): Promise<web3.SignExecuteScriptTxResult> {
-    return await DepositNFT.execute(
-      this.signer,
-      {
-        initialFields: {
-          nftContractId: nftContractId
-        },
-        gasAmount: gasAmount,
-        gasPrice: gasPrice,
-        tokens: [{ id: nftContractId, amount: 1n }]
-      }
-    )
-  }
-
-  async withdrawNFT(
-    nftContractId: string,
-    gasAmount?: number,
-    gasPrice?: bigint
-  ): Promise<web3.SignExecuteScriptTxResult> {
-    return await WithdrawNFT.execute(
-      this.signer,
-      {
-        initialFields: {
-          nftContractId: nftContractId
-        },
-        gasAmount: gasAmount,
-        gasPrice: gasPrice
       }
     )
   }
