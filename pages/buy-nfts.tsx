@@ -1,28 +1,14 @@
 import { useEffect, useState } from 'react'
 import * as web3 from '@alephium/web3'
-import { addressFromContractId, binToHex, contractIdFromAddress, hexToString, prettifyExactAmount, SignerProvider } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress, prettifyExactAmount } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
-import { NFTListing as NFTListingFactory } from '../artifacts/ts'
-import axios from 'axios'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useRouter } from 'next/router'
-import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
 import { useContext } from '@alephium/web3-react'
-import { fetchNFTListingState, fetchNFTMarketplaceState, fetchNFTState } from '../utils/contracts'
-
-interface NFTListing {
-  price: bigint
-  name: string,
-  description: string,
-  image: string,
-  tokenId: string,
-  tokenOwner: string,
-  marketAddress: string
-  commissionRate: bigint,
-  listingContractId: string
-}
+import { fetchNFTMarketplaceState } from '../utils/contracts'
+import { fetchNFTListings, NFTListing } from '../components/nft-listing'
 
 export default function BuyNFTs() {
   const [nftListings, setNftListings] = useState([] as NFTListing[])
@@ -60,64 +46,13 @@ export default function BuyNFTs() {
     }
   }
 
-  async function loadListedNFT(event: ContractEvent): Promise<NFTListing | undefined> {
-    const tokenId = event.fields[1].value.toString()
-    const listingContractId = event.fields[3].value.toString()
-
-    if (context.signerProvider?.nodeProvider) {
-      var listingState = undefined
-
-      try {
-        listingState = await fetchNFTListingState(
-          addressFromContractId(listingContractId)
-        )
-      } catch (e) {
-        console.log(`error fetching state for ${tokenId}`, e)
-      }
-
-      if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-        const nftState = await fetchNFTState(
-          addressFromContractId(tokenId)
-        )
-
-        const metadataUri = hexToString(nftState.fields.uri as string)
-        const metadata = (await axios.get(metadataUri)).data
-        return {
-          price: listingState.fields.price as bigint,
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image,
-          tokenId: tokenId,
-          tokenOwner: listingState.fields.tokenOwner as string,
-          marketAddress: listingState.fields.marketAddress as string,
-          commissionRate: listingState.fields.commissionRate as bigint,
-          listingContractId: listingContractId
-        }
-      }
-    }
-  }
-
   async function loadListedNFTs() {
-    const items = new Map<string, NFTListing>()
-
-    if (context.signerProvider?.nodeProvider && context.signerProvider && context.account) {
-      const nftMarketplace = new NFTMarketplace(
-        context.signerProvider.nodeProvider,
-        context.signerProvider as SignerProvider
-      )
-
+    if (context.signerProvider?.nodeProvider && context.account) {
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
-
-      for (var event of events) {
-        const listedNFT = await loadListedNFT(event)
-        listedNFT && items.set(listedNFT.listingContractId, listedNFT)
-      }
+      const items = await fetchNFTListings(context.signerProvider, marketplaceContractAddress)
+      setNftListings(Array.from(items.values()))
+      setLoadingState('loaded')
     }
-
-
-    setNftListings(Array.from(items.values()))
-    setLoadingState('loaded')
   }
 
   async function buyNFT(nftListing: NFTListing) {

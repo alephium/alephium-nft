@@ -9,6 +9,7 @@ import { marketplaceContractId } from '../configs/nft'
 import axios from 'axios'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
+import { fetchNFTListings } from '../components/nft-listing'
 
 interface NFT {
   name: string,
@@ -49,7 +50,7 @@ export default function Home() {
     setNftSellingPrice(undefined)
   }
 
-  async function loadNFT(tokenId: string): Promise<NFT | undefined> {
+  async function loadNFT(tokenId: string, listed: boolean): Promise<NFT | undefined> {
     var nftState = undefined
 
     if (context.signerProvider?.nodeProvider) {
@@ -71,7 +72,7 @@ export default function Home() {
             description: metadata.description,
             image: metadata.image,
             tokenId: tokenId,
-            listed: false
+            listed
           }
         } catch {
           return undefined
@@ -90,29 +91,26 @@ export default function Home() {
   }
 
   async function loadAllNFTsForAddress(address: string) {
-    console.log("before load all nfts")
-    const allNFTs = await loadAllSelfCustodiedNFTsForAddress(address)
-    console.log("all nfts", allNFTs)
-    //return allNFTs.filter((nft) => nft.owner === address)
-    return allNFTs
+    const allNFTsOnUTXOs = await loadAllSelfCustodiedNFTsForAddress(address)
+    const allListedNFTs = await loadAllListedNFTs(address)
+    return allNFTsOnUTXOs.concat(allListedNFTs)
   }
 
-  // Then we need to add the NFTs from marketplace listings
+  async function loadAllListedNFTs(address: string) {
+    const items = []
 
-  //  async function loadAllNFTs() {
-  //    console.log("load all nfts")
-  //    const items = []
-  //    if (context.signerProvider?.nodeProvider) {
-  //      const mintNftEvents = await context.signerProvider.nodeProvider.events.getEventsContractContractaddress(defaultNftCollectionAddress, { start: 0 })
-  //      for (var event of mintNftEvents.events) {
-  //        const tokenId = event.fields[2].value as string
-  //        const nft = await loadNFT(tokenId)
-  //        nft && items.push(nft)
-  //      }
-  //    }
-  //
-  //    return items;
-  //  }
+    if (context.signerProvider) {
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
+      const listings = await fetchNFTListings(context.signerProvider, marketplaceContractAddress, address)
+      const tokenIds = Array.from(listings.values()).map((listing) => listing.tokenId)
+      for (var tokenId of tokenIds) {
+        const nft = await loadNFT(tokenId, true)
+        nft && items.push(nft)
+      }
+    }
+
+    return items
+  }
 
   async function loadAllSelfCustodiedNFTsForAddress(address: string) {
     const items = []
@@ -125,7 +123,7 @@ export default function Home() {
         .map((token) => token.id)
 
       for (var tokenId of tokenIds) {
-        const nft = await loadNFT(tokenId)
+        const nft = await loadNFT(tokenId, false)
         nft && items.push(nft)
       }
     }
@@ -209,8 +207,8 @@ export default function Home() {
                   <div className="p-4 bg-black">
                     {
                       nft.listed ?
-                        <button className="mt-4 bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Sell</button> :
-                        <button className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => sellingNFT(nft)}>Sell</button>
+                        <button className="mt-4 w-full bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Listed</button> :
+                        <button className="mt-4 w-full bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => sellingNFT(nft)}>Sell</button>
                     }
                   </div>
                 </div>
@@ -244,14 +242,14 @@ export default function Home() {
                       {
                         (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
                           <button
-                            className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
+                            className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
                             type="button"
                             onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
                           >
                             Submit
                           </button> :
                           <button
-                            className="mt-4 bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded"
+                            className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
                             type="button"
                             disabled
                           >
