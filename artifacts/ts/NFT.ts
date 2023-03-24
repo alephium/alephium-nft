@@ -64,17 +64,18 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     return new NFTInstance(address);
   }
 
-  async testGetTokenUriMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getTokenUri", params);
-  }
-
-  async testGetCollectionIdMethod(
-    params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getCollectionId", params);
-  }
+  tests = {
+    getTokenUri: async (
+      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getTokenUri", params);
+    },
+    getCollectionId: async (
+      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionId", params);
+    },
+  };
 }
 
 // Use this object to test and deploy the contract
@@ -96,27 +97,28 @@ export class NFTInstance extends ContractInstance {
     return fetchContractState(NFT, this);
   }
 
-  async callGetTokenUriMethod(
-    params?: NFTTypes.CallMethodParams<"getTokenUri">
-  ): Promise<NFTTypes.CallMethodResult<"getTokenUri">> {
-    return callMethod(
-      NFT,
-      this,
-      "getTokenUri",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetCollectionIdMethod(
-    params?: NFTTypes.CallMethodParams<"getCollectionId">
-  ): Promise<NFTTypes.CallMethodResult<"getCollectionId">> {
-    return callMethod(
-      NFT,
-      this,
-      "getCollectionId",
-      params === undefined ? {} : params
-    );
-  }
+  methods = {
+    getTokenUri: async (
+      params?: NFTTypes.CallMethodParams<"getTokenUri">
+    ): Promise<NFTTypes.CallMethodResult<"getTokenUri">> => {
+      return callMethod(
+        NFT,
+        this,
+        "getTokenUri",
+        params === undefined ? {} : params
+      );
+    },
+    getCollectionId: async (
+      params?: NFTTypes.CallMethodParams<"getCollectionId">
+    ): Promise<NFTTypes.CallMethodResult<"getCollectionId">> => {
+      return callMethod(
+        NFT,
+        this,
+        "getCollectionId",
+        params === undefined ? {} : params
+      );
+    },
+  };
 
   async multicall<Calls extends NFTTypes.MultiCallParams>(
     calls: Calls

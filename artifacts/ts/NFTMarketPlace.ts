@@ -103,86 +103,80 @@ class Factory extends ContractFactory<
     return new NFTMarketPlaceInstance(address);
   }
 
-  async testBuyNFTMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { tokenId: HexString; totalPayment: bigint }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "buyNFT", params);
-  }
-
-  async testPayCommissionMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { buyer: HexString; commission: bigint }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "payCommission", params);
-  }
-
-  async testListNFTMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { tokenId: HexString; price: bigint }
-    >
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "listNFT", params);
-  }
-
-  async testCancelNFTListingMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { tokenId: HexString }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "cancelNFTListing", params);
-  }
-
-  async testUpdateNFTPriceMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { tokenId: HexString; newPrice: bigint }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updateNFTPrice", params);
-  }
-
-  async testUpdateAdminMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { newAdmin: HexString }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updateAdmin", params);
-  }
-
-  async testUpdateListingFeeMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { newListingFee: bigint }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updateListingFee", params);
-  }
-
-  async testUpdateCommissionRateMethod(
-    params: TestContractParams<
-      NFTMarketPlaceTypes.Fields,
-      { newCommissionRate: bigint }
-    >
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updateCommissionRate", params);
-  }
-
-  async testGetListingFeeMethod(
-    params: Omit<
-      TestContractParams<NFTMarketPlaceTypes.Fields, never>,
-      "testArgs"
-    >
-  ): Promise<TestContractResult<bigint>> {
-    return testMethod(this, "getListingFee", params);
-  }
+  tests = {
+    buyNFT: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { tokenId: HexString; totalPayment: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "buyNFT", params);
+    },
+    payCommission: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { buyer: HexString; commission: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "payCommission", params);
+    },
+    listNFT: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { tokenId: HexString; price: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "listNFT", params);
+    },
+    cancelNFTListing: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { tokenId: HexString }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "cancelNFTListing", params);
+    },
+    updateNFTPrice: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { tokenId: HexString; newPrice: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "updateNFTPrice", params);
+    },
+    updateAdmin: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { newAdmin: HexString }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "updateAdmin", params);
+    },
+    updateListingFee: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { newListingFee: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "updateListingFee", params);
+    },
+    updateCommissionRate: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { newCommissionRate: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "updateCommissionRate", params);
+    },
+    getListingFee: async (
+      params: Omit<
+        TestContractParams<NFTMarketPlaceTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getListingFee", params);
+    },
+  };
 }
 
 // Use this object to test and deploy the contract
@@ -319,22 +313,23 @@ export class NFTMarketPlaceInstance extends ContractInstance {
     );
   }
 
-  async callListNFTMethod(
-    params: NFTMarketPlaceTypes.CallMethodParams<"listNFT">
-  ): Promise<NFTMarketPlaceTypes.CallMethodResult<"listNFT">> {
-    return callMethod(NFTMarketPlace, this, "listNFT", params);
-  }
-
-  async callGetListingFeeMethod(
-    params?: NFTMarketPlaceTypes.CallMethodParams<"getListingFee">
-  ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getListingFee">> {
-    return callMethod(
-      NFTMarketPlace,
-      this,
-      "getListingFee",
-      params === undefined ? {} : params
-    );
-  }
+  methods = {
+    listNFT: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"listNFT">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"listNFT">> => {
+      return callMethod(NFTMarketPlace, this, "listNFT", params);
+    },
+    getListingFee: async (
+      params?: NFTMarketPlaceTypes.CallMethodParams<"getListingFee">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getListingFee">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "getListingFee",
+        params === undefined ? {} : params
+      );
+    },
+  };
 
   async multicall<Calls extends NFTMarketPlaceTypes.MultiCallParams>(
     calls: Calls

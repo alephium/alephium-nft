@@ -75,10 +75,10 @@ async function mintOpenNFTAndVerify(
   )
 
   // NFT just minted
-  const nftByIndexResult = await nftOpenCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex } })
+  const nftByIndexResult = await nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
   // NFT doesn't exist yet
-  await expect(nftOpenCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
+  await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, Number(tokenIndex))
   await verifyNFTState(nftContractId, tokenIndex)
@@ -124,7 +124,7 @@ async function mintPreDesignedNFTAndVerify(
   )
 
   // NFT just minted
-  const nftByIndexResult = await nftPreDesignedCollectionInstance.callNftByIndexMethod({ args: { index: tokenIndex } })
+  const nftByIndexResult = await nftPreDesignedCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
   await verifyMintEvent(nftCollectionContractAddress, tokenIndex, sequence)

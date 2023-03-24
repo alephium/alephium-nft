@@ -88,47 +88,48 @@ class Factory extends ContractFactory<
     return new NFTOpenCollectionInstance(address);
   }
 
-  async testGetNameMethod(
-    params: Omit<
-      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
-      "testArgs"
-    >
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getName", params);
-  }
-
-  async testGetSymbolMethod(
-    params: Omit<
-      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
-      "testArgs"
-    >
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getSymbol", params);
-  }
-
-  async testTotalSupplyMethod(
-    params: Omit<
-      TestContractParams<NFTOpenCollectionTypes.Fields, never>,
-      "testArgs"
-    >
-  ): Promise<TestContractResult<bigint>> {
-    return testMethod(this, "totalSupply", params);
-  }
-
-  async testNftByIndexMethod(
-    params: TestContractParams<NFTOpenCollectionTypes.Fields, { index: bigint }>
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "nftByIndex", params);
-  }
-
-  async testMintMethod(
-    params: TestContractParams<
-      NFTOpenCollectionTypes.Fields,
-      { nftUri: HexString }
-    >
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "mint", params);
-  }
+  tests = {
+    getName: async (
+      params: Omit<
+        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getName", params);
+    },
+    getSymbol: async (
+      params: Omit<
+        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getSymbol", params);
+    },
+    totalSupply: async (
+      params: Omit<
+        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "totalSupply", params);
+    },
+    nftByIndex: async (
+      params: TestContractParams<
+        NFTOpenCollectionTypes.Fields,
+        { index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "nftByIndex", params);
+    },
+    mint: async (
+      params: TestContractParams<
+        NFTOpenCollectionTypes.Fields,
+        { nftUri: HexString }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "mint", params);
+    },
+  };
 }
 
 // Use this object to test and deploy the contract
@@ -167,50 +168,48 @@ export class NFTOpenCollectionInstance extends ContractInstance {
     );
   }
 
-  async callGetNameMethod(
-    params?: NFTOpenCollectionTypes.CallMethodParams<"getName">
-  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getName">> {
-    return callMethod(
-      NFTOpenCollection,
-      this,
-      "getName",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetSymbolMethod(
-    params?: NFTOpenCollectionTypes.CallMethodParams<"getSymbol">
-  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getSymbol">> {
-    return callMethod(
-      NFTOpenCollection,
-      this,
-      "getSymbol",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callTotalSupplyMethod(
-    params?: NFTOpenCollectionTypes.CallMethodParams<"totalSupply">
-  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"totalSupply">> {
-    return callMethod(
-      NFTOpenCollection,
-      this,
-      "totalSupply",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callNftByIndexMethod(
-    params: NFTOpenCollectionTypes.CallMethodParams<"nftByIndex">
-  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"nftByIndex">> {
-    return callMethod(NFTOpenCollection, this, "nftByIndex", params);
-  }
-
-  async callMintMethod(
-    params: NFTOpenCollectionTypes.CallMethodParams<"mint">
-  ): Promise<NFTOpenCollectionTypes.CallMethodResult<"mint">> {
-    return callMethod(NFTOpenCollection, this, "mint", params);
-  }
+  methods = {
+    getName: async (
+      params?: NFTOpenCollectionTypes.CallMethodParams<"getName">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getName">> => {
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "getName",
+        params === undefined ? {} : params
+      );
+    },
+    getSymbol: async (
+      params?: NFTOpenCollectionTypes.CallMethodParams<"getSymbol">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getSymbol">> => {
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "getSymbol",
+        params === undefined ? {} : params
+      );
+    },
+    totalSupply: async (
+      params?: NFTOpenCollectionTypes.CallMethodParams<"totalSupply">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"totalSupply">> => {
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "totalSupply",
+        params === undefined ? {} : params
+      );
+    },
+    nftByIndex: async (
+      params: NFTOpenCollectionTypes.CallMethodParams<"nftByIndex">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"nftByIndex">> => {
+      return callMethod(NFTOpenCollection, this, "nftByIndex", params);
+    },
+    mint: async (
+      params: NFTOpenCollectionTypes.CallMethodParams<"mint">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"mint">> => {
+      return callMethod(NFTOpenCollection, this, "mint", params);
+    },
+  };
 
   async multicall<Calls extends NFTOpenCollectionTypes.MultiCallParams>(
     calls: Calls

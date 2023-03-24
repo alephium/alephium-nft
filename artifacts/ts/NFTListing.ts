@@ -70,35 +70,42 @@ class Factory extends ContractFactory<
     return new NFTListingInstance(address);
   }
 
-  async testGetTokenOwnerMethod(
-    params: Omit<TestContractParams<NFTListingTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<HexString>> {
-    return testMethod(this, "getTokenOwner", params);
-  }
-
-  async testGetPriceMethod(
-    params: Omit<TestContractParams<NFTListingTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<bigint>> {
-    return testMethod(this, "getPrice", params);
-  }
-
-  async testBuyMethod(
-    params: TestContractParams<NFTListingTypes.Fields, { buyer: HexString }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "buy", params);
-  }
-
-  async testCancelMethod(
-    params: Omit<TestContractParams<NFTListingTypes.Fields, never>, "testArgs">
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "cancel", params);
-  }
-
-  async testUpdatePriceMethod(
-    params: TestContractParams<NFTListingTypes.Fields, { newPrice: bigint }>
-  ): Promise<TestContractResult<null>> {
-    return testMethod(this, "updatePrice", params);
-  }
+  tests = {
+    getTokenOwner: async (
+      params: Omit<
+        TestContractParams<NFTListingTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getTokenOwner", params);
+    },
+    getPrice: async (
+      params: Omit<
+        TestContractParams<NFTListingTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getPrice", params);
+    },
+    buy: async (
+      params: TestContractParams<NFTListingTypes.Fields, { buyer: HexString }>
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "buy", params);
+    },
+    cancel: async (
+      params: Omit<
+        TestContractParams<NFTListingTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "cancel", params);
+    },
+    updatePrice: async (
+      params: TestContractParams<NFTListingTypes.Fields, { newPrice: bigint }>
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "updatePrice", params);
+    },
+  };
 }
 
 // Use this object to test and deploy the contract
@@ -120,27 +127,28 @@ export class NFTListingInstance extends ContractInstance {
     return fetchContractState(NFTListing, this);
   }
 
-  async callGetTokenOwnerMethod(
-    params?: NFTListingTypes.CallMethodParams<"getTokenOwner">
-  ): Promise<NFTListingTypes.CallMethodResult<"getTokenOwner">> {
-    return callMethod(
-      NFTListing,
-      this,
-      "getTokenOwner",
-      params === undefined ? {} : params
-    );
-  }
-
-  async callGetPriceMethod(
-    params?: NFTListingTypes.CallMethodParams<"getPrice">
-  ): Promise<NFTListingTypes.CallMethodResult<"getPrice">> {
-    return callMethod(
-      NFTListing,
-      this,
-      "getPrice",
-      params === undefined ? {} : params
-    );
-  }
+  methods = {
+    getTokenOwner: async (
+      params?: NFTListingTypes.CallMethodParams<"getTokenOwner">
+    ): Promise<NFTListingTypes.CallMethodResult<"getTokenOwner">> => {
+      return callMethod(
+        NFTListing,
+        this,
+        "getTokenOwner",
+        params === undefined ? {} : params
+      );
+    },
+    getPrice: async (
+      params?: NFTListingTypes.CallMethodParams<"getPrice">
+    ): Promise<NFTListingTypes.CallMethodResult<"getPrice">> => {
+      return callMethod(
+        NFTListing,
+        this,
+        "getPrice",
+        params === undefined ? {} : params
+      );
+    },
+  };
 
   async multicall<Calls extends NFTListingTypes.MultiCallParams>(
     calls: Calls
