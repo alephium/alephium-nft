@@ -31,7 +31,7 @@
     },
     "INFTCollection": {
       "sourceFile": "nft/nft_collection_interface.ral",
-      "sourceCodeHash": "95be47fce8d93b492ed49f3995c81d1e25181e90d251b41f6d3b0b0385ce6f32",
+      "sourceCodeHash": "7d323c71c1b6eaa129b6b7ac5bacbfe7f8655ac9b900177cc54121dc28da2953",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -66,7 +66,7 @@
     },
     "NFTCollectionBase": {
       "sourceFile": "nft/nft_collection_base.ral",
-      "sourceCodeHash": "fdee5f3f9a5cf7445185061a701903a62415d83c9280b23197f5eab141b231a7",
+      "sourceCodeHash": "2b55af3b31a58393fd2def50b25312439b6af3fcf62bd4e6dbc2c94ca01c0aed",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -87,16 +87,16 @@
     },
     "NFTOpenCollection": {
       "sourceFile": "nft/nft_open_collection.ral",
-      "sourceCodeHash": "e3ff4e868a044d0198b65e7366aeacdf69d925c5162bc27283d0e2630b2497fa",
+      "sourceCodeHash": "59e5d4a6dc7d70efb651d668cf69525399367b51354b421836ca584c6505c142",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "2acc8b23be8debce084b4adfc46476bc462ba4ce27b0f82991630df945501f23",
+      "codeHashDebug": "49dc93ece9ac38dcaadc99c9949f02e0154588a89148548c53181ce781c1d3f1",
       "warnings": []
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "d756870237ae89fd3b212dec43b3e9fe873b15a43b475eabc34d93a4f96b503d",
+      "sourceCodeHash": "324e839c6e4309cd2b023f74b521ac90534904ccf52446c58bbd132ee98f9cd9",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "9301ca6e8075f1404006642735728e2c250cd1dc4d3927c14a05a2f2c90e19a4",
+      "codeHashDebug": "4416caed433fb5d708e5846255e980f57ec70544f8a1b8edb22465306ad19a7e",
       "warnings": []
     },
     "UpdateAdmin": {

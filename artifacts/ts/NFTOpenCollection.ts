@@ -30,8 +30,7 @@ import { default as NFTOpenCollectionContractJson } from "../nft/nft_open_collec
 export namespace NFTOpenCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
-    name: HexString;
-    symbol: HexString;
+    uri: HexString;
     totalSupply: bigint;
     currentTokenIndex: bigint;
   };
@@ -45,11 +44,7 @@ export namespace NFTOpenCollectionTypes {
   }>;
 
   export interface CallMethodTable {
-    getName: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
-    };
-    getSymbol: {
+    getCollectionUri: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -89,21 +84,13 @@ class Factory extends ContractFactory<
   }
 
   tests = {
-    getName: async (
+    getCollectionUri: async (
       params: Omit<
         TestContractParams<NFTOpenCollectionTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getName", params);
-    },
-    getSymbol: async (
-      params: Omit<
-        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getSymbol", params);
+      return testMethod(this, "getCollectionUri", params);
     },
     totalSupply: async (
       params: Omit<
@@ -137,7 +124,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "2acc8b23be8debce084b4adfc46476bc462ba4ce27b0f82991630df945501f23"
+    "49dc93ece9ac38dcaadc99c9949f02e0154588a89148548c53181ce781c1d3f1"
   )
 );
 
@@ -169,23 +156,13 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   methods = {
-    getName: async (
-      params?: NFTOpenCollectionTypes.CallMethodParams<"getName">
-    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getName">> => {
+    getCollectionUri: async (
+      params?: NFTOpenCollectionTypes.CallMethodParams<"getCollectionUri">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getCollectionUri">> => {
       return callMethod(
         NFTOpenCollection,
         this,
-        "getName",
-        params === undefined ? {} : params
-      );
-    },
-    getSymbol: async (
-      params?: NFTOpenCollectionTypes.CallMethodParams<"getSymbol">
-    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getSymbol">> => {
-      return callMethod(
-        NFTOpenCollection,
-        this,
-        "getSymbol",
+        "getCollectionUri",
         params === undefined ? {} : params
       );
     },

@@ -30,8 +30,7 @@ import { default as NFTPreDesignedCollectionContractJson } from "../nft/nft-pre-
 export namespace NFTPreDesignedCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
-    name: HexString;
-    symbol: HexString;
+    uri: HexString;
     totalSupply: bigint;
     baseUri: HexString;
   };
@@ -45,11 +44,7 @@ export namespace NFTPreDesignedCollectionTypes {
   }>;
 
   export interface CallMethodTable {
-    getName: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
-    };
-    getSymbol: {
+    getCollectionUri: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -89,21 +84,13 @@ class Factory extends ContractFactory<
   }
 
   tests = {
-    getName: async (
+    getCollectionUri: async (
       params: Omit<
         TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getName", params);
-    },
-    getSymbol: async (
-      params: Omit<
-        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getSymbol", params);
+      return testMethod(this, "getCollectionUri", params);
     },
     totalSupply: async (
       params: Omit<
@@ -137,7 +124,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "9301ca6e8075f1404006642735728e2c250cd1dc4d3927c14a05a2f2c90e19a4"
+    "4416caed433fb5d708e5846255e980f57ec70544f8a1b8edb22465306ad19a7e"
   )
 );
 
@@ -169,23 +156,15 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
   }
 
   methods = {
-    getName: async (
-      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getName">
-    ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"getName">> => {
+    getCollectionUri: async (
+      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getCollectionUri">
+    ): Promise<
+      NFTPreDesignedCollectionTypes.CallMethodResult<"getCollectionUri">
+    > => {
       return callMethod(
         NFTPreDesignedCollection,
         this,
-        "getName",
-        params === undefined ? {} : params
-      );
-    },
-    getSymbol: async (
-      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getSymbol">
-    ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"getSymbol">> => {
-      return callMethod(
-        NFTPreDesignedCollection,
-        this,
-        "getSymbol",
+        "getCollectionUri",
         params === undefined ? {} : params
       );
     },

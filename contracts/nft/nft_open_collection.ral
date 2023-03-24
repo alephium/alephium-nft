@@ -2,11 +2,10 @@
 // to mint NFTs one-by-one
 Contract NFTOpenCollection(
     nftTemplateId: ByteVec,
-    name: ByteVec,
-    symbol: ByteVec,
+    uri: ByteVec,
     totalSupply: U256,
     mut currentTokenIndex: U256
-) extends NFTCollectionBase(name, symbol, totalSupply) {
+) extends NFTCollectionBase(uri, totalSupply) {
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         assert!(currentTokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)

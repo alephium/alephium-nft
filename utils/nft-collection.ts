@@ -9,8 +9,7 @@ export class NFTCollection extends DeployHelpers {
   nftTemplateId: string | undefined = undefined
 
   async createOpenCollection(
-    collectionName: string,
-    collectionSymbol: string,
+    collectionUri: string,
     totalSupply: bigint
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
@@ -20,8 +19,7 @@ export class NFTCollection extends DeployHelpers {
       {
         initialFields: {
           nftTemplateId,
-          name: web3.stringToHex(collectionName),
-          symbol: web3.stringToHex(collectionSymbol),
+          uri: web3.stringToHex(collectionUri),
           totalSupply,
           currentTokenIndex: 0n
         }
@@ -32,8 +30,7 @@ export class NFTCollection extends DeployHelpers {
   }
 
   async createPreDesignedCollection(
-    collectionName: string,
-    collectionSymbol: string,
+    collectionUri: string,
     baseUri: string,
     totalSupply: bigint
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
@@ -44,8 +41,7 @@ export class NFTCollection extends DeployHelpers {
       {
         initialFields: {
           nftTemplateId,
-          name: web3.stringToHex(collectionName),
-          symbol: web3.stringToHex(collectionSymbol),
+          uri: web3.stringToHex(collectionUri),
           baseUri: web3.stringToHex(baseUri),
           totalSupply
         }

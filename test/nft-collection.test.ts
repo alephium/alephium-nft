@@ -14,7 +14,7 @@ describe('nft collection', function() {
     nftCollection.buildProject(false)
 
     const totalSupply = 3n
-    const nftCollectionDeployTx = await nftCollection.createOpenCollection("CryptoPunk", "CP", totalSupply)
+    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri", totalSupply)
     const nftCollectionInstance = nftCollectionDeployTx.instance
 
     // First 3 NFTs should be ok
@@ -40,8 +40,7 @@ describe('nft collection', function() {
   it('should test that nft in pre designed collection can not be minted twice', async () => {
     const nftCollection = await getNFTCollection()
     const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
-      "CryptoPunk",
-      "CP",
+      "https://crypto-punk-uri",
       "https://cryptopunks.app/cryptopunks/details/",
       3n
     )
@@ -90,8 +89,7 @@ async function testPreDesignedNFT(tokenIndexes: bigint[]) {
   const nftCollection = await getNFTCollection()
   const totalSupply = BigInt(tokenIndexes.length)
   const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
-    "CryptoPunk",
-    "CP",
+    "https://crypto-punk-uri",
     "https://cryptopunks.app/cryptopunks/details/",
     totalSupply
   )

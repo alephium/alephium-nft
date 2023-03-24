@@ -2,11 +2,10 @@
 // in advance and sell to the public for minting
 Contract NFTPreDesignedCollection(
     nftTemplateId: ByteVec,
-    name: ByteVec,
-    symbol: ByteVec,
+    uri: ByteVec,
     totalSupply: U256,
     baseUri: ByteVec
-) extends NFTCollectionBase(name, symbol, totalSupply) {
+) extends NFTCollectionBase(uri, totalSupply) {
     @using(preapprovedAssets = true)
     pub fn mint(tokenIndex: U256) -> (ByteVec) {
         assert!(tokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)

@@ -12,8 +12,7 @@ const deployDefaultNFTCollection: DeployFunction<Settings> = async (
   const initialFields = {
     nftTemplateId: nftTemplateResult.contractId,
     currentTokenIndex: 0n,
-    name: stringToHex("DefaultCollection"),
-    symbol: stringToHex("Default Collection"),
+    uri: stringToHex("https://metadata.url"),
     totalSupply: maxU256
   }
 

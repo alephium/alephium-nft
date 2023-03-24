@@ -16,7 +16,8 @@ export interface NFT {
 export interface NFTCollection {
   id: string,
   name: string,
-  symbol: string,
+  description: string,
+  image: string,
   nfts: NFT[]
 }
 
@@ -117,10 +118,12 @@ async function fetchNFTCollections(
       if (index === -1) {
         const collectionAddress = addressFromContractId(nft.collectionId)
         const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+        const metadata = (await axios.get(collectionState.fields.uri)).data
         items.push({
           id: nft.collectionId,
-          name: hexToString(collectionState.fields.name),
-          symbol: hexToString(collectionState.fields.symbol),
+          name: metadata.name,
+          description: metadata.description,
+          image: metadata.image,
           nfts: [nft]
         })
       } else {
