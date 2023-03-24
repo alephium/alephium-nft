@@ -29,7 +29,6 @@ describe('nft collection', function() {
     )).rejects.toThrow(Error)
   }, 60000)
 
-
   it('should test minting nft in pre designed collection sequentially', async () => {
     await testPreDesignedNFT([0n, 1n, 2n])
   }, 60000)

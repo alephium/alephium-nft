@@ -2,7 +2,7 @@ import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
-import { DeployContractResult } from '@alephium/web3'
+import { DeployContractResult, ONE_ALPH } from '@alephium/web3'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)
@@ -84,7 +84,8 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           nftCollectionContractId: nftCollectionContractId,
           uri: web3.stringToHex(nftUri)
-        }
+        },
+        attoAlphAmount: BigInt(1.1e18)
       }
     )
   }
@@ -99,7 +100,8 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           nftCollectionContractId: nftCollectionContractId,
           tokenIndex: tokenIndex
-        }
+        },
+        attoAlphAmount: BigInt(1.1e18)
       }
     )
   }

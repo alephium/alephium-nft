@@ -1,5 +1,5 @@
 {
-  "version": "v1.7.3",
+  "version": "v2.0.1",
   "name": "UpdateComissionRate",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000107",
   "fieldsSig": {

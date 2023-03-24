@@ -2,7 +2,8 @@ import {
   web3,
   Number256,
   DeployContractResult,
-  ExecuteScriptResult
+  ExecuteScriptResult,
+  ONE_ALPH
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
@@ -11,6 +12,8 @@ import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
 
 export class NFTMarketplace extends DeployHelpers {
+  defaultListingFee: bigint = 10n          // Listing price default to 10 ALPH
+  defaultCommissionRate: bigint = 200n     // 200 basis point: 2%
 
   async create(): Promise<DeployContractResult<NFTMarketPlaceInstance>> {
 
@@ -34,8 +37,8 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractId,
           admin: adminAddress,
-          listingFee: 10n,    // Listing price default to 10 ALPH
-          commissionRate: 200n  // 200 basis point: 2%
+          listingFee: this.defaultListingFee,
+          commissionRate: this.defaultCommissionRate
         }
       }
     )
@@ -56,6 +59,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: BigInt(price),
           marketPlaceContractId: marketPlaceContractId
         },
+        attoAlphAmount: this.defaultListingFee + ONE_ALPH,
         tokens: [
           {
             id: tokenId,
@@ -95,7 +99,8 @@ export class NFTMarketplace extends DeployHelpers {
           totalPayment: BigInt(totalPayment),
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
-        }
+        },
+        attoAlphAmount: totalPayment
       }
     )
   }

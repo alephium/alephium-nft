@@ -42,7 +42,6 @@ describe('nft marketplace', function() {
     {
       await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId)
       await sleep(3000)
-
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
         { start: 0, group: 0 }
@@ -82,7 +81,6 @@ describe('nft marketplace', function() {
       expect(BigInt(+nftPriceUpdatedEventFields[2].value)).toEqual(newPrice)
     }
     // TODO: verify other signer won't be able to update price
-
 
     // Buy the NFT
     {

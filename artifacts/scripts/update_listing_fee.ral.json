@@ -1,5 +1,5 @@
 {
-  "version": "v1.7.3",
+  "version": "v2.0.1",
   "name": "UpdateListingFee",
   "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000106",
   "fieldsSig": {
