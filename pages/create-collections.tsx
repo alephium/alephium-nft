@@ -1,20 +1,18 @@
-import { web3, node } from '@alephium/web3'
-import { useEffect, useState } from 'react'
+import * as web3 from '@alephium/web3'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { NFTCollection } from '../utils/nft-collection'
 import { defaultNFTCollectionContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
-import { fetchNFTCollection, NFTCollection as NFTCollectionInfo } from '../components/nft'
+import { SignerProvider } from '@alephium/web3'
 
-export default function MintNFTs() {
-  const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)
+export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '' })
+  const [formInput, updateFormInput] = useState({ name: '', description: '', totalSupply: '' })
   const context = useContext()
   const router = useRouter()
-  const { collectionId } = router.query
 
   const [
     ongoingTxId,
@@ -25,16 +23,6 @@ export default function MintNFTs() {
     setTxStatusCallback,
     resetTxStatus
   ] = useTxStatusStates()
-
-
-  useEffect(() => {
-    if (!!collectionId && context.signerProvider?.nodeProvider) {
-      web3.setCurrentNodeProvider(context.signerProvider?.nodeProvider)
-      fetchNFTCollection(collectionId as string).then((fetchedCollection) => (
-        setCollection(fetchedCollection)
-      ))
-    }
-  }, [collectionId, context.signerProvider?.nodeProvider])
 
   async function onChange(e: any) {
     const file = e.target.files[0]
@@ -53,8 +41,8 @@ export default function MintNFTs() {
   }
 
   async function uploadToIPFS(): Promise<string | undefined> {
-    const { name, description } = formInput
-    if (!name || !description || !fileUrl) return
+    const { name, description, totalSupply } = formInput
+    if (!name || !description || !fileUrl || !isPositiveNumber(totalSupply)) return
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name, description, image: fileUrl
@@ -69,28 +57,31 @@ export default function MintNFTs() {
     }
   }
 
-  async function mintNFT() {
+  async function createCollection() {
     const uri = await uploadToIPFS()
-    if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
+    if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
-
-      const mintNFTTxResult = await nftCollection.mintOpenNFT(collection.id, uri)
-      console.debug('mintNFTTxResult', mintNFTTxResult)
+      formInput.totalSupply
+      // TODO: Figure out UI to create collection, right now use default collection id
+      const nftCollectionContractId = defaultNFTCollectionContractId
+      const mintNFTTxResult = await nftCollection.createOpenCollection(uri, BigInt(formInput.totalSupply))
+      console.debug('create collection TxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)
       setOngoingTxDescription('minting NFT')
 
+      console.log("create collection TxResult.contractid and address", mintNFTTxResult.contractId, mintNFTTxResult.contractAddress)
       let txNotFoundRetries: number = 0
-      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
+      setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
-          router.push('/my-nfts')
+          //router.push('/my-nfts')
         } else if (txStatus.type === 'TxNotFound') {
           if (txNotFoundRetries >= 10) {
-            console.info('Mint NFT transaction not found after 30 seconds, give up.')
+            console.info('Create collection transaction not found after 30 seconds, give up.')
             resetTxStatus()
           } else {
             txNotFoundRetries = txNotFoundRetries + 1
-            console.info('Mint NFT transaction not found, retrying...')
+            console.info('Create collection transaction not found, retrying...')
           }
         }
       })
@@ -99,49 +90,35 @@ export default function MintNFTs() {
     }
   }
 
-  if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
-  console.log("collection", collection)
+  function isPositiveNumber(str: string): Boolean {
+    const num = parseInt(str, 10)
+    return !isNaN(num) && num > 0
+  }
+
   return (
     <>
       {
         ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
       }
 
-      {
-        collection && (
-          <div className="flex justify-center">
-            <table className="w-1/2 flex flex-col pb-12">
-              <tbody>
-                <tr>
-                  <td>
-                    <img className="rounded mt-4" src={collection.image} />
-                  </td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Collection Name</b>: {collection.name}</td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Description</b>: {collection.description}</td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Total Supply</b>: {collection.totalSupply.toString()}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )
-      }
       <div className="flex justify-center">
         <div className="w-1/2 flex flex-col pb-12">
           <input
-            placeholder="Asset Name"
+            placeholder="Collection Name"
             className="mt-2 border rounded p-4"
             onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
           />
           <textarea
-            placeholder="Asset Description"
+            placeholder="Collection Description"
             className="mt-2 border rounded p-4"
             onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
+          />
+          <input
+            placeholder="Total Supply"
+            type="number"
+            min={1}
+            className="mt-2 border rounded p-4"
+            onChange={e => updateFormInput({ ...formInput, totalSupply: e.target.value })}
           />
           <input
             type="file"
@@ -154,8 +131,8 @@ export default function MintNFTs() {
               <img className="rounded mt-4" width="350" src={fileUrl} />
             )
           }
-          <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-            Mint NFT
+          <button onClick={createCollection} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
+            Create Collection
           </button>
         </div>
       </div>

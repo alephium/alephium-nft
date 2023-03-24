@@ -28,8 +28,6 @@ export default function Home() {
     resetTxStatus
   ] = useTxStatusStates()
 
-  console.debug('selected account in my-nft', context.account)
-
   useEffect(() => {
     loadNFTs()
   }, [context.account])

@@ -17,6 +17,7 @@ export interface NFTCollection {
   id: string,
   name: string,
   description: string,
+  totalSupply: bigint,
   image: string,
   nfts: NFT[]
 }
@@ -81,6 +82,7 @@ export async function fetchNFTsFromUTXOs(
       .filter((token) => +token.amount == 1)
       .map((token) => token.id)
 
+    console.log("tokenIds", tokenIds)
     return await fetchNFTCollections(signerProvider, tokenIds, false)
   }
 
@@ -103,6 +105,25 @@ export function mergeNFTCollections(
   return right
 }
 
+export async function fetchNFTCollection(
+  collectionId: string
+): Promise<NFTCollection> {
+  const collectionState = await fetchNFTOpenCollectionState(addressFromContractId(collectionId))
+  const metadataUri = hexToString(collectionState.fields.uri)
+  //const metadata = (await axios.get(collectionState.fields.uri)).data
+  //const nftState = await fetchNFTState(nftAddress)
+  const metadata = (await axios.get(metadataUri)).data
+  console.log("metadata", metadata)
+  return {
+    id: collectionId,
+    name: metadata.name,
+    description: metadata.description,
+    totalSupply: collectionState.fields.totalSupply,
+    image: metadata.image,
+    nfts: []
+  }
+}
+
 async function fetchNFTCollections(
   signerProvider: SignerProvider,
   tokenIds: string[],
@@ -116,13 +137,19 @@ async function fetchNFTCollections(
     if (nft) {
       const index = items.findIndex((item) => item.id === nft.collectionId)
       if (index === -1) {
-        const collectionAddress = addressFromContractId(nft.collectionId)
-        const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-        const metadata = (await axios.get(collectionState.fields.uri)).data
+        const nftAddress = addressFromContractId(nft.tokenId)
+        // FIXME: use collection instead
+        //const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+        //const metadata = (await axios.get(collectionState.fields.uri)).data
+        const nftState = await fetchNFTState(nftAddress)
+        const metadataUri = hexToString(nftState.fields.uri)
+        const metadata = (await axios.get(metadataUri)).data
+        console.log("metadata", metadata)
         items.push({
           id: nft.collectionId,
           name: metadata.name,
           description: metadata.description,
+          totalSupply: 2n,
           image: metadata.image,
           nfts: [nft]
         })
