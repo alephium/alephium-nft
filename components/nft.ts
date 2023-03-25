@@ -1,4 +1,4 @@
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex } from "@alephium/web3"
 import { fetchNFTOpenCollectionState, fetchNFTState } from "../utils/contracts"
 import { NFT as NFTFactory } from '../artifacts/ts'
 import axios from "axios"
@@ -25,15 +25,14 @@ export interface NFTCollection {
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
 export async function fetchNFT(
-  signerProvider: SignerProvider,
   tokenId: string,
   listed: boolean
 ): Promise<NFT | undefined> {
   var nftState = undefined
 
-  if (signerProvider.nodeProvider) {
+  const nodeProvider = web3.getCurrentNodeProvider()
+  if (nodeProvider) {
     try {
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
       nftState = await fetchNFTState(
         addressFromTokenId(tokenId)
       )
@@ -67,23 +66,22 @@ export async function fetchListedNFTs(
 ): Promise<NFTCollection[]> {
   const listings = await fetchNFTListings(signerProvider, marketplaceContractAddress, address)
   const tokenIds = Array.from(listings.values()).map((listing) => listing.tokenId)
-  return await fetchNFTCollections(signerProvider, tokenIds, true)
+  return await fetchNFTCollections(tokenIds, true)
 }
 
 export async function fetchNFTsFromUTXOs(
-  signerProvider: SignerProvider,
   address: string
 ): Promise<NFTCollection[]> {
 
-  if (signerProvider.nodeProvider) {
-    const balances = await signerProvider.nodeProvider.addresses.getAddressesAddressBalance(address)
+  const nodeProvider = web3.getCurrentNodeProvider()
+  if (nodeProvider) {
+    const balances = await nodeProvider.addresses.getAddressesAddressBalance(address)
     const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
     const tokenIds = tokenBalances
       .filter((token) => +token.amount == 1)
       .map((token) => token.id)
 
-    console.log("tokenIds", tokenIds)
-    return await fetchNFTCollections(signerProvider, tokenIds, false)
+    return await fetchNFTCollections(tokenIds, false)
   }
 
   return [];
@@ -108,43 +106,55 @@ export function mergeNFTCollections(
 export async function fetchNFTCollection(
   collectionId: string
 ): Promise<NFTCollection> {
-  const collectionState = await fetchNFTOpenCollectionState(addressFromContractId(collectionId))
+  const collectionAddress = addressFromContractId(collectionId)
+  const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
   const metadataUri = hexToString(collectionState.fields.uri)
-  //const metadata = (await axios.get(collectionState.fields.uri)).data
-  //const nftState = await fetchNFTState(nftAddress)
+  const explorerProvider = web3.getCurrentExplorerProvider()
+
   const metadata = (await axios.get(metadataUri)).data
-  console.log("metadata", metadata)
+  const nfts = []
+  if (explorerProvider) {
+    const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
+    for (var tokenAddress of subContracts || []) {
+      const tokenId = binToHex(contractIdFromAddress(tokenAddress))
+      const nft = await fetchNFT(tokenId, false)
+      if (nft) {
+        nfts.push(nft)
+      }
+    }
+  }
+
   return {
     id: collectionId,
     name: metadata.name,
     description: metadata.description,
     totalSupply: collectionState.fields.totalSupply,
     image: metadata.image,
-    nfts: []
+    nfts
   }
 }
 
 async function fetchNFTCollections(
-  signerProvider: SignerProvider,
   tokenIds: string[],
   listed: boolean,
 ): Promise<NFTCollection[]> {
   const items = []
 
   for (var tokenId of tokenIds) {
-    const nft = await fetchNFT(signerProvider, tokenId, listed)
+    const nft = await fetchNFT(tokenId, listed)
 
     if (nft) {
       const index = items.findIndex((item) => item.id === nft.collectionId)
       if (index === -1) {
-        const nftAddress = addressFromContractId(nft.tokenId)
+        //const nftAddress = addressFromContractId(nft.tokenId)
+        const collectionAddress = addressFromContractId(nft.collectionId)
         // FIXME: use collection instead
-        //const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+        const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+        const metadataUri = hexToString(collectionState.fields.uri)
         //const metadata = (await axios.get(collectionState.fields.uri)).data
-        const nftState = await fetchNFTState(nftAddress)
-        const metadataUri = hexToString(nftState.fields.uri)
+        //const nftState = await fetchNFTState(nftAddress)
+        //const metadataUri = hexToString(nftState.fields.uri)
         const metadata = (await axios.get(metadataUri)).data
-        console.log("metadata", metadata)
         items.push({
           id: nft.collectionId,
           name: metadata.name,

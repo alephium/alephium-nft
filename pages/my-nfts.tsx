@@ -1,4 +1,4 @@
-import { node, ONE_ALPH } from '@alephium/web3'
+import { node, ONE_ALPH, web3 } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
@@ -40,8 +40,9 @@ export default function Home() {
 
   async function loadNFTs() {
     if (context.signerProvider?.nodeProvider && context.account) {
+      web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const fetchedNFTCollections = await fetchNFTsFromUTXOs(context.signerProvider, context.account.address)
+      const fetchedNFTCollections = await fetchNFTsFromUTXOs(context.account.address)
       setNFTCollections(fetchedNFTCollections)
 
       fetchListedNFTs(
@@ -107,7 +108,9 @@ export default function Home() {
             nftCollections.map((nftCollection, _i) => {
               return (
                 <>
-                  <label className="font-bold">{nftCollection.name}</label>
+                  <label><b>Collection</b>: </label><a href={`/collections?collectionId=${nftCollection.id}`}>{nftCollection.name}</a>
+                  <br />
+                  <label><b>Description</b>: {nftCollection.description}</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
                     {
                       nftCollection.nfts.map((nft, i) => {

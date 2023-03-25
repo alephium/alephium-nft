@@ -63,7 +63,6 @@ export default function CreateCollections() {
       const nftCollection = new NFTCollection(context.signerProvider)
       formInput.totalSupply
       // TODO: Figure out UI to create collection, right now use default collection id
-      const nftCollectionContractId = defaultNFTCollectionContractId
       const mintNFTTxResult = await nftCollection.createOpenCollection(uri, BigInt(formInput.totalSupply))
       console.debug('create collection TxResult', mintNFTTxResult)
       setOngoingTxId(mintNFTTxResult.txId)

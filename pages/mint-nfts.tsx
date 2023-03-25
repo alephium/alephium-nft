@@ -100,7 +100,7 @@ export default function MintNFTs() {
   }
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
-  console.log("collection", collection)
+
   return (
     <>
       {
