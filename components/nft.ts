@@ -18,6 +18,7 @@ export interface NFTCollection {
   name: string,
   description: string,
   totalSupply: bigint,
+  currentTokenIndex: bigint,
   image: string,
   nfts: NFT[]
 }
@@ -129,6 +130,7 @@ export async function fetchNFTCollection(
     name: metadata.name,
     description: metadata.description,
     totalSupply: collectionState.fields.totalSupply,
+    currentTokenIndex: collectionState.fields.currentTokenIndex,
     image: metadata.image,
     nfts
   }
@@ -146,20 +148,16 @@ async function fetchNFTCollections(
     if (nft) {
       const index = items.findIndex((item) => item.id === nft.collectionId)
       if (index === -1) {
-        //const nftAddress = addressFromContractId(nft.tokenId)
         const collectionAddress = addressFromContractId(nft.collectionId)
-        // FIXME: use collection instead
         const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
         const metadataUri = hexToString(collectionState.fields.uri)
-        //const metadata = (await axios.get(collectionState.fields.uri)).data
-        //const nftState = await fetchNFTState(nftAddress)
-        //const metadataUri = hexToString(nftState.fields.uri)
         const metadata = (await axios.get(metadataUri)).data
         items.push({
           id: nft.collectionId,
           name: metadata.name,
           description: metadata.description,
-          totalSupply: 2n,
+          totalSupply: collectionState.fields.totalSupply,
+          currentTokenIndex: collectionState.fields.currentTokenIndex,
           image: metadata.image,
           nfts: [nft]
         })

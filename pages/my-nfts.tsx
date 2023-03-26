@@ -6,6 +6,7 @@ import { marketplaceContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
 import { fetchListedNFTs, fetchNFTsFromUTXOs, mergeNFTCollections, NFT, NFTCollection } from '../components/nft'
+import Link from 'next/link'
 
 type LoadingState = 'loaded' | 'not-loaded'
 
@@ -108,7 +109,7 @@ export default function Home() {
             nftCollections.map((nftCollection, _i) => {
               return (
                 <>
-                  <label><b>Collection</b>: </label><a href={`/collections?collectionId=${nftCollection.id}`}>{nftCollection.name}</a>
+                  <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}><a className="mr-6 text-blue-500"> {nftCollection.name} </a></Link>
                   <br />
                   <label><b>Description</b>: {nftCollection.description}</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">

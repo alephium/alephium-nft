@@ -7,6 +7,7 @@ import { marketplaceContractId } from '../configs/nft'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
 import { fetchNFTCollection, fetchNFTsForCollection, NFTCollection as NFTCollectionInfo } from '../components/nft'
+import Link from 'next/link'
 
 export default function Collections() {
   const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)
@@ -62,6 +63,18 @@ export default function Collections() {
                   </tr>
                   <tr>
                     <td className="whitespace-nowrap text-sm font-medium"><b>Total Supply</b>: {collection.totalSupply.toString()}</td>
+                  </tr>
+                  <tr>
+                    <td className="whitespace-nowrap text-sm font-medium">
+                      <b>Already Minted</b>: {collection.currentTokenIndex.toString().concat(',  ')}
+                      {
+                        collection.currentTokenIndex < collection.totalSupply ? (
+                          <Link href={`/mint-nfts?collectionId=${collection.id}`}><a className="mr-6 text-blue-500">mint more </a></Link>
+                        ) : (
+                          <label>can not mint more</label>
+                        )
+                      }
+                    </td>
                   </tr>
                 </tbody>
               </table>
