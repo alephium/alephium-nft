@@ -17,11 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                 My NFTs
               </a>
             </Link>
-            <Link href="/mint-nfts">
-              <a className="mr-6 text-pink-500">
-                Mint NFTs
-              </a>
-            </Link>
             <Link href="/create-collections">
               <a className="mr-6 text-pink-500">
                 Create Collections

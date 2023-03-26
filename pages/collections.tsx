@@ -1,17 +1,13 @@
-import { web3, node, addressFromContractId } from '@alephium/web3'
+import { web3 } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { NFTCollection } from '../utils/nft-collection'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
-import { marketplaceContractId } from '../configs/nft'
-import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
-import { fetchNFTCollection, fetchNFTsForCollection, NFTCollection as NFTCollectionInfo } from '../components/nft'
+import { fetchNFTCollection, NFTCollection } from '../components/nft'
 import Link from 'next/link'
 
 export default function Collections() {
-  const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)
-  const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
+  const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
   const context = useContext()
   const router = useRouter()
   const { collectionId } = router.query
@@ -34,7 +30,7 @@ export default function Collections() {
         setCollection(fetchedCollection)
       ))
     }
-  }, [collectionId, context.signerProvider?.nodeProvider])
+  }, [collectionId, context.signerProvider?.nodeProvider, context.signerProvider?.explorerProvider])
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
 

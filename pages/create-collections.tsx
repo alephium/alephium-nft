@@ -1,18 +1,14 @@
 import * as web3 from '@alephium/web3'
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 import { NFTCollection } from '../utils/nft-collection'
-import { defaultNFTCollectionContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
-import { SignerProvider } from '@alephium/web3'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '', totalSupply: '' })
   const context = useContext()
-  const router = useRouter()
 
   const [
     ongoingTxId,
