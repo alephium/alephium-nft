@@ -6,6 +6,7 @@ import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection as NFTCollectionInfo } from '../components/nft'
+import Link from 'next/link'
 
 export default function MintNFTs() {
   const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)
@@ -125,39 +126,53 @@ export default function MintNFTs() {
                 <tr>
                   <td className="whitespace-nowrap text-sm font-medium"><b>Total Supply</b>: {collection.totalSupply.toString()}</td>
                 </tr>
+                <tr>
+                  <td className="whitespace-nowrap text-sm font-medium">
+                    <b>Already Minted</b>: {collection.currentTokenIndex.toString()}
+                    {
+                      collection.currentTokenIndex >= collection.totalSupply ? (
+                        <label>, can not mint more</label>
+                      ) : null
+                    }
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         )
       }
-      <div className="flex justify-center">
-        <div className="w-1/2 flex flex-col pb-12">
-          <input
-            placeholder="Asset Name"
-            className="mt-2 border rounded p-4"
-            onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
-          />
-          <textarea
-            placeholder="Asset Description"
-            className="mt-2 border rounded p-4"
-            onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
-          />
-          <input
-            type="file"
-            name="Asset"
-            className="my-4"
-            onChange={onChange}
-          />
-          {
-            fileUrl && (
-              <img className="rounded mt-4" width="350" src={fileUrl} />
-            )
-          }
-          <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-            Mint NFT
-          </button>
-        </div>
-      </div>
+      {
+        collection && collection.currentTokenIndex < collection.totalSupply ? (
+          <div className="flex justify-center">
+            <div className="w-1/2 flex flex-col pb-12">
+              <input
+                placeholder="Asset Name"
+                className="mt-2 border rounded p-4"
+                onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
+              />
+              <textarea
+                placeholder="Asset Description"
+                className="mt-2 border rounded p-4"
+                onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
+              />
+              <input
+                type="file"
+                name="Asset"
+                className="my-4"
+                onChange={onChange}
+              />
+              {
+                fileUrl && (
+                  <img className="rounded mt-4" width="350" src={fileUrl} />
+                )
+              }
+              <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
+                Mint NFT
+              </button>
+            </div>
+          </div>
+        ) : null
+      }
     </>
   )
 }
