@@ -4,11 +4,13 @@ import { NFTCollection } from '../utils/nft-collection'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useContext } from '@alephium/web3-react'
+import { useRouter } from 'next/router'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '', totalSupply: '' })
   const context = useContext()
+  const router = useRouter()
 
   const [
     ongoingTxId,
@@ -59,17 +61,16 @@ export default function CreateCollections() {
       const nftCollection = new NFTCollection(context.signerProvider)
       formInput.totalSupply
       // TODO: Figure out UI to create collection, right now use default collection id
-      const mintNFTTxResult = await nftCollection.createOpenCollection(uri, BigInt(formInput.totalSupply))
-      console.debug('create collection TxResult', mintNFTTxResult)
-      setOngoingTxId(mintNFTTxResult.txId)
+      const createCollectionTxResult = await nftCollection.createOpenCollection(uri, BigInt(formInput.totalSupply))
+      console.debug('create collection TxResult', createCollectionTxResult)
+      setOngoingTxId(createCollectionTxResult.txId)
       setOngoingTxDescription('minting NFT')
 
-      console.log("create collection TxResult.contractid and address", mintNFTTxResult.contractId, mintNFTTxResult.contractAddress)
       let txNotFoundRetries: number = 0
       setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
-          //router.push('/my-nfts')
+          router.push(`/collections?collectionId=${createCollectionTxResult.contractId}`)
         } else if (txStatus.type === 'TxNotFound') {
           if (txNotFoundRetries >= 10) {
             console.info('Create collection transaction not found after 30 seconds, give up.')
