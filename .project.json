@@ -31,7 +31,7 @@
     },
     "INFTCollection": {
       "sourceFile": "nft/nft_collection_interface.ral",
-      "sourceCodeHash": "7d323c71c1b6eaa129b6b7ac5bacbfe7f8655ac9b900177cc54121dc28da2953",
+      "sourceCodeHash": "774e11f556d29dbb8a798702a285d079a33800dc677373e1961b447c412127b7",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -52,7 +52,7 @@
     },
     "MintPreDesignedNFT": {
       "sourceFile": "scripts/mint_pre_designed_nft.ral",
-      "sourceCodeHash": "12d65721e5f262c14c91dea29f321cf823d46b8ea5eaefc5ec3c92b356fd552b",
+      "sourceCodeHash": "cae46266e0da86446c1c19e6c699fa6d76831b5eb1825717dc07750ccb06c034",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -66,7 +66,7 @@
     },
     "NFTCollectionBase": {
       "sourceFile": "nft/nft_collection_base.ral",
-      "sourceCodeHash": "2b55af3b31a58393fd2def50b25312439b6af3fcf62bd4e6dbc2c94ca01c0aed",
+      "sourceCodeHash": "506a49e53c34d5cc6b7e932059d2c3904b881d6ff1907e7a1941c33eb0744394",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -87,16 +87,16 @@
     },
     "NFTOpenCollection": {
       "sourceFile": "nft/nft_open_collection.ral",
-      "sourceCodeHash": "59e5d4a6dc7d70efb651d668cf69525399367b51354b421836ca584c6505c142",
+      "sourceCodeHash": "eb0acc06cb7d5223946eac1c70ed8d7975ace854b8b6d20f6f1d230951696d39",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "49dc93ece9ac38dcaadc99c9949f02e0154588a89148548c53181ce781c1d3f1",
+      "codeHashDebug": "346ef9dddacc8990e7db9012c4636ab686aee364e4523b7cbe7b402901d2dabd",
       "warnings": []
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "324e839c6e4309cd2b023f74b521ac90534904ccf52446c58bbd132ee98f9cd9",
+      "sourceCodeHash": "ab760f67fd8fb47cb970caa1a2ffedad81d3abef64d59b05830ff9b3bfdcc8a8",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "4416caed433fb5d708e5846255e980f57ec70544f8a1b8edb22465306ad19a7e",
+      "codeHashDebug": "bb5b1d396fb159f4793a3dd7abbb3f8336933c61f39ae031644e9d796b127c08",
       "warnings": []
     },
     "UpdateAdmin": {

@@ -18,7 +18,6 @@ export interface NFTCollection {
   name: string,
   description: string,
   totalSupply: bigint,
-  currentTokenIndex: bigint,
   image: string,
   nfts: NFT[]
 }
@@ -130,7 +129,6 @@ export async function fetchNFTCollection(
     name: metadata.name,
     description: metadata.description,
     totalSupply: collectionState.fields.totalSupply,
-    currentTokenIndex: collectionState.fields.currentTokenIndex,
     image: metadata.image,
     nfts
   }
@@ -157,7 +155,6 @@ async function fetchNFTCollections(
           name: metadata.name,
           description: metadata.description,
           totalSupply: collectionState.fields.totalSupply,
-          currentTokenIndex: collectionState.fields.currentTokenIndex,
           image: metadata.image,
           nfts: [nft]
         })

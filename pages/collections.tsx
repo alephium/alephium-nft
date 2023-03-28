@@ -62,14 +62,8 @@ export default function Collections() {
                   </tr>
                   <tr>
                     <td className="whitespace-nowrap text-sm font-medium">
-                      <b>Already Minted</b>: {collection.currentTokenIndex.toString().concat(',  ')}
-                      {
-                        collection.currentTokenIndex < collection.totalSupply ? (
-                          <Link href={`/mint-nfts?collectionId=${collection.id}`}><a className="mr-6 text-blue-500">mint more </a></Link>
-                        ) : (
-                          <label>can not mint more</label>
-                        )
-                      }
+                      <b>Already Minted</b>: {collection.totalSupply.toString().concat(',  ')}
+                      <Link href={`/mint-nfts?collectionId=${collection.id}`}><a className="mr-6 text-blue-500">mint more </a></Link>
                     </td>
                   </tr>
                 </tbody>

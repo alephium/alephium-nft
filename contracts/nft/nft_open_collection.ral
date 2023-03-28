@@ -3,18 +3,16 @@
 Contract NFTOpenCollection(
     nftTemplateId: ByteVec,
     uri: ByteVec,
-    totalSupply: U256,
-    mut currentTokenIndex: U256
+    mut totalSupply: U256
 ) extends NFTCollectionBase(uri, totalSupply) {
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
-        assert!(currentTokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)
         let minter = callerAddress!()
 
         let initialImmState = encodeToByteVec!(selfContractId!(), nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(currentTokenIndex),
+            toByteVec!(totalSupply),
             nftTemplateId,
             initialImmState,
             #00,
@@ -22,8 +20,7 @@ Contract NFTOpenCollection(
             minter
         )
 
-        emit Minted(minter, currentTokenIndex, contractId)
-        currentTokenIndex = currentTokenIndex + 1
+        totalSupply = totalSupply + 1
         return contractId
     }
 }

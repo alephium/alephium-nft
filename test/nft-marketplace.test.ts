@@ -1,9 +1,8 @@
-import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep, NodeProvider } from '@alephium/web3'
+import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep } from '@alephium/web3'
 import { testWallet1, testAddress1, testAddress2 } from './signers'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
-import { fetchNFTMarketplaceState, fetchNFTListingState, fetchNFTOpenCollectionState } from '../utils/contracts'
-import { maxU256 } from '../utils'
+import { fetchNFTMarketplaceState, fetchNFTListingState } from '../utils/contracts'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -19,12 +18,8 @@ describe('nft marketplace', function() {
     const nftMarketplaceDeployResult = await nftMarketplace.create()
     const nftMarketplaceContractAddress = nftMarketplaceDeployResult.contractAddress
     const nftMarketplaceContractId = nftMarketplaceDeployResult.contractId
-    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri", maxU256)
+    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
     const nftCollectionContractId = nftCollectionDeployTx.contractId
-    const nftCollectionContractAddress = nftCollectionDeployTx.contractAddress
-
-    const nftCollectionContractState = await fetchNFTOpenCollectionState(nftCollectionContractAddress)
-    expect(nftCollectionContractState.fields.currentTokenIndex).toEqual(0n)
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)

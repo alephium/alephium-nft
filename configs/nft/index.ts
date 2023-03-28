@@ -1,8 +1,8 @@
 export const NETWORK: string = process.env.NEXT_PUBLIC_NETWORK || 'devnet'
 
 import devnetDeployment from '../../artifacts/.deployments.devnet.json'
-import testnetDeployment from '../../.deployments.testnet.json'
-import mainnetDeployment from '../../.deployments.mainnet.json'
+import testnetDeployment from '../../artifacts/.deployments.testnet.json'
+import mainnetDeployment from '../../artifacts/.deployments.mainnet.json'
 
 export const marketplaceContractId: string =
   NETWORK === 'mainnet'

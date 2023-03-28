@@ -31,17 +31,11 @@ export namespace NFTPreDesignedCollectionTypes {
   export type Fields = {
     nftTemplateId: HexString;
     uri: HexString;
-    totalSupply: bigint;
     baseUri: HexString;
+    totalSupply: bigint;
   };
 
   export type State = ContractState<Fields>;
-
-  export type MintedEvent = ContractEvent<{
-    minter: HexString;
-    tokenIndex: bigint;
-    tokenId: HexString;
-  }>;
 
   export interface CallMethodTable {
     getCollectionUri: {
@@ -57,7 +51,7 @@ export namespace NFTPreDesignedCollectionTypes {
       result: CallContractResult<HexString>;
     };
     mint: {
-      params: CallContractParams<{ tokenIndex: bigint }>;
+      params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
   }
@@ -109,9 +103,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "nftByIndex", params);
     },
     mint: async (
-      params: TestContractParams<
-        NFTPreDesignedCollectionTypes.Fields,
-        { tokenIndex: bigint }
+      params: Omit<
+        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
+        "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
@@ -124,7 +118,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "4416caed433fb5d708e5846255e980f57ec70544f8a1b8edb22465306ad19a7e"
+    "bb5b1d396fb159f4793a3dd7abbb3f8336933c61f39ae031644e9d796b127c08"
   )
 );
 
@@ -136,23 +130,6 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
 
   async fetchState(): Promise<NFTPreDesignedCollectionTypes.State> {
     return fetchContractState(NFTPreDesignedCollection, this);
-  }
-
-  async getContractEventsCurrentCount(): Promise<number> {
-    return getContractEventsCurrentCount(this.address);
-  }
-
-  subscribeMintedEvent(
-    options: SubscribeOptions<NFTPreDesignedCollectionTypes.MintedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFTPreDesignedCollection.contract,
-      this,
-      options,
-      "Minted",
-      fromCount
-    );
   }
 
   methods = {
@@ -188,9 +165,14 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
       return callMethod(NFTPreDesignedCollection, this, "nftByIndex", params);
     },
     mint: async (
-      params: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
+      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
     ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"mint">> => {
-      return callMethod(NFTPreDesignedCollection, this, "mint", params);
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "mint",
+        params === undefined ? {} : params
+      );
     },
   };
 

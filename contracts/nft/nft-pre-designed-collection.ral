@@ -3,19 +3,20 @@
 Contract NFTPreDesignedCollection(
     nftTemplateId: ByteVec,
     uri: ByteVec,
-    totalSupply: U256,
-    baseUri: ByteVec
+    baseUri: ByteVec,
+    mut totalSupply: U256
 ) extends NFTCollectionBase(uri, totalSupply) {
-    @using(preapprovedAssets = true)
-    pub fn mint(tokenIndex: U256) -> (ByteVec) {
-        assert!(tokenIndex < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+
+    // TODO Add some comments
+    @using(preapprovedAssets = true, updateFields = true)
+    pub fn mint() -> (ByteVec) {
         let minter = callerAddress!()
-        let nftUri = baseUri ++ u256ToString!(tokenIndex)
+        let nftUri = baseUri ++ u256ToString!(totalSupply)
 
         let initialImmState = encodeToByteVec!(selfContractId!(), nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(tokenIndex),
+            toByteVec!(totalSupply),
             nftTemplateId,
             initialImmState,
             #00,
@@ -23,7 +24,7 @@ Contract NFTPreDesignedCollection(
             minter
         )
 
-        emit Minted(minter, tokenIndex, contractId)
+        totalSupply = totalSupply + 1
         return contractId
     }
 }

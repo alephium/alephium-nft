@@ -1,6 +1,6 @@
 Abstract Contract NFTCollectionBase(
     uri: ByteVec,
-    totalSupply: U256
+    mut totalSupply: U256
 ) implements INFTCollection {
     enum ErrorCodes {
         IncorrectTokenIndex = 0

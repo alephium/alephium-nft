@@ -84,10 +84,7 @@ export namespace MintOpenNFT {
 export namespace MintPreDesignedNFT {
   export async function execute(
     signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      nftCollectionContractId: HexString;
-      tokenIndex: bigint;
-    }>
+    params: ExecuteScriptParams<{ nftCollectionContractId: HexString }>
   ): Promise<ExecuteScriptResult> {
     const signerParams = await script.txParamsForExecution(signer, params);
     return await signer.signAndSubmitExecuteScriptTx(signerParams);

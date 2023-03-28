@@ -128,12 +128,7 @@ export default function MintNFTs() {
                 </tr>
                 <tr>
                   <td className="whitespace-nowrap text-sm font-medium">
-                    <b>Already Minted</b>: {collection.currentTokenIndex.toString()}
-                    {
-                      collection.currentTokenIndex >= collection.totalSupply ? (
-                        <label>, can not mint more</label>
-                      ) : null
-                    }
+                    <b>Already Minted</b>: {collection.totalSupply.toString()}
                   </td>
                 </tr>
               </tbody>
@@ -142,7 +137,7 @@ export default function MintNFTs() {
         )
       }
       {
-        collection && collection.currentTokenIndex < collection.totalSupply ? (
+        collection ? (
           <div className="flex justify-center">
             <div className="w-1/2 flex flex-col pb-12">
               <input

@@ -9,8 +9,7 @@ export class NFTCollection extends DeployHelpers {
   nftTemplateId: string | undefined = undefined
 
   async createOpenCollection(
-    collectionUri: string,
-    totalSupply: bigint
+    collectionUri: string
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
     const nftTemplateId = await this.createNFTTemplate()
@@ -20,8 +19,7 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           nftTemplateId,
           uri: web3.stringToHex(collectionUri),
-          totalSupply,
-          currentTokenIndex: 0n
+          totalSupply: 0n
         }
       }
     )
@@ -31,8 +29,7 @@ export class NFTCollection extends DeployHelpers {
 
   async createPreDesignedCollection(
     collectionUri: string,
-    baseUri: string,
-    totalSupply: bigint
+    baseUri: string
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
 
     const nftTemplateId = await this.createNFTTemplate()
@@ -43,7 +40,7 @@ export class NFTCollection extends DeployHelpers {
           nftTemplateId,
           uri: web3.stringToHex(collectionUri),
           baseUri: web3.stringToHex(baseUri),
-          totalSupply
+          totalSupply: 0n
         }
       }
     )
@@ -88,14 +85,12 @@ export class NFTCollection extends DeployHelpers {
 
   async mintPreDesignedNFT(
     nftCollectionContractId: string,
-    tokenIndex: bigint
   ) {
     return await MintPreDesignedNFT.execute(
       this.signer,
       {
         initialFields: {
-          nftCollectionContractId: nftCollectionContractId,
-          tokenIndex: tokenIndex
+          nftCollectionContractId: nftCollectionContractId
         },
         attoAlphAmount: BigInt(1.1e18)
       }

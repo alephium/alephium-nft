@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '', totalSupply: '' })
+  const [formInput, updateFormInput] = useState({ name: '', description: '' })
   const context = useContext()
   const router = useRouter()
 
@@ -39,8 +39,8 @@ export default function CreateCollections() {
   }
 
   async function uploadToIPFS(): Promise<string | undefined> {
-    const { name, description, totalSupply } = formInput
-    if (!name || !description || !fileUrl || !isPositiveNumber(totalSupply)) return
+    const { name, description } = formInput
+    if (!name || !description || !fileUrl) return
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name, description, image: fileUrl
@@ -59,9 +59,8 @@ export default function CreateCollections() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
-      formInput.totalSupply
-      // TODO: Figure out UI to create collection, right now use default collection id
-      const createCollectionTxResult = await nftCollection.createOpenCollection(uri, BigInt(formInput.totalSupply))
+
+      const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
       console.debug('create collection TxResult', createCollectionTxResult)
       setOngoingTxId(createCollectionTxResult.txId)
       setOngoingTxDescription('minting NFT')
@@ -108,13 +107,6 @@ export default function CreateCollections() {
             placeholder="Collection Description"
             className="mt-2 border rounded p-4"
             onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
-          />
-          <input
-            placeholder="Total Supply"
-            type="number"
-            min={1}
-            className="mt-2 border rounded p-4"
-            onChange={e => updateFormInput({ ...formInput, totalSupply: e.target.value })}
           />
           <input
             type="file"
