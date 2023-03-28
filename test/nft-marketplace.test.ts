@@ -42,6 +42,7 @@ describe('nft marketplace', function() {
     {
       await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId)
       await sleep(3000)
+
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
         { start: 0, group: 0 }
@@ -216,13 +217,5 @@ describe('nft marketplace', function() {
       const stateAfter = await fetchNFTMarketplaceState(nftMarketplaceContractAddress)
       expect(stateAfter.fields.admin).toEqual(updatedValue)
     }
-  }
-
-  async function getTokens(
-    provider: NodeProvider,
-    address: string
-  ): Promise<string[]> {
-    const utxos = await provider.addresses.getAddressesAddressUtxos(address)
-    return utxos.utxos.flatMap((utxo) => utxo.tokens || []).map((token) => token.id)
   }
 })

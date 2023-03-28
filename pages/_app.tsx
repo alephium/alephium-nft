@@ -3,10 +3,11 @@ import '../styles/globals.css'
 import Link from 'next/link'
 import { AppProps } from 'next/app'
 import { AlephiumConnectButton, AlephiumConnectProvider } from '@alephium/web3-react'
+import { NETWORK } from '../configs/nft'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AlephiumConnectProvider useTheme="retro" addressGroup={0}>
+    <AlephiumConnectProvider useTheme="retro" addressGroup={0} network={NETWORK}>
       <title>Alephium NFT Marketplace</title>
       <div>
         <nav className="border-b p-6">
