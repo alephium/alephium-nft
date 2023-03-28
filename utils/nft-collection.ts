@@ -3,6 +3,7 @@ import { DeployHelpers } from './deploy-helpers'
 import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult, ONE_ALPH } from '@alephium/web3'
+import { nftTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
   defaultNFTCollectionId: string = "0".repeat(64)
@@ -12,7 +13,6 @@ export class NFTCollection extends DeployHelpers {
     collectionUri: string
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
-    const nftTemplateId = await this.createNFTTemplate()
     const nftCollectionDeployTx = await NFTOpenCollection.deploy(
       this.signer,
       {

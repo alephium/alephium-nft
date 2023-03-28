@@ -1,7 +1,6 @@
 import { web3 } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection } from '../components/nft'
 import Link from 'next/link'
@@ -11,16 +10,6 @@ export default function Collections() {
   const context = useContext()
   const router = useRouter()
   const { collectionId } = router.query
-
-  const [
-    ongoingTxId,
-    setOngoingTxId,
-    ongoingTxDescription,
-    setOngoingTxDescription,
-    txStatusCallback,
-    setTxStatusCallback,
-    resetTxStatus
-  ] = useTxStatusStates()
 
   useEffect(() => {
     if (!!collectionId && context.signerProvider?.nodeProvider && context.signerProvider?.explorerProvider) {
@@ -36,10 +25,6 @@ export default function Collections() {
 
   return (
     <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
-
       {
         collection && (
           <>

@@ -106,9 +106,9 @@ export default function Home() {
         <div className="px-4" style={{ maxWidth: '1600px' }}>
 
           {
-            nftCollections.map((nftCollection, _i) => {
+            nftCollections.map((nftCollection, i) => {
               return (
-                <>
+                <div key={i} >
                   <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}><a className="mr-6 text-blue-500"> {nftCollection.name} </a></Link>
                   <br />
                   <label><b>Description</b>: {nftCollection.description}</label>
@@ -120,7 +120,7 @@ export default function Home() {
                             <div className="p-4 object-center">
                               <img src={nft.image} />
                             </div>
-                            <div className="p-4">
+                            <div key={i} className="p-4">
                               <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
                               <div style={{ height: '70px', overflow: 'hidden' }}>
                                 <p className="text-gray-400">{nft.description}</p>
@@ -139,7 +139,7 @@ export default function Home() {
                       })
                     }
                   </div>
-                </>
+                </div>
               )
             })
           }

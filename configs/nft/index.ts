@@ -13,3 +13,13 @@ export const marketplaceContractId: string =
       ? testnetDeployment['contracts']?.NFTMarketPlace.contractId
       // @ts-ignore
       : devnetDeployment['contracts']?.NFTMarketPlace.contractId
+
+export const nftTemplateId: string =
+  NETWORK === 'mainnet'
+    // @ts-ignore
+    ? mainnetDeployment['contracts']?.NFT.contractId
+    : NETWORK === 'testnet'
+      // @ts-ignore
+      ? testnetDeployment['contracts']?.NFT.contractId
+      // @ts-ignore
+      : devnetDeployment['contracts']?.NFT.contractId

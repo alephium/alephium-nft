@@ -115,7 +115,7 @@ export async function fetchNFTCollection(
   const nfts = []
   if (explorerProvider) {
     const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
-    for (var tokenAddress of subContracts || []) {
+    for (const tokenAddress of subContracts || []) {
       const tokenId = binToHex(contractIdFromAddress(tokenAddress))
       const nft = await fetchNFT(tokenId, false)
       if (nft) {
