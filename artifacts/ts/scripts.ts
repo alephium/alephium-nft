@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 import {
+  Address,
   ExecuteScriptParams,
   ExecuteScriptResult,
   Script,
@@ -97,7 +98,7 @@ export namespace UpdateAdmin {
   export async function execute(
     signer: SignerProvider,
     params: ExecuteScriptParams<{
-      newAdmin: HexString;
+      newAdmin: Address;
       nftMarketplaceContractId: HexString;
     }>
   ): Promise<ExecuteScriptResult> {

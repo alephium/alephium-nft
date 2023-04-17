@@ -1,4 +1,5 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
+import { addressFromContractId } from '@alephium/web3'
 import { Settings } from '../alephium.config'
 import { NFTMarketPlace } from '../artifacts/ts'
 
@@ -9,7 +10,7 @@ const deployMarketplace: DeployFunction<Settings> = async (
   const nftListingTemplateResult = deployer.getDeployContractResult('NFTListing')
 
   const initialFields = {
-    nftListingTemplateId: nftListingTemplateResult.contractId,
+    nftListingTemplateId: nftListingTemplateResult.contractInstance.contractId,
     admin: network.settings.marketplaceAdminAddress,
     listingFee: network.settings.listingFee,
     commissionRate: network.settings.commissionRate
@@ -20,7 +21,9 @@ const deployMarketplace: DeployFunction<Settings> = async (
     initialFields: initialFields
   })
 
-  console.log(`NFT Marketplace: ${result.contractAddress}, contract id: ${result.contractId}`)
+  const contractId = result.contractInstance.contractId
+  const contractAddress = addressFromContractId(contractId)
+  console.log(`NFT Marketplace: ${contractAddress}, contract id: ${contractId}`)
 }
 
 export default deployMarketplace

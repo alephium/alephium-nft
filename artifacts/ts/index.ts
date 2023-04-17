@@ -4,7 +4,7 @@
 
 export * from "./NFTListing";
 export * from "./NFTMarketPlace";
+export * from "./EnumerableNFT";
 export * from "./NFTPreDesignedCollection";
-export * from "./NFT";
 export * from "./NFTOpenCollection";
 export * from "./scripts";

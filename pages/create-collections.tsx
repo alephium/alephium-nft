@@ -69,7 +69,7 @@ export default function CreateCollections() {
       setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
-          router.push(`/collections?collectionId=${createCollectionTxResult.contractId}`)
+          router.push(`/collections?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
         } else if (txStatus.type === 'TxNotFound') {
           if (txNotFoundRetries >= 10) {
             console.info('Create collection transaction not found after 30 seconds, give up.')

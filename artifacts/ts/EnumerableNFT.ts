@@ -24,10 +24,10 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTContractJson } from "../nft/nft.ral.json";
+import { default as EnumerableNFTContractJson } from "../nft/enumerable-nft.ral.json";
 
 // Custom types for the contract
-export namespace NFTTypes {
+export namespace EnumerableNFTTypes {
   export type Fields = {
     collectionId: HexString;
     uri: HexString;
@@ -59,19 +59,28 @@ export namespace NFTTypes {
   };
 }
 
-class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
-  at(address: string): NFTInstance {
-    return new NFTInstance(address);
+class Factory extends ContractFactory<
+  EnumerableNFTInstance,
+  EnumerableNFTTypes.Fields
+> {
+  at(address: string): EnumerableNFTInstance {
+    return new EnumerableNFTInstance(address);
   }
 
   tests = {
     getTokenUri: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<EnumerableNFTTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
     getCollectionId: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+      params: Omit<
+        TestContractParams<EnumerableNFTTypes.Fields, never>,
+        "testArgs"
+      >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getCollectionId", params);
     },
@@ -79,40 +88,40 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
 }
 
 // Use this object to test and deploy the contract
-export const NFT = new Factory(
+export const EnumerableNFT = new Factory(
   Contract.fromJson(
-    NFTContractJson,
+    EnumerableNFTContractJson,
     "",
     "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e"
   )
 );
 
 // Use this class to interact with the blockchain
-export class NFTInstance extends ContractInstance {
+export class EnumerableNFTInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<NFTTypes.State> {
-    return fetchContractState(NFT, this);
+  async fetchState(): Promise<EnumerableNFTTypes.State> {
+    return fetchContractState(EnumerableNFT, this);
   }
 
   methods = {
     getTokenUri: async (
-      params?: NFTTypes.CallMethodParams<"getTokenUri">
-    ): Promise<NFTTypes.CallMethodResult<"getTokenUri">> => {
+      params?: EnumerableNFTTypes.CallMethodParams<"getTokenUri">
+    ): Promise<EnumerableNFTTypes.CallMethodResult<"getTokenUri">> => {
       return callMethod(
-        NFT,
+        EnumerableNFT,
         this,
         "getTokenUri",
         params === undefined ? {} : params
       );
     },
     getCollectionId: async (
-      params?: NFTTypes.CallMethodParams<"getCollectionId">
-    ): Promise<NFTTypes.CallMethodResult<"getCollectionId">> => {
+      params?: EnumerableNFTTypes.CallMethodParams<"getCollectionId">
+    ): Promise<EnumerableNFTTypes.CallMethodResult<"getCollectionId">> => {
       return callMethod(
-        NFT,
+        EnumerableNFT,
         this,
         "getCollectionId",
         params === undefined ? {} : params
@@ -120,13 +129,13 @@ export class NFTInstance extends ContractInstance {
     },
   };
 
-  async multicall<Calls extends NFTTypes.MultiCallParams>(
+  async multicall<Calls extends EnumerableNFTTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<NFTTypes.MultiCallResults<Calls>> {
+  ): Promise<EnumerableNFTTypes.MultiCallResults<Calls>> {
     return (await multicallMethods(
-      NFT,
+      EnumerableNFT,
       this,
       calls
-    )) as NFTTypes.MultiCallResults<Calls>;
+    )) as EnumerableNFTTypes.MultiCallResults<Calls>;
   }
 }

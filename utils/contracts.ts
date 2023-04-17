@@ -1,7 +1,7 @@
 import { fetchContractState } from '@alephium/web3'
 import {
-  NFT,
-  NFTInstance,
+  EnumerableNFT,
+  EnumerableNFTInstance,
   NFTListing,
   NFTListingInstance,
   NFTMarketPlace,
@@ -29,5 +29,5 @@ export async function fetchNFTListingState(address: string) {
 }
 
 export async function fetchNFTState(address: string) {
-  return await fetchContractState(NFT, new NFTInstance(address))
+  return await fetchContractState(EnumerableNFT, new EnumerableNFTInstance(address))
 }

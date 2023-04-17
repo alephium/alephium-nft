@@ -30,7 +30,7 @@ import { default as NFTMarketPlaceContractJson } from "../marketplace/nft_market
 export namespace NFTMarketPlaceTypes {
   export type Fields = {
     nftListingTemplateId: HexString;
-    admin: HexString;
+    admin: Address;
     listingFee: bigint;
     commissionRate: bigint;
   };
@@ -40,18 +40,18 @@ export namespace NFTMarketPlaceTypes {
   export type NFTListedEvent = ContractEvent<{
     price: bigint;
     tokenId: HexString;
-    tokenOwner: HexString;
+    tokenOwner: Address;
     listingContractId: HexString;
   }>;
   export type NFTSoldEvent = ContractEvent<{
     price: bigint;
     tokenId: HexString;
-    previousOwner: HexString;
-    newOwner: HexString;
+    previousOwner: Address;
+    newOwner: Address;
   }>;
   export type NFTListingCancelledEvent = ContractEvent<{
     tokenId: HexString;
-    tokenOwner: HexString;
+    tokenOwner: Address;
   }>;
   export type NFTListingPriceUpdatedEvent = ContractEvent<{
     tokenId: HexString;
@@ -59,8 +59,8 @@ export namespace NFTMarketPlaceTypes {
     newPrice: bigint;
   }>;
   export type AdminUpdatedEvent = ContractEvent<{
-    previous: HexString;
-    new: HexString;
+    previous: Address;
+    new: Address;
   }>;
   export type ListingFeeUpdatedEvent = ContractEvent<{
     previous: bigint;
@@ -74,7 +74,7 @@ export namespace NFTMarketPlaceTypes {
   export interface CallMethodTable {
     listNFT: {
       params: CallContractParams<{ tokenId: HexString; price: bigint }>;
-      result: CallContractResult<HexString>;
+      result: CallContractResult<Address>;
     };
     getListingFee: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -115,7 +115,7 @@ class Factory extends ContractFactory<
     payCommission: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { buyer: HexString; commission: bigint }
+        { buyer: Address; commission: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payCommission", params);
@@ -125,7 +125,7 @@ class Factory extends ContractFactory<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString; price: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
+    ): Promise<TestContractResult<Address>> => {
       return testMethod(this, "listNFT", params);
     },
     cancelNFTListing: async (
@@ -147,7 +147,7 @@ class Factory extends ContractFactory<
     updateAdmin: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { newAdmin: HexString }
+        { newAdmin: Address }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "updateAdmin", params);

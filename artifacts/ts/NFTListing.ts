@@ -30,8 +30,8 @@ import { default as NFTListingContractJson } from "../marketplace/nft_listing.ra
 export namespace NFTListingTypes {
   export type Fields = {
     tokenId: HexString;
-    tokenOwner: HexString;
-    marketAddress: HexString;
+    tokenOwner: Address;
+    marketAddress: Address;
     commissionRate: bigint;
     price: bigint;
   };
@@ -41,7 +41,7 @@ export namespace NFTListingTypes {
   export interface CallMethodTable {
     getTokenOwner: {
       params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
+      result: CallContractResult<Address>;
     };
     getPrice: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -76,7 +76,7 @@ class Factory extends ContractFactory<
         TestContractParams<NFTListingTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
+    ): Promise<TestContractResult<Address>> => {
       return testMethod(this, "getTokenOwner", params);
     },
     getPrice: async (
@@ -88,7 +88,7 @@ class Factory extends ContractFactory<
       return testMethod(this, "getPrice", params);
     },
     buy: async (
-      params: TestContractParams<NFTListingTypes.Fields, { buyer: HexString }>
+      params: TestContractParams<NFTListingTypes.Fields, { buyer: Address }>
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buy", params);
     },

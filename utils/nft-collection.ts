@@ -1,6 +1,6 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
+import { EnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult, ONE_ALPH } from '@alephium/web3'
 import { nftTemplateId } from '../configs/nft'
@@ -53,7 +53,7 @@ export class NFTCollection extends DeployHelpers {
       return Promise.resolve(this.nftTemplateId)
     }
 
-    const nftDeployResult = await NFT.deploy(
+    const nftDeployResult = await EnumerableNFT.deploy(
       this.signer,
       {
         initialFields: {

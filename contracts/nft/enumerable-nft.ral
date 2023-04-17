@@ -1,5 +1,5 @@
 // Only 1 token is supported
-Contract NFT(
+Contract EnumerableNFT(
     // Temporarily put collection id here to keep track of the collection
     // remove after parent contract id can be queried from explorer backend
     collectionId: ByteVec,

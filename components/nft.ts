@@ -1,6 +1,6 @@
 import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex } from "@alephium/web3"
 import { fetchNFTOpenCollectionState, fetchNFTState } from "../utils/contracts"
-import { NFT as NFTFactory } from '../artifacts/ts'
+import { EnumerableNFT as NFTFactory } from '../artifacts/ts'
 import axios from "axios"
 import { fetchNFTListings } from "./nft-listing"
 

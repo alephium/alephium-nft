@@ -1,4 +1,4 @@
-import { binToHex, contractIdFromAddress } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { randomBytes } from 'crypto'
@@ -21,7 +21,9 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
     // @ts-ignore
     initialFields: initialFields
   })
-  console.log(`NFTListing Template: ${result.contractAddress}, contract id: ${result.contractId}`)
+  const contractId = result.contractInstance.contractId
+  const contractAddress = addressFromContractId(contractId)
+  console.log(`NFTListing Template: ${contractAddress}, contract id: ${contractId}`)
 }
 
 function randomContractId() {
