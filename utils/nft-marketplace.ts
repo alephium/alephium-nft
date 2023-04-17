@@ -35,7 +35,7 @@ export class NFTMarketplace extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftListingTemplateId: nftListingDeployTx.contractId,
+          nftListingTemplateId: nftListingDeployTx.contractInstance.contractId,
           admin: adminAddress,
           listingFee: this.defaultListingFee,
           commissionRate: this.defaultCommissionRate

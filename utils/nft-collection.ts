@@ -17,7 +17,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId,
+          nftTemplateId: nftTemplateId,
           uri: web3.stringToHex(collectionUri),
           totalSupply: 0n
         }
@@ -37,7 +37,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId,
+          nftTemplateId: nftTemplateId,
           uri: web3.stringToHex(collectionUri),
           baseUri: web3.stringToHex(baseUri),
           totalSupply: 0n
@@ -63,7 +63,7 @@ export class NFTCollection extends DeployHelpers {
       }
     )
 
-    this.nftTemplateId = nftDeployResult.contractId
+    this.nftTemplateId = nftDeployResult.contractInstance.contractId
     return this.nftTemplateId
   }
 

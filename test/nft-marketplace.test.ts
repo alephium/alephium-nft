@@ -16,10 +16,10 @@ describe('nft marketplace', function() {
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployResult = await nftMarketplace.create()
-    const nftMarketplaceContractAddress = nftMarketplaceDeployResult.contractAddress
-    const nftMarketplaceContractId = nftMarketplaceDeployResult.contractId
+    const nftMarketplaceContractId = nftMarketplaceDeployResult.contractInstance.contractId
+    const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
-    const nftCollectionContractId = nftCollectionDeployTx.contractId
+    const nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
@@ -128,8 +128,8 @@ describe('nft marketplace', function() {
     await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
-    const nftMarketplaceContractAddress = nftMarketplaceDeployTx.contractAddress
-    const nftMarketplaceContractId = nftMarketplaceDeployTx.contractId
+    const nftMarketplaceContractId = nftMarketplaceDeployTx.contractInstance.contractId
+    const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
 
     // Update listing price
     await checkListingFee(

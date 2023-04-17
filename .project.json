@@ -1,6 +1,7 @@
 {
+  "fullNodeVersion": "2.0.1",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": true,
+    "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
