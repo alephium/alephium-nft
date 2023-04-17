@@ -4,7 +4,7 @@ import { addressFromContractId } from '@alephium/web3'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
-import { useContext } from '@alephium/web3-react'
+import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchListedNFTs, fetchNFTsFromUTXOs, mergeNFTCollections, NFT, NFTCollection } from '../components/nft'
 import Link from 'next/link'
 
@@ -15,7 +15,7 @@ export default function Home() {
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
   const [nftSellingPrice, setNFTSellingPrice] = useState<number | undefined>(undefined)
   const [loadingState, setLoadingState] = useState<LoadingState>('not-loaded')
-  const context = useContext()
+  const context = useAlephiumConnectContext()
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
   const minimumNFTPrice = 0.0001 // ALPH
 

@@ -14,7 +14,7 @@ describe('nft collection', function() {
     nftCollection.buildProject(false)
 
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
-    const nftCollectionInstance = nftCollectionDeployTx.instance
+    const nftCollectionInstance = nftCollectionDeployTx.contractInstance
 
 
     for (let i = 0n; i < 10n; i++) {
@@ -28,7 +28,7 @@ describe('nft collection', function() {
       "https://crypto-punk-uri",
       "https://cryptopunks.app/cryptopunks/details/"
     )
-    const nftPreDesignedCollectionInstane = nftCollectionDeployTx.instance
+    const nftPreDesignedCollectionInstane = nftCollectionDeployTx.contractInstance
 
     for (let i = 0n; i < 10n; i++) {
       await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i)

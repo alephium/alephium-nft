@@ -3,13 +3,13 @@ import { useState } from 'react'
 import { NFTCollection } from '../utils/nft-collection'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
-import { useContext } from '@alephium/web3-react'
+import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useRouter } from 'next/router'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
-  const context = useContext()
+  const context = useAlephiumConnectContext()
   const router = useRouter()
 
   const [

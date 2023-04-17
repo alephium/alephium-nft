@@ -6,7 +6,7 @@ import { marketplaceContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useRouter } from 'next/router'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
-import { useContext } from '@alephium/web3-react'
+import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { fetchNFTListings, NFTListing } from '../components/nft-listing'
 
@@ -15,7 +15,7 @@ export default function BuyNFTs() {
   const [loadingState, setLoadingState] = useState('not-loaded')
   const [commissionRate, setCommissionRate] = useState<bigint | undefined>(undefined)
   const router = useRouter()
-  const context = useContext()
+  const context = useAlephiumConnectContext()
 
   const [
     ongoingTxId,

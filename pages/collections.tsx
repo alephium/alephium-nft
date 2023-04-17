@@ -1,13 +1,13 @@
 import { web3 } from '@alephium/web3'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useContext } from '@alephium/web3-react'
+import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection } from '../components/nft'
 import Link from 'next/link'
 
 export default function Collections() {
   const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
-  const context = useContext()
+  const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
 
