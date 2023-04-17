@@ -28,18 +28,6 @@ cd test/docker
 docker-compose up -d
 ```
 
-## Testing Smart Contract
-
-```
-yarn run test:contracts
-```
-
-or
-
-```
-yarn run test:contracts -- nft-marketplace.test.ts
-```
-
 ## Deploy Smart Contracts
 Before running the application, two smart contracts need to be created:
 1. A [marketplace smart contract](contracts/nft_marketplace.ral) where
@@ -51,4 +39,16 @@ Before running the application, two smart contracts need to be created:
 
 ```
 yarn run deploy:contracts
+```
+
+## Testing Smart Contract
+
+```
+yarn run test:contracts
+```
+
+or
+
+```
+yarn run test:contracts -- nft-marketplace.test.ts
 ```
