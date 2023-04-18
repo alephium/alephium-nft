@@ -19,7 +19,8 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
 
   const result = await deployer.deployContract(NFTListing, {
     // @ts-ignore
-    initialFields: initialFields
+    initialFields: initialFields,
+    gasAmount: 100000
   })
   const contractId = result.contractInstance.contractId
   const contractAddress = addressFromContractId(contractId)

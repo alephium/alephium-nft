@@ -1,14 +1,11 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { EnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
+import { NonEnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 import { nftTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
-  defaultNFTCollectionId: string = "0".repeat(64)
-  nftTemplateId: string | undefined = undefined
-
   async createOpenCollection(
     collectionUri: string
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
@@ -32,8 +29,6 @@ export class NFTCollection extends DeployHelpers {
     collectionUri: string,
     baseUri: string
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
-
-    const nftTemplateId = await this.createNFTTemplate()
     const nftCollectionDeployTx = await NFTPreDesignedCollection.deploy(
       this.signer,
       {
@@ -48,26 +43,6 @@ export class NFTCollection extends DeployHelpers {
     )
 
     return nftCollectionDeployTx
-  }
-
-  async createNFTTemplate() {
-    if (!!this.nftTemplateId) {
-      return Promise.resolve(this.nftTemplateId)
-    }
-
-    const nftDeployResult = await EnumerableNFT.deploy(
-      this.signer,
-      {
-        initialFields: {
-          collectionId: web3.stringToHex("collection_id"),
-          uri: web3.stringToHex("template_uri")
-        },
-        gasAmount: 100000
-      }
-    )
-
-    this.nftTemplateId = nftDeployResult.contractInstance.contractId
-    return this.nftTemplateId
   }
 
   async mintOpenNFT(

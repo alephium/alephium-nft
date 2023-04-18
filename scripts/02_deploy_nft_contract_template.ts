@@ -1,7 +1,7 @@
 import { addressFromContractId, stringToHex } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { EnumerableNFT } from '../artifacts/ts'
+import { NonEnumerableNFT } from '../artifacts/ts'
 
 const deployNFTContractTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -17,8 +17,9 @@ const deployNFTContractTemplate: DeployFunction<Settings> = async (
     tokenIndex: 0n
   }
 
-  const result = await deployer.deployContract(EnumerableNFT, {
-    initialFields: initialFields
+  const result = await deployer.deployContract(NonEnumerableNFT, {
+    initialFields: initialFields,
+    gasAmount: 100000
   })
 
   const contractId = result.contractInstance.contractId

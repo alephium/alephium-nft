@@ -9,8 +9,8 @@ import {
   NFTListingInstance,
   NFTMarketPlace,
   NFTMarketPlaceInstance,
-  EnumerableNFT,
-  EnumerableNFTInstance,
+  NonEnumerableNFT,
+  NonEnumerableNFTInstance,
 } from ".";
 import { default as mainnetDeployments } from "../.deployments.mainnet.json";
 import { default as testnetDeployments } from "../.deployments.testnet.json";
@@ -21,7 +21,7 @@ export type Deployments = {
   contracts: {
     NFTListing: DeployContractExecutionResult<NFTListingInstance>;
     NFTMarketPlace: DeployContractExecutionResult<NFTMarketPlaceInstance>;
-    EnumerableNFT: DeployContractExecutionResult<EnumerableNFTInstance>;
+    NonEnumerableNFT: DeployContractExecutionResult<NonEnumerableNFTInstance>;
   };
 };
 
@@ -39,10 +39,10 @@ function toDeployments(json: any): Deployments {
         json.contracts.NFTMarketPlace.contractInstance.address
       ),
     },
-    EnumerableNFT: {
-      ...json.contracts.EnumerableNFT,
-      contractInstance: EnumerableNFT.at(
-        json.contracts.EnumerableNFT.contractInstance.address
+    NonEnumerableNFT: {
+      ...json.contracts.NonEnumerableNFT,
+      contractInstance: NonEnumerableNFT.at(
+        json.contracts.NonEnumerableNFT.contractInstance.address
       ),
     },
   };

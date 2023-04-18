@@ -54,6 +54,10 @@ export namespace NFTPreDesignedCollectionTypes {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
+    getTokenUri: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
     CallMethodTable[T]["params"];
@@ -110,6 +114,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    getTokenUri: async (
+      params: TestContractParams<
+        NFTPreDesignedCollectionTypes.Fields,
+        { index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getTokenUri", params);
+    },
   };
 }
 
@@ -118,7 +130,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "bb5b1d396fb159f4793a3dd7abbb3f8336933c61f39ae031644e9d796b127c08"
+    "0705b2651a515c79c370b9a75e1e608e4955ef1edd84753bf66b9ad0e3486537"
   )
 );
 
@@ -173,6 +185,13 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
         "mint",
         params === undefined ? {} : params
       );
+    },
+    getTokenUri: async (
+      params: NFTPreDesignedCollectionTypes.CallMethodParams<"getTokenUri">
+    ): Promise<
+      NFTPreDesignedCollectionTypes.CallMethodResult<"getTokenUri">
+    > => {
+      return callMethod(NFTPreDesignedCollection, this, "getTokenUri", params);
     },
   };
 

@@ -27,4 +27,9 @@ Contract NFTPreDesignedCollection(
         totalSupply = totalSupply + 1
         return contractId
     }
+
+    pub fn getTokenUri(index: U256) -> ByteVec {
+        assert!(index < totalSupply, ErrorCodes.IncorrectTokenIndex)
+        return baseUri ++ u256ToString!(index)
+    }
 }

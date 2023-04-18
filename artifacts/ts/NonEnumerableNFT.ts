@@ -24,19 +24,23 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as EnumerableNFTContractJson } from "../nft/enumerable-nft.ral.json";
+import { default as NonEnumerableNFTContractJson } from "../nft/non-enumerable-nft.ral.json";
 
 // Custom types for the contract
-export namespace EnumerableNFTTypes {
+export namespace NonEnumerableNFTTypes {
   export type Fields = {
-    collection: HexString;
-    nftIndex: bigint;
+    collectionId: HexString;
+    uri: HexString;
   };
 
   export type State = ContractState<Fields>;
 
   export interface CallMethodTable {
     getTokenUri: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getCollectionId: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -56,64 +60,82 @@ export namespace EnumerableNFTTypes {
 }
 
 class Factory extends ContractFactory<
-  EnumerableNFTInstance,
-  EnumerableNFTTypes.Fields
+  NonEnumerableNFTInstance,
+  NonEnumerableNFTTypes.Fields
 > {
-  at(address: string): EnumerableNFTInstance {
-    return new EnumerableNFTInstance(address);
+  at(address: string): NonEnumerableNFTInstance {
+    return new NonEnumerableNFTInstance(address);
   }
 
   tests = {
     getTokenUri: async (
       params: Omit<
-        TestContractParams<EnumerableNFTTypes.Fields, never>,
+        TestContractParams<NonEnumerableNFTTypes.Fields, never>,
         "testArgs"
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
+    getCollectionId: async (
+      params: Omit<
+        TestContractParams<NonEnumerableNFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionId", params);
+    },
   };
 }
 
 // Use this object to test and deploy the contract
-export const EnumerableNFT = new Factory(
+export const NonEnumerableNFT = new Factory(
   Contract.fromJson(
-    EnumerableNFTContractJson,
+    NonEnumerableNFTContractJson,
     "",
-    "99f77e928f89b9e3d7fbae1886eb983d5cbf305147a1e5014d52b75bf8a02645"
+    "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e"
   )
 );
 
 // Use this class to interact with the blockchain
-export class EnumerableNFTInstance extends ContractInstance {
+export class NonEnumerableNFTInstance extends ContractInstance {
   constructor(address: Address) {
     super(address);
   }
 
-  async fetchState(): Promise<EnumerableNFTTypes.State> {
-    return fetchContractState(EnumerableNFT, this);
+  async fetchState(): Promise<NonEnumerableNFTTypes.State> {
+    return fetchContractState(NonEnumerableNFT, this);
   }
 
   methods = {
     getTokenUri: async (
-      params?: EnumerableNFTTypes.CallMethodParams<"getTokenUri">
-    ): Promise<EnumerableNFTTypes.CallMethodResult<"getTokenUri">> => {
+      params?: NonEnumerableNFTTypes.CallMethodParams<"getTokenUri">
+    ): Promise<NonEnumerableNFTTypes.CallMethodResult<"getTokenUri">> => {
       return callMethod(
-        EnumerableNFT,
+        NonEnumerableNFT,
         this,
         "getTokenUri",
         params === undefined ? {} : params
       );
     },
+    getCollectionId: async (
+      params?: NonEnumerableNFTTypes.CallMethodParams<"getCollectionId">
+    ): Promise<NonEnumerableNFTTypes.CallMethodResult<"getCollectionId">> => {
+      return callMethod(
+        NonEnumerableNFT,
+        this,
+        "getCollectionId",
+        params === undefined ? {} : params
+      );
+    },
   };
 
-  async multicall<Calls extends EnumerableNFTTypes.MultiCallParams>(
+  async multicall<Calls extends NonEnumerableNFTTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<EnumerableNFTTypes.MultiCallResults<Calls>> {
+  ): Promise<NonEnumerableNFTTypes.MultiCallResults<Calls>> {
     return (await multicallMethods(
-      EnumerableNFT,
+      NonEnumerableNFT,
       this,
       calls
-    )) as EnumerableNFTTypes.MultiCallResults<Calls>;
+    )) as NonEnumerableNFTTypes.MultiCallResults<Calls>;
   }
 }
