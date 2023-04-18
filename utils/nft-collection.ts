@@ -2,7 +2,7 @@ import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { EnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
-import { DeployContractResult, ONE_ALPH } from '@alephium/web3'
+import { DeployContractResult } from '@alephium/web3'
 import { nftTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
@@ -20,7 +20,8 @@ export class NFTCollection extends DeployHelpers {
           nftTemplateId: nftTemplateId,
           uri: web3.stringToHex(collectionUri),
           totalSupply: 0n
-        }
+        },
+        gasAmount: 100000
       }
     )
 
@@ -41,7 +42,8 @@ export class NFTCollection extends DeployHelpers {
           uri: web3.stringToHex(collectionUri),
           baseUri: web3.stringToHex(baseUri),
           totalSupply: 0n
-        }
+        },
+        gasAmount: 100000
       }
     )
 
@@ -59,7 +61,8 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           collectionId: web3.stringToHex("collection_id"),
           uri: web3.stringToHex("template_uri")
-        }
+        },
+        gasAmount: 100000
       }
     )
 
@@ -78,7 +81,8 @@ export class NFTCollection extends DeployHelpers {
           nftCollectionContractId: nftCollectionContractId,
           uri: web3.stringToHex(nftUri)
         },
-        attoAlphAmount: BigInt(1.1e18)
+        attoAlphAmount: BigInt(1.1e18),
+        gasAmount: 100000
       }
     )
   }
@@ -92,7 +96,8 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           nftCollectionContractId: nftCollectionContractId
         },
-        attoAlphAmount: BigInt(1.1e18)
+        attoAlphAmount: BigInt(1.1e18),
+        gasAmount: 100000
       }
     )
   }
