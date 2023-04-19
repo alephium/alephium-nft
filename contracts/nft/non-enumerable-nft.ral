@@ -1,16 +1,9 @@
 // Only 1 token is supported
 Contract NonEnumerableNFT(
-    // Temporarily put collection id here to keep track of the collection
-    // remove after parent contract id can be queried from explorer backend
-    collectionId: ByteVec,
     // name; description; image
     uri: ByteVec
 ) implements INFT {
     pub fn getTokenUri() -> ByteVec {
         return uri
-    }
-
-    pub fn getCollectionId() -> ByteVec {
-        return collectionId
     }
 }

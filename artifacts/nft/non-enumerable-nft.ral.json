@@ -1,19 +1,16 @@
 {
   "version": "v2.1.2",
   "name": "NonEnumerableNFT",
-  "bytecode": "02020912010000000102ce0102010000000102ce0002",
-  "codeHash": "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e",
+  "bytecode": "010109010000000102ce0002",
+  "codeHash": "e4ac1069a1aea968d177741c290e109285ba3771c8df9c94e07d80d328a4c0c3",
   "fieldsSig": {
     "names": [
-      "collectionId",
       "uri"
     ],
     "types": [
-      "ByteVec",
       "ByteVec"
     ],
     "isMutable": [
-      false,
       false
     ]
   },
@@ -21,18 +18,6 @@
   "functions": [
     {
       "name": "getTokenUri",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "getCollectionId",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,

@@ -6,7 +6,6 @@ import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection as NFTCollectionInfo } from '../components/nft'
-import Link from 'next/link'
 
 export default function MintNFTs() {
   const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)

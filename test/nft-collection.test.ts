@@ -47,10 +47,7 @@ async function mintOpenNFTAndVerify(
     nftOpenCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group
   )
 
-  const { txId } = await nftCollection.mintOpenNFT(
-    nftOpenCollectionInstance.contractId,
-    getNFTUri(tokenIndex)
-  )
+  const { txId } = await nftCollection.mintOpenNFT(nftOpenCollectionInstance.contractId, getNFTUri(tokenIndex))
 
   // NFT just minted
   const nftByIndexResult = await nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
@@ -72,9 +69,7 @@ async function mintPreDesignedNFTAndVerify(
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(nftPreDesignedCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
 
-  await nftCollection.mintPreDesignedNFT(
-    nftPreDesignedCollectionInstance.contractId
-  )
+  await nftCollection.mintPreDesignedNFT(nftPreDesignedCollectionInstance.contractId)
 
   // NFT just minted
   const nftByIndexResult = await nftPreDesignedCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
