@@ -29,8 +29,8 @@ import { default as NFTOpenCollectionContractJson } from "../nft/nft_open_collec
 // Custom types for the contract
 export namespace NFTOpenCollectionTypes {
   export type Fields = {
-    nftTemplateId: HexString;
-    uri: HexString;
+    nonEnumerableNftTemplateId: HexString;
+    collectionUri: HexString;
     totalSupply: bigint;
   };
 

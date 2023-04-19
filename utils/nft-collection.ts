@@ -1,9 +1,9 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NonEnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
+import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
-import { nonEnumerableNFTTemplateId } from '../configs/nft'
+import { nonEnumerableNFTTemplateId, enumerableNFTTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
   async createOpenCollection(
@@ -14,8 +14,8 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId: nonEnumerableNFTTemplateId,
-          uri: web3.stringToHex(collectionUri),
+          nonEnumerableNftTemplateId: nonEnumerableNFTTemplateId,
+          collectionUri: web3.stringToHex(collectionUri),
           totalSupply: 0n
         },
         gasAmount: 100000
@@ -33,9 +33,9 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId: nonEnumerableNFTTemplateId,
-          uri: web3.stringToHex(collectionUri),
-          baseUri: web3.stringToHex(baseUri),
+          enumerableNftTemplateId: enumerableNFTTemplateId,
+          collectionUri: web3.stringToHex(collectionUri),
+          tokenBaseUri: web3.stringToHex(baseUri),
           totalSupply: 0n
         },
         gasAmount: 100000

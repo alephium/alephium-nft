@@ -29,9 +29,9 @@ import { default as NFTPreDesignedCollectionContractJson } from "../nft/nft-pre-
 // Custom types for the contract
 export namespace NFTPreDesignedCollectionTypes {
   export type Fields = {
-    nftTemplateId: HexString;
-    uri: HexString;
-    baseUri: HexString;
+    enumerableNftTemplateId: HexString;
+    collectionUri: HexString;
+    tokenBaseUri: HexString;
     totalSupply: bigint;
   };
 
@@ -130,7 +130,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "c9aec2e3f98f6562b835015d65fe2aae3b11addef30dfa4ae2a7607b86ca0276"
+    "e6994b00de9cdeedbc048b5854c6fabd8b9ca4998e92d530c69b628829540b76"
   )
 );
 

@@ -1,5 +1,5 @@
 Abstract Contract NFTCollectionBase(
-    uri: ByteVec,
+    collectionUri: ByteVec,
     mut totalSupply: U256
 ) implements INFTCollection {
     enum ErrorCodes {
@@ -8,7 +8,7 @@ Abstract Contract NFTCollectionBase(
     }
 
     pub fn getCollectionUri() -> ByteVec {
-        return uri
+        return collectionUri
     }
 
     pub fn totalSupply() -> U256 {

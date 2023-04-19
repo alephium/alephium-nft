@@ -7,3 +7,4 @@ const deployment = loadDeployments(NETWORK)
 
 export const marketplaceContractId: string = deployment.contracts.NFTMarketPlace.contractInstance.contractId
 export const nonEnumerableNFTTemplateId: string = deployment.contracts.NonEnumerableNFT.contractInstance.contractId
+export const enumerableNFTTemplateId: string = deployment.contracts.EnumerableNFT.contractInstance.contractId

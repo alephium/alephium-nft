@@ -2,7 +2,7 @@ import { web3, subContractId, addressFromContractId, encodeU256, binToHex, group
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
 import { testWallet1 } from './signers'
-import { fetchNFTState } from '../utils/contracts'
+import { fetchNonEnumerableNFTState, fetchEnumerableNFTState } from '../utils/contracts'
 import { NFTOpenCollectionInstance, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
@@ -55,7 +55,8 @@ async function mintOpenNFTAndVerify(
   // NFT doesn't exist yet
   await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
-  await verifyNFTState(nftContractId, tokenIndex)
+  const nftContractState = await fetchNonEnumerableNFTState(addressFromContractId(nftContractId))
+  utils.checkHexString(nftContractState.fields.uri, getNFTUri(tokenIndex))
 
   return txId
 }
@@ -75,12 +76,9 @@ async function mintPreDesignedNFTAndVerify(
   const nftByIndexResult = await nftPreDesignedCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-  await verifyNFTState(nftContractId, tokenIndex)
-}
-
-async function verifyNFTState(nftContractId: string, tokenIndex: bigint) {
-  const nftContractState = await fetchNFTState(addressFromContractId(nftContractId))
-  utils.checkHexString(nftContractState.fields.uri, getNFTUri(tokenIndex))
+  const nftContractState = await fetchEnumerableNFTState(addressFromContractId(nftContractId))
+  expect(nftContractState.fields.collection).toEqual(nftPreDesignedCollectionInstance.contractId)
+  expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
 }
 
 async function getNFTCollection() {

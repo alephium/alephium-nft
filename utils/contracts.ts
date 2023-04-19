@@ -9,7 +9,9 @@ import {
   NFTOpenCollection,
   NFTOpenCollectionInstance,
   NFTPreDesignedCollection,
-  NFTPreDesignedCollectionInstance
+  NFTPreDesignedCollectionInstance,
+  EnumerableNFT,
+  EnumerableNFTInstance
 } from '../artifacts/ts'
 
 export async function fetchNFTMarketplaceState(address: string) {
@@ -28,6 +30,10 @@ export async function fetchNFTListingState(address: string) {
   return await fetchContractState(NFTListing, new NFTListingInstance(address))
 }
 
-export async function fetchNFTState(address: string) {
+export async function fetchNonEnumerableNFTState(address: string) {
   return await fetchContractState(NonEnumerableNFT, new NonEnumerableNFTInstance(address))
+}
+
+export async function fetchEnumerableNFTState(address: string) {
+  return await fetchContractState(EnumerableNFT, new EnumerableNFTInstance(address))
 }

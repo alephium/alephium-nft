@@ -5,8 +5,8 @@
   "codeHash": "935e1ff93c3598140e0d2a2187b3c55d06e764d27a44fd0933fff1606574628f",
   "fieldsSig": {
     "names": [
-      "nftTemplateId",
-      "uri",
+      "nonEnumerableNftTemplateId",
+      "collectionUri",
       "totalSupply"
     ],
     "types": [

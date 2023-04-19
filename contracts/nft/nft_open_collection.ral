@@ -1,10 +1,10 @@
 // This is for the scenario where someone to create a collection and starts
 // to mint NFTs one-by-one
 Contract NFTOpenCollection(
-    nftTemplateId: ByteVec,
-    uri: ByteVec,
+    nonEnumerableNftTemplateId: ByteVec,
+    collectionUri: ByteVec,
     mut totalSupply: U256
-) extends NFTCollectionBase(uri, totalSupply) {
+) extends NFTCollectionBase(collectionUri, totalSupply) {
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
@@ -13,7 +13,7 @@ Contract NFTOpenCollection(
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(totalSupply),
-            nftTemplateId,
+            nonEnumerableNftTemplateId,
             initialImmState,
             #00,
             1,
