@@ -37,7 +37,7 @@ const TxStatusAlert = ({ txId, description, txStatusCallback }: TxStatusAlertPro
     numberOfChecks = numberOfChecks + 1
 
     console.log("txstatus", status)
-    if ((status.type === 'Confirmed' && numberOfChecks > 2) || (status.type === 'TxNotFound' && numberOfChecks > 3)) {
+    if ((status.type === 'Confirmed' && numberOfChecks === 2) || (status.type === 'TxNotFound' && numberOfChecks === 3)) {
       txStatusCallback(status)
     }
 

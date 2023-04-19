@@ -3,7 +3,7 @@ import { DeployHelpers } from './deploy-helpers'
 import { NonEnumerableNFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
-import { nftTemplateId } from '../configs/nft'
+import { nonEnumerableNFTTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
   async createOpenCollection(
@@ -14,7 +14,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId: nftTemplateId,
+          nftTemplateId: nonEnumerableNFTTemplateId,
           uri: web3.stringToHex(collectionUri),
           totalSupply: 0n
         },
@@ -33,7 +33,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftTemplateId: nftTemplateId,
+          nftTemplateId: nonEnumerableNFTTemplateId,
           uri: web3.stringToHex(collectionUri),
           baseUri: web3.stringToHex(baseUri),
           totalSupply: 0n

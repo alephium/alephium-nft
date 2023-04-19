@@ -6,4 +6,4 @@ import { loadDeployments } from '../../artifacts/ts/deployments'
 const deployment = loadDeployments(NETWORK)
 
 export const marketplaceContractId: string = deployment.contracts.NFTMarketPlace.contractInstance.contractId
-export const nftTemplateId: string = deployment.contracts.NonEnumerableNFT.contractInstance.contractId
+export const nonEnumerableNFTTemplateId: string = deployment.contracts.NonEnumerableNFT.contractInstance.contractId

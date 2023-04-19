@@ -59,9 +59,7 @@ export default function CreateCollections() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
-
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
-      console.debug('create collection TxResult', createCollectionTxResult)
       setOngoingTxId(createCollectionTxResult.txId)
       setOngoingTxDescription('minting NFT')
 

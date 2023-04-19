@@ -1,6 +1,6 @@
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, tokenIdFromAddress } from "@alephium/web3"
 import { fetchNFTOpenCollectionState, fetchNFTState } from "../utils/contracts"
-import { EnumerableNFT as NFTFactory } from '../artifacts/ts'
+import { NonEnumerableNFT } from '../artifacts/ts'
 import axios from "axios"
 import { fetchNFTListings } from "./nft-listing"
 
@@ -31,7 +31,8 @@ export async function fetchNFT(
   var nftState = undefined
 
   const nodeProvider = web3.getCurrentNodeProvider()
-  if (nodeProvider) {
+  const explorerProvider = web3.getCurrentExplorerProvider()
+  if (!!nodeProvider && !!explorerProvider) {
     try {
       nftState = await fetchNFTState(
         addressFromTokenId(tokenId)
@@ -40,17 +41,20 @@ export async function fetchNFT(
       console.debug(`error fetching state for ${tokenId}`, e)
     }
 
-    if (nftState && nftState.codeHash === NFTFactory.contract.codeHash) {
+    if (nftState && nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
       const metadataUri = hexToString(nftState.fields.uri as string)
       try {
         const metadata = (await axios.get(metadataUri)).data
-        return {
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image,
-          tokenId: tokenId,
-          collectionId: nftState.fields.collectionId,
-          listed
+        const collectionAddress = await explorerProvider.contracts.getContractsContractParent(addressFromTokenId(tokenId))
+        if (!!collectionAddress.parent) {
+          return {
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+            tokenId: tokenId,
+            collectionId: binToHex(tokenIdFromAddress(collectionAddress.parent)),
+            listed
+          }
         }
       } catch {
         return undefined
@@ -143,7 +147,7 @@ async function fetchNFTCollections(
   for (var tokenId of tokenIds) {
     const nft = await fetchNFT(tokenId, listed)
 
-    if (nft) {
+    if (!!nft) {
       const index = items.findIndex((item) => item.id === nft.collectionId)
       if (index === -1) {
         const collectionAddress = addressFromContractId(nft.collectionId)

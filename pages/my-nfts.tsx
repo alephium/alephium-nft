@@ -40,8 +40,9 @@ export default function Home() {
   }
 
   async function loadNFTs() {
-    if (context.signerProvider?.nodeProvider && context.account) {
+    if (context.signerProvider?.nodeProvider && context.signerProvider?.explorerProvider && context.account) {
       web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
+      web3.setCurrentExplorerProvider(context.signerProvider.explorerProvider)
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
       const fetchedNFTCollections = await fetchNFTsFromUTXOs(context.account.address)
       setNFTCollections(fetchedNFTCollections)
