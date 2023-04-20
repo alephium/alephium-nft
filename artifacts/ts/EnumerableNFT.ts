@@ -29,7 +29,7 @@ import { default as EnumerableNFTContractJson } from "../nft/enumerable-nft.ral.
 // Custom types for the contract
 export namespace EnumerableNFTTypes {
   export type Fields = {
-    collection: HexString;
+    collectionId: HexString;
     nftIndex: bigint;
   };
 
@@ -37,6 +37,10 @@ export namespace EnumerableNFTTypes {
 
   export interface CallMethodTable {
     getTokenUri: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getCollectionId: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -72,6 +76,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
+    getCollectionId: async (
+      params: Omit<
+        TestContractParams<EnumerableNFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionId", params);
+    },
   };
 }
 
@@ -80,7 +92,7 @@ export const EnumerableNFT = new Factory(
   Contract.fromJson(
     EnumerableNFTContractJson,
     "",
-    "99f77e928f89b9e3d7fbae1886eb983d5cbf305147a1e5014d52b75bf8a02645"
+    "484b54ef4088e71684e87728204b31ead5e1d2134ef4229522afdae1100c00f5"
   )
 );
 
@@ -102,6 +114,16 @@ export class EnumerableNFTInstance extends ContractInstance {
         EnumerableNFT,
         this,
         "getTokenUri",
+        params === undefined ? {} : params
+      );
+    },
+    getCollectionId: async (
+      params?: EnumerableNFTTypes.CallMethodParams<"getCollectionId">
+    ): Promise<EnumerableNFTTypes.CallMethodResult<"getCollectionId">> => {
+      return callMethod(
+        EnumerableNFT,
+        this,
+        "getCollectionId",
         params === undefined ? {} : params
       );
     },

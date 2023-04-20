@@ -1,11 +1,15 @@
 // Only 1 token is supported
 Contract EnumerableNFT(
-    collection: NFTPreDesignedCollection,
+    collectionId: ByteVec,
     nftIndex: U256
 ) implements INFT {
     // name; description; image
     pub fn getTokenUri() -> ByteVec {
         checkCaller!(true, 0)
-        return collection.getTokenUri(nftIndex)
+        return NFTPreDesignedCollection(collectionId).getTokenUri(nftIndex)
+    }
+
+    pub fn getCollectionId() -> ByteVec {
+        return collectionId
     }
 }

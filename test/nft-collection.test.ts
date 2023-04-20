@@ -77,11 +77,13 @@ async function mintPreDesignedNFTAndVerify(
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
   const nftContractState = await fetchEnumerableNFTState(addressFromContractId(nftContractId))
-  expect(nftContractState.fields.collection).toEqual(nftPreDesignedCollectionInstance.contractId)
+  expect(nftContractState.fields.collectionId).toEqual(nftPreDesignedCollectionInstance.contractId)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
   const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
   const tokenUri = (await nftInstance.methods.getTokenUri()).returns
   utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
+  const collectionId = (await nftInstance.methods.getCollectionId()).returns
+  expect(collectionId).toEqual(nftPreDesignedCollectionInstance.contractId)
 }
 
 async function getNFTCollection() {

@@ -1,6 +1,6 @@
 import { addressFromContractId, hexToString, SignerProvider } from "@alephium/web3"
 import { ContractEvent } from "@alephium/web3/dist/src/api/api-alephium"
-import { fetchNFTListingState, fetchNFTState } from "../utils/contracts"
+import { fetchNFTListingState, fetchNonEnumerableNFTState } from "../utils/contracts"
 import { NFTListing as NFTListingFactory } from '../artifacts/ts'
 import axios from "axios"
 import { NFTMarketplace } from "../utils/nft-marketplace"
@@ -64,7 +64,7 @@ async function fetchNFTListing(
     }
 
     if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-      const nftState = await fetchNFTState(
+      const nftState = await fetchNonEnumerableNFTState(
         addressFromContractId(tokenId)
       )
 

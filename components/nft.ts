@@ -1,5 +1,5 @@
 import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, tokenIdFromAddress } from "@alephium/web3"
-import { fetchNFTOpenCollectionState, fetchNFTState } from "../utils/contracts"
+import { fetchNFTOpenCollectionState, fetchNonEnumerableNFTState } from "../utils/contracts"
 import { NonEnumerableNFT } from '../artifacts/ts'
 import axios from "axios"
 import { fetchNFTListings } from "./nft-listing"
@@ -31,10 +31,9 @@ export async function fetchNFT(
   var nftState = undefined
 
   const nodeProvider = web3.getCurrentNodeProvider()
-  const explorerProvider = web3.getCurrentExplorerProvider()
-  if (!!nodeProvider && !!explorerProvider) {
+  if (!!nodeProvider) {
     try {
-      nftState = await fetchNFTState(
+      nftState = await fetchNonEnumerableNFTState(
         addressFromTokenId(tokenId)
       )
     } catch (e) {
@@ -45,16 +44,13 @@ export async function fetchNFT(
       const metadataUri = hexToString(nftState.fields.uri as string)
       try {
         const metadata = (await axios.get(metadataUri)).data
-        const collectionAddress = await explorerProvider.contracts.getContractsContractParent(addressFromTokenId(tokenId))
-        if (!!collectionAddress.parent) {
-          return {
-            name: metadata.name,
-            description: metadata.description,
-            image: metadata.image,
-            tokenId: tokenId,
-            collectionId: binToHex(tokenIdFromAddress(collectionAddress.parent)),
-            listed
-          }
+        return {
+          name: metadata.name,
+          description: metadata.description,
+          image: metadata.image,
+          tokenId: tokenId,
+          collectionId: nftState.fields.collectionId,
+          listed
         }
       } catch {
         return undefined
@@ -112,7 +108,7 @@ export async function fetchNFTCollection(
 ): Promise<NFTCollection> {
   const collectionAddress = addressFromContractId(collectionId)
   const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-  const metadataUri = hexToString(collectionState.fields.uri)
+  const metadataUri = hexToString(collectionState.fields.collectionUri)
   const explorerProvider = web3.getCurrentExplorerProvider()
 
   const metadata = (await axios.get(metadataUri)).data
@@ -152,7 +148,7 @@ async function fetchNFTCollections(
       if (index === -1) {
         const collectionAddress = addressFromContractId(nft.collectionId)
         const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-        const metadataUri = hexToString(collectionState.fields.uri)
+        const metadataUri = hexToString(collectionState.fields.collectionUri)
         const metadata = (await axios.get(metadataUri)).data
         items.push({
           id: nft.collectionId,

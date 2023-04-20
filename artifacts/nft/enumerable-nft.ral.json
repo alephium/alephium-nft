@@ -1,11 +1,11 @@
 {
   "version": "v2.1.2",
   "name": "EnumerableNFT",
-  "bytecode": "020112010000000109030c7bce010d0dce00010402",
-  "codeHash": "99f77e928f89b9e3d7fbae1886eb983d5cbf305147a1e5014d52b75bf8a02645",
+  "bytecode": "0202121b010000000109030c7bce010d0dce00010402010000000102ce0002",
+  "codeHash": "484b54ef4088e71684e87728204b31ead5e1d2134ef4229522afdae1100c00f5",
   "fieldsSig": {
     "names": [
-      "collection",
+      "collectionId",
       "nftIndex"
     ],
     "types": [
@@ -21,6 +21,18 @@
   "functions": [
     {
       "name": "getTokenUri",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getCollectionId",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,

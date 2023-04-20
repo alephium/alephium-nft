@@ -29,6 +29,7 @@ import { default as NonEnumerableNFTContractJson } from "../nft/non-enumerable-n
 // Custom types for the contract
 export namespace NonEnumerableNFTTypes {
   export type Fields = {
+    collectionId: HexString;
     uri: HexString;
   };
 
@@ -36,6 +37,10 @@ export namespace NonEnumerableNFTTypes {
 
   export interface CallMethodTable {
     getTokenUri: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    getCollectionId: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -71,6 +76,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
+    getCollectionId: async (
+      params: Omit<
+        TestContractParams<NonEnumerableNFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionId", params);
+    },
   };
 }
 
@@ -79,7 +92,7 @@ export const NonEnumerableNFT = new Factory(
   Contract.fromJson(
     NonEnumerableNFTContractJson,
     "",
-    "e4ac1069a1aea968d177741c290e109285ba3771c8df9c94e07d80d328a4c0c3"
+    "c3e8a33252664e2f79903788d8abd79ee2c6785c580fa6911a0868436c59f59e"
   )
 );
 
@@ -101,6 +114,16 @@ export class NonEnumerableNFTInstance extends ContractInstance {
         NonEnumerableNFT,
         this,
         "getTokenUri",
+        params === undefined ? {} : params
+      );
+    },
+    getCollectionId: async (
+      params?: NonEnumerableNFTTypes.CallMethodParams<"getCollectionId">
+    ): Promise<NonEnumerableNFTTypes.CallMethodResult<"getCollectionId">> => {
+      return callMethod(
+        NonEnumerableNFT,
+        this,
+        "getCollectionId",
         params === undefined ? {} : params
       );
     },

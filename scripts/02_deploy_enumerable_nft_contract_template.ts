@@ -8,7 +8,7 @@ const deployEnumerableNFTTemplate: DeployFunction<Settings> = async (
   network: Network<Settings>
 ): Promise<void> => {
   const initialFields = {
-    collection: stringToHex("collection"),
+    collectionId: stringToHex("collection-id"),
     nftIndex: 1
   }
 
