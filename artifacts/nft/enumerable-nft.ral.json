@@ -1,18 +1,21 @@
 {
   "version": "v2.1.2",
   "name": "EnumerableNFT",
-  "bytecode": "0202121b010000000109030c7bce010d0dce00010402010000000102ce0002",
-  "codeHash": "484b54ef4088e71684e87728204b31ead5e1d2134ef4229522afdae1100c00f5",
+  "bytecode": "0302121b010000000109030c7bce010d0dce00010402010000000102ce0002",
+  "codeHash": "8b70b2781d2e60683abc67249fbcd966818816fd512d17edd02a8592085e49be",
   "fieldsSig": {
     "names": [
       "collectionId",
-      "nftIndex"
+      "nftIndex",
+      "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
-      "U256"
+      "U256",
+      "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false
     ]
@@ -43,5 +46,6 @@
         "ByteVec"
       ]
     }
-  ]
+  ],
+  "stdInterfaceId": "0003"
 }

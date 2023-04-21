@@ -1,3 +1,5 @@
+import "std/nft_interface"
+
 // Only 1 token is supported
 Contract NonEnumerableNFT(
     collectionId: ByteVec,

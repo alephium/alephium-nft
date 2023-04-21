@@ -1,3 +1,5 @@
+import "std/nft_collection_interface"
+
 Abstract Contract NFTCollectionBase(
     collectionUri: ByteVec,
     mut totalSupply: U256

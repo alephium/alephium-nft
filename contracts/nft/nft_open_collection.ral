@@ -9,7 +9,7 @@ Contract NFTOpenCollection(
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
 
-        let initialImmState = encodeToByteVec!(selfContractId!(), nftUri)
+        let initialImmState = NonEnumerableNFT.encodeImmFields!(selfContractId!(), nftUri)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(totalSupply),
