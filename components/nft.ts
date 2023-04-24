@@ -1,11 +1,12 @@
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, Account, NodeProvider, ExplorerProvider } from "@alephium/web3"
-import { fetchNFTOpenCollectionState, fetchNonEnumerableNFTState } from "../utils/contracts"
-import { NonEnumerableNFT } from '../artifacts/ts'
 import axios from "axios"
-import { fetchNFTListings } from "./nft-listing"
-import { marketplaceContractId } from '../configs/nft'
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
+import { NonEnumerableNFT } from '../artifacts/ts'
+import { fetchNFTListings } from "./nft-listing"
+import { fetchNFTMarketplaceState } from '../utils/contracts'
+import { fetchNFTOpenCollectionState, fetchNonEnumerableNFTState } from "../utils/contracts"
+import { marketplaceContractId } from '../configs/nft'
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, Account } from "@alephium/web3"
 
 export interface NFT {
   name: string,
@@ -238,6 +239,67 @@ export const useCollection = (
   )
 
   return { collection, ...rest }
+}
+
+export const useNFTListings = (
+  signerProvider?: SignerProvider
+) => {
+  const { data, error, ...rest } = useSWR(
+    signerProvider &&
+    [
+      "nftListings",
+    ],
+    async () => {
+      if (!signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
+        return undefined;
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
+
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
+      const items = await fetchNFTListings(signerProvider, marketplaceContractAddress)
+
+      return Array.from(items.values())
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { nftListings: data || [], isLoading: !data && !error, ...rest }
+}
+
+export const useCommissionRate = (
+  signerProvider?: SignerProvider
+) => {
+  const { data, error, ...rest } = useSWR(
+    signerProvider &&
+    signerProvider.nodeProvider &&
+    [
+      "commissionRate",
+    ],
+    async () => {
+      if (!signerProvider || !signerProvider.nodeProvider) {
+        return undefined;
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+
+      const marketplaceState = await fetchNFTMarketplaceState(
+        addressFromContractId(marketplaceContractId)
+      )
+
+      return marketplaceState.fields.commissionRate as bigint
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { commissionRate: data, isLoading: !data && !error, ...rest }
 }
 
 export const getAccountIdentifier = (account: Account) =>
