@@ -1,25 +1,14 @@
-import { web3 } from '@alephium/web3'
-import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { fetchNFTCollection, NFTCollection } from '../components/nft'
 import Link from 'next/link'
+import { useCollection } from '../components/nft'
 
 export default function Collections() {
-  const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
 
-  useEffect(() => {
-    if (!!collectionId && context.signerProvider?.nodeProvider && context.signerProvider?.explorerProvider) {
-      web3.setCurrentNodeProvider(context.signerProvider?.nodeProvider)
-      web3.setCurrentExplorerProvider(context.signerProvider?.explorerProvider)
-      fetchNFTCollection(collectionId as string).then((fetchedCollection) => (
-        setCollection(fetchedCollection)
-      ))
-    }
-  }, [collectionId, context.signerProvider?.nodeProvider, context.signerProvider?.explorerProvider])
+  const { collection } = useCollection(collectionId as string, context.signerProvider)
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
 

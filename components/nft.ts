@@ -209,5 +209,36 @@ export const useCollections = (
   return { nftCollections: nftCollections || [], isLoading: !nftCollections && !error, ...rest }
 }
 
+export const useCollection = (
+  collectionId?: string,
+  signerProvider?: SignerProvider
+) => {
+  const { data: collection, error, ...rest } = useSWR(
+    collectionId &&
+    signerProvider?.nodeProvider &&
+    signerProvider?.explorerProvider &&
+    [
+      collectionId,
+      "collection",
+    ],
+    async () => {
+      if (!signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
+        return undefined;
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
+
+      return await fetchNFTCollection(collectionId as string)
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { collection, ...rest }
+}
+
 export const getAccountIdentifier = (account: Account) =>
   `${NETWORK}::${account.address}`
