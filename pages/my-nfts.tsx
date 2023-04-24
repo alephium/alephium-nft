@@ -1,20 +1,15 @@
-import { node, ONE_ALPH, web3 } from '@alephium/web3'
-import { useEffect, useState } from 'react'
-import { addressFromContractId } from '@alephium/web3'
+import { node, ONE_ALPH } from '@alephium/web3'
+import { useState } from 'react'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { fetchListedNFTs, fetchNFTsFromUTXOs, mergeNFTCollections, NFT, NFTCollection } from '../components/nft'
+import { NFT, useCollections } from '../components/nft'
 import Link from 'next/link'
 
-type LoadingState = 'loaded' | 'not-loaded'
-
 export default function Home() {
-  const [nftCollections, setNFTCollections] = useState([] as NFTCollection[])
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
   const [nftSellingPrice, setNFTSellingPrice] = useState<number | undefined>(undefined)
-  const [loadingState, setLoadingState] = useState<LoadingState>('not-loaded')
   const context = useAlephiumConnectContext()
   const [showSetPriceModal, setShowSetPriceModal] = useState(false);
   const minimumNFTPrice = 0.0001 // ALPH
@@ -29,33 +24,12 @@ export default function Home() {
     resetTxStatus
   ] = useTxStatusStates()
 
-  useEffect(() => {
-    loadNFTs()
-  }, [context.account])
+  const { nftCollections, isLoading } = useCollections(context.signerProvider, context.account)
 
   function resetState() {
     resetTxStatus()
     setNFTBeingSold(undefined)
     setNFTSellingPrice(undefined)
-  }
-
-  async function loadNFTs() {
-    if (context.signerProvider?.nodeProvider && context.signerProvider?.explorerProvider && context.account) {
-      web3.setCurrentNodeProvider(context.signerProvider.nodeProvider)
-      web3.setCurrentExplorerProvider(context.signerProvider.explorerProvider)
-      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const fetchedNFTCollections = await fetchNFTsFromUTXOs(context.account.address)
-      setNFTCollections(fetchedNFTCollections)
-
-      fetchListedNFTs(
-        context.signerProvider,
-        marketplaceContractAddress,
-        context.account.address
-      ).then((listedNftCollections) => {
-        setNFTCollections(mergeNFTCollections(listedNftCollections, fetchedNFTCollections))
-        setLoadingState('loaded')
-      })
-    }
   }
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
@@ -77,7 +51,6 @@ export default function Home() {
       setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetState()
-          await loadNFTs()
         } else if (txStatus.type === 'TxNotFound') {
           resetState()
           console.error('List NFT transaction not found')
@@ -96,7 +69,8 @@ export default function Home() {
     resetState()
   }
 
-  if (loadingState === 'loaded' && nftCollections.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
+  if (isLoading) return (<h1 className="px-20 py-10 text-3xl">Loading...</h1>)
+  if (nftCollections.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
     <>
       {

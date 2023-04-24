@@ -1,8 +1,11 @@
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, tokenIdFromAddress } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, contractIdFromAddress, binToHex, Account, NodeProvider, ExplorerProvider } from "@alephium/web3"
 import { fetchNFTOpenCollectionState, fetchNonEnumerableNFTState } from "../utils/contracts"
 import { NonEnumerableNFT } from '../artifacts/ts'
 import axios from "axios"
 import { fetchNFTListings } from "./nft-listing"
+import { marketplaceContractId } from '../configs/nft'
+import useSWR from "swr"
+import { NETWORK } from '../configs/nft'
 
 export interface NFT {
   name: string,
@@ -166,3 +169,45 @@ async function fetchNFTCollections(
 
   return items
 }
+
+export const useCollections = (
+  signerProvider?: SignerProvider,
+  account?: Account
+) => {
+  const { data: nftCollections, error, ...rest } = useSWR(
+    account &&
+    signerProvider?.nodeProvider &&
+    signerProvider?.explorerProvider &&
+    [
+      getAccountIdentifier(account),
+      "collections",
+    ],
+    async () => {
+      if (!account || !signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
+        return [];
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
+
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
+      const nftsFromUTXOs = await fetchNFTsFromUTXOs(account.address)
+      const listedNFTs = await fetchListedNFTs(
+        signerProvider,
+        marketplaceContractAddress,
+        account.address
+      )
+
+      return mergeNFTCollections(listedNFTs, nftsFromUTXOs)
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { nftCollections: nftCollections || [], isLoading: !nftCollections && !error, ...rest }
+}
+
+export const getAccountIdentifier = (account: Account) =>
+  `${NETWORK}::${account.address}`
