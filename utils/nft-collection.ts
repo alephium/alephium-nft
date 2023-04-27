@@ -53,7 +53,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftCollectionContractId: nftCollectionContractId,
+          nftCollection: nftCollectionContractId,
           uri: web3.stringToHex(nftUri)
         },
         attoAlphAmount: BigInt(1.1e18),
@@ -69,7 +69,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nftCollectionContractId: nftCollectionContractId
+          nftCollection: nftCollectionContractId
         },
         attoAlphAmount: BigInt(1.1e18),
         gasAmount: 100000

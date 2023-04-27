@@ -1,5 +1,4 @@
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
-import { addressFromContractId } from '@alephium/web3'
 import { Settings } from '../alephium.config'
 import { NFTMarketPlace } from '../artifacts/ts'
 
@@ -23,7 +22,7 @@ const deployMarketplace: DeployFunction<Settings> = async (
   })
 
   const contractId = result.contractInstance.contractId
-  const contractAddress = addressFromContractId(contractId)
+  const contractAddress = result.contractInstance.address
   console.log(`NFT Marketplace: ${contractAddress}, contract id: ${contractId}`)
 }
 

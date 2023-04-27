@@ -1,39 +1,32 @@
-import { fetchContractState } from '@alephium/web3'
 import {
-  NonEnumerableNFT,
   NonEnumerableNFTInstance,
-  NFTListing,
   NFTListingInstance,
-  NFTMarketPlace,
   NFTMarketPlaceInstance,
-  NFTOpenCollection,
   NFTOpenCollectionInstance,
-  NFTPreDesignedCollection,
   NFTPreDesignedCollectionInstance,
-  EnumerableNFT,
   EnumerableNFTInstance
 } from '../artifacts/ts'
 
 export async function fetchNFTMarketplaceState(address: string) {
-  return await fetchContractState(NFTMarketPlace, new NFTMarketPlaceInstance(address))
+  return new NFTMarketPlaceInstance(address).fetchState()
 }
 
 export async function fetchNFTOpenCollectionState(address: string) {
-  return await fetchContractState(NFTOpenCollection, new NFTOpenCollectionInstance(address))
+  return new NFTOpenCollectionInstance(address).fetchState()
 }
 
 export async function fetchNFTPreDesignedCollectionState(address: string) {
-  return await fetchContractState(NFTPreDesignedCollection, new NFTPreDesignedCollectionInstance(address))
+  return new NFTPreDesignedCollectionInstance(address).fetchState()
 }
 
 export async function fetchNFTListingState(address: string) {
-  return await fetchContractState(NFTListing, new NFTListingInstance(address))
+  return new NFTListingInstance(address).fetchState()
 }
 
 export async function fetchNonEnumerableNFTState(address: string) {
-  return await fetchContractState(NonEnumerableNFT, new NonEnumerableNFTInstance(address))
+  return new NonEnumerableNFTInstance(address).fetchState()
 }
 
 export async function fetchEnumerableNFTState(address: string) {
-  return await fetchContractState(EnumerableNFT, new EnumerableNFTInstance(address))
+  return new EnumerableNFTInstance(address).fetchState()
 }

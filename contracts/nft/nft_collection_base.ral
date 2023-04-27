@@ -18,7 +18,7 @@ Abstract Contract NFTCollectionBase(
     }
 
     pub fn nftByIndex(index: U256) -> INFT {
-        checkCaller!(index < totalSupply(), ErrorCodes.IncorrectTokenIndex)
+        assert!(index < totalSupply, ErrorCodes.IncorrectTokenIndex)
 
         let nftTokenId = subContractId!(toByteVec!(index))
         assert!(contractExists!(nftTokenId), ErrorCodes.NFTNotFound)

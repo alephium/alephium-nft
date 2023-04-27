@@ -70,10 +70,7 @@ export namespace ListNFT {
 export namespace MintOpenNFT {
   export async function execute(
     signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      nftCollectionContractId: HexString;
-      uri: HexString;
-    }>
+    params: ExecuteScriptParams<{ nftCollection: HexString; uri: HexString }>
   ): Promise<ExecuteScriptResult> {
     const signerParams = await script.txParamsForExecution(signer, params);
     return await signer.signAndSubmitExecuteScriptTx(signerParams);
@@ -85,7 +82,7 @@ export namespace MintOpenNFT {
 export namespace MintPreDesignedNFT {
   export async function execute(
     signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftCollectionContractId: HexString }>
+    params: ExecuteScriptParams<{ nftCollection: HexString }>
   ): Promise<ExecuteScriptResult> {
     const signerParams = await script.txParamsForExecution(signer, params);
     return await signer.signAndSubmitExecuteScriptTx(signerParams);

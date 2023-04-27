@@ -7,7 +7,7 @@ import { EnumerableNFTInstance, NFTOpenCollectionInstance, NFTPreDesignedCollect
 
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
-  web3.setCurrentNodeProvider(nodeUrl)
+  web3.setCurrentNodeProvider(nodeUrl, undefined, fetch)
 
   it('should test minting nft in open collection', async () => {
     const nftCollection = await getNFTCollection()
@@ -33,7 +33,7 @@ describe('nft collection', function() {
     for (let i = 0n; i < 10n; i++) {
       await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i)
     }
-  }, 60000)
+  }, 30000)
 })
 
 async function mintOpenNFTAndVerify(

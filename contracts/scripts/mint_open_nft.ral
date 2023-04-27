@@ -1,7 +1,6 @@
 TxScript MintOpenNFT(
-    nftCollectionContractId: ByteVec,
+    nftCollection: NFTOpenCollection,
     uri: ByteVec
 ) {
-    let nftCollection = NFTOpenCollection(nftCollectionContractId)
     nftCollection.mint{callerAddress!() -> ALPH: 1 alph}(uri)
 }
