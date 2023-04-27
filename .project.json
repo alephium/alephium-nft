@@ -25,7 +25,7 @@
     },
     "EnumerableNFT": {
       "sourceFile": "nft/enumerable-nft.ral",
-      "sourceCodeHash": "21065e77f03c383ba4163affc064e2b609e4c90e522c083f6a7900e37c0afe3f",
+      "sourceCodeHash": "6ecbeb24f45290bd4e08bdb3a3ebd78e34caa697137fe532adc718fc19d2d697",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "8b70b2781d2e60683abc67249fbcd966818816fd512d17edd02a8592085e49be",
       "warnings": []
@@ -95,7 +95,7 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "61b4c67a9d05a2704d685eb7c16d341c6ea9ca47ba877bcd80f04205a4095592",
+      "sourceCodeHash": "1ee921000740d3fe3a2be41ba9312514569b3d5fce3575520526f3111848b8a3",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "7793d2f69fe3a53dcf82e5304ef6242a3d14d22e2f9536d811106121baaa990f",
       "warnings": []

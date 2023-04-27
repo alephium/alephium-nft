@@ -11,7 +11,10 @@ Contract NFTPreDesignedCollection(
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint() -> (ByteVec) {
         let minter = callerAddress!()
-        let initialImmState = EnumerableNFT.encodeImmFields!(selfContractId!(), totalSupply)
+        let initialImmState = EnumerableNFT.encodeImmFields!(
+            NFTPreDesignedCollection(selfContractId!()),
+            totalSupply
+        )
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(totalSupply),

@@ -29,7 +29,7 @@ import { default as EnumerableNFTContractJson } from "../nft/enumerable-nft.ral.
 // Custom types for the contract
 export namespace EnumerableNFTTypes {
   export type Fields = {
-    collectionId: HexString;
+    collection: HexString;
     nftIndex: bigint;
   };
 

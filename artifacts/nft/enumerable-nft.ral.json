@@ -5,7 +5,7 @@
   "codeHash": "8b70b2781d2e60683abc67249fbcd966818816fd512d17edd02a8592085e49be",
   "fieldsSig": {
     "names": [
-      "collectionId",
+      "collection",
       "nftIndex",
       "__stdInterfaceId"
     ],
