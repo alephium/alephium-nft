@@ -174,13 +174,13 @@ export class NFTMarketplace extends DeployHelpers {
     )
   }
 
-  async getListedNFTs(marketPlaceContractAddress: string): Promise<ContractEvent[]> {
+  async getListedNFTs(marketPlaceContractAddress: string, start: number): Promise<ContractEvent[]> {
     const nodeProvider = web3.getCurrentNodeProvider()
     const contractEvents = await nodeProvider.events.getEventsContractContractaddress(
       marketPlaceContractAddress,
-      { start: 0 }
+      { start }
     )
     // NFTListed event has index 0
-    return contractEvents.events.filter((event) => event.eventIndex == 0)
+    return contractEvents.events;
   }
 }

@@ -12,7 +12,8 @@ const nextConfig = {
     }
     config.experiments = {
       asyncWebAssembly: true,
-      syncWebAssembly: true
+      syncWebAssembly: true,
+      layers: true
     }
     return config;
   },

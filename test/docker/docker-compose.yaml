@@ -57,3 +57,21 @@ services:
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - EXPLORER_READONLY=false
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:5.0.17
+    ports:
+      - 127.0.0.1:27017:27017
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongodb
+    ports:
+      - 127.0.0.1:8888:8081
+    

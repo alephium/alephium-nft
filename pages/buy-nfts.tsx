@@ -23,19 +23,18 @@ export default function BuyNFTs() {
   ] = useTxStatusStates()
 
   const { nftListings, isLoading } = useNFTListings(context.signerProvider)
-  const { commissionRate } = useCommissionRate(context.signerProvider)
 
   async function buyNFT(nftListing: NFTListing) {
-    if (context.signerProvider?.nodeProvider && context.account && commissionRate) {
+    if (context.signerProvider?.nodeProvider && context.account) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
-      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, commissionRate)
+      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
       console.debug("commission", commission)
       console.debug("nftDeposit", nftDeposit)
       console.debug("gasAmount", gasAmount)
       console.debug("totalAmount", totalAmount)
       const buyNFTTxResult = await nftMarketplace.buyNFT(
         totalAmount,
-        nftListing.tokenId,
+        nftListing._id,
         binToHex(contractIdFromAddress(nftListing.marketAddress))
       )
       console.debug('buyNFTTxResult', buyNFTTxResult)
@@ -56,8 +55,7 @@ export default function BuyNFTs() {
         "can not buy NFT",
         context.signerProvider?.nodeProvider,
         context.signerProvider,
-        context.account,
-        commissionRate
+        context.account
       )
     }
   }
@@ -87,7 +85,7 @@ export default function BuyNFTs() {
                   </div>
                   <div className="p-4 bg-black">
                     <p className="text-2xl font-bold text-white">{prettifyAttoAlphAmount(nftListing.price)} ALPH </p>
-                    {commissionRate?.toString() && showPriceBreakdowns(nftListing.price, commissionRate)}
+                    {showPriceBreakdowns(nftListing.price, nftListing.commissionRate)}
                     <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNFT(nftListing)}>Buy</button>
                   </div>
                 </div>
@@ -101,7 +99,7 @@ export default function BuyNFTs() {
 }
 
 function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
-  const commission = (nftPrice * commissionRate) / BigInt(10000)
+  const commission = BigInt(nftPrice * commissionRate) / BigInt(10000)
   const nftDeposit = ONE_ALPH
   const gasAmount = BigInt(200000)
   const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount

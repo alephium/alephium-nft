@@ -10,7 +10,7 @@ export interface NFTListing {
   name: string,
   description: string,
   image: string,
-  tokenId: string,
+  _id: string,
   tokenOwner: string,
   marketAddress: string
   commissionRate: bigint,
@@ -22,27 +22,24 @@ export async function fetchNFTListings(
   signerProvider: SignerProvider,
   marketplaceContractAddress: string,
   address?: string
-): Promise<Map<string, NFTListing>> {
-  const items = new Map<string, NFTListing>()
-
+): Promise<NFTListing[]> {
   if (signerProvider?.nodeProvider) {
+    const res = await axios.get(`api/marketplace-events/count`)
     const nftMarketplace = new NFTMarketplace(signerProvider)
-    const events: ContractEvent[] = await nftMarketplace.getListedNFTs(marketplaceContractAddress)
-
+    const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress, res.data.count)
     for (var event of events) {
-      const listedNFT = await fetchNFTListing(signerProvider, event)
-      if (address) {
-        listedNFT &&
-          listedNFT.tokenOwner === address &&
-          items.set(listedNFT.listingContractId, listedNFT)
-      } else {
-        listedNFT &&
-          items.set(listedNFT.listingContractId, listedNFT)
-      }
+      await nftListingEventReducer(event, marketplaceContractAddress, signerProvider)
     }
   }
 
-  return items;
+  const result = await axios.get(`api/nft-listings`)
+  const nftListings: NFTListing[] = result.data
+
+  if (address) {
+    return nftListings.filter((listing) => listing.tokenOwner === address)
+  } else {
+    return nftListings
+  }
 }
 
 async function fetchNFTListing(
@@ -60,7 +57,7 @@ async function fetchNFTListing(
         addressFromContractId(listingContractId)
       )
     } catch (e) {
-      console.log(`error fetching state for ${tokenId}`, e)
+      console.debug(`error fetching state for ${tokenId}`, e)
     }
 
     if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
@@ -71,16 +68,59 @@ async function fetchNFTListing(
       const metadataUri = hexToString(nftState.fields.uri as string)
       const metadata = (await axios.get(metadataUri)).data
       return {
+        _id: tokenId,
         price: listingState.fields.price as bigint,
         name: metadata.name,
         description: metadata.description,
         image: metadata.image,
-        tokenId: tokenId,
         tokenOwner: listingState.fields.tokenOwner as string,
         marketAddress: listingState.fields.marketAddress as string,
         commissionRate: listingState.fields.commissionRate as bigint,
         listingContractId: listingContractId
       }
     }
+  }
+}
+
+async function nftListingEventReducer(
+  event: ContractEvent,
+  marketplaceContractAddress: string,
+  signerProvider: SignerProvider
+) {
+  axios.post(`api/marketplace-events`, {
+    txId: event.txId,
+    contractAddress: marketplaceContractAddress,
+    eventIndex: event.eventIndex,
+    fields: event.fields
+  })
+
+  // NFTListed or NFTListingPriceUpdated
+  if (event.eventIndex === 0 || event.eventIndex === 3) {
+    const listedNFT = await fetchNFTListing(signerProvider, event)
+    if (listedNFT) {
+      console.log("persist nft listing", event)
+      // Persist the nft listing
+      const result = await axios.post(`api/nft-listings`, {
+        id: listedNFT._id,
+        price: listedNFT.price,
+        name: listedNFT.name,
+        description: listedNFT.description,
+        image: listedNFT.image,
+        tokenOwner: listedNFT.tokenOwner,
+        marketAddress: listedNFT.marketAddress,
+        commissionRate: listedNFT.commissionRate,
+        listingContractId: listedNFT.listingContractId
+      })
+
+      console.debug("Persist nft listing", result, event)
+    }
+  }
+
+  // NFTSold or NFTListingCancelled
+  if (event.eventIndex === 1 || event.eventIndex === 2) {
+    const tokenId = event.fields[1].value.toString()
+    // Remove NFT Listing
+    const result = await axios.delete(`api/nft-listings?id=${tokenId}`)
+    console.debug("Delete nft listing", result, event)
   }
 }

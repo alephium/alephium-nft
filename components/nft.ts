@@ -69,7 +69,7 @@ export async function fetchListedNFTs(
   address: string
 ): Promise<NFTCollection[]> {
   const listings = await fetchNFTListings(signerProvider, marketplaceContractAddress, address)
-  const tokenIds = Array.from(listings.values()).map((listing) => listing.tokenId)
+  const tokenIds = listings.map((listing) => listing._id)
   return await fetchNFTCollections(tokenIds, true)
 }
 
@@ -258,9 +258,7 @@ export const useNFTListings = (
       web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
 
       const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const items = await fetchNFTListings(signerProvider, marketplaceContractAddress)
-
-      return Array.from(items.values())
+      return await fetchNFTListings(signerProvider, marketplaceContractAddress)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,
