@@ -1,12 +1,13 @@
+'use client'
 import * as web3 from '@alephium/web3'
 import { binToHex, contractIdFromAddress, prettifyExactAmount } from '@alephium/web3'
-import { NFTMarketplace } from '../utils/nft-marketplace'
-import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
+import { NFTMarketplace } from '../../utils/nft-marketplace'
+import TxStatusAlert, { useTxStatusStates } from '../tx-status-alert/page'
 import { useRouter } from 'next/router'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { NFTListing } from '../components/nft-listing'
-import { useCommissionRate, useNFTListings } from '../components/nft'
+import { NFTListing } from '../../components/nft-listing'
+import { useCommissionRate, useNFTListings } from '../../components/nft'
 
 export default function BuyNFTs() {
   const router = useRouter()

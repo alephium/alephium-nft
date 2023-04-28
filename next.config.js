@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    //ENVIRONMENT: "development-walletconnect"
-    //ENVIRONMENT: "development-nodewallet"
-    ENVIRONMENT: "browser-extension"
+  experimental: {
+    appDir: true
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -12,7 +10,8 @@ const nextConfig = {
     }
     config.experiments = {
       asyncWebAssembly: true,
-      syncWebAssembly: true
+      syncWebAssembly: true,
+      layers: true
     }
     return config;
   },

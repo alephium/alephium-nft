@@ -1,3 +1,4 @@
+'use client'
 import * as web3 from "@alephium/web3"
 import { useTxStatus } from "@alephium/web3-react"
 import { useState } from "react"

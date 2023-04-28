@@ -1,3 +1,4 @@
+'use client'
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import Link from 'next/link'
@@ -37,7 +38,7 @@ export default function Collections() {
                   <tr>
                     <td className="whitespace-nowrap text-sm font-medium">
                       <b>Already Minted</b>: {collection.totalSupply.toString().concat(',  ')}
-                      <Link href={`/mint-nfts?collectionId=${collection.id}`}><a className="mr-6 text-blue-500">mint more </a></Link>
+                      <Link href={`/mint-nfts?collectionId=${collection.id}`}>mint more</Link>
                     </td>
                   </tr>
                 </tbody>

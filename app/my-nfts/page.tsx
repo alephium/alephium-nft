@@ -1,13 +1,14 @@
+'use client'
 import { node, ONE_ALPH } from '@alephium/web3'
 import { useState } from 'react'
-import { NFTMarketplace } from '../utils/nft-marketplace'
-import { marketplaceContractId } from '../configs/nft'
-import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
+import { NFTMarketplace } from '../../utils/nft-marketplace'
+import { marketplaceContractId } from '../../configs/nft'
+import TxStatusAlert, { useTxStatusStates } from '../tx-status-alert/page'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { NFT, useCollections } from '../components/nft'
+import { NFT, useCollections } from '../../components/nft'
 import Link from 'next/link'
 
-export default function Home() {
+export default function MyNFTs() {
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
   const [nftSellingPrice, setNFTSellingPrice] = useState<number | undefined>(undefined)
   const context = useAlephiumConnectContext()
@@ -84,7 +85,7 @@ export default function Home() {
             nftCollections.map((nftCollection, i) => {
               return (
                 <div key={i} >
-                  <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}><a className="mr-6 text-blue-500"> {nftCollection.name} </a></Link>
+                  <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}>{nftCollection.name}</Link>
                   <br />
                   <label><b>Description</b>: {nftCollection.description}</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
