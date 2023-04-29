@@ -1,6 +1,5 @@
 import { connect, connection } from 'mongoose'
 const {
-  // Attempts to connect to MongoDB and then tries to connect locally:)
   MONGO_URI = 'mongodb://localhost:27017/alephium-nft'
 } = process.env
 

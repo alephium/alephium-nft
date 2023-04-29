@@ -12,6 +12,7 @@ export class DeployHelpers {
   ) {
     this.signer = signer
     signer.nodeProvider && web3.setCurrentNodeProvider(signer.nodeProvider)
+    signer.explorerProvider && web3.setCurrentExplorerProvider(signer.explorerProvider)
   }
 
   async buildProject(errorOnWarnings: boolean = true): Promise<void> {

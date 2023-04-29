@@ -174,7 +174,7 @@ export class NFTMarketplace extends DeployHelpers {
     )
   }
 
-  async getListedNFTs(marketPlaceContractAddress: string, start: number): Promise<ContractEvent[]> {
+  async getMarketplaceEvents(marketPlaceContractAddress: string, start: number): Promise<ContractEvent[]> {
     const nodeProvider = web3.getCurrentNodeProvider()
     const contractEvents = await nodeProvider.events.getEventsContractContractaddress(
       marketPlaceContractAddress,

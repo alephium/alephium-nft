@@ -1,9 +1,11 @@
-import { addressFromContractId, hexToString, SignerProvider } from "@alephium/web3"
+import useSWR from "swr"
+import { web3, addressFromContractId, hexToString, SignerProvider } from "@alephium/web3"
 import { ContractEvent } from "@alephium/web3/dist/src/api/api-alephium"
 import { fetchNFTListingState, fetchNonEnumerableNFTState } from "../utils/contracts"
 import { NFTListing as NFTListingFactory } from '../artifacts/ts'
 import axios from "axios"
 import { NFTMarketplace } from "../utils/nft-marketplace"
+import { marketplaceContractId } from '../configs/nft'
 
 export interface NFTListing {
   _id: string,
@@ -17,7 +19,6 @@ export interface NFTListing {
   listingContractId: string
 }
 
-
 export async function fetchNFTListings(
   signerProvider: SignerProvider,
   marketplaceContractAddress: string,
@@ -26,7 +27,7 @@ export async function fetchNFTListings(
   if (signerProvider?.nodeProvider) {
     const res = await axios.get(`api/marketplace-events/count`)
     const nftMarketplace = new NFTMarketplace(signerProvider)
-    const events = await nftMarketplace.getListedNFTs(marketplaceContractAddress, res.data.count)
+    const events = await nftMarketplace.getMarketplaceEvents(marketplaceContractAddress, res.data.count)
     for (var event of events) {
       await nftListingEventReducer(event, marketplaceContractAddress, signerProvider)
     }
@@ -98,7 +99,6 @@ async function nftListingEventReducer(
   if (event.eventIndex === 0 || event.eventIndex === 3) {
     const listedNFT = await fetchNFTListing(signerProvider, event)
     if (listedNFT) {
-      console.log("persist nft listing", event)
       // Persist NFT Listing
       const result = await axios.post(`api/nft-listings`, {
         id: listedNFT._id,
@@ -123,4 +123,32 @@ async function nftListingEventReducer(
     const result = await axios.delete(`api/nft-listings?id=${tokenId}`)
     console.debug("Delete nft listing", result, event)
   }
+}
+
+export const useNFTListings = (
+  signerProvider?: SignerProvider
+) => {
+  const { data, error, ...rest } = useSWR(
+    signerProvider &&
+    [
+      "nftListings",
+    ],
+    async () => {
+      if (!signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
+        return undefined;
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
+
+      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
+      return await fetchNFTListings(signerProvider, marketplaceContractAddress)
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { nftListings: data || [], isLoading: !data && !error, ...rest }
 }

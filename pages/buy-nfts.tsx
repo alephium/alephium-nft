@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { prettifyAttoAlphAmount, ONE_ALPH } from '@alephium/web3'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { NFTListing } from '../components/nft-listing'
-import { useCommissionRate, useNFTListings } from '../components/nft'
+import { useNFTListings } from '../components/nft-listing'
 
 export default function BuyNFTs() {
   const router = useRouter()

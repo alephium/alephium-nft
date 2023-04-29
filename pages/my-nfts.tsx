@@ -4,7 +4,8 @@ import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
 import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { NFT, useCollections } from '../components/nft'
+import { NFT } from '../components/nft'
+import { useCollections } from '../components/nft-collection'
 import Link from 'next/link'
 
 export default function Home() {

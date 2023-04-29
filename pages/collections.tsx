@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import Link from 'next/link'
-import { useCollection } from '../components/nft'
+import { useCollection } from '../components/nft-collection'
 
 export default function Collections() {
   const context = useAlephiumConnectContext()
