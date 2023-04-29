@@ -6,11 +6,11 @@ import axios from "axios"
 import { NFTMarketplace } from "../utils/nft-marketplace"
 
 export interface NFTListing {
+  _id: string,
   price: bigint
   name: string,
   description: string,
   image: string,
-  _id: string,
   tokenOwner: string,
   marketAddress: string
   commissionRate: bigint,
@@ -99,7 +99,7 @@ async function nftListingEventReducer(
     const listedNFT = await fetchNFTListing(signerProvider, event)
     if (listedNFT) {
       console.log("persist nft listing", event)
-      // Persist the nft listing
+      // Persist NFT Listing
       const result = await axios.post(`api/nft-listings`, {
         id: listedNFT._id,
         price: listedNFT.price,
