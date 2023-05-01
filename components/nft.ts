@@ -12,7 +12,8 @@ export interface NFT {
   image: string,
   tokenId: string,
   listed: boolean,
-  collectionId: string
+  collectionId: string,
+  metadataUri: string
 }
 
 export async function fetchNFT(
@@ -41,7 +42,8 @@ export async function fetchNFT(
           image: metadata.image,
           tokenId: tokenId,
           collectionId: nftState.fields.collectionId,
-          listed
+          listed,
+          metadataUri
         }
       } catch {
         return undefined

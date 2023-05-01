@@ -119,3 +119,32 @@
     flex-direction: column;
   }
 }
+
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 27rem;
+  margin: 1rem;
+}
+
+.sellSection {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 0.3rem;
+}
+
+.sell_btn {
+  width: 10rem;
+  height: 3rem;
+  color: #ff8700;
+  background-color: #ffffff;
+  text-shadow: currentcolor 0px 0px 25px;
+  border-radius: 1rem;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: "Proto Mono", Helvetica, Arial, sans-serif;
+}

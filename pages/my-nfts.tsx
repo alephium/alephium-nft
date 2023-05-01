@@ -1,4 +1,4 @@
-import { node, ONE_ALPH } from '@alephium/web3'
+import { addressFromContractId, node, ONE_ALPH } from '@alephium/web3'
 import { useState } from 'react'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { marketplaceContractId } from '../configs/nft'
@@ -7,6 +7,7 @@ import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { NFT } from '../components/nft'
 import { useCollections } from '../components/nft-collection'
 import Link from 'next/link'
+import { NFTCard } from '../components/nft-card'
 
 export default function Home() {
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
@@ -80,37 +81,25 @@ export default function Home() {
 
       <div className="flex justify-center">
         <div className="px-4" style={{ maxWidth: '1600px' }}>
-
           {
             nftCollections.map((nftCollection, i) => {
               return (
                 <div key={i} >
-                  <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}><a className="mr-6 text-blue-500"> {nftCollection.name} </a></Link>
-                  <br />
-                  <label><b>Description</b>: {nftCollection.description}</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3">
                     {
                       nftCollection.nfts.map((nft, i) => {
+                        console.log("nft.image", nft.image)
                         return (
-                          <div key={i} className="border shadow rounded-xl overflow-hidden">
-                            <div className="p-4 object-center">
-                              <img src={nft.image} />
-                            </div>
-                            <div key={i} className="p-4">
-                              <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
-                              <div style={{ height: '70px', overflow: 'hidden' }}>
-                                <p className="text-gray-400">{nft.description}</p>
-                              </div>
-                            </div>
-                            <div></div>
-                            <div className="p-4 bg-black">
-                              {
-                                nft.listed ?
-                                  <button className="mt-4 w-full bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Listed</button> :
-                                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => sellingNFT(nft)}>Sell</button>
-                              }
-                            </div>
-                          </div>
+                          <NFTCard tokenInfo={{
+                            name: nft.name,
+                            token_id: nft.tokenId,
+                            owner_of: context.account?.address,
+                            description: nft.description,
+                            collection_id: nft.collectionId,
+                            token_address: addressFromContractId(nft.tokenId),
+                            metadata: `{"image": "${nft.image}"}`
+                          }}>
+                          </NFTCard>
                         )
                       })
                     }
