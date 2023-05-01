@@ -99,13 +99,9 @@ export default function MintNFTs() {
   }
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
-
+  if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   return (
     <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
-
       {
         collection && (
           <div className="flex justify-center">

@@ -5,7 +5,7 @@ import { Typography, TruncateString, Illustration, Button } from '@web3uikit/cor
 import NFTDetails from './nft-details';
 import { image } from '../utils/nft-card'
 
-const { DivStyled, DivStyledContainer, FieldsetStyled, DivButton } = styles;
+const { DivStyled, DivStyledContainer, FieldsetStyled, DivRightButton } = styles;
 
 export interface INFTCardProps {
   tokenInfo: {
@@ -80,14 +80,14 @@ export const NFTCard: React.FC<INFTCardProps &
               />
             </Typography>
           </div>
-          <DivButton>
+          <DivRightButton>
             {
               data.listed ?
                 <Button theme='translucent' disabled={true} text="Listed" /> :
                 <Button theme='outline' onClick={() => sellingNFT()} text="Sell Now" />
 
             }
-          </DivButton>
+          </DivRightButton>
           <FieldsetStyled detailsBorder={detailsBorder}>
             <legend>Details</legend>
             <NFTDetails data={data} />

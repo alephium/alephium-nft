@@ -61,13 +61,10 @@ export default function BuyNFTs() {
   }
 
   if (isLoading) return (<h1 className="px-20 py-10 text-3xl">Loading...</h1>)
+  if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   if (nftListings.length === 0) return (<h1 className="px-20 py-10 text-3xl">No NFTs for sale</h1>)
   return (
     <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
-
       <div className="flex justify-center">
         <div className="px-4" style={{ maxWidth: '1600px' }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">

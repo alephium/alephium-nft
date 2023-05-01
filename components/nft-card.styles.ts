@@ -88,13 +88,18 @@ const FieldsetStyled = styled.fieldset<Partial<INFTCardProps>>`
       : 'border:none'}
 `;
 
-const DivButton = styled.div<Partial<INFTCardProps>>`
+const DivRightButton = styled.div<Partial<INFTCardProps>>`
     float: right;
+`;
+
+const DivLeftButton = styled.div<Partial<INFTCardProps>>`
+    float: left;
 `;
 
 export default {
   DivStyled,
   DivStyledContainer,
   FieldsetStyled,
-  DivButton
+  DivLeftButton,
+  DivRightButton
 };

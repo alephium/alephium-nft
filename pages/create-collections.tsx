@@ -88,12 +88,9 @@ export default function CreateCollections() {
     return !isNaN(num) && num > 0
   }
 
+  if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   return (
     <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
-
       <div className="flex justify-center">
         <div className="w-1/2 flex flex-col pb-12">
           <input

@@ -7,7 +7,9 @@ import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { NFT } from '../components/nft'
 import { useCollections } from '../components/nft-collection'
 import { NFTCard } from '../components/nft-card'
-import { Loading } from '@web3uikit/core'
+import { Loading, Button } from '@web3uikit/core'
+import styles from '../components/nft-card.styles';
+const { DivRightButton, DivLeftButton } = styles;
 
 export default function Home() {
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
@@ -72,13 +74,10 @@ export default function Home() {
   }
 
   if (isLoading) return (<h1 className="px-20 py-10 text-3xl"><Loading spinnerType='wave' spinnerColor='grey' text='Loading' size={30} /></h1>)
+  if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   if (nftCollections.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
     <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
-
       <div className="flex justify-center">
         <div className="px-4" style={{ maxWidth: '1600px' }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-1">
@@ -108,51 +107,57 @@ export default function Home() {
           </div>
           {
             showSetPriceModal && nftBeingSold ? (
-              <>
-                <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50">
-                  <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                    <div className="rounded-lg shadow-lg relative flex flex-col w-full bg-white">
-                      <form className="bg-black shadow-md rounded px-10 pt-6 pb-8 w-full">
-                        <label className="block text-white text-sm font-bold mb-1">
-                          Price (ALPH)
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          onChange={e => setNFTSellingPrice(+e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-1 text-black"
-                        />
-                      </form>
-                      <div className="flex bg-white items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-                        <button
+              <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50">
+                <div className="relative w-auto my-6 mx-auto max-w-3xl border rounded">
+                  <div className="rounded-lg shadow-lg relative flex flex-col w-full bg-white">
+                    <form className="bg-gray rounded px-10 pt-6 pb-8 w-full">
+                      <label className="block text-black text-sm font-bold mb-1">
+                        Price (ALPH)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        onChange={e => setNFTSellingPrice(+e.target.value)}
+                        className="shadow appearance-none rounded w-full py-2 px-1 text-black"
+                      />
+                    </form>
+                    <div>
+                      <DivLeftButton>
+                        <Button
                           className="mt-4 bg-gray-500 text-white font-bold py-1 m-2 w-32 rounded"
-                          type="button"
+                          theme="colored"
+                          text="Cancel"
+                          color="red"
                           onClick={() => cancelSellingNFT()}
                         >
                           Cancel
-                        </button>
+                        </Button>
+                      </DivLeftButton>
+                      <DivRightButton>
                         {
                           (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
-                            <button
+                            <Button
                               className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
-                              type="button"
+                              theme="outline"
+                              text="Submit"
                               onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
                             >
                               Submit
-                            </button> :
-                            <button
+                            </Button> :
+                            <Button
                               className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
-                              type="button"
+                              text="Submit"
+                              theme="outline"
                               disabled
                             >
                               Submit
-                            </button>
+                            </Button>
                         }
-                      </div>
+                      </DivRightButton>
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             ) : null
           }
         </div>
