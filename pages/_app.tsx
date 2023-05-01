@@ -28,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <Link href="/create-collections" >
                     <p> Create Collections </p>
                   </Link>
-                  <Link href="/buy-nfts" >
+                  <Link href="/explore-nfts" >
                     <p> Explore NFTs </p>
                   </Link>
                 </section>
