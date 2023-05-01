@@ -21,7 +21,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/my-nfts',
+        destination: '/my-porfolio',
         permanent: true
       }
     ]

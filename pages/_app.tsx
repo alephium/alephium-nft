@@ -17,19 +17,19 @@ function MyApp({ Component, pageProps }: AppProps) {
             <section className={styles.collectionHeader}>
               <section className={styles.logo}>
                 <Link href="/">
-                  <Image src={Logo} alt="Blur Logo" width="70" height="" />
+                  <Image src={Logo} alt="Blur Logo" width="50" height="" />
                 </Link>
               </section>
               <section className={styles.nav}>
                 <section className={styles.nav_items}>
-                  <Link href="/my-nfts">
+                  <Link href="/my-porfolio" >
                     <p> My Porfolio </p>
                   </Link>
-                  <Link href="/create-collections">
+                  <Link href="/create-collections" >
                     <p> Create Collections </p>
                   </Link>
-                  <Link href="/buy-nfts">
-                    <p> Buy NFTs </p>
+                  <Link href="/buy-nfts" >
+                    <p> Explore NFTs </p>
                   </Link>
                 </section>
                 <section className={styles.connect_btn}>

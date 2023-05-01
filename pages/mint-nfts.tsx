@@ -82,7 +82,7 @@ export default function MintNFTs() {
       setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
-          router.push('/my-nfts')
+          router.push('/my-porfolio')
         } else if (txStatus.type === 'TxNotFound') {
           if (txNotFoundRetries >= 10) {
             console.info('Mint NFT transaction not found after 30 seconds, give up.')

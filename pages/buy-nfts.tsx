@@ -44,7 +44,7 @@ export default function BuyNFTs() {
       setTxStatusCallback(() => async (txStatus: web3.node.TxStatus) => {
         if (txStatus.type === 'Confirmed') {
           resetTxStatus()
-          router.push('/my-nfts')
+          router.push('/my-porfolio')
         } else if (txStatus.type === 'TxNotFound') {
           resetTxStatus()
           console.error('Deposit NFT transaction not found')

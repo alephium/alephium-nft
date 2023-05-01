@@ -62,12 +62,16 @@
 .nav_items {
   display: flex;
   justify-content: space-evenly;
-  width: 17rem;
+  width: 34rem;
   cursor: pointer;
 }
 
 .nav_items > p:hover {
   color: #ffffff;
+}
+
+.nav_items > p {
+  font-size: 1rem;
 }
 
 .logo {
