@@ -81,34 +81,27 @@ export default function Home() {
 
       <div className="flex justify-center">
         <div className="px-4" style={{ maxWidth: '1600px' }}>
-          {
-            nftCollections.map((nftCollection, i) => {
-              return (
-                <div key={i} >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3">
-                    {
-                      nftCollection.nfts.map((nft, i) => {
-                        console.log("nft.image", nft.image)
-                        return (
-                          <NFTCard tokenInfo={{
-                            name: nft.name,
-                            token_id: nft.tokenId,
-                            owner_of: context.account?.address,
-                            description: nft.description,
-                            collection_id: nft.collectionId,
-                            token_address: addressFromContractId(nft.tokenId),
-                            metadata: `{"image": "${nft.image}"}`
-                          }}>
-                          </NFTCard>
-                        )
-                      })
-                    }
-                  </div>
-                </div>
-              )
-            })
-          }
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-1">
+            {
+              nftCollections.flatMap((nftCollection) => nftCollection.nfts).map((nft, i) => {
+                return (
+                  <NFTCard
+                    tokenInfo={{
+                      name: nft.name,
+                      token_id: nft.tokenId,
+                      owner_of: context.account?.address,
+                      description: nft.description,
+                      collection_id: nft.collectionId,
+                      token_address: addressFromContractId(nft.tokenId),
+                      metadata: `{"image": "${nft.image}"}`
+                    }}
+                    width='300px'
+                  >
+                  </NFTCard>
+                )
+              })
+            }
+          </div>
           {
             showSetPriceModal && nftBeingSold ? (
               <>
