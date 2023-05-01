@@ -40,7 +40,7 @@ const DivStyledContainer = styled.div<Partial<INFTCardProps>>`
 `;
 
 const FieldsetStyled = styled.fieldset<Partial<INFTCardProps>>`
-    margin-top: 40px;
+    margin-top: 10px;
     text-align: left;
     legend {
         color: ${color.blue70};

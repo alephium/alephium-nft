@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './nft-card.styles';
 import { color } from '@web3uikit/styles';
-import { Typography, TruncateString, Illustration } from '@web3uikit/core';
+import { Typography, TruncateString, Illustration, Button } from '@web3uikit/core';
 import NFTDetails from './nft-details';
 import { image } from '../utils/nft-card'
 
@@ -17,6 +17,7 @@ export interface INFTCardProps {
     name: string | null;
     description: string | null;
     metadata?: string | null;
+    listed?: boolean | null;
   };
   /**
    * width of the card
@@ -26,6 +27,7 @@ export interface INFTCardProps {
    * set border for details section
    */
   detailsBorder?: string;
+  sellingNFT: () => void;
 }
 
 export const NFTCard: React.FC<INFTCardProps &
@@ -33,6 +35,7 @@ export const NFTCard: React.FC<INFTCardProps &
     detailsBorder,
     tokenInfo: data,
     width = '400px',
+    sellingNFT,
     ...props
   }) => {
     const [isError, setIsError] = useState(false);
@@ -77,6 +80,12 @@ export const NFTCard: React.FC<INFTCardProps &
               />
             </Typography>
           </div>
+          {
+            data.listed ?
+              <Button theme='translucent' disabled={true} text="Listed" /> :
+              <Button theme='outline' onClick={() => sellingNFT()} text="Sell Now" />
+
+          }
           <FieldsetStyled detailsBorder={detailsBorder}>
             <legend>Details</legend>
             <NFTDetails data={data} />

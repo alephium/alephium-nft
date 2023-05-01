@@ -6,8 +6,8 @@ import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { NFT } from '../components/nft'
 import { useCollections } from '../components/nft-collection'
-import Link from 'next/link'
 import { NFTCard } from '../components/nft-card'
+import { Loading } from '@web3uikit/core'
 
 export default function Home() {
   const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
@@ -71,7 +71,7 @@ export default function Home() {
     resetState()
   }
 
-  if (isLoading) return (<h1 className="px-20 py-10 text-3xl">Loading...</h1>)
+  if (isLoading) return (<h1 className="px-20 py-10 text-3xl"><Loading spinnerType='wave' spinnerColor='grey' text='Loading' size={30} /></h1>)
   if (nftCollections.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
     <>
@@ -85,19 +85,23 @@ export default function Home() {
             {
               nftCollections.flatMap((nftCollection) => nftCollection.nfts).map((nft, i) => {
                 return (
-                  <NFTCard
-                    tokenInfo={{
-                      name: nft.name,
-                      token_id: nft.tokenId,
-                      owner_of: context.account?.address,
-                      description: nft.description,
-                      collection_id: nft.collectionId,
-                      token_address: addressFromContractId(nft.tokenId),
-                      metadata: `{"image": "${nft.image}"}`
-                    }}
-                    width='300px'
-                  >
-                  </NFTCard>
+                  <>
+                    <NFTCard
+                      tokenInfo={{
+                        name: nft.name,
+                        token_id: nft.tokenId,
+                        owner_of: context.account?.address,
+                        description: nft.description,
+                        collection_id: nft.collectionId,
+                        token_address: addressFromContractId(nft.tokenId),
+                        metadata: `{"image": "${nft.image}"}`,
+                        listed: nft.listed
+                      }}
+                      width='300px'
+                      sellingNFT={() => sellingNFT(nft)}
+                    >
+                    </NFTCard>
+                  </>
                 )
               })
             }
