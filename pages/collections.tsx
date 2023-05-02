@@ -3,7 +3,9 @@ import { useAlephiumConnectContext } from '@alephium/web3-react'
 import Link from 'next/link'
 import { useCollection } from '../components/nft-collection'
 import NFTCollectionCard from '../components/nft-collection-card'
+import { NFTCard } from '../components/nft-card'
 import { color } from '@web3uikit/styles';
+import { addressFromContractId } from '@alephium/web3'
 
 export default function Collections() {
   const context = useAlephiumConnectContext()
@@ -28,21 +30,23 @@ export default function Collections() {
               detailsBorder={`2px solid ${color.mint30}`}
               width='300px'
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 pt-4">
               {
                 collection.nfts.map((nft, i) => {
                   return (
-                    <div key={i} className="border shadow rounded-xl overflow-hidden">
-                      <div className="p-4 object-center">
-                        <img src={nft.image} />
-                      </div>
-                      <div className="p-4">
-                        <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
-                        <div style={{ height: '70px', overflow: 'hidden' }}>
-                          <p className="text-gray-400">{nft.description}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <NFTCard
+                      tokenInfo={{
+                        name: nft.name,
+                        token_id: nft.tokenId,
+                        owner_of: context.account?.address,
+                        description: nft.description,
+                        token_address: addressFromContractId(nft.tokenId),
+                        metadata: `{"image": "${nft.image}"}`,
+                        listed: nft.listed
+                      }}
+                      width='300px'
+                    >
+                    </NFTCard>
                   )
                 })
               }

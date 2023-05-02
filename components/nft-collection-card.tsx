@@ -22,7 +22,8 @@ export interface INFTCollectionCardProps {
    * set border for details section
    */
   detailsBorder?: string;
-  mint: () => void;
+  mintMore: boolean
+  detailsOnly: boolean
 }
 
 export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
@@ -34,7 +35,8 @@ export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
     imageUrl,
     totalSupply,
     width = '400px',
-    mint,
+    mintMore = true,
+    detailsOnly = false,
     ...props
   }) => {
     const [isError, setIsError] = useState(false);
@@ -57,25 +59,29 @@ export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
         {...props}
       >
         <DivStyledContainer width={width}>
-          <div className="nft-image">
-            {isError ? <Illustration logo="lazyNft" /> : getImage()}
-          </div>
-          <div className="nft-card-text">
-            <Typography variant="h4" weight="500" fontSize="20px">
-              <TruncateString
-                text={`${name}`}
-                fontSize="20px"
-                textColor={color.blue70}
-              />
-            </Typography>
-            <Typography variant="h6" weight="300" fontSize="10px">
-              <TruncateString
-                text={`${description}`}
-                fontSize="12px"
-                textColor={color.blue70}
-              />
-            </Typography>
-          </div>
+          {!detailsOnly && (
+            <>
+              <div className="nft-image">
+                {isError ? <Illustration logo="lazyNft" /> : getImage()}
+              </div>
+              <div className="nft-card-text">
+                <Typography variant="h4" weight="500" fontSize="20px">
+                  <TruncateString
+                    text={`${name}`}
+                    fontSize="20px"
+                    textColor={color.blue70}
+                  />
+                </Typography>
+                <Typography variant="h6" weight="300" fontSize="10px">
+                  <TruncateString
+                    text={`${description}`}
+                    fontSize="12px"
+                    textColor={color.blue70}
+                  />
+                </Typography>
+              </div>
+            </>
+          )}
           <FieldsetStyled detailsBorder={detailsBorder}>
             <legend>Collection Details</legend>
             <table>
@@ -97,9 +103,13 @@ export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
                     {totalSupply.toString()}
                   </td>
                 </tr>
-                <tr>
-                  <th><Link href={`/mint-nfts?collectionId=${id}`}><a className="mr-6 text-blue-500">Mint More </a></Link></th>
-                </tr>
+                {
+                  mintMore && (
+                    <tr>
+                      <th><Link href={`/mint-nfts?collectionId=${id}`}><a className="mr-6 text-blue-500">Mint More </a></Link></th>
+                    </tr>
+                  )
+                }
               </tbody>
             </table >
           </FieldsetStyled>

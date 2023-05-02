@@ -8,7 +8,7 @@ import { NFT } from '../components/nft'
 import { useCollections } from '../components/nft-collection'
 import { NFTCard } from '../components/nft-card'
 import { Loading, Button, Input } from '@web3uikit/core'
-import styles from '../components/nft-card.styles';
+import styles from '../components/nft.styles';
 const { DivRightButton, DivLeftButton } = styles;
 
 export default function Home() {

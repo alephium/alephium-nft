@@ -82,10 +82,11 @@ export const NFTCard: React.FC<INFTCardProps &
           </div>
           <DivRightButton>
             {
-              data.listed ?
-                <Button theme='translucent' disabled={true} text="Listed" /> :
-                <Button theme='outline' onClick={() => sellingNFT()} text="Sell Now" />
-
+              sellingNFT && (
+                data.listed ?
+                  <Button theme='translucent' disabled={true} text="Listed" /> :
+                  <Button theme='outline' onClick={() => sellingNFT()} text="Sell Now" />
+              )
             }
           </DivRightButton>
           <FieldsetStyled detailsBorder={detailsBorder}>

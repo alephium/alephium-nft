@@ -6,11 +6,16 @@ import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection as NFTCollectionInfo } from '../components/nft-collection'
+import NFTCollectionCard from '../components/nft-collection-card'
+import { color } from '@web3uikit/styles';
+import { Button, Form } from '@web3uikit/core'
+import { ArrowCircleLeft } from '@web3uikit/icons'
 
 export default function MintNFTs() {
   const [collection, setCollection] = useState<NFTCollectionInfo | undefined>(undefined)
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
+  const [uploadProgressText, setUploadProgressText] = useState<string | undefined>(undefined)
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
@@ -51,14 +56,13 @@ export default function MintNFTs() {
     }
   }
 
-  async function uploadToIPFS(): Promise<string | undefined> {
-    const { name, description } = formInput
-    if (!name || !description || !fileUrl) return
+  async function uploadToIPFS(name: string, description: string, fileUrl: string): Promise<string | undefined> {
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name, description, image: fileUrl
     })
     try {
+      setUploadProgressText(`Upload metadata to IPFS`)
       const added = await ipfsClient.add(data)
       const url = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
       /* after file is uploaded to IPFS, return the URL to use it in the transaction */
@@ -68,8 +72,9 @@ export default function MintNFTs() {
     }
   }
 
-  async function mintNFT() {
-    const uri = await uploadToIPFS()
+  async function mintNFT(name: string, description: string, fileUrl: string) {
+    const uri = await uploadToIPFS(name, description, fileUrl)
+    setUploadProgressText(undefined)
     if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
       const nftCollection = new NFTCollection(context.signerProvider)
 
@@ -98,69 +103,92 @@ export default function MintNFTs() {
     }
   }
 
+  async function onSubmit(v: any) {
+    console.log("on submit", v)
+    const collectionName = v.data[0].inputResult
+    const collectionDescription = v.data[0].inputResult
+    const imageFile = v.data[2].inputResult
+    try {
+      const added = await ipfsClient.add(
+        imageFile,
+        {
+          progress: (prog) => {
+            setUploadProgressText(`Upload image to IPFS: ${prog} bytes`)
+            console.log(`received: ${prog}`)
+          }
+        }
+      )
+      const imageUrl: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
+      console.log("Image Url", imageUrl)
+      await mintNFT(collectionName, collectionDescription, imageUrl)
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+    }
+  }
+
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
   if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   return (
     <>
       {
-        collection && (
-          <div className="flex justify-center">
-            <table className="w-1/2 flex flex-col pb-12">
-              <tbody>
-                <tr>
-                  <td>
-                    <img className="rounded mt-4" src={collection.image} />
-                  </td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Collection Name</b>: {collection.name}</td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Description</b>: {collection.description}</td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium"><b>Total Supply</b>: {collection.totalSupply.toString()}</td>
-                </tr>
-                <tr>
-                  <td className="whitespace-nowrap text-sm font-medium">
-                    <b>Already Minted</b>: {collection.totalSupply.toString()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )
-      }
-      {
         collection ? (
-          <div className="flex justify-center">
-            <div className="w-1/2 flex flex-col pb-12">
-              <input
-                placeholder="Asset Name"
-                className="mt-2 border rounded p-4"
-                onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
-              />
-              <textarea
-                placeholder="Asset Description"
-                className="mt-2 border rounded p-4"
-                onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
-              />
-              <input
-                type="file"
-                name="Asset"
-                className="my-4"
-                onChange={onChange}
-              />
+          <Form
+            id="mint-nft"
+            title='Mint NFT'
+            customFooter={
+              (
+                <>
+                  <NFTCollectionCard
+                    id={collectionId}
+                    name={collection.name}
+                    description={collection.description}
+                    imageUrl={collection.image}
+                    totalSupply={collection.totalSupply}
+                    detailsBorder={`2px solid ${color.mint30}`}
+                    width='300px'
+                    mintMore={false}
+                    detailsOnly={true}
+                  />
+                  <Button
+                    text={'Mint NFT'}
+                    isFullWidth={true}
+                    theme={'primary'}
+                    size="regular"
+                  />
+                </>
+              )
+            }
+            onSubmit={onSubmit}
+            data={[
               {
-                fileUrl && (
-                  <img className="rounded mt-4" width="350" src={fileUrl} />
-                )
+                name: 'NFT Name',
+                type: 'text',
+                value: '',
+                inputWidth: '100%',
+                validation: {
+                  required: true
+                }
+              },
+              {
+                name: 'NFT Description',
+                type: 'textarea',
+                value: '',
+                inputWidth: '100%',
+                validation: {
+                  required: true
+                }
+              },
+              {
+                name: 'NFT Image',
+                type: 'file',
+                value: '',
+                inputWidth: '100%',
+                validation: {
+                  required: true
+                }
               }
-              <button onClick={mintNFT} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-                Mint NFT
-              </button>
-            </div>
-          </div>
+            ]}
+          />
         ) : null
       }
     </>
