@@ -74,6 +74,7 @@ export default function BuyNFTs() {
                 const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
                 return (
                   <NFTCard
+                    key={i}
                     tokenInfo={{
                       name: nftListing.name,
                       token_id: nftListing._id,

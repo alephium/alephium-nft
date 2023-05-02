@@ -139,7 +139,7 @@ export default function MintNFTs() {
               (
                 <>
                   <NFTCollectionCard
-                    id={collectionId}
+                    id={collectionId as string}
                     name={collection.name}
                     description={collection.description}
                     imageUrl={collection.image}

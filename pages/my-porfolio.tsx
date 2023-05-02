@@ -98,8 +98,7 @@ export default function Home() {
                       }}
                       width='300px'
                       sellingNFT={() => sellingNFT(nft)}
-                    >
-                    </NFTCard>
+                    />
                   </>
                 )
               })
@@ -126,14 +125,11 @@ export default function Home() {
                     <div>
                       <DivLeftButton>
                         <Button
-                          className="mt-4 bg-gray-500 text-white font-bold py-1 m-2 w-32 rounded"
                           theme="colored"
                           text="Cancel"
                           color="red"
                           onClick={() => cancelSellingNFT()}
-                        >
-                          Cancel
-                        </Button>
+                        />
                       </DivLeftButton>
                       <DivRightButton>
                         {
@@ -142,16 +138,13 @@ export default function Home() {
                               theme="moneyPrimary"
                               text="Submit"
                               onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
-                            >
-                              Submit
-                            </Button> :
+                            />
+                            :
                             <Button
                               text="Submit"
                               theme="moneyPrimary"
                               disabled
-                            >
-                              Submit
-                            </Button>
+                            />
                         }
                       </DivRightButton>
                     </div>

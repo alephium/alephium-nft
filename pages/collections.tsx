@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import Link from 'next/link'
 import { useCollection } from '../components/nft-collection'
 import NFTCollectionCard from '../components/nft-collection-card'
 import { NFTCard } from '../components/nft-card'
@@ -22,7 +21,7 @@ export default function Collections() {
         collection && (
           <>
             <NFTCollectionCard
-              id={collectionId}
+              id={collectionId as string}
               name={collection.name}
               description={collection.description}
               imageUrl={collection.image}
@@ -35,6 +34,7 @@ export default function Collections() {
                 collection.nfts.map((nft, i) => {
                   return (
                     <NFTCard
+                      key={i}
                       tokenInfo={{
                         name: nft.name,
                         token_id: nft.tokenId,
@@ -45,8 +45,7 @@ export default function Collections() {
                         listed: nft.listed
                       }}
                       width='300px'
-                    >
-                    </NFTCard>
+                    />
                   )
                 })
               }

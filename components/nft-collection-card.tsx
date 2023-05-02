@@ -22,8 +22,8 @@ export interface INFTCollectionCardProps {
    * set border for details section
    */
   detailsBorder?: string;
-  mintMore: boolean
-  detailsOnly: boolean
+  mintMore?: boolean
+  detailsOnly?: boolean
 }
 
 export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
@@ -72,7 +72,7 @@ export const NFTCollectionCard: React.FC<INFTCollectionCardProps &
                     textColor={color.blue70}
                   />
                 </Typography>
-                <Typography variant="h6" weight="300" fontSize="10px">
+                <Typography variant="subtitle1" weight="300" fontSize="10px">
                   <TruncateString
                     text={`${description}`}
                     fontSize="12px"

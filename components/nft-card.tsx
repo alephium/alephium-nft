@@ -11,13 +11,13 @@ export interface INFTCardProps {
   tokenInfo: {
     token_address: string;
     token_id: string;
-    collection_id: string,
-    amount: string | null;
-    owner_of: string | null;
-    name: string | null;
-    description: string | null;
-    metadata?: string | null;
-    listed?: boolean | null;
+    collection_id?: string,
+    amount?: string;
+    owner_of?: string;
+    name?: string;
+    description?: string;
+    metadata?: string;
+    listed?: boolean;
     listingInfo?: {
       totalAmount: string,
       price: string,
@@ -80,7 +80,7 @@ export const NFTCard: React.FC<INFTCardProps &
                 textColor={color.blue70}
               />
             </Typography>
-            <Typography variant="h6" weight="300" fontSize="10px">
+            <Typography variant="subtitle1" weight="300" fontSize="10px">
               <TruncateString
                 text={`${data.description}`}
                 fontSize="12px"
@@ -97,8 +97,8 @@ export const NFTCard: React.FC<INFTCardProps &
               )
             }
             {
-              data.listingInfo?.buyNFT && (
-                <Button theme='outline' onClick={() => data.listingInfo.buyNFT()} text="Buy Now" />
+              data?.listingInfo?.buyNFT && (
+                <Button theme='outline' onClick={() => data.listingInfo && data.listingInfo.buyNFT()} text="Buy Now" />
               )
             }
           </DivRightButton>
