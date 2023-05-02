@@ -5,12 +5,12 @@ import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useRouter } from 'next/router'
+import { Form, Loading } from '@web3uikit/core'
 
 export default function CreateCollections() {
-  const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '' })
   const context = useAlephiumConnectContext()
   const router = useRouter()
+  const [uploadProgressText, setUploadProgressText] = useState<string | undefined>(undefined)
 
   const [
     ongoingTxId,
@@ -22,30 +22,13 @@ export default function CreateCollections() {
     resetTxStatus
   ] = useTxStatusStates()
 
-  async function onChange(e: any) {
-    const file = e.target.files[0]
-    try {
-      const added = await ipfsClient.add(
-        file,
-        {
-          progress: (prog) => console.log(`received: ${prog}`)
-        }
-      )
-      const url: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
-      setFileUrl(url)
-    } catch (error) {
-      console.log('Error uploading file: ', error)
-    }
-  }
-
-  async function uploadToIPFS(): Promise<string | undefined> {
-    const { name, description } = formInput
-    if (!name || !description || !fileUrl) return
+  async function uploadToIPFS(name: string, description: string, fileUrl: string): Promise<string | undefined> {
     /* first, upload to IPFS */
     const data = JSON.stringify({
       name, description, image: fileUrl
     })
     try {
+      setUploadProgressText(`Upload metadata to IPFS`)
       const added = await ipfsClient.add(data)
       const url = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
       /* after file is uploaded to IPFS, return the URL to use it in the transaction */
@@ -55,8 +38,9 @@ export default function CreateCollections() {
     }
   }
 
-  async function createCollection() {
-    const uri = await uploadToIPFS()
+  async function createCollection(name: string, description: string, fileUrl: string) {
+    const uri = await uploadToIPFS(name, description, fileUrl)
+    setUploadProgressText(undefined)
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
@@ -83,42 +67,71 @@ export default function CreateCollections() {
     }
   }
 
-  function isPositiveNumber(str: string): Boolean {
-    const num = parseInt(str, 10)
-    return !isNaN(num) && num > 0
+  async function onSubmit(v: any) {
+    const collectionName = v.data[0].inputResult
+    const collectionDescription = v.data[0].inputResult
+    const imageFile = v.data[2].inputResult
+    try {
+      const added = await ipfsClient.add(
+        imageFile,
+        {
+          progress: (prog) => {
+            setUploadProgressText(`Upload image to IPFS: ${prog} bytes`)
+            console.log(`received: ${prog}`)
+          }
+        }
+      )
+      const imageUrl: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.cid}`
+      console.log("Image Url", imageUrl)
+      await createCollection(collectionName, collectionDescription, imageUrl)
+    } catch (error) {
+      console.log('Error uploading file: ', error)
+    }
   }
 
+  if (uploadProgressText) return (<h1 className="px-20 py-10 text-3xl"><Loading spinnerType='wave' spinnerColor='grey' text={uploadProgressText} size={30} /></h1>)
   if (ongoingTxId) return (<TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} />)
   return (
     <>
-      <div className="flex justify-center">
-        <div className="w-1/2 flex flex-col pb-12">
-          <input
-            placeholder="Collection Name"
-            className="mt-2 border rounded p-4"
-            onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
-          />
-          <textarea
-            placeholder="Collection Description"
-            className="mt-2 border rounded p-4"
-            onChange={e => updateFormInput({ ...formInput, description: e.target.value })}
-          />
-          <input
-            type="file"
-            name="Asset"
-            className="my-4"
-            onChange={onChange}
-          />
+      <Form
+        id="create-collection"
+        title='Create Collection'
+        buttonConfig={{
+          onClick: (e) => e.preventDefault,
+          theme: 'primary',
+          isFullWidth: true
+        }}
+        onSubmit={onSubmit}
+        data={[
           {
-            fileUrl && (
-              <img className="rounded mt-4" width="350" src={fileUrl} />
-            )
+            name: 'Collection Name',
+            type: 'text',
+            value: '',
+            inputWidth: '100%',
+            validation: {
+              required: true
+            }
+          },
+          {
+            name: 'Collection Description',
+            type: 'textarea',
+            value: '',
+            inputWidth: '100%',
+            validation: {
+              required: true
+            }
+          },
+          {
+            name: 'Collection Image',
+            type: 'file',
+            value: '',
+            inputWidth: '100%',
+            validation: {
+              required: true
+            }
           }
-          <button onClick={createCollection} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-            Create Collection
-          </button>
-        </div>
-      </div>
+        ]}
+      />
     </>
   )
 }

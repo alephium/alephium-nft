@@ -7,7 +7,7 @@ import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { NFT } from '../components/nft'
 import { useCollections } from '../components/nft-collection'
 import { NFTCard } from '../components/nft-card'
-import { Loading, Button } from '@web3uikit/core'
+import { Loading, Button, Input } from '@web3uikit/core'
 import styles from '../components/nft-card.styles';
 const { DivRightButton, DivLeftButton } = styles;
 
@@ -108,17 +108,19 @@ export default function Home() {
           {
             showSetPriceModal && nftBeingSold ? (
               <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50">
-                <div className="relative w-auto my-6 mx-auto max-w-3xl border rounded">
+                <div className="relative w-auto my-6 mx-auto max-w-3xl rounded-lg border">
                   <div className="rounded-lg shadow-lg relative flex flex-col w-full bg-white">
                     <form className="bg-gray rounded px-10 pt-6 pb-8 w-full">
-                      <label className="block text-black text-sm font-bold mb-1">
+                      <label className="block text-sm font-bold mb-1">
                         Price (ALPH)
                       </label>
-                      <input
+                      <Input
                         type="number"
-                        min="0"
+                        validation={{
+                          numberMin: 0
+                        }}
                         onChange={e => setNFTSellingPrice(+e.target.value)}
-                        className="shadow appearance-none rounded w-full py-2 px-1 text-black"
+                        errorMessage='Price should be positive'
                       />
                     </form>
                     <div>
@@ -137,17 +139,15 @@ export default function Home() {
                         {
                           (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
                             <Button
-                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
-                              theme="outline"
+                              theme="moneyPrimary"
                               text="Submit"
                               onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
                             >
                               Submit
                             </Button> :
                             <Button
-                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
                               text="Submit"
-                              theme="outline"
+                              theme="moneyPrimary"
                               disabled
                             >
                               Submit
