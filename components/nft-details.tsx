@@ -45,6 +45,46 @@ const NFTDetails: React.FC<{
             </td>
           </tr>
         )}
+        {data?.listingInfo?.totalAmount && (
+          <tr>
+            <th>Total Amount</th>
+            <td>
+              {data?.listingInfo?.totalAmount}
+            </td>
+          </tr>
+        )}
+        {data?.listingInfo?.price && (
+          <tr>
+            <th>Price</th>
+            <td>
+              {data?.listingInfo?.price}
+            </td>
+          </tr>
+        )}
+        {data?.listingInfo?.commission && (
+          <tr>
+            <th>Commission</th>
+            <td>
+              {data?.listingInfo?.commission}
+            </td>
+          </tr>
+        )}
+        {data?.listingInfo?.gas && (
+          <tr>
+            <th>Gas</th>
+            <td>
+              {data?.listingInfo?.gas}
+            </td>
+          </tr>
+        )}
+        {data?.listingInfo?.deposit && (
+          <tr>
+            <th>Deposit</th>
+            <td>
+              {data?.listingInfo?.deposit}
+            </td>
+          </tr>
+        )}
       </tbody>
     </table >
   );

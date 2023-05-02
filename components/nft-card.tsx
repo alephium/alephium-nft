@@ -18,6 +18,14 @@ export interface INFTCardProps {
     description: string | null;
     metadata?: string | null;
     listed?: boolean | null;
+    listingInfo?: {
+      totalAmount: string,
+      price: string,
+      commission: string,
+      deposit: string,
+      gas: string,
+      buyNFT: () => void;
+    }
   };
   /**
    * width of the card
@@ -27,7 +35,7 @@ export interface INFTCardProps {
    * set border for details section
    */
   detailsBorder?: string;
-  sellingNFT: () => void;
+  sellingNFT?: () => void;
 }
 
 export const NFTCard: React.FC<INFTCardProps &
@@ -86,6 +94,11 @@ export const NFTCard: React.FC<INFTCardProps &
                 data.listed ?
                   <Button theme='translucent' disabled={true} text="Listed" /> :
                   <Button theme='outline' onClick={() => sellingNFT()} text="Sell Now" />
+              )
+            }
+            {
+              data.listingInfo?.buyNFT && (
+                <Button theme='outline' onClick={() => data.listingInfo.buyNFT()} text="Buy Now" />
               )
             }
           </DivRightButton>
