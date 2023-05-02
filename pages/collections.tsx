@@ -2,6 +2,8 @@ import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import Link from 'next/link'
 import { useCollection } from '../components/nft-collection'
+import NFTCollectionCard from '../components/nft-collection-card'
+import { color } from '@web3uikit/styles';
 
 export default function Collections() {
   const context = useAlephiumConnectContext()
@@ -17,33 +19,15 @@ export default function Collections() {
       {
         collection && (
           <>
-            <div className="flex justify-center">
-              <table className="w-1/2 flex flex-col pb-12">
-                <tbody>
-                  <tr>
-                    <td>
-                      <img className="rounded mt-4" src={collection.image} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="whitespace-nowrap text-sm font-medium"><b>Collection Name</b>: {collection.name}</td>
-                  </tr>
-                  <tr>
-                    <td className="whitespace-nowrap text-sm font-medium"><b>Description</b>: {collection.description}</td>
-                  </tr>
-                  <tr>
-                    <td className="whitespace-nowrap text-sm font-medium"><b>Total Supply</b>: {collection.totalSupply.toString()}</td>
-                  </tr>
-                  <tr>
-                    <td className="whitespace-nowrap text-sm font-medium">
-                      <b>Already Minted</b>: {collection.totalSupply.toString().concat(',  ')}
-                      <Link href={`/mint-nfts?collectionId=${collection.id}`}><a className="mr-6 text-blue-500">mint more </a></Link>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
+            <NFTCollectionCard
+              id={collectionId}
+              name={collection.name}
+              description={collection.description}
+              imageUrl={collection.image}
+              totalSupply={collection.totalSupply}
+              detailsBorder={`2px solid ${color.mint30}`}
+              width='300px'
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
               {
                 collection.nfts.map((nft, i) => {

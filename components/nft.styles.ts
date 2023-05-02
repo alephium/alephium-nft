@@ -1,13 +1,12 @@
 import styled, { css } from 'styled-components';
 import { color, resetCSS } from '@web3uikit/styles';
-import { INFTCardProps } from './nft-card';
 
-const DivStyled = styled.div<Partial<INFTCardProps>>`
+const DivStyled = styled.div`
     overflow: auto;
     padding-bottom: 10px;
 `;
 
-const DivStyledContainer = styled.div<Partial<INFTCardProps>>`
+const DivStyledContainer = styled.div<Partial<{ width?: string }>>`
     ${resetCSS};
     background-color: color.white;
     border: 'none';
@@ -39,7 +38,7 @@ const DivStyledContainer = styled.div<Partial<INFTCardProps>>`
         `}
 `;
 
-const FieldsetStyled = styled.fieldset<Partial<INFTCardProps>>`
+const FieldsetStyled = styled.fieldset<Partial<{ detailsBorder?: string }>>`
     margin-top: 10px;
     text-align: left;
     legend {
@@ -88,11 +87,11 @@ const FieldsetStyled = styled.fieldset<Partial<INFTCardProps>>`
       : 'border:none'}
 `;
 
-const DivRightButton = styled.div<Partial<INFTCardProps>>`
+const DivRightButton = styled.div`
     float: right;
 `;
 
-const DivLeftButton = styled.div<Partial<INFTCardProps>>`
+const DivLeftButton = styled.div`
     float: left;
 `;
 

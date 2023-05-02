@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './nft-card.styles';
+import styles from './nft.styles';
 import { color } from '@web3uikit/styles';
 import { Typography, TruncateString, Illustration, Button } from '@web3uikit/core';
 import NFTDetails from './nft-details';
