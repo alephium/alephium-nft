@@ -17,6 +17,7 @@ Abstract Contract NFTCollectionBase(
         return totalSupply
     }
 
+    @using(checkExternalCaller = false)
     pub fn nftByIndex(index: U256) -> INFT {
         assert!(index < totalSupply, ErrorCodes.IncorrectTokenIndex)
 

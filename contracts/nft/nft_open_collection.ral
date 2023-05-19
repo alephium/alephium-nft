@@ -5,7 +5,7 @@ Contract NFTOpenCollection(
     collectionUri: ByteVec,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply) {
-    @using(preapprovedAssets = true, updateFields = true)
+    @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
 

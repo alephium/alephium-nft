@@ -51,7 +51,7 @@ Contract NFTMarketPlace(
         CommissionIsZero = 3
     }
 
-    @using(preapprovedAssets = true)
+    @using(preapprovedAssets = true, checkExternalCaller = false)
     pub fn buyNFT(
         tokenId: ByteVec,
         totalPayment: U256
@@ -77,7 +77,7 @@ Contract NFTMarketPlace(
         tokenId: ByteVec,
         price: U256
     ) -> (Address) {
-        assert!(price > 0, ErrorCodes.NFTPriceIsZero)
+        checkCaller!(price > 0, ErrorCodes.NFTPriceIsZero)
 
         // Only owner can list the NFT
         let tokenOwner = callerAddress!()
@@ -115,7 +115,7 @@ Contract NFTMarketPlace(
         let nftListing = NFTListing(nftListingContractId)
         let tokenOwner = nftListing.getTokenOwner()
 
-        assert!(callerAddress!() == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
+        checkCaller!(callerAddress!() == tokenOwner, ErrorCodes.TokenOwnerAllowedOnly)
 
         nftListing.cancel()
         emit NFTListingCancelled(tokenId, tokenOwner)
@@ -125,7 +125,7 @@ Contract NFTMarketPlace(
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
 
-        assert!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
+        checkCaller!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
 
         let price = nftListing.getPrice()
 
@@ -135,7 +135,7 @@ Contract NFTMarketPlace(
 
     @using(updateFields = true)
     pub fn updateAdmin(newAdmin: Address) -> () {
-        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
+        checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         admin = newAdmin
         emit AdminUpdated(admin, newAdmin)
@@ -143,7 +143,7 @@ Contract NFTMarketPlace(
 
     @using(updateFields = true)
     pub fn updateListingFee(newListingFee: U256) -> () {
-        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
+        checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         listingFee = newListingFee
         emit ListingFeeUpdated(listingFee, newListingFee)
@@ -151,7 +151,7 @@ Contract NFTMarketPlace(
 
     @using(updateFields = true)
     pub fn updateCommissionRate(newCommissionRate: U256) -> () {
-        assert!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
+        checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
 
         commissionRate = newCommissionRate
         emit CommissionRateUpdated(commissionRate, newCommissionRate)
