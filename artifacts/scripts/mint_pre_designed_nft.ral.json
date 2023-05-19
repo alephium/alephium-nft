@@ -1,5 +1,5 @@
 {
-  "version": "v2.1.2",
+  "version": "v2.3.2",
   "name": "MintPreDesignedNFT",
   "bytecodeTemplate": "01010300000008b413c40de0b6b3a7640000a20c0d{0}010318",
   "fieldsSig": {
