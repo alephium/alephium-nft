@@ -17,8 +17,7 @@ const deployMarketplace: DeployFunction<Settings> = async (
 
   const result = await deployer.deployContract(NFTMarketPlace, {
     // @ts-ignore
-    initialFields: initialFields,
-    gasAmount: 50000
+    initialFields: initialFields
   })
 
   const contractId = result.contractInstance.contractId

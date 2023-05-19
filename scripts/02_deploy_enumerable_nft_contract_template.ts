@@ -14,8 +14,7 @@ const deployEnumerableNFTTemplate: DeployFunction<Settings> = async (
 
   const result = await deployer.deployContract(EnumerableNFT, {
     // @ts-ignore
-    initialFields: initialFields,
-    gasAmount: 100000
+    initialFields: initialFields
   })
 
   const contractId = result.contractInstance.contractId
