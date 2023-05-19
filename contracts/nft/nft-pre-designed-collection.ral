@@ -6,9 +6,7 @@ Contract NFTPreDesignedCollection(
     tokenBaseUri: ByteVec,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply) {
-
-    // TODO Add some comments
-    @using(preapprovedAssets = true, updateFields = true)
+    @using(preapprovedAssets = true, updateFields = true, checkExternalCaller = false)
     pub fn mint() -> (ByteVec) {
         let minter = callerAddress!()
         let initialImmState = EnumerableNFT.encodeImmFields!(
