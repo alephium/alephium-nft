@@ -17,8 +17,7 @@ export class NFTCollection extends DeployHelpers {
           nonEnumerableNftTemplateId: nonEnumerableNFTTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
           totalSupply: 0n
-        },
-        gasAmount: 100000
+        }
       }
     )
 
@@ -37,8 +36,7 @@ export class NFTCollection extends DeployHelpers {
           collectionUri: web3.stringToHex(collectionUri),
           tokenBaseUri: web3.stringToHex(baseUri),
           totalSupply: 0n
-        },
-        gasAmount: 100000
+        }
       }
     )
 
@@ -56,8 +54,7 @@ export class NFTCollection extends DeployHelpers {
           nftCollection: nftCollectionContractId,
           uri: web3.stringToHex(nftUri)
         },
-        attoAlphAmount: BigInt(1.1e18),
-        gasAmount: 100000
+        attoAlphAmount: BigInt(1.1e18)
       }
     )
   }
@@ -71,8 +68,7 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           nftCollection: nftCollectionContractId
         },
-        attoAlphAmount: BigInt(1.1e18),
-        gasAmount: 100000
+        attoAlphAmount: BigInt(1.1e18)
       }
     )
   }

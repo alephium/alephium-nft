@@ -26,8 +26,7 @@ export class NFTMarketplace extends DeployHelpers {
           tokenOwner: randomContractAddress(),
           marketAddress: randomContractAddress(),
           commissionRate: 200n  // 200 basis point: 2%
-        },
-        gasAmount: 100000
+        }
       }
     )
 
@@ -40,8 +39,7 @@ export class NFTMarketplace extends DeployHelpers {
           admin: adminAddress,
           listingFee: this.defaultListingFee,
           commissionRate: this.defaultCommissionRate
-        },
-        gasAmount: 100000
+        }
       }
     )
 
@@ -67,8 +65,7 @@ export class NFTMarketplace extends DeployHelpers {
             id: tokenId,
             amount: 1n
           }
-        ],
-        gasAmount: 100000
+        ]
       }
     )
   }
@@ -85,8 +82,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: BigInt(price),
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 100000
+        }
       }
     )
   }
@@ -104,8 +100,7 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
         },
-        attoAlphAmount: totalPayment,
-        gasAmount: 100000
+        attoAlphAmount: totalPayment
       }
     )
   }
@@ -120,8 +115,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           tokenId: tokenId,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 100000
+        }
       }
     )
   }
@@ -136,8 +130,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           price: BigInt(price),
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 100000
+        }
       }
     )
   }
@@ -152,8 +145,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           newAdmin: admin,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 100000
+        }
       }
     )
   }
@@ -168,8 +160,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           newCommissionRate: commissionRate,
           nftMarketplaceContractId: marketPlaceContractId
-        },
-        gasAmount: 100000
+        }
       }
     )
   }

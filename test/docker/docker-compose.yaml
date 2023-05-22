@@ -5,7 +5,7 @@ volumes:
 
 services:
   alephium:
-    image: alephium/dev-alephium:2.3.2
+    image: liuhongchao/dev-alephium:2.3.1_27-4074e987-SNAPSHOT
     restart: unless-stopped
     ports:
       - 19973:19973/tcp
