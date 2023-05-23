@@ -10,7 +10,7 @@ Contract NFTPreDesignedCollection(
     pub fn mint() -> (ByteVec) {
         let minter = callerAddress!()
         let initialImmState = EnumerableNFT.encodeImmFields!(
-            NFTPreDesignedCollection(selfContractId!()),
+            selfContract!(),
             totalSupply
         )
 
