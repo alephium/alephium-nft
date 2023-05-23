@@ -1,5 +1,5 @@
 {
-  "fullNodeVersion": "v2.3.2",
+  "fullNodeVersion": "v2.3.3",
   "compilerOptionsUsed": {
     "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
@@ -95,7 +95,7 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "fa09a331f6b893195dc6a5ebc03c857c033c1d82f54db4e83073bea590c57560",
+      "sourceCodeHash": "d5d538abdeb54814a4bd181706e50d5fc8fc32022d47667e2a3489c352bd41d3",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "7793d2f69fe3a53dcf82e5304ef6242a3d14d22e2f9536d811106121baaa990f",
       "warnings": []
