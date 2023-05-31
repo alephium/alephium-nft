@@ -1,39 +1,31 @@
 /* pages/_app.js */
-import '../styles/globals.css'
-import Link from 'next/link'
 import { AppProps } from 'next/app'
 import { AlephiumConnectButton, AlephiumConnectProvider } from '@alephium/web3-react'
 import { NETWORK } from '../configs/nft'
+import { ThemeProvider } from 'next-themes';
+import Head from 'next/head';
+import { Navbar } from '../components';
+import Script from 'next/script';
+import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AlephiumConnectProvider useTheme="retro" addressGroup={0} network={NETWORK}>
-      <title>Alephium NFT Marketplace</title>
-      <div>
-        <nav className="border-b p-6">
-          <p className="text-4xl font-bold">Alephium NFT Marketplace</p>
-          <div className="flex mt-4">
-            <Link href="/my-nfts">
-              <a className="mr-4 text-pink-500">
-                My NFTs
-              </a>
-            </Link>
-            <Link href="/create-collections">
-              <a className="mr-6 text-pink-500">
-                Create Collections
-              </a>
-            </Link>
-            <Link href="/buy-nfts">
-              <a className="mr-6 text-pink-500">
-                Buy NFTs
-              </a>
-            </Link>
-            <AlephiumConnectButton />
+    <ThemeProvider attribute="class">
+      <AlephiumConnectProvider useTheme="retro" addressGroup={0} network={NETWORK}>
+        <div className="dark:bg-nft-dark bg-white min-h-screen">
+          <Head>
+            <title>Alelphium</title>
+            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+          </Head>
+          <Navbar />
+          <div className="pt-65">
+            <Component {...pageProps} />
           </div>
-        </nav>
-        <Component {...pageProps} />
-      </div>
-    </AlephiumConnectProvider>
+        </div>
+
+        <Script src="https://kit.fontawesome.com/77a74156e4.js" crossOrigin="anonymous" />
+      </AlephiumConnectProvider>
+    </ThemeProvider>
   )
 }
 

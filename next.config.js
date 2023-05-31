@@ -25,6 +25,9 @@ const nextConfig = {
         permanent: true
       }
     ]
+  },
+  images: {
+    domains: ['alephium-nft.infura-ipfs.io']
   }
 }
 
