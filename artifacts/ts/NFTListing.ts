@@ -24,7 +24,8 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTListingContractJson } from "../marketplace/nft_listing.ral.json";
+import { default as NFTListingContractJson } from "../marketplace/NFTListing.ral.json";
+import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTListingTypes {
@@ -66,6 +67,8 @@ class Factory extends ContractFactory<
   NFTListingInstance,
   NFTListingTypes.Fields
 > {
+  consts = { ErrorCodes: { MarketplaceAllowedOnly: BigInt(0) } };
+
   at(address: string): NFTListingInstance {
     return new NFTListingInstance(address);
   }
@@ -135,7 +138,8 @@ export class NFTListingInstance extends ContractInstance {
         NFTListing,
         this,
         "getTokenOwner",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     getPrice: async (
@@ -145,7 +149,8 @@ export class NFTListingInstance extends ContractInstance {
         NFTListing,
         this,
         "getPrice",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
   };
@@ -156,7 +161,8 @@ export class NFTListingInstance extends ContractInstance {
     return (await multicallMethods(
       NFTListing,
       this,
-      calls
+      calls,
+      getContractByCodeHash
     )) as NFTListingTypes.MultiCallResults<Calls>;
   }
 }

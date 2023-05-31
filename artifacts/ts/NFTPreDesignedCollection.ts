@@ -24,7 +24,8 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTPreDesignedCollectionContractJson } from "../nft/nft-pre-designed-collection.ral.json";
+import { default as NFTPreDesignedCollectionContractJson } from "../nft/NFTPreDesignedCollection.ral.json";
+import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTPreDesignedCollectionTypes {
@@ -77,6 +78,10 @@ class Factory extends ContractFactory<
   NFTPreDesignedCollectionInstance,
   NFTPreDesignedCollectionTypes.Fields
 > {
+  consts = {
+    ErrorCodes: { IncorrectTokenIndex: BigInt(0), NFTNotFound: BigInt(1) },
+  };
+
   at(address: string): NFTPreDesignedCollectionInstance {
     return new NFTPreDesignedCollectionInstance(address);
   }
@@ -154,7 +159,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
         NFTPreDesignedCollection,
         this,
         "getCollectionUri",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     totalSupply: async (
@@ -166,7 +172,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
         NFTPreDesignedCollection,
         this,
         "totalSupply",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     nftByIndex: async (
@@ -174,7 +181,13 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
     ): Promise<
       NFTPreDesignedCollectionTypes.CallMethodResult<"nftByIndex">
     > => {
-      return callMethod(NFTPreDesignedCollection, this, "nftByIndex", params);
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "nftByIndex",
+        params,
+        getContractByCodeHash
+      );
     },
     mint: async (
       params?: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
@@ -183,7 +196,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
         NFTPreDesignedCollection,
         this,
         "mint",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     getTokenUri: async (
@@ -191,7 +205,13 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
     ): Promise<
       NFTPreDesignedCollectionTypes.CallMethodResult<"getTokenUri">
     > => {
-      return callMethod(NFTPreDesignedCollection, this, "getTokenUri", params);
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "getTokenUri",
+        params,
+        getContractByCodeHash
+      );
     },
   };
 
@@ -201,7 +221,8 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
     return (await multicallMethods(
       NFTPreDesignedCollection,
       this,
-      calls
+      calls,
+      getContractByCodeHash
     )) as NFTPreDesignedCollectionTypes.MultiCallResults<Calls>;
   }
 }

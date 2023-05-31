@@ -24,7 +24,8 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTOpenCollectionContractJson } from "../nft/nft_open_collection.ral.json";
+import { default as NFTOpenCollectionContractJson } from "../nft/NFTOpenCollection.ral.json";
+import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTOpenCollectionTypes {
@@ -72,6 +73,10 @@ class Factory extends ContractFactory<
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes.Fields
 > {
+  consts = {
+    ErrorCodes: { IncorrectTokenIndex: BigInt(0), NFTNotFound: BigInt(1) },
+  };
+
   at(address: string): NFTOpenCollectionInstance {
     return new NFTOpenCollectionInstance(address);
   }
@@ -139,7 +144,8 @@ export class NFTOpenCollectionInstance extends ContractInstance {
         NFTOpenCollection,
         this,
         "getCollectionUri",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     totalSupply: async (
@@ -149,18 +155,31 @@ export class NFTOpenCollectionInstance extends ContractInstance {
         NFTOpenCollection,
         this,
         "totalSupply",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     nftByIndex: async (
       params: NFTOpenCollectionTypes.CallMethodParams<"nftByIndex">
     ): Promise<NFTOpenCollectionTypes.CallMethodResult<"nftByIndex">> => {
-      return callMethod(NFTOpenCollection, this, "nftByIndex", params);
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "nftByIndex",
+        params,
+        getContractByCodeHash
+      );
     },
     mint: async (
       params: NFTOpenCollectionTypes.CallMethodParams<"mint">
     ): Promise<NFTOpenCollectionTypes.CallMethodResult<"mint">> => {
-      return callMethod(NFTOpenCollection, this, "mint", params);
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "mint",
+        params,
+        getContractByCodeHash
+      );
     },
   };
 
@@ -170,7 +189,8 @@ export class NFTOpenCollectionInstance extends ContractInstance {
     return (await multicallMethods(
       NFTOpenCollection,
       this,
-      calls
+      calls,
+      getContractByCodeHash
     )) as NFTOpenCollectionTypes.MultiCallResults<Calls>;
   }
 }
