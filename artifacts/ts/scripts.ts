@@ -4,150 +4,58 @@
 
 import {
   Address,
+  ExecutableScript,
   ExecuteScriptParams,
   ExecuteScriptResult,
   Script,
   SignerProvider,
   HexString,
 } from "@alephium/web3";
-import { default as BuyNFTScriptJson } from "../scripts/buy_nft.ral.json";
-import { default as CancelListingScriptJson } from "../scripts/cancel_listing.ral.json";
-import { default as ListNFTScriptJson } from "../scripts/list_nft.ral.json";
-import { default as MintOpenNFTScriptJson } from "../scripts/mint_open_nft.ral.json";
-import { default as MintPreDesignedNFTScriptJson } from "../scripts/mint_pre_designed_nft.ral.json";
-import { default as UpdateAdminScriptJson } from "../scripts/update_admin.ral.json";
-import { default as UpdateComissionRateScriptJson } from "../scripts/update_commission_rate.ral.json";
-import { default as UpdateListingFeeScriptJson } from "../scripts/update_listing_fee.ral.json";
-import { default as UpdateNFTPriceScriptJson } from "../scripts/update_nft_price.ral.json";
+import { default as BuyNFTScriptJson } from "../scripts/BuyNFT.ral.json";
+import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral.json";
+import { default as ListNFTScriptJson } from "../scripts/ListNFT.ral.json";
+import { default as MintOpenNFTScriptJson } from "../scripts/MintOpenNFT.ral.json";
+import { default as MintPreDesignedNFTScriptJson } from "../scripts/MintPreDesignedNFT.ral.json";
+import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.json";
+import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComissionRate.ral.json";
+import { default as UpdateListingFeeScriptJson } from "../scripts/UpdateListingFee.ral.json";
+import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
 
-export namespace BuyNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      totalPayment: bigint;
-      tokenId: HexString;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(BuyNFTScriptJson);
-}
-
-export namespace CancelListing {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      tokenId: HexString;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(CancelListingScriptJson);
-}
-
-export namespace ListNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      tokenId: HexString;
-      price: bigint;
-      marketPlaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(ListNFTScriptJson);
-}
-
-export namespace MintOpenNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftCollection: HexString; uri: HexString }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(MintOpenNFTScriptJson);
-}
-
-export namespace MintPreDesignedNFT {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{ nftCollection: HexString }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(MintPreDesignedNFTScriptJson);
-}
-
-export namespace UpdateAdmin {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      newAdmin: Address;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(UpdateAdminScriptJson);
-}
-
-export namespace UpdateComissionRate {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      newCommissionRate: bigint;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(UpdateComissionRateScriptJson);
-}
-
-export namespace UpdateListingFee {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      price: bigint;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(UpdateListingFeeScriptJson);
-}
-
-export namespace UpdateNFTPrice {
-  export async function execute(
-    signer: SignerProvider,
-    params: ExecuteScriptParams<{
-      price: bigint;
-      tokenId: HexString;
-      nftMarketplaceContractId: HexString;
-    }>
-  ): Promise<ExecuteScriptResult> {
-    const signerParams = await script.txParamsForExecution(signer, params);
-    return await signer.signAndSubmitExecuteScriptTx(signerParams);
-  }
-
-  export const script = Script.fromJson(UpdateNFTPriceScriptJson);
-}
+export const BuyNFT = new ExecutableScript<{
+  totalPayment: bigint;
+  tokenId: HexString;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(BuyNFTScriptJson));
+export const CancelListing = new ExecutableScript<{
+  tokenId: HexString;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(CancelListingScriptJson));
+export const ListNFT = new ExecutableScript<{
+  tokenId: HexString;
+  price: bigint;
+  marketPlaceContractId: HexString;
+}>(Script.fromJson(ListNFTScriptJson));
+export const MintOpenNFT = new ExecutableScript<{
+  nftCollection: HexString;
+  uri: HexString;
+}>(Script.fromJson(MintOpenNFTScriptJson));
+export const MintPreDesignedNFT = new ExecutableScript<{
+  nftCollection: HexString;
+}>(Script.fromJson(MintPreDesignedNFTScriptJson));
+export const UpdateAdmin = new ExecutableScript<{
+  newAdmin: Address;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(UpdateAdminScriptJson));
+export const UpdateComissionRate = new ExecutableScript<{
+  newCommissionRate: bigint;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(UpdateComissionRateScriptJson));
+export const UpdateListingFee = new ExecutableScript<{
+  price: bigint;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(UpdateListingFeeScriptJson));
+export const UpdateNFTPrice = new ExecutableScript<{
+  price: bigint;
+  tokenId: HexString;
+  nftMarketplaceContractId: HexString;
+}>(Script.fromJson(UpdateNFTPriceScriptJson));

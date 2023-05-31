@@ -1,0 +1,31 @@
+{
+  "version": "v2.3.3",
+  "name": "MintOpenNFT",
+  "bytecodeTemplate": "01010300000009b413c40de0b6b3a7640000a2{1}0d0d{0}010318",
+  "fieldsSig": {
+    "names": [
+      "nftCollection",
+      "uri"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

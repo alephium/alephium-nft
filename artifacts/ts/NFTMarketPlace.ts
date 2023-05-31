@@ -24,7 +24,8 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTMarketPlaceContractJson } from "../marketplace/nft_marketplace.ral.json";
+import { default as NFTMarketPlaceContractJson } from "../marketplace/NFTMarketPlace.ral.json";
+import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTMarketPlaceTypes {
@@ -99,6 +100,15 @@ class Factory extends ContractFactory<
   NFTMarketPlaceInstance,
   NFTMarketPlaceTypes.Fields
 > {
+  consts = {
+    ErrorCodes: {
+      AdminAllowedOnly: BigInt(0),
+      TokenOwnerAllowedOnly: BigInt(1),
+      NFTPriceIsZero: BigInt(2),
+      CommissionIsZero: BigInt(3),
+    },
+  };
+
   at(address: string): NFTMarketPlaceInstance {
     return new NFTMarketPlaceInstance(address);
   }
@@ -317,7 +327,13 @@ export class NFTMarketPlaceInstance extends ContractInstance {
     listNFT: async (
       params: NFTMarketPlaceTypes.CallMethodParams<"listNFT">
     ): Promise<NFTMarketPlaceTypes.CallMethodResult<"listNFT">> => {
-      return callMethod(NFTMarketPlace, this, "listNFT", params);
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "listNFT",
+        params,
+        getContractByCodeHash
+      );
     },
     getListingFee: async (
       params?: NFTMarketPlaceTypes.CallMethodParams<"getListingFee">
@@ -326,7 +342,8 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         NFTMarketPlace,
         this,
         "getListingFee",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
   };
@@ -337,7 +354,8 @@ export class NFTMarketPlaceInstance extends ContractInstance {
     return (await multicallMethods(
       NFTMarketPlace,
       this,
-      calls
+      calls,
+      getContractByCodeHash
     )) as NFTMarketPlaceTypes.MultiCallResults<Calls>;
   }
 }
