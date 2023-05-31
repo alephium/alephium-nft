@@ -24,7 +24,8 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as EnumerableNFTContractJson } from "../nft/enumerable-nft.ral.json";
+import { default as EnumerableNFTContractJson } from "../nft/EnumerableNFT.ral.json";
+import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
 export namespace EnumerableNFTTypes {
@@ -114,7 +115,8 @@ export class EnumerableNFTInstance extends ContractInstance {
         EnumerableNFT,
         this,
         "getTokenUri",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
     getCollectionId: async (
@@ -124,7 +126,8 @@ export class EnumerableNFTInstance extends ContractInstance {
         EnumerableNFT,
         this,
         "getCollectionId",
-        params === undefined ? {} : params
+        params === undefined ? {} : params,
+        getContractByCodeHash
       );
     },
   };
@@ -135,7 +138,8 @@ export class EnumerableNFTInstance extends ContractInstance {
     return (await multicallMethods(
       EnumerableNFT,
       this,
-      calls
+      calls,
+      getContractByCodeHash
     )) as EnumerableNFTTypes.MultiCallResults<Calls>;
   }
 }

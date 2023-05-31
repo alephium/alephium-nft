@@ -1,0 +1,31 @@
+{
+  "version": "v2.3.3",
+  "name": "UpdateComissionRate",
+  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000107",
+  "fieldsSig": {
+    "names": [
+      "newCommissionRate",
+      "nftMarketplaceContractId"
+    ],
+    "types": [
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

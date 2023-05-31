@@ -1,0 +1,307 @@
+{
+  "version": "v2.3.3",
+  "name": "NFTMarketPlace",
+  "bytecode": "04094039404b409e40c740f8410e4124413b414401030207001f1600cb170216021703b417040c0d1603010117050c0d16030100170616041601a216040d0c160301020616051600160616046101010202000916010c330f7b1600b21601a70101020601402b16010c330e7bb417021601130164170316001602b2a002130464170416027a13c40de0b6b3a7640000a216000da31600ce0016041603c117051602a001a905160116001602160561160577020100010400171600cb1701160117020c0d160201001703b41603450d7b0c0c1602010307160016035f01000205001c1600cb170216021703b40c0d16030100450d7b0c0d16030101170416010d0c16030104081600160416016001000101000bb4a000450c7b1600a10009a00016005f01000101000bb4a000450c7b1600a1010aa00116005f01000101000bb4a000450c7b1600a1021206a00216005f010000000102a00102",
+  "codeHash": "8c473bc9d9b4aaeeb841a005ca968d9fc69c2848f9a01a95d6398ce59788062f",
+  "fieldsSig": {
+    "names": [
+      "nftListingTemplateId",
+      "admin",
+      "listingFee",
+      "commissionRate"
+    ],
+    "types": [
+      "ByteVec",
+      "Address",
+      "U256",
+      "U256"
+    ],
+    "isMutable": [
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "eventsSig": [
+    {
+      "name": "NFTListed",
+      "fieldNames": [
+        "price",
+        "tokenId",
+        "tokenOwner",
+        "listingContractId"
+      ],
+      "fieldTypes": [
+        "U256",
+        "ByteVec",
+        "Address",
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "NFTSold",
+      "fieldNames": [
+        "price",
+        "tokenId",
+        "previousOwner",
+        "newOwner"
+      ],
+      "fieldTypes": [
+        "U256",
+        "ByteVec",
+        "Address",
+        "Address"
+      ]
+    },
+    {
+      "name": "NFTListingCancelled",
+      "fieldNames": [
+        "tokenId",
+        "tokenOwner"
+      ],
+      "fieldTypes": [
+        "ByteVec",
+        "Address"
+      ]
+    },
+    {
+      "name": "NFTListingPriceUpdated",
+      "fieldNames": [
+        "tokenId",
+        "oldPrice",
+        "newPrice"
+      ],
+      "fieldTypes": [
+        "ByteVec",
+        "U256",
+        "U256"
+      ]
+    },
+    {
+      "name": "AdminUpdated",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "Address",
+        "Address"
+      ]
+    },
+    {
+      "name": "ListingFeeUpdated",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "U256",
+        "U256"
+      ]
+    },
+    {
+      "name": "CommissionRateUpdated",
+      "fieldNames": [
+        "previous",
+        "new"
+      ],
+      "fieldTypes": [
+        "U256",
+        "U256"
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "buyNFT",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "tokenId",
+        "totalPayment"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "payCommission",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "buyer",
+        "commission"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "listNFT",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "tokenId",
+        "price"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "Address"
+      ]
+    },
+    {
+      "name": "cancelNFTListing",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "tokenId"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateNFTPrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "tokenId",
+        "newPrice"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateAdmin",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "newAdmin"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateListingFee",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "newListingFee"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "updateCommissionRate",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "newCommissionRate"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getListingFee",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "AdminAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "TokenOwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        },
+        {
+          "name": "NFTPriceIsZero",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
+        {
+          "name": "CommissionIsZero",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        }
+      ]
+    }
+  ]
+}

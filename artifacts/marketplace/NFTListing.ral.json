@@ -1,0 +1,113 @@
+{
+  "version": "v2.3.3",
+  "name": "NFTListing",
+  "bytecode": "05050912405540644074010000000102ce0102010000000102a0000201010102004026b4ce02450c7ba000ce032c1367102d170116010c334c0916001601a2160016010e0cb301011600ce01464c041600ce01a000a71600ce000dabce01b0010200000007b4ce02450c7bce01b0010001010007b4ce02450c7b1600a100",
+  "codeHash": "9ad05920ee5ac04af5c82ec689e04b5464bc589186999dc60ce47e900dbc8fbf",
+  "fieldsSig": {
+    "names": [
+      "tokenId",
+      "tokenOwner",
+      "marketAddress",
+      "commissionRate",
+      "price"
+    ],
+    "types": [
+      "ByteVec",
+      "Address",
+      "Address",
+      "U256",
+      "U256"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "eventsSig": [],
+  "functions": [
+    {
+      "name": "getTokenOwner",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Address"
+      ]
+    },
+    {
+      "name": "getPrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "buy",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "buyer"
+      ],
+      "paramTypes": [
+        "Address"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "cancel",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    },
+    {
+      "name": "updatePrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "newPrice"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": []
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "MarketplaceAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        }
+      ]
+    }
+  ]
+}
