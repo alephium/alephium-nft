@@ -85,7 +85,7 @@ const AssetDetails = () => {
     setSuccessModal(true);
   };
 
-  if (isNFTLoading || isTokensLoading || !nft) return <Loader />;
+  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) return <Loader />;
 
   const isOwner = tokenIds.includes(nft.tokenId)
   const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)

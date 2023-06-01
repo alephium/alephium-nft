@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 
-import { useRouter, Router, NextRouter } from 'next/router';
+import { useRouter, NextRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,10 +9,9 @@ import Link from 'next/link';
 
 import images from '../assets';
 
-import Button from './Button';
-import { AlephiumConnectButton, useAlephiumConnectContext } from '@alephium/web3-react';
+import { AlephiumConnectButton } from '@alephium/web3-react';
 
-type NavItem = 'Explore NFTs' | 'Listed NFTs' | 'My NFTs' | ''
+type NavItem = 'Explore NFTs' | 'Create NFTs' | 'My NFTs' | ''
 interface MenuItemsProps {
   isMobile: boolean,
   active: NavItem,
@@ -24,7 +23,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
   const generateLink = (i: number) => {
     switch (i) {
       case 0: return '/';
-      case 1: return '/listed-nfts';
+      case 1: return '/create-nfts';
       case 2: return '/my-nfts';
       default:
         return '';
@@ -33,7 +32,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
 
   return (
     <ul className={`list-none flexCenter flex-row ${isMobile && 'flex-col h-full'}`}>
-      {['Explore NFTs', 'Listed NFTs', 'My NFTs'].map((item, i) => (
+      {['Explore NFTs', 'Create NFTs', 'My NFTs'].map((item, i) => (
         <li
           key={i}
           onClick={() => {
@@ -54,32 +53,6 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
   );
 };
 
-interface ButtonGroupProps {
-  setActive: (i: NavItem) => void,
-  router: NextRouter,
-  setIsOpen: (open: boolean) => void
-}
-
-const ButtonGroup = ({ setActive, router, setIsOpen }: ButtonGroupProps) => {
-  const context = useAlephiumConnectContext()
-  //const { connectWallet, currentAccount } = useContext(NFTContext);
-
-  return context.account ? (
-    <Button
-      btnName="Create"
-      classStyles="mx-2 rounded-xl"
-      handleClick={() => {
-        setActive('');
-        setIsOpen(false);
-
-        router.push('/create-nft');
-      }}
-    />
-  ) : (
-    <AlephiumConnectButton />
-  );
-};
-
 const checkActive = (
   active: NavItem,
   setActive: (i: NavItem) => void,
@@ -89,8 +62,8 @@ const checkActive = (
     case '/':
       if (active !== 'Explore NFTs') setActive('Explore NFTs');
       break;
-    case '/listed-nfts':
-      if (active !== 'Listed NFTs') setActive('Listed NFTs');
+    case '/create-nfts':
+      if (active !== 'Create NFTs') setActive('Create NFTs');
       break;
     case '/my-nfts':
       if (active !== 'My NFTs') setActive('My NFTs');
@@ -162,7 +135,7 @@ const Navbar = () => {
         <div className="md:hidden flex">
           <MenuItems active={active} setActive={setActive} setIsOpen={setIsOpen} isMobile={false} />
           <div className="ml-3">
-            <ButtonGroup setActive={setActive} router={router} setIsOpen={setIsOpen} />
+            <AlephiumConnectButton />
           </div>
         </div>
       </div>
@@ -197,7 +170,7 @@ const Navbar = () => {
               <MenuItems active={active} setActive={setActive} isMobile setIsOpen={setIsOpen} />
             </div>
             <div className="p-4 border-t dark:border-nft-black-1 border-nft-gray-1 flex justify-center">
-              <ButtonGroup setActive={setActive} router={router} setIsOpen={setIsOpen} />
+              <AlephiumConnectButton />
             </div>
           </div>
         )}

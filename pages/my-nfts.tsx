@@ -7,11 +7,14 @@ import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useCollections } from '../components/nft-collection';
+import { useNFTListings } from '../components/nft-listing';
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
 
-  const { nftCollections, isLoading } = useCollections(context.signerProvider, context.account)
+  const { nftCollections, isLoading: isNFTCollectionLoading } = useCollections(context.signerProvider, context.account)
+  const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
+  const isLoading = isNFTCollectionLoading || isNFTListingLoading
 
   if (isLoading) {
     return (
@@ -52,10 +55,12 @@ const MyNFTs = () => {
           <div className="mt-3 w-full flex flex-wrap">
             {nftCollections.flatMap((nftCollection) => {
               return nftCollection.nfts.map((nft) => {
+                const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
+                const nftLike = nftListing && { tokenId: nftListing._id, ...nftListing } || nft
                 return (
                   <NFTCard
                     key={nft.tokenId}
-                    nft={{ tokenOwner: context.account?.address || '', ...nft }}
+                    nft={{ tokenOwner: context.account?.address || '', ...nftLike }}
                   />
                 )
               })
