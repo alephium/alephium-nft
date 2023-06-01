@@ -129,7 +129,7 @@ const Navbar = () => {
             }}
           >
             <Image src={images.alephiumLogo} objectFit="contain" width={40} height={40} alt="logo" />
-            <p className="dark:text-white text-nft-black-1 font-bold text-xl ml-1">Alephium</p>
+            <p className="dark:text-white text-nft-black-1 font-bold text-xl ml-1">AlephiumNFT</p>
           </div>
         </Link>
         <Link href="/">

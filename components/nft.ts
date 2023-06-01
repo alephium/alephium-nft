@@ -4,7 +4,7 @@ import { NonEnumerableNFT } from '../artifacts/ts'
 import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { fetchNonEnumerableNFTState } from "../utils/contracts"
 import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, ExplorerProvider } from "@alephium/web3"
 
 export interface NFT {
   name: string,

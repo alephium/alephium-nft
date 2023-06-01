@@ -2,9 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { shortenAddress } from '../utils/shortenAddress';
-import { shortenPrice } from '../utils/shortenPrice';
 import { shortenName } from '../utils/shortenName';
 import { motion } from 'framer-motion';
+import { prettifyAttoAlphAmount } from '@alephium/web3';
 
 interface NFTCardProps {
   nft: {
@@ -46,7 +46,7 @@ const NFTCard = ({ nft }: NFTCardProps) => {
             {
               nft.price ? (
                 <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
-                  {nft.price > 100000 ? shortenPrice() : Number(nft.price)} <span className="normal">ALPH</span>
+                  {prettifyAttoAlphAmount(nft.price)} <span className="normal">ALPH</span>
                 </p>
               ) : null
             }

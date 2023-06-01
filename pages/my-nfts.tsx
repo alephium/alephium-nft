@@ -1,176 +1,70 @@
-import { node, ONE_ALPH } from '@alephium/web3'
-import { useState } from 'react'
-import { NFTMarketplace } from '../utils/nft-marketplace'
-import { marketplaceContractId } from '../configs/nft'
-import TxStatusAlert, { useTxStatusStates } from './tx-status-alert'
-import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { NFT } from '../components/nft'
-import { useCollections } from '../components/nft-collection'
-import Link from 'next/link'
+import Image from 'next/image';
 
-export default function Home() {
-  const [nftBeingSold, setNFTBeingSold] = useState<NFT | undefined>(undefined)
-  const [nftSellingPrice, setNFTSellingPrice] = useState<number | undefined>(undefined)
+import withTransition from '../components/withTransition';
+
+import { Loader, NFTCard, Banner } from '../components';
+import images from '../assets';
+import { shortenAddress } from '../utils/shortenAddress';
+import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useCollections } from '../components/nft-collection';
+
+const MyNFTs = () => {
   const context = useAlephiumConnectContext()
-  const [showSetPriceModal, setShowSetPriceModal] = useState(false);
-  const minimumNFTPrice = 0.0001 // ALPH
-
-  const [
-    ongoingTxId,
-    setOngoingTxId,
-    ongoingTxDescription,
-    setOngoingTxDescription,
-    txStatusCallback,
-    setTxStatusCallback,
-    resetTxStatus
-  ] = useTxStatusStates()
 
   const { nftCollections, isLoading } = useCollections(context.signerProvider, context.account)
 
-  function resetState() {
-    resetTxStatus()
-    setNFTBeingSold(undefined)
-    setNFTSellingPrice(undefined)
+  if (isLoading) {
+    return (
+      <div className="flexStart min-h-screen">
+        <Loader />
+      </div>
+    );
   }
 
-  function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.signerProvider) {
-      return new NFTMarketplace(context.signerProvider)
-    }
-  }
-
-  async function sellNFT(nft: NFT, price: number) {
-    setShowSetPriceModal(false)
-
-    const nftMarketplace = getNFTMarketplace()
-    if (!!nftMarketplace) {
-      const priceInSets = BigInt(price) * ONE_ALPH
-      const listNFTTxResult = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
-
-      setOngoingTxId(listNFTTxResult.txId)
-      setOngoingTxDescription('listing NFT')
-      setTxStatusCallback(() => async (txStatus: node.TxStatus) => {
-        if (txStatus.type === 'Confirmed') {
-          resetState()
-        } else if (txStatus.type === 'TxNotFound') {
-          resetState()
-          console.error('List NFT transaction not found')
-        }
-      })
-    }
-  }
-
-  function sellingNFT(nft: NFT) {
-    setNFTBeingSold(nft)
-    setShowSetPriceModal(true)
-  }
-
-  function cancelSellingNFT() {
-    setShowSetPriceModal(false)
-    resetState()
-  }
-
-  if (isLoading) return (<h1 className="px-20 py-10 text-3xl">Loading...</h1>)
-  if (nftCollections.length === 0) return (<h1 className="px-20 py-10 text-3xl">I have no NFTs</h1>)
   return (
-    <>
-      {
-        ongoingTxId ? <TxStatusAlert txId={ongoingTxId} description={ongoingTxDescription} txStatusCallback={txStatusCallback} /> : undefined
-      }
+    <div className="w-full flex justify-start items-center flex-col min-h-screen">
+      <div className="w-full flexCenter flex-col">
+        <Banner
+          name="Your creative NFT's section."
+          childStyles="text-center mb-4"
+          parentStyles="h-80 justify-center"
 
-      <div className="flex justify-center">
-        <div className="px-4" style={{ maxWidth: '1600px' }}>
+        />
 
-          {
-            nftCollections.map((nftCollection, i) => {
-              return (
-                <div key={i} >
-                  <label><b>Collection</b>: </label><Link href={`/collections?collectionId=${nftCollection.id}`}><a className="mr-6 text-blue-500"> {nftCollection.name} </a></Link>
-                  <br />
-                  <label><b>Description</b>: {nftCollection.description}</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-                    {
-                      nftCollection.nfts.map((nft, i) => {
-                        return (
-                          <div key={i} className="border shadow rounded-xl overflow-hidden">
-                            <div className="p-4 object-center">
-                              <img src={nft.image} />
-                            </div>
-                            <div key={i} className="p-4">
-                              <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
-                              <div style={{ height: '70px', overflow: 'hidden' }}>
-                                <p className="text-gray-400">{nft.description}</p>
-                              </div>
-                            </div>
-                            <div></div>
-                            <div className="p-4 bg-black">
-                              {
-                                nft.listed ?
-                                  <button className="mt-4 w-full bg-pink-300 text-white font-bold py-1 m-2 w-32 rounded disable" disabled>Listed</button> :
-                                  <button className="mt-4 w-full bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded" onClick={() => sellingNFT(nft)}>Sell</button>
-                              }
-                            </div>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                </div>
-              )
-            })
-          }
-
-          {
-            showSetPriceModal && nftBeingSold ? (
-              <>
-                <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50">
-                  <div className="relative w-auto my-6 mx-auto max-w-3xl">
-                    <div className="rounded-lg shadow-lg relative flex flex-col w-full bg-white">
-                      <form className="bg-black shadow-md rounded px-10 pt-6 pb-8 w-full">
-                        <label className="block text-white text-sm font-bold mb-1">
-                          Price (ALPH)
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          onChange={e => setNFTSellingPrice(+e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-1 text-black"
-                        />
-                      </form>
-                      <div className="flex bg-white items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-                        <button
-                          className="mt-4 bg-gray-500 text-white font-bold py-1 m-2 w-32 rounded"
-                          type="button"
-                          onClick={() => cancelSellingNFT()}
-                        >
-                          Cancel
-                        </button>
-                        {
-                          (nftSellingPrice && (nftSellingPrice > minimumNFTPrice)) ?
-                            <button
-                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
-                              type="button"
-                              onClick={() => sellNFT(nftBeingSold, nftSellingPrice)}
-                            >
-                              Submit
-                            </button> :
-                            <button
-                              className="mt-4 bg-pink-500 text-white font-bold py-1 m-2 w-32 rounded"
-                              type="button"
-                              disabled
-                            >
-                              Submit
-                            </button>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : null
-          }
+        <div className="flexCenter flex-col -mt-20 z-0">
+          <div className="flexCenter w-40 h-40 sm:w-36 sm:h-36 p-1 dark:bg-nft-black-4 bg-white rounded-full">
+            <Image
+              src={images.creator1}
+              className="rounded-full object-cover"
+              objectFit="cover"
+            />
+          </div>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(context.account?.address)}</p>
         </div>
       </div>
-    </>
-  )
-}
+
+      {!isLoading && !nftCollections.length ? (
+        <div className="flexCenter sm:p-4 p-16">
+          <h1 className="font-poppins dark:text-white text-nft-black-1 font-extrabold text-3xl">No NFTs Owned!</h1>
+        </div>
+      ) : (
+        <div className="sm:px-4 p-12 w-full minmd:w-4/5 flexCenter flex-col">
+          <div className="mt-3 w-full flex flex-wrap">
+            {nftCollections.flatMap((nftCollection) => {
+              return nftCollection.nfts.map((nft) => {
+                return (
+                  <NFTCard
+                    key={nft.tokenId}
+                    nft={{ tokenOwner: context.account?.address || '', ...nft }}
+                  />
+                )
+              })
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default withTransition(MyNFTs);

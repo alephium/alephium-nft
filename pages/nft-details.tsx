@@ -10,6 +10,8 @@ import { Button, Loader, Modal } from '../components';
 import images from '../assets';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useNFT } from '../components/nft';
+import { useTokens } from '../components/token';
+import { useNFTListings } from '../components/nft-listing';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -63,7 +65,9 @@ const AssetDetails = () => {
   const router = useRouter();
   const { tokenId } = router.query
   // TODO: Fix listed
-  const { nft, isLoading } = useNFT(tokenId as string, false, context.signerProvider)
+  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
+  const { tokenIds, isLoading: isTokensLoading } = useTokens(context.account?.address, context.signerProvider)
+  const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
 
   useEffect(() => {
     // disable body scroll when navbar is open
@@ -81,7 +85,10 @@ const AssetDetails = () => {
     setSuccessModal(true);
   };
 
-  if (isLoading || !nft) return <Loader />;
+  if (isNFTLoading || isTokensLoading || !nft) return <Loader />;
+
+  const isOwner = tokenIds.includes(nft.tokenId)
+  const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
 
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
@@ -119,9 +126,31 @@ const AssetDetails = () => {
           </div>
         </div>
         <div className="flex flex-row sm:flex-col mt-10">
-          <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
-            You cannot buy your own NFT
-          </p>
+          {
+            (isOwner && nftListing) ? (
+              <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                You cannot buy your own NFT
+              </p>
+            ) : null
+          }
+          {
+            (isOwner && !nftListing) ? (
+              <Button
+                btnName="Sell on AlephiumNFT Marketplace"
+                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                handleClick={() => router.push(`/resell-nft?id=${nft.tokenId}&tokenId=${nft.tokenId}`)}
+              />
+            ) : null
+          }
+          {
+            (!isOwner && nftListing) ? (
+              <Button
+                btnName={`Buy for ${nftListing.price} ALPH`}
+                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                handleClick={() => setPaymentModal(true)}
+              />
+            ) : null
+          }
         </div>
       </div>
 
@@ -147,7 +176,7 @@ const AssetDetails = () => {
         />
       )}
 
-      {isLoading && (
+      {isNFTLoading && (
         <Modal
           header="Buying NFT..."
           body={(
