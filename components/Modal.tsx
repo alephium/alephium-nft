@@ -1,14 +1,21 @@
-import { useRef } from 'react';
+import { MutableRefObject, ReactNode, useRef } from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
 import images from '../assets';
 
-const Modal = ({ header, body, footer, handleClose }) => {
-  const modalRef = useRef(null);
+interface ModalProps {
+  header: string,
+  body: ReactNode,
+  footer?: ReactNode,
+  handleClose: () => void
+}
+
+const Modal = ({ header, body, footer, handleClose }: ModalProps) => {
+  const modalRef: MutableRefObject<any> = useRef(null);
   const { theme } = useTheme();
 
-  const handleClickOutside = (e) => {
+  const handleClickOutside = (e: React.MouseEvent<HTMLElement>) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       handleClose();
     }
@@ -28,9 +35,11 @@ const Modal = ({ header, body, footer, handleClose }) => {
         <div className="p-10 sm:px-4 border-t border-b dark:border-nft-black-3 border-nft-gray-1">
           {body}
         </div>
-        <div className="flexCenter p-4">
-          {footer}
-        </div>
+        {footer && (
+          <div className="flexCenter p-4">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

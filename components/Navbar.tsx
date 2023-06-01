@@ -10,6 +10,7 @@ import Link from 'next/link';
 import images from '../assets';
 
 import Button from './Button';
+import { AlephiumConnectButton, useAlephiumConnectContext } from '@alephium/web3-react';
 
 type NavItem = 'Explore NFTs' | 'Listed NFTs' | 'My NFTs' | ''
 interface MenuItemsProps {
@@ -54,40 +55,29 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
 };
 
 interface ButtonGroupProps {
-  setActive: (i: 'Explore NFTs' | 'Listed NFTs' | 'My NFTs') => void,
+  setActive: (i: NavItem) => void,
   router: NextRouter,
   setIsOpen: (open: boolean) => void
 }
 
 const ButtonGroup = ({ setActive, router, setIsOpen }: ButtonGroupProps) => {
+  const context = useAlephiumConnectContext()
   //const { connectWallet, currentAccount } = useContext(NFTContext);
 
-  //return currentAccount ? (
-  //  <Button
-  //    btnName="Create"
-  //    classStyles="mx-2 rounded-xl"
-  //    handleClick={() => {
-  //      setActive('');
-  //      setIsOpen(false);
-  //
-  //      router.push('/create-nft');
-  //    }}
-  //  />
-  //) : (
-  //  <Button
-  //    btnName="Connect"
-  //    classStyles="mx-2 rounded-xl"
-  //    handleClick={connectWallet}
-  //  />
-  //);
-
-  return (
+  return context.account ? (
     <Button
-      btnName="Connect"
+      btnName="Create"
       classStyles="mx-2 rounded-xl"
-      handleClick={() => { }}
+      handleClick={() => {
+        setActive('');
+        setIsOpen(false);
+
+        router.push('/create-nft');
+      }}
     />
-  )
+  ) : (
+    <AlephiumConnectButton />
+  );
 };
 
 const checkActive = (

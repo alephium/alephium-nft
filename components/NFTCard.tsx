@@ -4,16 +4,26 @@ import Link from 'next/link';
 import { shortenAddress } from '../utils/shortenAddress';
 import { shortenPrice } from '../utils/shortenPrice';
 import { shortenName } from '../utils/shortenName';
-import { NFTListing } from '../components/nft-listing'
 import { motion } from 'framer-motion';
 
 interface NFTCardProps {
-  nft: NFTListing, // FIXME
+  nft: {
+    tokenId: string,
+    name: string,
+    description: string,
+    image: string,
+    tokenOwner: string,
+    collectionId?: string
+    price?: bigint
+    marketAddress?: string
+    commissionRate?: bigint,
+    listingContractId?: string
+  }
 }
 
 const NFTCard = ({ nft }: NFTCardProps) => {
   return (
-    <Link href={{ pathname: '/nft-details', query: nft._id }}>
+    <Link href={{ pathname: '/nft-details', query: { tokenId: nft.tokenId } }}>
       <motion.div
         whileInView={{ opacity: [0, 1] }}
         transition={{ duration: 0.5 }}
@@ -25,7 +35,7 @@ const NFTCard = ({ nft }: NFTCardProps) => {
             src={nft.image}
             layout="fill"
             objectFit="cover"
-            alt={`nft${nft._id}`}
+            alt={`nft${nft.tokenId}`}
           />
         </div>
         <div className="mt-3 flex flex-col">
@@ -33,9 +43,13 @@ const NFTCard = ({ nft }: NFTCardProps) => {
             {nft.name.length > 14 ? shortenName(nft.name) : nft.name}
           </p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
-            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
-              {nft.price > 100000 ? shortenPrice() : Number(nft.price)} <span className="normal">ALPH</span>
-            </p>
+            {
+              nft.price ? (
+                <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
+                  {nft.price > 100000 ? shortenPrice() : Number(nft.price)} <span className="normal">ALPH</span>
+                </p>
+              ) : null
+            }
             <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">{shortenAddress(nft.tokenOwner)}</p>
           </div>
         </div>

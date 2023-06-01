@@ -80,3 +80,33 @@ export const useCommissionRate = (
 
   return { commissionRate: data, isLoading: !data && !error, ...rest }
 }
+
+export const useNFT = (
+  tokenId: string,
+  listed: boolean,
+  signerProvider?: SignerProvider
+) => {
+  const { data, error, ...rest } = useSWR(
+    signerProvider &&
+    signerProvider.nodeProvider &&
+    [
+      tokenId,
+      "nft",
+    ],
+    async () => {
+      if (!signerProvider?.nodeProvider) {
+        return undefined;
+      }
+
+      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+
+      return await fetchNFT(tokenId, listed)
+    },
+    {
+      refreshInterval: 60e3 /* 1 minute */,
+      suspense: true
+    },
+  )
+
+  return { nft: data, isLoading: !data && !error, ...rest }
+}
