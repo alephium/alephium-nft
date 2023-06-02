@@ -11,7 +11,7 @@ import images from '../assets';
 
 import { AlephiumConnectButton } from '@alephium/web3-react';
 
-type NavItem = 'Explore NFTs' | 'Create NFTs' | 'My NFTs' | ''
+type NavItem = 'Explore NFTs' | 'Create Collection' | 'My NFTs' | ''
 interface MenuItemsProps {
   isMobile: boolean,
   active: NavItem,
@@ -23,7 +23,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
   const generateLink = (i: number) => {
     switch (i) {
       case 0: return '/';
-      case 1: return '/create-nfts';
+      case 1: return '/create-collection';
       case 2: return '/my-nfts';
       default:
         return '';
@@ -32,7 +32,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }: MenuItemsProps) =
 
   return (
     <ul className={`list-none flexCenter flex-row ${isMobile && 'flex-col h-full'}`}>
-      {['Explore NFTs', 'Create NFTs', 'My NFTs'].map((item, i) => (
+      {['Explore NFTs', 'Create Collection', 'My NFTs'].map((item, i) => (
         <li
           key={i}
           onClick={() => {
@@ -62,13 +62,13 @@ const checkActive = (
     case '/':
       if (active !== 'Explore NFTs') setActive('Explore NFTs');
       break;
-    case '/create-nfts':
-      if (active !== 'Create NFTs') setActive('Create NFTs');
+    case '/create-collection':
+      if (active !== 'Create Collection') setActive('Create Collection');
       break;
     case '/my-nfts':
       if (active !== 'My NFTs') setActive('My NFTs');
       break;
-    case '/create-nft':
+    case '/create-collection':
       setActive('');
       break;
 

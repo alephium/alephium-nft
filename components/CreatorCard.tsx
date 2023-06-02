@@ -2,15 +2,15 @@ import React, { useContext } from 'react';
 
 import { motion } from 'framer-motion';
 
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 import images from '../assets';
 
 interface CreatorCardProps {
   rank: string,
-  creatorImage: string,
+  creatorImage: StaticImageData,
   creatorName: string,
-  creatorAlphs: number
+  creatorAlphs: string
 }
 
 const CreatorCard = ({ rank, creatorImage, creatorName, creatorAlphs }: CreatorCardProps) => {
@@ -53,7 +53,7 @@ const CreatorCard = ({ rank, creatorImage, creatorName, creatorAlphs }: CreatorC
 
       <div className="mt-3 minlg:mt-7 text-center flexCenter flex-col">
         <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base">{creatorName}</p>
-        <p className="mt-1 font-poppins dark:text-white text-nft-black-1 font-semibold text-base">{creatorAlphs.toFixed(2)} <span className="font-normal">ALPH</span></p>
+        <p className="mt-1 font-poppins dark:text-white text-nft-black-1 font-semibold text-base">{creatorAlphs} <span className="font-normal">ALPH</span></p>
       </div>
     </motion.div>
   );
