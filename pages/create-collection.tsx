@@ -67,7 +67,7 @@ export default function CreateCollections() {
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
-      router.push(`/collections?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
+      router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
     } else {
       console.debug('context..', context)
     }
