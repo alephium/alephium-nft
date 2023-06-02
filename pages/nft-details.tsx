@@ -100,6 +100,7 @@ const AssetDetails = () => {
   const checkout = async () => {
     if (nftListing && context.signerProvider) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
+      // TODO: Display the price breakdowns
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
 
       await nftMarketplace.buyNFT(
@@ -169,7 +170,7 @@ const AssetDetails = () => {
               <Button
                 btnName="Sell on AlephiumNFT Marketplace"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => router.push(`/resell-nft?id=${nft.tokenId}&tokenId=${nft.tokenId}`)}
+                handleClick={() => router.push(`/sell-nft?tokenId=${nft.tokenId}`)}
               />
             ) : null
           }
