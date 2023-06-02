@@ -1,17 +1,17 @@
-import { useState, useEffect, useContext } from 'react';
-import { NextRouter, useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
-
 import withTransition from '../components/withTransition';
 import { shortenName } from '../utils/shortenName';
-
 import { shortenAddress } from '../utils/shortenAddress';
 import { Button, Loader, Modal } from '../components';
 import images from '../assets';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress } from '@alephium/web3'
 import { useNFT } from '../components/nft';
 import { useTokens } from '../components/token';
 import { useNFTListings } from '../components/nft-listing';
+import { NFTMarketplace } from '../utils/nft-marketplace';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -46,14 +46,19 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
         </div>
       </div>
 
-      <div>
-        <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{Number(nft.price)} <span className="font-semibold">ALPH</span></p>
-      </div>
+      {nft.price ? (
+        <div>
+          <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{prettifyAttoAlphAmount(nft.price)} <span className="font-semibold">ALPH</span></p>
+        </div>
+
+      ) : null}
     </div>
 
     <div className="flexBetween mt-10">
       <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-base minlg:text-xl">Total</p>
-      <p className="font-poppins dark:text-white text-nft-black-1 text-base minlg:text-xl font-normal">{Number(nft.price)} <span className="font-semibold">ALPH</span></p>
+      {nft.price ? (
+        <p className="font-poppins dark:text-white text-nft-black-1 text-base minlg:text-xl font-normal">{prettifyAttoAlphAmount(nft.price)} <span className="font-semibold">ALPH</span></p>
+      ) : null}
     </div>
   </div>
 );
@@ -78,17 +83,43 @@ const AssetDetails = () => {
     }
   }, [paymentModal, successModal]);
 
-  const checkout = async () => {
-    //await buyNft(nft);
-
-    setPaymentModal(false);
-    setSuccessModal(true);
-  };
-
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) return <Loader />;
 
   const isOwner = tokenIds.includes(nft.tokenId)
   const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
+
+  function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
+    const commission = BigInt(nftPrice * commissionRate) / BigInt(10000)
+    const nftDeposit = ONE_ALPH
+    const gasAmount = BigInt(200000)
+    const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
+
+    return [commission, nftDeposit, gasAmount, totalAmount]
+  }
+
+  const checkout = async () => {
+    if (nftListing && context.signerProvider) {
+      const nftMarketplace = new NFTMarketplace(context.signerProvider)
+      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
+
+      await nftMarketplace.buyNFT(
+        totalAmount,
+        nftListing._id,
+        binToHex(contractIdFromAddress(nftListing.marketAddress))
+      )
+
+      setPaymentModal(false);
+      setSuccessModal(true);
+    } else {
+      console.debug(
+        "can not buy NFT",
+        context.signerProvider?.nodeProvider,
+        context.signerProvider,
+        context.account,
+        nftListing
+      )
+    }
+  };
 
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
@@ -145,7 +176,7 @@ const AssetDetails = () => {
           {
             (!isOwner && nftListing) ? (
               <Button
-                btnName={`Buy for ${nftListing.price} ALPH`}
+                btnName={`Buy for ${prettifyAttoAlphAmount(nftListing.price)} ALPH`}
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
                 handleClick={() => setPaymentModal(true)}
               />
@@ -157,7 +188,7 @@ const AssetDetails = () => {
       {paymentModal && (
         <Modal
           header="Check Out"
-          body={<PaymentBodyCmp nft={nft} />}
+          body={<PaymentBodyCmp nft={nftListing && { tokenId: nftListing._id, ...nftListing } || nft} />}
           footer={(
             <div className="flex flex-row sm:flex-col">
               <Button
