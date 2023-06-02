@@ -27,6 +27,7 @@ const ResellNFT = () => {
     if (!!nftMarketplace) {
       const priceInSets = BigInt(price) * ONE_ALPH
       await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
+      router.push('/');
     } else {
       console.debug(
         "can not sell NFT",
@@ -66,6 +67,7 @@ const ResellNFT = () => {
             btnName="List NFT"
             classStyles="rounded-xl"
             handleClick={() => sell(nft, price)}
+            disabled={!price || price <= 0}
           />
         </div>
       </div>
