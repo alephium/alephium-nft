@@ -1,7 +1,7 @@
 import React, { ChangeEventHandler } from 'react';
 
 interface InputProps {
-  inputType: 'textarea' | 'number' | '',
+  inputType: 'textarea' | 'number' | 'input' | '',
   title: string,
   placeholder: string,
   handleClick: ChangeEventHandler
