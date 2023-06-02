@@ -74,7 +74,7 @@ export default function CollectionDetails() {
                 <Button
                   btnName={"Mint More"}
                   classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                  handleClick={() => router.push(`/mint-nfts?collectionId=${collection.id}`)}
+                  handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
                 />
               </div>
             </div>
