@@ -13,7 +13,7 @@ const Home = () => {
   const context = useAlephiumConnectContext()
   const [hideButtons, setHideButtons] = useState(false);
   const [nfts, setNfts] = useState<NFTListing[]>([]);
-  const [activeSelect, setActiveSelect] = useState<'Price (low to high)' | 'Price (high to low)'>('Price (low to high)');
+  const [activeSelect, setActiveSelect] = useState<string>('Price (low to high)');
   const { theme } = useTheme();
   const { nftListings, isLoading } = useNFTListings(context.signerProvider)
 
