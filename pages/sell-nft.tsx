@@ -9,7 +9,7 @@ import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH } from '@alephium/web3';
 
-const ResellNFT = () => {
+const SellNFT = () => {
   const context = useAlephiumConnectContext()
   const [price, setPrice] = useState<number>(0);
   const router = useRouter();
@@ -75,4 +75,4 @@ const ResellNFT = () => {
   );
 };
 
-export default withTransition(ResellNFT);
+export default withTransition(SellNFT);
