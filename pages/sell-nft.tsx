@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import withTransition from '../components/withTransition';
 import { marketplaceContractId } from '../configs/nft'
-import { Button, Input, Loader } from '../components';
+import { Button, Input, Loader, Banner } from '../components';
 import { useNFT } from '../components/nft';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH } from '@alephium/web3';
+import { waitTxConfirmed } from '../utils';
 
 const SellNFT = () => {
   const context = useAlephiumConnectContext()
@@ -24,9 +25,10 @@ const SellNFT = () => {
 
   async function sell(nft: NFT, price: number) {
     const nftMarketplace = getNFTMarketplace()
-    if (!!nftMarketplace) {
+    if (!!nftMarketplace && context.signerProvider?.nodeProvider) {
       const priceInSets = BigInt(price) * ONE_ALPH
-      await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
+      const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
+      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
       router.push('/');
     } else {
       console.debug(
@@ -38,6 +40,16 @@ const SellNFT = () => {
         price
       )
     }
+  }
+
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
   }
 
   if (isNFTLoading || !nft) {

@@ -153,7 +153,7 @@ export const useCollections = (
     ],
     async () => {
       if (!account || !signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
-        return [];
+        return undefined;
       }
 
       web3.setCurrentNodeProvider(signerProvider.nodeProvider)

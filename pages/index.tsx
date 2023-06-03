@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { NFTListing } from '../components/nft-listing'
 import { useTheme } from 'next-themes';
-import { Loader, NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
+import { Loader, NFTCard, SearchBar, withTransition, CreatorCard, Banner } from '../components';
 import images from '../assets';
 import { useNFTListings } from '../components/nft-listing';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
@@ -97,6 +97,16 @@ const Home = () => {
   const rankedTopSellers = Object.entries(topSellers).map((creator) => {
     return ({ address: creator[0], sum: creator[1] })
   }).sort((a, b) => Number(a.sum - b.sum))
+
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
+  }
 
   return (
     <div className="flex justify-center sm:px-4 p-12">

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useCollection } from '../components/nft-collection'
-import { Button, Input } from '../components'
+import { Button, Input, Banner } from '../components'
 import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
@@ -78,6 +78,16 @@ export default function MintNFT() {
     } else {
       console.debug('context..', context)
     }
+  }
+
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
   }
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)

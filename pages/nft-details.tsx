@@ -4,7 +4,7 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { shortenName } from '../utils/shortenName';
 import { shortenAddress } from '../utils/shortenAddress';
-import { Button, Loader, Modal } from '../components';
+import { Button, Loader, Modal, Banner } from '../components';
 import images from '../assets';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress } from '@alephium/web3'
@@ -15,6 +15,7 @@ import { NFTMarketplace } from '../utils/nft-marketplace';
 import Link from 'next/link';
 import { fetchNFTCollectionMetadata } from '../components/nft-collection';
 import { NFTCollection } from '../components/nft-collection';
+import { waitTxConfirmed } from '../utils';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -43,10 +44,14 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
         <div className="relative w-28 h-28">
           <Image src={nft.image} layout="fill" objectFit="cover" />
         </div>
-        <div className="flexCenterStart flex-col ml-5">
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">{shortenAddress(nft.tokenOwner)}</p>
-          <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{nft.name}</p>
-        </div>
+        {
+          nft.tokenOwner && (
+            <div className="flexCenterStart flex-col ml-5">
+              <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">{shortenAddress(nft.tokenOwner)}</p>
+              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{nft.name}</p>
+            </div>
+          )
+        }
       </div>
 
       {nft.price ? (
@@ -72,7 +77,6 @@ const AssetDetails = () => {
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
   const { tokenId } = router.query
-  // TODO: Fix listed
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
   const { tokenIds, isLoading: isTokensLoading } = useTokens(context.account?.address, context.signerProvider)
   const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
@@ -91,8 +95,17 @@ const AssetDetails = () => {
         setCollectionMetadata(metadata)
       })
     }
-
   }, [paymentModal, successModal, nft?.collectionId]);
+
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
+  }
 
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) {
     return <Loader />;
@@ -111,16 +124,17 @@ const AssetDetails = () => {
   }
 
   const checkout = async () => {
-    if (nftListing && context.signerProvider) {
+    if (nftListing && context.signerProvider?.nodeProvider) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
       // TODO: Display the price breakdowns
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
 
-      await nftMarketplace.buyNFT(
+      const result = await nftMarketplace.buyNFT(
         totalAmount,
         nftListing._id,
         binToHex(contractIdFromAddress(nftListing.marketAddress))
       )
+      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
 
       setPaymentModal(false);
       setSuccessModal(true);

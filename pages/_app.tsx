@@ -1,6 +1,6 @@
 /* pages/_app.js */
 import { AppProps } from 'next/app'
-import { AlephiumConnectButton, AlephiumConnectProvider } from '@alephium/web3-react'
+import { AlephiumConnectProvider } from '@alephium/web3-react'
 import { NETWORK } from '../configs/nft'
 import { ThemeProvider } from 'next-themes';
 import Head from 'next/head';

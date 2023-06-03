@@ -7,7 +7,7 @@ import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import images from '../assets';
 import { useTheme } from 'next-themes'
-import { Button, Input } from '../components';
+import { Button, Input, Banner } from '../components';
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -71,6 +71,16 @@ export default function CreateCollections() {
     } else {
       console.debug('context..', context)
     }
+  }
+
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
   }
 
   return (

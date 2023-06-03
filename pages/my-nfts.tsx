@@ -24,6 +24,16 @@ const MyNFTs = () => {
     );
   }
 
+  if (!context.account) {
+    return (
+      <Banner
+        name="Please Connect To Wallet"
+        childStyles="text-center mb-4"
+        parentStyles="h-80 justify-center"
+      />
+    );
+  }
+
   return (
     <div className="w-full flex justify-start items-center flex-col min-h-screen">
       <div className="w-full flexCenter flex-col">
@@ -31,7 +41,6 @@ const MyNFTs = () => {
           name="Your creative NFT's section."
           childStyles="text-center mb-4"
           parentStyles="h-80 justify-center"
-
         />
 
         <div className="flexCenter flex-col -mt-20 z-0">
