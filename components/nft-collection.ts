@@ -98,12 +98,10 @@ export function mergeNFTCollections(
 export async function fetchNFTCollection(
   collectionId: string
 ): Promise<NFTCollection> {
+  const metadata = await fetchNFTCollectionMetadata(collectionId)
   const collectionAddress = addressFromContractId(collectionId)
-  const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-  const metadataUri = hexToString(collectionState.fields.collectionUri)
   const explorerProvider = web3.getCurrentExplorerProvider()
 
-  const metadata = (await axios.get(metadataUri)).data
   const nfts = []
   if (explorerProvider) {
     const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
@@ -117,12 +115,27 @@ export async function fetchNFTCollection(
   }
 
   return {
+    nfts: nfts,
+    ...metadata
+  }
+}
+
+export async function fetchNFTCollectionMetadata(
+  collectionId: string
+) {
+  console.log("fetching")
+  const collectionAddress = addressFromContractId(collectionId)
+  const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+  const metadataUri = hexToString(collectionState.fields.collectionUri)
+
+  const metadata = (await axios.get(metadataUri)).data
+  console.log("metadat", metadata)
+  return {
     id: collectionId,
     name: metadata.name,
     description: metadata.description,
     totalSupply: collectionState.fields.totalSupply,
     image: metadata.image,
-    nfts
   }
 }
 

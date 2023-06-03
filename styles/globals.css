@@ -131,3 +131,8 @@ button[disabled]{
   background-color: #cccccc;
   color: #666666;
 }
+
+.collection-link {
+  color: gray;
+  text-decoration: underline;
+}

@@ -12,6 +12,9 @@ import { useNFT } from '../components/nft';
 import { useTokens } from '../components/token';
 import { useNFTListings } from '../components/nft-listing';
 import { NFTMarketplace } from '../utils/nft-marketplace';
+import Link from 'next/link';
+import { fetchNFTCollectionMetadata } from '../components/nft-collection';
+import { NFTCollection } from '../components/nft-collection';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -19,8 +22,8 @@ interface PaymentBodyCmpProps {
     name: string,
     description: string,
     image: string,
+    collectionId: string
     tokenOwner?: string,
-    collectionId?: string
     price?: bigint
     marketAddress?: string
     commissionRate?: bigint,
@@ -73,6 +76,7 @@ const AssetDetails = () => {
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
   const { tokenIds, isLoading: isTokensLoading } = useTokens(context.account?.address, context.signerProvider)
   const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
+  const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
 
   useEffect(() => {
     // disable body scroll when navbar is open
@@ -81,9 +85,18 @@ const AssetDetails = () => {
     } else {
       document.body.style.overflow = 'visible';
     }
-  }, [paymentModal, successModal]);
 
-  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) return <Loader />;
+    if (nft?.collectionId) {
+      fetchNFTCollectionMetadata(nft.collectionId).then((metadata) => {
+        setCollectionMetadata(metadata)
+      })
+    }
+
+  }, [paymentModal, successModal, nft?.collectionId]);
+
+  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) {
+    return <Loader />;
+  }
 
   const isOwner = tokenIds.includes(nft.tokenId)
   const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
@@ -134,6 +147,21 @@ const AssetDetails = () => {
         <div className="flex flex-row sm:flex-col">
           <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{nft.name.length > 14 ? shortenName(nft.name) : nft.name}</h2>
         </div>
+        {
+          nft.collectionId && collectionMetadata && (
+            <>
+              <div className="flex w-full flex-wrap justify-start md:justify-center">
+                From&nbsp;
+                <div className="flex flex-row sm:flex-col collection-link">
+                  <Link href={{ pathname: '/collection-details', query: { collectionId: nft.collectionId } }} color={"blue"}>
+                    {collectionMetadata.name}
+                  </Link>
+                </div>
+                &nbsp;collection
+              </div>
+            </>
+          )
+        }
 
         <div className="mt-10">
           <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-base font-normal">Owner</p>
@@ -189,7 +217,7 @@ const AssetDetails = () => {
       {paymentModal && (
         <Modal
           header="Check Out"
-          body={<PaymentBodyCmp nft={nftListing && { tokenId: nftListing._id, ...nftListing } || nft} />}
+          body={<PaymentBodyCmp nft={nftListing && { collectionId: nft.collectionId, tokenId: nftListing._id, ...nftListing } || nft} />}
           footer={(
             <div className="flex flex-row sm:flex-col">
               <Button
@@ -230,7 +258,9 @@ const AssetDetails = () => {
               <div className="relative w-52 h-52">
                 <Image src={nft.image} objectFit="cover" layout="fill" />
               </div>
-              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10"> You successfully purchased <span className="font-semibold">{nft.name}</span> from <span className="font-semibold">{shortenAddress(context.account?.address)}</span>.</p>
+              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
+                You successfully purchased <span className="font-semibold">{nft.name}</span> from <span className="font-semibold">{shortenAddress(context.account?.address)}</span>.
+              </p>
             </div>
           )}
           footer={(
