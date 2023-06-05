@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { NFTListing } from '../components/nft-listing'
 import { useTheme } from 'next-themes';
 import { Loader, NFTCard, SearchBar, withTransition, CreatorCard, Banner } from '../components';
 import images from '../assets';
-import { useNFTListings } from '../components/nft-listing';
+import { useNFTListings, NFTListing } from '../components/NFTListing';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { shortenAddress } from '../utils/shortenAddress';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 const Home = () => {
   const context = useAlephiumConnectContext()
@@ -98,13 +98,17 @@ const Home = () => {
     return ({ address: creator[0], sum: creator[1] })
   }).sort((a, b) => Number(a.sum - b.sum))
 
+  if (!context) {
+    return (
+      <div className="flexStart min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
   if (!context.account) {
     return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
+      <ConnectToWalletBanner />
     );
   }
 

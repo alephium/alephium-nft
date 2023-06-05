@@ -6,8 +6,9 @@ import { Loader, NFTCard, Banner } from '../components';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
-import { useCollections } from '../components/nft-collection';
-import { useNFTListings } from '../components/nft-listing';
+import { useCollections } from '../components/NFTCollection';
+import { useNFTListings } from '../components/NFTListing';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
@@ -16,21 +17,17 @@ const MyNFTs = () => {
   const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
   const isLoading = isNFTCollectionLoading || isNFTListingLoading
 
+  if (!context.account) {
+    return (
+      <ConnectToWalletBanner />
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flexStart min-h-screen">
         <Loader />
       </div>
-    );
-  }
-
-  if (!context.account) {
-    return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
     );
   }
 

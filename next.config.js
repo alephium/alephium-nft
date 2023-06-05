@@ -17,15 +17,6 @@ const nextConfig = {
     }
     return config;
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/my-nfts',
-        permanent: true
-      }
-    ]
-  },
   images: {
     domains: ['alephium-nft.infura-ipfs.io']
   }

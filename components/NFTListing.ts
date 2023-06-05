@@ -28,6 +28,7 @@ export async function fetchNFTListings(
     const res = await axios.get(`api/marketplace-events/count`)
     const nftMarketplace = new NFTMarketplace(signerProvider)
     const events = await nftMarketplace.getMarketplaceEvents(marketplaceContractAddress, res.data.count)
+
     for (var event of events) {
       await nftListingEventReducer(event, marketplaceContractAddress, signerProvider)
     }

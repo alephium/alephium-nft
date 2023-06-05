@@ -8,6 +8,7 @@ import Image from 'next/image';
 import images from '../assets';
 import { useTheme } from 'next-themes'
 import { Button, Input, Banner } from '../components';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -75,11 +76,7 @@ export default function CreateCollections() {
 
   if (!context.account) {
     return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
+      <ConnectToWalletBanner />
     );
   }
 

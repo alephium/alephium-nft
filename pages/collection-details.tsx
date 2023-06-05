@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { useCollection } from '../components/nft-collection'
+import { useCollection } from '../components/NFTCollection'
 import { Button, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';

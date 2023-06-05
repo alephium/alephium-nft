@@ -10,12 +10,12 @@ import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress } from '@alephium/web3'
 import { useNFT } from '../components/nft';
 import { useTokens } from '../components/token';
-import { useNFTListings } from '../components/nft-listing';
+import { useNFTListings } from '../components/NFTListing';
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import Link from 'next/link';
-import { fetchNFTCollectionMetadata } from '../components/nft-collection';
-import { NFTCollection } from '../components/nft-collection';
+import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
 import { waitTxConfirmed } from '../utils';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -99,11 +99,7 @@ const AssetDetails = () => {
 
   if (!context.account) {
     return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
+      <ConnectToWalletBanner />
     );
   }
 
@@ -171,7 +167,6 @@ const AssetDetails = () => {
                     {collectionMetadata.name}
                   </Link>
                 </div>
-                &nbsp;collection
               </div>
             </>
           )

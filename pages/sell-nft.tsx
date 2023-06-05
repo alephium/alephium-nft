@@ -9,6 +9,7 @@ import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH } from '@alephium/web3';
 import { waitTxConfirmed } from '../utils';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 const SellNFT = () => {
   const context = useAlephiumConnectContext()
@@ -44,11 +45,7 @@ const SellNFT = () => {
 
   if (!context.account) {
     return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
+      <ConnectToWalletBanner />
     );
   }
 

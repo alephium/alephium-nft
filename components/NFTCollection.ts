@@ -3,7 +3,7 @@ import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT } from './nft'
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
-import { fetchNFTListings } from "./nft-listing"
+import { fetchNFTListings } from "./NFTListing"
 import { fetchNFTOpenCollectionState } from "../utils/contracts"
 import { marketplaceContractId } from '../configs/nft'
 

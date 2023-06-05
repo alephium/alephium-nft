@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { useCollection } from '../components/nft-collection'
+import { useCollection } from '../components/NFTCollection'
 import { Button, Input, Banner } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -10,6 +10,7 @@ import { ipfsClient } from '../utils/ipfs';
 import { useDropzone } from 'react-dropzone';
 import { useTheme } from 'next-themes';
 import { NFTCollection } from '../utils/nft-collection';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 export default function MintNFT() {
   const context = useAlephiumConnectContext()
@@ -82,11 +83,7 @@ export default function MintNFT() {
 
   if (!context.account) {
     return (
-      <Banner
-        name="Please Connect To Wallet"
-        childStyles="text-center mb-4"
-        parentStyles="h-80 justify-center"
-      />
+      <ConnectToWalletBanner />
     );
   }
 
