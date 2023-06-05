@@ -16,3 +16,4 @@ export const enumerableNFTTemplateId: string = deployment.contracts.EnumerableNF
 const config = NETWORK === 'devnet' ? devnetConfig : NETWORK === 'testnet' ? testnetConfig : mainnetConfig
 export const defaultNodeUrl = config.defaultNodeUrl
 export const defaultExplorerUrl = config.defaultExplorerUrl
+export const mongoUrl = config.mongodbUrl

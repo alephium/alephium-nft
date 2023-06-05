@@ -34,7 +34,7 @@ const Home = () => {
         setNfts(nfts);
         break;
     }
-  }, [activeSelect, nftListings]);
+  }, [activeSelect, nftListings, nfts, nftsCopy]);
 
   const onHandleSearch = (value: string) => {
     const filteredNfts = nftsCopy.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));

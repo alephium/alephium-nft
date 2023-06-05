@@ -1,7 +1,5 @@
 import { connect, connection } from 'mongoose'
-const {
-  MONGO_URI = 'mongodb://localhost:27017/alephium-nft'
-} = process.env
+import { mongoUrl } from '../../configs/nft'
 
 const options: any = {
   useUnifiedTopology: true,
@@ -10,7 +8,7 @@ const options: any = {
 
 export const connectToDatabase = async () => {
   if (!connection.readyState) {
-    console.log('Connecting to ', MONGO_URI)
-    connect(MONGO_URI, options)
+    console.log('Connecting to ', mongoUrl)
+    connect(mongoUrl, options)
   }
 }

@@ -4,5 +4,6 @@
   "listingFee": 1,
   "marketplaceAdminAddress": "",
   "defaultNodeUrl": "https://wallet-v20.mainnet.alephium.org",
-  "defaultExplorerUrl": "https://backend-v113.mainnet.alephium.org"
+  "defaultExplorerUrl": "https://backend-v113.mainnet.alephium.org",
+  "mongodbUrl": ""
 }
