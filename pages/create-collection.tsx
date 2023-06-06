@@ -7,8 +7,9 @@ import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import images from '../assets';
 import { useTheme } from 'next-themes'
-import { Button, Input, Banner } from '../components';
+import { Button, Input } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner'
+import { waitTxConfirmed } from '../utils'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -68,6 +69,8 @@ export default function CreateCollections() {
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
+      await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
+
       router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
     } else {
       console.debug('context..', context)

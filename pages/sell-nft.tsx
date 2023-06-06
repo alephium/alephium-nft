@@ -30,6 +30,7 @@ const SellNFT = () => {
       const priceInSets = BigInt(price) * ONE_ALPH
       const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+
       router.push('/');
     } else {
       console.debug(

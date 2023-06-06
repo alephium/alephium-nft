@@ -1,21 +1,38 @@
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-
 import withTransition from '../components/withTransition';
-
 import { Loader, NFTCard, Banner } from '../components';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
-import { useCollections } from '../components/NFTCollection';
-import { useNFTListings } from '../components/NFTListing';
+import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
+import { NFTListing, fetchNFTListings } from '../components/NFTListing';
+import { marketplaceContractAddress } from '../configs/nft'
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
 
-  const { nftCollections, isLoading: isNFTCollectionLoading } = useCollections(context.signerProvider, context.account)
-  const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
-  const isLoading = isNFTCollectionLoading || isNFTListingLoading
+  const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [nftCollections, setNftCollections] = useState<NFTCollection[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    (async () => {
+      if (context.signerProvider
+        && context.signerProvider.nodeProvider
+        && context.signerProvider.explorerProvider
+        && context.account?.address
+      ) {
+        setIsLoading(true)
+        const listings = await fetchNFTListings(context.signerProvider, marketplaceContractAddress)
+        setNftListing(listings)
+        const collections = await fetchAllNFTCollections(context.signerProvider, marketplaceContractAddress, context.account.address)
+        setNftCollections(collections)
+        setIsLoading(false)
+      }
+    })()
+  }, [context.signerProvider, context.account]);
 
   if (!context.account) {
     return (

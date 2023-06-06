@@ -11,6 +11,7 @@ import { useDropzone } from 'react-dropzone';
 import { useTheme } from 'next-themes';
 import { NFTCollection } from '../utils/nft-collection';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
+import { waitTxConfirmed } from '../utils';
 
 export default function MintNFT() {
   const context = useAlephiumConnectContext()
@@ -73,8 +74,9 @@ export default function MintNFT() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
       const nftCollection = new NFTCollection(context.signerProvider)
+      const result = await nftCollection.mintOpenNFT(collection.id, uri)
+      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
 
-      await nftCollection.mintOpenNFT(collection.id, uri)
       router.push('/my-nfts')
     } else {
       console.debug('context..', context)

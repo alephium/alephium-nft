@@ -3,11 +3,12 @@ import Image, { StaticImageData } from 'next/image';
 import { useTheme } from 'next-themes';
 import { Loader, NFTCard, SearchBar, withTransition, CreatorCard, Banner } from '../components';
 import images from '../assets';
-import { useNFTListings, NFTListing } from '../components/NFTListing';
+import { NFTListing, fetchNFTListings } from '../components/NFTListing';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { shortenAddress } from '../utils/shortenAddress';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
+import { marketplaceContractAddress } from '../configs/nft'
 
 const Home = () => {
   const context = useAlephiumConnectContext()
@@ -15,31 +16,39 @@ const Home = () => {
   const [nfts, setNfts] = useState<NFTListing[]>([]);
   const [activeSelect, setActiveSelect] = useState<string>('Price (low to high)');
   const { theme } = useTheme();
-  const { nftListings, isLoading } = useNFTListings(context.signerProvider)
+  const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
 
-  const nftsCopy = [...nftListings];
-
   useEffect(() => {
+    if (context.signerProvider
+      && context.signerProvider.nodeProvider
+      && context.signerProvider.explorerProvider
+    ) {
+      setIsLoading(true)
+      fetchNFTListings(context.signerProvider, marketplaceContractAddress).then((listings) => {
+        setNftListing(listings)
+        setIsLoading(false)
+      })
+    }
+
     switch (activeSelect) {
       case 'Price (low to high)':
-        setNfts(nftsCopy.sort((a, b) => Number(a.price - b.price)));
+        setNfts(nftListings.sort((a, b) => Number(a.price - b.price)));
         break;
       case 'Price (high to low)':
-        setNfts(nftsCopy.sort((a, b) => Number(b.price - a.price)));
+        setNfts(nftListings.sort((a, b) => Number(b.price - a.price)));
         break;
       default:
         setNfts(nfts);
         break;
     }
-  }, [activeSelect, nftListings, nfts, nftsCopy]);
+  }, [activeSelect, context.signerProvider]);
 
   const onHandleSearch = (value: string) => {
-    const filteredNfts = nftsCopy.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
-    console.log("filtered nft", filteredNfts, nftsCopy)
-
+    const filteredNfts = nftListings.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
     if (filteredNfts.length) {
       setNfts(filteredNfts);
     } else {
@@ -48,7 +57,7 @@ const Home = () => {
   };
 
   const onClearSearch = () => {
-    setNfts(nftsCopy);
+    setNfts(nftListings);
   };
 
   const handleScroll = (direction: string) => {
@@ -116,7 +125,7 @@ const Home = () => {
     <div className="flex justify-center sm:px-4 p-12">
       <div className="w-full minmd:w-4/5">
 
-        {!isLoading && !nftsCopy.length ? (
+        {!isLoading && !nftListings.length ? (
           <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">The marketplace is empty.</h1>
         ) : isLoading ? <Loader /> : (
           <>

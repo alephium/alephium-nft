@@ -79,6 +79,21 @@ export async function fetchNFTsFromUTXOs(
   return [];
 }
 
+export async function fetchAllNFTCollections(
+  signerProvider: SignerProvider,
+  marketplaceContractAddress: string,
+  address: string
+): Promise<NFTCollection[]> {
+  const nftsFromUTXOs = await fetchNFTsFromUTXOs(address)
+  const listedNFTs = await fetchListedNFTs(
+    signerProvider,
+    marketplaceContractAddress,
+    address
+  )
+
+  return mergeNFTCollections(listedNFTs, nftsFromUTXOs)
+}
+
 export function mergeNFTCollections(
   left: NFTCollection[],
   right: NFTCollection[]
@@ -123,13 +138,11 @@ export async function fetchNFTCollection(
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ) {
-  console.log("fetching")
   const collectionAddress = addressFromContractId(collectionId)
   const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
   const metadataUri = hexToString(collectionState.fields.collectionUri)
 
   const metadata = (await axios.get(metadataUri)).data
-  console.log("metadat", metadata)
   return {
     id: collectionId,
     name: metadata.name,
@@ -137,45 +150,6 @@ export async function fetchNFTCollectionMetadata(
     totalSupply: collectionState.fields.totalSupply,
     image: metadata.image,
   }
-}
-
-export const useCollections = (
-  signerProvider?: SignerProvider,
-  account?: Account
-) => {
-  const { data: nftCollections, error, ...rest } = useSWR(
-    account &&
-    signerProvider?.nodeProvider &&
-    signerProvider?.explorerProvider &&
-    [
-      getAccountIdentifier(account),
-      "collections",
-    ],
-    async () => {
-      if (!account || !signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
-        return undefined;
-      }
-
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
-
-      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      const nftsFromUTXOs = await fetchNFTsFromUTXOs(account.address)
-      const listedNFTs = await fetchListedNFTs(
-        signerProvider,
-        marketplaceContractAddress,
-        account.address
-      )
-
-      return mergeNFTCollections(listedNFTs, nftsFromUTXOs)
-    },
-    {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true
-    },
-  )
-
-  return { nftCollections: nftCollections || [], isLoading: !nftCollections && !error, ...rest }
 }
 
 export const useCollection = (
