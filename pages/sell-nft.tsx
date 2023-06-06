@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import withTransition from '../components/withTransition';
 import { marketplaceContractId } from '../configs/nft'
-import { Button, Input, Loader, Banner } from '../components';
+import { Button, Input, Loader } from '../components';
 import { useNFT } from '../components/nft';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
-import { ONE_ALPH } from '@alephium/web3';
+import { convertAlphAmountWithDecimals } from '@alephium/web3';
 import { waitTxConfirmed } from '../utils';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
@@ -17,6 +17,7 @@ const SellNFT = () => {
   const router = useRouter();
   const { tokenId } = router.query;
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
+  const [isSellingNFT, setIsSellingNFT] = useState(false);
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
     if (context.signerProvider) {
@@ -26,10 +27,12 @@ const SellNFT = () => {
 
   async function sell(nft: NFT, price: number) {
     const nftMarketplace = getNFTMarketplace()
-    if (!!nftMarketplace && context.signerProvider?.nodeProvider) {
-      const priceInSets = BigInt(price) * ONE_ALPH
+    const priceInSets = convertAlphAmountWithDecimals(price)
+    if (!!nftMarketplace && context.signerProvider?.nodeProvider && priceInSets) {
+      setIsSellingNFT(true)
       const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      setIsSellingNFT(false)
 
       router.push('/');
     } else {
@@ -50,7 +53,7 @@ const SellNFT = () => {
     );
   }
 
-  if (isNFTLoading || !nft) {
+  if (isNFTLoading || !nft || isSellingNFT) {
     return (
       <div className="flexCenter" style={{ height: '51vh' }}>
         <Loader />

@@ -7,7 +7,7 @@ import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import images from '../assets';
 import { useTheme } from 'next-themes'
-import { Button, Input } from '../components';
+import { Button, Input, Loader } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner'
 import { waitTxConfirmed } from '../utils'
 
@@ -17,6 +17,7 @@ export default function CreateCollections() {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { theme } = useTheme();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
     const file = acceptedFile[0]
@@ -68,9 +69,10 @@ export default function CreateCollections() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
+      setIsLoading(true)
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
-
+      setIsLoading(false)
       router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
     } else {
       console.debug('context..', context)
@@ -80,6 +82,14 @@ export default function CreateCollections() {
   if (!context.account) {
     return (
       <ConnectToWalletBanner />
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flexStart min-h-screen">
+        <Loader />
+      </div>
     );
   }
 

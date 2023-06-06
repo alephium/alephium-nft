@@ -4,7 +4,7 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { shortenName } from '../utils/shortenName';
 import { shortenAddress } from '../utils/shortenAddress';
-import { Button, Loader, Modal, Banner } from '../components';
+import { Button, Loader, Modal } from '../components';
 import images from '../assets';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress } from '@alephium/web3'
@@ -131,7 +131,6 @@ const AssetDetails = () => {
         binToHex(contractIdFromAddress(nftListing.marketAddress))
       )
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
-
       setPaymentModal(false);
       setSuccessModal(true);
     } else {

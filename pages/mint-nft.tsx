@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useCollection } from '../components/NFTCollection'
-import { Button, Input, Banner } from '../components'
+import { Button, Input, Banner, Loader } from '../components'
 import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
@@ -19,8 +19,8 @@ export default function MintNFT() {
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
   const router = useRouter()
   const { theme } = useTheme();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { collectionId } = router.query
-
   const { collection } = useCollection(collectionId as string, context.signerProvider)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
@@ -74,9 +74,10 @@ export default function MintNFT() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
       const nftCollection = new NFTCollection(context.signerProvider)
+      setIsLoading(true)
       const result = await nftCollection.mintOpenNFT(collection.id, uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
-
+      setIsLoading(false)
       router.push('/my-nfts')
     } else {
       console.debug('context..', context)
@@ -86,6 +87,14 @@ export default function MintNFT() {
   if (!context.account) {
     return (
       <ConnectToWalletBanner />
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flexStart min-h-screen">
+        <Loader />
+      </div>
     );
   }
 
