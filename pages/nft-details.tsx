@@ -81,6 +81,7 @@ const AssetDetails = () => {
   const { tokenIds, isLoading: isTokensLoading } = useTokens(context.account?.address, context.signerProvider)
   const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
+  const [isBuyingNFT, setIsBuyingNFT] = useState(false);
 
   useEffect(() => {
     // disable body scroll when navbar is open
@@ -103,7 +104,7 @@ const AssetDetails = () => {
     );
   }
 
-  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft) {
+  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT) {
     return <Loader />;
   }
 
@@ -125,14 +126,16 @@ const AssetDetails = () => {
       // TODO: Display the price breakdowns
       const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
 
+      setIsBuyingNFT(true)
       const result = await nftMarketplace.buyNFT(
         totalAmount,
         nftListing._id,
         binToHex(contractIdFromAddress(nftListing.marketAddress))
       )
-      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
       setPaymentModal(false);
       setSuccessModal(true);
+      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      setIsBuyingNFT(false)
     } else {
       console.debug(
         "can not buy NFT",

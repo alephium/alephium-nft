@@ -3,7 +3,8 @@ import {
   Number256,
   DeployContractResult,
   ExecuteScriptResult,
-  ONE_ALPH
+  ONE_ALPH,
+  DUST_AMOUNT
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
@@ -59,7 +60,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: BigInt(price),
           marketPlaceContractId: marketPlaceContractId
         },
-        attoAlphAmount: this.defaultListingFee + ONE_ALPH,
+        attoAlphAmount: this.defaultListingFee + ONE_ALPH + DUST_AMOUNT,
         tokens: [
           {
             id: tokenId,

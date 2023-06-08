@@ -101,7 +101,7 @@ export default function CreateCollections() {
             Create new NFT Collection
           </h1>
           <div className="mt-16">
-            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">Upload File</p>
+            <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">Upload Image for Collection Profile</p>
             <div className="mt-4">
               <div {...getRootProps()} className={fileStyle}>
                 <input {...getInputProps()} />

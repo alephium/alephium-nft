@@ -138,7 +138,7 @@ export default function MintNFT() {
                 </div>
               </div>
               <div className="mt-16">
-                <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">Upload File</p>
+                <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">Upload Image for NFT</p>
                 <div className="mt-4">
                   <div {...getRootProps()} className={fileStyle}>
                     <input {...getInputProps()} />
@@ -176,18 +176,18 @@ export default function MintNFT() {
               <Input
                 inputType="input"
                 title="Name"
-                placeholder="NFT Collection Name"
+                placeholder="NFT Name"
                 handleClick={(e) => updateFormInput({ ...formInput, name: (e.target as HTMLInputElement).value })}
               />
               <Input
                 inputType="textarea"
                 title="Description"
-                placeholder="NFT Collection Description"
+                placeholder="NFT Description"
                 handleClick={(e) => updateFormInput({ ...formInput, description: (e.target as HTMLInputElement).value })}
               />
               <div className="mt-7 w-full flex justify-end">
                 <Button
-                  btnName="Create NFT Collection"
+                  btnName="Mint NFT"
                   classStyles="rounded-xl"
                   handleClick={() => mintNFT()}
                 />
