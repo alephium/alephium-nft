@@ -1,10 +1,8 @@
 import axios from "axios"
-import useSWR from "swr"
 import { ContractEvent } from "@alephium/web3/dist/src/api/api-alephium"
 import { NFTListing as NFTListingFactory } from '../artifacts/ts'
 import { fetchNFTListingState, fetchNonEnumerableNFTState } from "../utils/contracts"
-import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromContractId, hexToString, SignerProvider, NodeProvider } from "@alephium/web3"
+import { addressFromContractId, hexToString, NodeProvider } from "@alephium/web3"
 
 export interface NFTListing {
   _id: string,
@@ -120,32 +118,4 @@ async function nftListingEventReducer(
     const result = await axios.delete(`api/nft-listings?id=${tokenId}`)
     console.debug("Delete nft listing", result, event)
   }
-}
-
-export const useNFTListings = (
-  signerProvider?: SignerProvider
-) => {
-  const { data, error, ...rest } = useSWR(
-    signerProvider &&
-    [
-      "nftListings",
-    ],
-    async () => {
-      if (!signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
-        return undefined;
-      }
-
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
-
-      const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
-      return await fetchNFTListings(marketplaceContractAddress, signerProvider.nodeProvider)
-    },
-    {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true
-    },
-  )
-
-  return { nftListings: data || [], isLoading: !data && !error, ...rest }
 }

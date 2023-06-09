@@ -1,17 +1,32 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { useCollection } from '../components/NFTCollection'
+import { fetchNFTCollection, NFTCollection } from '../components/NFTCollection'
 import { Button, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
+import { useEffect, useState } from 'react';
+import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
+import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3';
 
 export default function CollectionDetails() {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
+  const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
 
-  const { collection } = useCollection(collectionId as string, context.signerProvider)
+  useEffect(() => {
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
+    web3.setCurrentNodeProvider(nodeProvider)
+    web3.setCurrentExplorerProvider(explorerProvider)
+
+    if (collectionId) {
+      fetchNFTCollection(collectionId as string).then((result) =>
+        setCollection(result)
+      )
+    }
+  }, [collectionId])
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
 
@@ -37,7 +52,7 @@ export default function CollectionDetails() {
                     <Image src={images.creator1} objectFit="cover" className="rounded-full" />
                   </div>
                   <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-                    {shortenAddress(context.account?.address)}
+                    {context.account?.address && shortenAddress(context.account?.address) || "Unknown"}
                   </p>
                 </div>
               </div>
@@ -71,11 +86,19 @@ export default function CollectionDetails() {
               </div>
 
               <div className="flex flex-row sm:flex-col mt-10">
-                <Button
-                  btnName={"Mint More"}
-                  classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                  handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
-                />
+                {
+                  (!context.account) ? (
+                    <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                      To mint NFT, please connect to wallet
+                    </p>
+                  ) : (
+                    <Button
+                      btnName={"Mint More"}
+                      classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                      handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
+                    />
+                  )
+                }
               </div>
             </div>
           </div>
