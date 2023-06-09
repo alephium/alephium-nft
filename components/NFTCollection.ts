@@ -10,6 +10,7 @@ export interface NFTCollection {
   id: string,
   name: string,
   description: string,
+  owner: string,
   totalSupply: bigint,
   image: string,
   nfts: NFT[]
@@ -54,6 +55,7 @@ async function fetchNFTCollections(
           name: metadata.name,
           description: metadata.description,
           totalSupply: collectionState.fields.totalSupply,
+          owner: collectionState.fields.collectionOwner,
           image: metadata.image,
           nfts: [nft]
         })
@@ -153,6 +155,7 @@ export async function fetchNFTCollectionMetadata(
     name: metadata.name,
     description: metadata.description,
     totalSupply: collectionState.fields.totalSupply,
+    owner: collectionState.fields.collectionOwner,
     image: metadata.image,
   }
 }

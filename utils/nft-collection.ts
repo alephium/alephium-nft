@@ -10,12 +10,14 @@ export class NFTCollection extends DeployHelpers {
     collectionUri: string
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
+    const ownerAddress = (await this.signer.getSelectedAccount()).address
     const nftCollectionDeployTx = await NFTOpenCollection.deploy(
       this.signer,
       {
         initialFields: {
           nonEnumerableNftTemplateId: nonEnumerableNFTTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
+          collectionOwner: ownerAddress,
           totalSupply: 0n
         }
       }
@@ -28,6 +30,7 @@ export class NFTCollection extends DeployHelpers {
     collectionUri: string,
     baseUri: string
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
+    const ownerAddress = (await this.signer.getSelectedAccount()).address
     const nftCollectionDeployTx = await NFTPreDesignedCollection.deploy(
       this.signer,
       {
@@ -35,6 +38,7 @@ export class NFTCollection extends DeployHelpers {
           enumerableNftTemplateId: enumerableNFTTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
           tokenBaseUri: web3.stringToHex(baseUri),
+          collectionOwner: ownerAddress,
           totalSupply: 0n
         }
       }

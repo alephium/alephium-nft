@@ -32,6 +32,7 @@ export namespace NFTOpenCollectionTypes {
   export type Fields = {
     nonEnumerableNftTemplateId: HexString;
     collectionUri: HexString;
+    collectionOwner: Address;
     totalSupply: bigint;
   };
 
@@ -74,7 +75,11 @@ class Factory extends ContractFactory<
   NFTOpenCollectionTypes.Fields
 > {
   consts = {
-    ErrorCodes: { IncorrectTokenIndex: BigInt(0), NFTNotFound: BigInt(1) },
+    ErrorCodes: {
+      IncorrectTokenIndex: BigInt(0),
+      NFTNotFound: BigInt(1),
+      TokenOwnerAllowedOnly: BigInt(2),
+    },
   };
 
   at(address: string): NFTOpenCollectionInstance {
@@ -122,7 +127,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "26b97d1d503286d05d99884ca9bdc817d9f0f2c6ae597d1ce1feefef907f5641"
+    "fb23053f2696a73cad5756f9ea077152c5adaecd408491b06300b3291698dd28"
   )
 );
 

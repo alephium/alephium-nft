@@ -33,6 +33,7 @@ export namespace NFTPreDesignedCollectionTypes {
     enumerableNftTemplateId: HexString;
     collectionUri: HexString;
     tokenBaseUri: HexString;
+    collectionOwner: Address;
     totalSupply: bigint;
   };
 
@@ -79,7 +80,11 @@ class Factory extends ContractFactory<
   NFTPreDesignedCollectionTypes.Fields
 > {
   consts = {
-    ErrorCodes: { IncorrectTokenIndex: BigInt(0), NFTNotFound: BigInt(1) },
+    ErrorCodes: {
+      IncorrectTokenIndex: BigInt(0),
+      NFTNotFound: BigInt(1),
+      TokenOwnerAllowedOnly: BigInt(2),
+    },
   };
 
   at(address: string): NFTPreDesignedCollectionInstance {
@@ -135,7 +140,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "710c5e20c7ba8873be06e52f03d2e74fb228a4f2f87de0fb3281da80a8818bb0"
+    "f64ed2c6d97080d127f038b84ee66217ab0f9e8b2208e0ea7bb5eb6a853dea49"
   )
 );
 

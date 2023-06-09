@@ -1,22 +1,25 @@
 {
   "version": "v2.3.3",
   "name": "NFTOpenCollection",
-  "bytecode": "04040912402d4070010000000102ce0102010000000102a0000201000102010f1600a000310c7b160040cb17011601c50d7b16010201030105011db41701b116001406414c5048000313036413006417031702160113c40de0b6b3a7640000a2a00040ce00160216030d1601c91704a0000d2aa100160402",
-  "codeHash": "26b97d1d503286d05d99884ca9bdc817d9f0f2c6ae597d1ce1feefef907f5641",
+  "bytecode": "05040912402d4078010000000102ce0102010000000102a0000201000102010f1600a000310c7b160040cb17011601c50d7b16010201030105014022b417011601ce02450e7bb116001406414c5048000313036413006417031702160113c40de0b6b3a7640000a2a00040ce00160216030d1601c91704a0000d2aa100160402",
+  "codeHash": "fb23053f2696a73cad5756f9ea077152c5adaecd408491b06300b3291698dd28",
   "fieldsSig": {
     "names": [
       "nonEnumerableNftTemplateId",
       "collectionUri",
+      "collectionOwner",
       "totalSupply",
       "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
       "ByteVec",
+      "Address",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       true,
@@ -103,6 +106,13 @@
           "value": {
             "type": "U256",
             "value": "1"
+          }
+        },
+        {
+          "name": "TokenOwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "2"
           }
         }
       ]

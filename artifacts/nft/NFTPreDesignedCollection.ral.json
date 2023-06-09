@@ -1,13 +1,14 @@
 {
   "version": "v2.3.3",
   "name": "NFTPreDesignedCollection",
-  "bytecode": "05050912402d40704084010000000102ce0102010000000102a0000201000102010f1600a000310c7b160040cb17011601c50d7b16010201030004011db41700b1a0001406414c5048000313036413006417021701160013c40de0b6b3a7640000a2a00040ce00160116020d1600c91703a0000d2aa10016030201000101010a1600a000310c7bce021600894402",
-  "codeHash": "710c5e20c7ba8873be06e52f03d2e74fb228a4f2f87de0fb3281da80a8818bb0",
+  "bytecode": "06050912402d4078408c010000000102ce0102010000000102a0000201000102010f1600a000310c7b160040cb17011601c50d7b16010201030004014022b417001600ce03450e7bb1a0001406414c5048000313036413006417021701160013c40de0b6b3a7640000a2a00040ce00160116020d1600c91703a0000d2aa10016030201000101010a1600a000310c7bce021600894402",
+  "codeHash": "f64ed2c6d97080d127f038b84ee66217ab0f9e8b2208e0ea7bb5eb6a853dea49",
   "fieldsSig": {
     "names": [
       "enumerableNftTemplateId",
       "collectionUri",
       "tokenBaseUri",
+      "collectionOwner",
       "totalSupply",
       "__stdInterfaceId"
     ],
@@ -15,10 +16,12 @@
       "ByteVec",
       "ByteVec",
       "ByteVec",
+      "Address",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -118,6 +121,13 @@
           "value": {
             "type": "U256",
             "value": "1"
+          }
+        },
+        {
+          "name": "TokenOwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "2"
           }
         }
       ]

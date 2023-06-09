@@ -63,7 +63,7 @@ export default function CollectionDetails() {
                     <Image src={images.creator1} objectFit="cover" className="rounded-full" />
                   </div>
                   <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-                    {context.account?.address && shortenAddress(context.account?.address) || "Unknown"}
+                    {shortenAddress(collection.owner)}
                   </p>
                 </div>
               </div>
@@ -98,9 +98,9 @@ export default function CollectionDetails() {
 
               <div className="flex flex-row sm:flex-col mt-10">
                 {
-                  (!context.account) ? (
+                  (context.account?.address != collection.owner) ? (
                     <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
-                      To mint NFT, please connect to wallet
+                      Only collection owner can mint NFT
                     </p>
                   ) : (
                     <Button

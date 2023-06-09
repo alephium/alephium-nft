@@ -16,6 +16,10 @@ describe('nft collection', function() {
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
     const nftCollectionInstance = nftCollectionDeployTx.contractInstance
 
+    const signer = await testWallet1()
+    const ownerAccount = await signer.getSelectedAccount()
+    const nftCollectionState = await nftCollectionInstance.fetchState()
+    expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
 
     for (let i = 0n; i < 10n; i++) {
       await mintOpenNFTAndVerify(nftCollection, nftCollectionInstance, i)
@@ -29,6 +33,11 @@ describe('nft collection', function() {
       "https://cryptopunks.app/cryptopunks/details/"
     )
     const nftPreDesignedCollectionInstane = nftCollectionDeployTx.contractInstance
+
+    const signer = await testWallet1()
+    const ownerAccount = await signer.getSelectedAccount()
+    const nftCollectionState = await nftPreDesignedCollectionInstane.fetchState()
+    expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
 
     for (let i = 0n; i < 10n; i++) {
       await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i)
