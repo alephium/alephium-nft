@@ -18,7 +18,7 @@ export default function CreateCollections() {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { theme } = useTheme();
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
@@ -81,10 +81,9 @@ export default function CreateCollections() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
-      setIsLoading(true)
+      setIsCreatingCollection(true)
       const createCollectionTxResult = await nftCollection.createOpenCollection(uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
-      setIsLoading(false)
       router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
     } else {
       console.debug('context..', context)
@@ -94,14 +93,6 @@ export default function CreateCollections() {
   if (!context.account) {
     return (
       <ConnectToWalletBanner />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flexStart min-h-screen">
-        <Loader />
-      </div>
     );
   }
 
@@ -155,13 +146,18 @@ export default function CreateCollections() {
             placeholder="NFT Collection Description"
             handleClick={(e) => updateFormInput({ ...formInput, description: (e.target as HTMLInputElement).value })}
           />
-          <div className="mt-7 w-full flex justify-end">
-            <Button
-              btnName="Create NFT Collection"
-              classStyles="rounded-xl"
-              handleClick={() => createCollection()}
-            />
-          </div>
+          {isCreatingCollection ? (
+            <LoaderWithText text={`Sign and create collection...`} />
+          ) : (
+            <div className="mt-7 w-full flex justify-end">
+              <Button
+                btnName="Create NFT Collection"
+                classStyles="rounded-xl"
+                handleClick={() => createCollection()}
+                disabled={!fileUrl || !formInput.name || !formInput.description}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>
