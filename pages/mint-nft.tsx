@@ -12,6 +12,7 @@ import { useTheme } from 'next-themes';
 import { NFTCollection } from '../utils/nft-collection';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { waitTxConfirmed } from '../utils';
+import LoaderWithText from '../components/LoaderWithText';
 
 export default function MintNFT() {
   const context = useAlephiumConnectContext()
@@ -19,17 +20,28 @@ export default function MintNFT() {
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
   const router = useRouter()
   const { theme } = useTheme();
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isMinting, setIsMinting] = useState<boolean>(false)
   const { collectionId } = router.query
   const { collection } = useCollection(collectionId as string, context.signerProvider)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
     const file = acceptedFile[0]
     console.log("file", file)
     try {
-      const added = await ipfsClient.add({
-        content: file,
-      })
+      const added = await ipfsClient.add(
+        {
+          content: file,
+        },
+        {
+          progress: (bytes, path) => {
+            setIsUploading(true)
+            console.log("bytes", bytes)
+            console.log("path", path)
+          }
+        }
+      )
+      setIsUploading(false)
       const url: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.path}`
       console.log("url", url)
       setFileUrl(url)
@@ -74,10 +86,10 @@ export default function MintNFT() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
       const nftCollection = new NFTCollection(context.signerProvider)
-      setIsLoading(true)
+      setIsMinting(true)
       const result = await nftCollection.mintOpenNFT(collection.id, uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
-      setIsLoading(false)
+      setIsMinting(false)
       router.push('/my-nfts')
     } else {
       console.debug('context..', context)
@@ -87,14 +99,6 @@ export default function MintNFT() {
   if (!context.account) {
     return (
       <ConnectToWalletBanner />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flexStart min-h-screen">
-        <Loader />
-      </div>
     );
   }
 
@@ -146,16 +150,23 @@ export default function MintNFT() {
                       <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
                         JPG, PNG, GIF, SVG, WEBM Max 100mb.
                       </p>
-                      <div className="my-12 w-full flex justify-center">
-                        <Image
-                          src={images.upload}
-                          width={100}
-                          height={100}
-                          objectFit="contain"
-                          alt="file upload"
-                          className={theme === 'light' ? 'filter invert' : ''}
-                        />
-                      </div>
+                      {
+                        isUploading ? (
+                          <LoaderWithText text={`Uploading...`} />
+                        ) : (
+                          <div className="my-12 w-full flex justify-center">
+                            <Image
+                              src={fileUrl || images.upload}
+                              width={fileUrl ? 200 : 100}
+                              height={fileUrl ? 200 : 100}
+                              objectFit="contain"
+                              loading="lazy"
+                              alt="file upload"
+                              className={theme === 'light' ? 'filter invert' : ''}
+                            />
+                          </div>
+                        )
+                      }
                       <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm">
                         Drag and Drop File,
                       </p>
@@ -164,13 +175,6 @@ export default function MintNFT() {
                       </p>
                     </div>
                   </div>
-                  {fileUrl && (
-                    <aside>
-                      <div>
-                        <img src={fileUrl} alt="asset_file" />
-                      </div>
-                    </aside>
-                  )}
                 </div>
               </div>
               <Input
@@ -185,13 +189,18 @@ export default function MintNFT() {
                 placeholder="NFT Description"
                 handleClick={(e) => updateFormInput({ ...formInput, description: (e.target as HTMLInputElement).value })}
               />
-              <div className="mt-7 w-full flex justify-end">
-                <Button
-                  btnName="Mint NFT"
-                  classStyles="rounded-xl"
-                  handleClick={() => mintNFT()}
-                />
-              </div>
+              {isMinting ? (
+                <LoaderWithText text={`Sign and mint NFT...`} />
+              ) : (
+                <div className="mt-7 w-full flex justify-end">
+                  <Button
+                    btnName="Mint NFT"
+                    classStyles="rounded-xl"
+                    handleClick={() => mintNFT()}
+                    disabled={!fileUrl || !formInput.name || !formInput.description}
+                  />
+                </div>
+              )}
             </div>
           </div>
         )

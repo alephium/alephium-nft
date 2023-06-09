@@ -117,8 +117,8 @@ export default function CreateCollections() {
                   ) : (<div className="my-12 w-full flex justify-center">
                     <Image
                       src={fileUrl || images.upload}
-                      width={100}
-                      height={100}
+                      width={fileUrl ? 200 : 100}
+                      height={fileUrl ? 200 : 100}
                       objectFit="contain"
                       alt="file upload"
                       className={theme === 'light' ? 'filter invert' : ''}
