@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import Image from 'next/image';
+import LoaderWithText from '../components/LoaderWithText';
 import withTransition from '../components/withTransition';
-import { marketplaceContractId } from '../configs/nft'
 import { Button, Input, Loader } from '../components';
-import { useNFT } from '../components/nft';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { convertAlphAmountWithDecimals } from '@alephium/web3';
-import { waitTxConfirmed } from '../utils';
-import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
-import LoaderWithText from '../components/LoaderWithText';
+import { marketplaceContractId } from '../configs/nft'
+import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useNFT } from '../components/nft';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { useTheme } from 'next-themes';
-import Image from 'next/image';
+import { waitTxConfirmed } from '../utils';
 
 const SellNFT = () => {
   const context = useAlephiumConnectContext()
@@ -20,7 +20,7 @@ const SellNFT = () => {
   const router = useRouter();
   const { theme } = useTheme();
   const { tokenId } = router.query;
-  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
+  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider?.nodeProvider)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
 
   function getNFTMarketplace(): NFTMarketplace | undefined {

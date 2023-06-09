@@ -4,7 +4,7 @@ import { NonEnumerableNFT } from '../artifacts/ts'
 import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { fetchNonEnumerableNFTState } from "../utils/contracts"
 import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, ExplorerProvider } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider } from "@alephium/web3"
 
 export interface NFT {
   name: string,
@@ -84,21 +84,20 @@ export const useCommissionRate = (
 export const useNFT = (
   tokenId: string,
   listed: boolean,
-  signerProvider?: SignerProvider
+  nodeProvider?: NodeProvider
 ) => {
   const { data, error, ...rest } = useSWR(
-    signerProvider &&
-    signerProvider.nodeProvider &&
+    nodeProvider &&
     [
       tokenId,
       "nft",
     ],
     async () => {
-      if (!signerProvider?.nodeProvider) {
+      if (!nodeProvider) {
         return undefined;
       }
 
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+      web3.setCurrentNodeProvider(nodeProvider)
 
       return await fetchNFT(tokenId, listed)
     },

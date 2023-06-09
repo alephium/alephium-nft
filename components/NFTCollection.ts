@@ -2,10 +2,9 @@ import axios from "axios"
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT } from './nft'
-import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
 import { fetchNFTListings } from "./NFTListing"
 import { fetchNFTOpenCollectionState } from "../utils/contracts"
-import { marketplaceContractId } from '../configs/nft'
+import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
 
 export interface NFTCollection {
   id: string,
@@ -23,9 +22,14 @@ export async function fetchListedNFTs(
   marketplaceContractAddress: string,
   address: string
 ): Promise<NFTCollection[]> {
-  const listings = await fetchNFTListings(signerProvider, marketplaceContractAddress, address)
-  const tokenIds = listings.map((listing) => listing._id)
-  return await fetchNFTCollections(tokenIds, true)
+  if (signerProvider.nodeProvider) {
+    const listings = await fetchNFTListings(marketplaceContractAddress, signerProvider.nodeProvider, address)
+    const tokenIds = listings.map((listing) => listing._id)
+    return await fetchNFTCollections(tokenIds, true)
+
+  } else {
+    return Promise.resolve([])
+  }
 }
 
 async function fetchNFTCollections(

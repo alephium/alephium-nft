@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
-import withTransition from '../components/withTransition';
-import { shortenName } from '../utils/shortenName';
-import { shortenAddress } from '../utils/shortenAddress';
-import { Button, Loader, Modal } from '../components';
-import images from '../assets';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
-import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress } from '@alephium/web3'
-import { useNFT } from '../components/nft';
-import { useTokens } from '../components/token';
-import { useNFTListings } from '../components/NFTListing';
-import { NFTMarketplace } from '../utils/nft-marketplace';
 import Link from 'next/link';
+import images from '../assets';
+import withTransition from '../components/withTransition';
+import { Button, Loader, Modal } from '../components';
 import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
+import { NFTMarketplace } from '../utils/nft-marketplace';
+import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider, ExplorerProvider } from '@alephium/web3'
+import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
+import { fetchNFT, NFT } from '../components/nft';
+import { fetchNFTListings, NFTListing } from '../components/NFTListing';
+import { fetchTokens } from '../components/token';
+import { marketplaceContractAddress } from '../configs/nft'
+import { shortenAddress } from '../utils/shortenAddress';
+import { shortenName } from '../utils/shortenName';
+import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import { waitTxConfirmed } from '../utils';
-import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -77,13 +78,20 @@ const AssetDetails = () => {
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
   const { tokenId } = router.query
-  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider)
-  const { tokenIds, isLoading: isTokensLoading } = useTokens(context.account?.address, context.signerProvider)
-  const { nftListings, isLoading: isNFTListingLoading } = useNFTListings(context.signerProvider)
+  const [nft, setNFT] = useState<NFT | undefined>(undefined)
+  const [isNFTLoading, setIsNFTLoading] = useState<boolean>(false)
+  const [tokenIds, setTokenIds] = useState<string[]>([])
+  const [isTokensLoading, setIsTokensLoading] = useState<boolean>(false)
+  const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [isNFTListingLoading, setIsNFTListingLoading] = useState<boolean>(false)
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
 
   useEffect(() => {
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
+    web3.setCurrentNodeProvider(nodeProvider)
+
     // disable body scroll when navbar is open
     if (paymentModal || successModal) {
       document.body.style.overflow = 'hidden';
@@ -96,13 +104,25 @@ const AssetDetails = () => {
         setCollectionMetadata(metadata)
       })
     }
-  }, [paymentModal, successModal, nft?.collectionId]);
 
-  if (!context.account) {
-    return (
-      <ConnectToWalletBanner />
-    );
-  }
+    setIsNFTLoading(true)
+    fetchNFT(tokenId as string, false).then((nft) => {
+      setNFT(nft)
+      setIsNFTLoading(false)
+    })
+
+    setIsTokensLoading(true)
+    fetchTokens(explorerProvider, context.account?.address).then((tokens) => {
+      setTokenIds(tokens)
+      setIsTokensLoading(false)
+    })
+
+    setIsNFTListingLoading(true)
+    fetchNFTListings(marketplaceContractAddress, nodeProvider).then((listings) => {
+      setNftListing(listings)
+      setIsNFTListingLoading(false)
+    })
+  }, [paymentModal, successModal, nft?.collectionId, context.account?.address, tokenId]);
 
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT) {
     return <Loader />;
@@ -181,7 +201,7 @@ const AssetDetails = () => {
               <Image src={images.creator1} objectFit="cover" className="rounded-full" />
             </div>
             <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-              {shortenAddress(context.account?.address)}
+              {nftListing?.tokenOwner ? shortenAddress(nftListing.tokenOwner) : "Unknown"}
             </p>
           </div>
         </div>
@@ -214,12 +234,19 @@ const AssetDetails = () => {
             ) : null
           }
           {
-            (!isOwner && nftListing) ? (
+            (!isOwner && !!context.account && nftListing) ? (
               <Button
                 btnName={`Buy for ${prettifyAttoAlphAmount(nftListing.price)} ALPH`}
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
                 handleClick={() => setPaymentModal(true)}
               />
+            ) : null
+          }
+          {
+            (!context.account) ? (
+              <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                To transact, please connect to wallet
+              </p>
             ) : null
           }
         </div>

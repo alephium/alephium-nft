@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { useTheme } from 'next-themes';
-import { Loader, NFTCard, SearchBar, withTransition, CreatorCard, Banner } from '../components';
 import images from '../assets';
+import { Loader, NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
 import { NFTListing, fetchNFTListings } from '../components/NFTListing';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
-import { shortenAddress } from '../utils/shortenAddress';
-import { prettifyAttoAlphAmount } from '@alephium/web3';
-import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
+import { NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
+import { defaultNodeUrl } from '../configs/nft'
 import { marketplaceContractAddress } from '../configs/nft'
+import { shortenAddress } from '../utils/shortenAddress';
+import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
+import { useTheme } from 'next-themes';
 
 const Home = () => {
   const context = useAlephiumConnectContext()
@@ -23,16 +23,12 @@ const Home = () => {
   const scrollRef: MutableRefObject<any> = useRef(null);
 
   useEffect(() => {
-    if (context.signerProvider
-      && context.signerProvider.nodeProvider
-      && context.signerProvider.explorerProvider
-    ) {
-      setIsLoading(true)
-      fetchNFTListings(context.signerProvider, marketplaceContractAddress).then((listings) => {
-        setNftListing(listings)
-        setIsLoading(false)
-      })
-    }
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    setIsLoading(true)
+    fetchNFTListings(marketplaceContractAddress, nodeProvider).then((listings) => {
+      setNftListing(listings)
+      setIsLoading(false)
+    })
 
     switch (activeSelect) {
       case 'Price (low to high)':
@@ -112,12 +108,6 @@ const Home = () => {
       <div className="flexStart min-h-screen">
         <Loader />
       </div>
-    );
-  }
-
-  if (!context.account) {
-    return (
-      <ConnectToWalletBanner />
     );
   }
 

@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import withTransition from '../components/withTransition';
-import { Loader, NFTCard, Banner } from '../components';
 import images from '../assets';
+import withTransition from '../components/withTransition';
+import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
+import { Loader, NFTCard, Banner } from '../components';
+import { NFTListing, fetchNFTListings } from '../components/NFTListing';
+import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
+import { marketplaceContractAddress } from '../configs/nft'
 import { shortenAddress } from '../utils/shortenAddress';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
-import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
-import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
-import { NFTListing, fetchNFTListings } from '../components/NFTListing';
-import { marketplaceContractAddress } from '../configs/nft'
+import { useEffect, useState } from 'react';
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
@@ -25,7 +25,7 @@ const MyNFTs = () => {
         && context.account?.address
       ) {
         setIsLoading(true)
-        const listings = await fetchNFTListings(context.signerProvider, marketplaceContractAddress)
+        const listings = await fetchNFTListings(marketplaceContractAddress, context.signerProvider.nodeProvider)
         setNftListing(listings)
         const collections = await fetchAllNFTCollections(context.signerProvider, marketplaceContractAddress, context.account.address)
         setNftCollections(collections)
