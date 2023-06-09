@@ -23,6 +23,7 @@ export async function fetchListedNFTs(
   address: string
 ): Promise<NFTCollection[]> {
   if (signerProvider.nodeProvider) {
+    web3.setCurrentNodeProvider(signerProvider.nodeProvider)
     const listings = await fetchNFTListings(marketplaceContractAddress, signerProvider.nodeProvider, address)
     const tokenIds = listings.map((listing) => listing._id)
     return await fetchNFTCollections(tokenIds, true)
@@ -66,12 +67,12 @@ async function fetchNFTCollections(
 }
 
 export async function fetchNFTsFromUTXOs(
+  signerProvider: SignerProvider,
   address: string
 ): Promise<NFTCollection[]> {
-
-  const nodeProvider = web3.getCurrentNodeProvider()
-  if (nodeProvider) {
-    const balances = await nodeProvider.addresses.getAddressesAddressBalance(address)
+  if (signerProvider.nodeProvider) {
+    web3.setCurrentNodeProvider(signerProvider.nodeProvider)
+    const balances = await signerProvider.nodeProvider.addresses.getAddressesAddressBalance(address)
     const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
     const tokenIds = tokenBalances
       .filter((token) => +token.amount == 1)
@@ -80,7 +81,7 @@ export async function fetchNFTsFromUTXOs(
     return await fetchNFTCollections(tokenIds, false)
   }
 
-  return [];
+  return Promise.resolve([]);
 }
 
 export async function fetchAllNFTCollections(
@@ -88,7 +89,7 @@ export async function fetchAllNFTCollections(
   marketplaceContractAddress: string,
   address: string
 ): Promise<NFTCollection[]> {
-  const nftsFromUTXOs = await fetchNFTsFromUTXOs(address)
+  const nftsFromUTXOs = await fetchNFTsFromUTXOs(signerProvider, address)
   const listedNFTs = await fetchListedNFTs(
     signerProvider,
     marketplaceContractAddress,

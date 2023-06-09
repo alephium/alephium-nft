@@ -27,7 +27,6 @@ export async function fetchNFTListings(
     { start: res.data.count }
   )
   const events = contractEvents.events;
-
   for (var event of events) {
     await nftListingEventReducer(event, marketplaceContractAddress)
   }
@@ -107,15 +106,15 @@ async function nftListingEventReducer(
         listingContractId: listedNFT.listingContractId
       })
 
-      console.debug("Persist nft listing", result, event)
+      console.log("Persist nft listing", result, event)
     }
   }
 
   // NFTSold or NFTListingCancelled
   if (event.eventIndex === 1 || event.eventIndex === 2) {
-    const tokenId = event.fields[1].value.toString()
+    const tokenId = event.fields[0].value.toString()
     // Remove NFT Listing
     const result = await axios.delete(`api/nft-listings?id=${tokenId}`)
-    console.debug("Delete nft listing", result, event)
+    console.log("Deleted nft listing", result, event)
   }
 }

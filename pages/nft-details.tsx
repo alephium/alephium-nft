@@ -6,7 +6,7 @@ import { Button, Loader, Modal } from '../components';
 import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider, ExplorerProvider } from '@alephium/web3'
-import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
+import { defaultExplorerUrl, defaultNodeUrl, marketplaceContractId } from '../configs/nft';
 import { fetchNFT, NFT } from '../components/nft';
 import { fetchNFTListings, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
@@ -86,6 +86,7 @@ const AssetDetails = () => {
   const [isNFTListingLoading, setIsNFTListingLoading] = useState<boolean>(false)
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
+  const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
@@ -124,7 +125,7 @@ const AssetDetails = () => {
     })
   }, [paymentModal, successModal, nft?.collectionId, context.account?.address, tokenId]);
 
-  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT) {
+  if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT || isCancellingNFTListing) {
     return <Loader />;
   }
 
@@ -166,6 +167,25 @@ const AssetDetails = () => {
       )
     }
   };
+
+  const cancelListing = async () => {
+    if (nftListing && context.signerProvider?.nodeProvider) {
+      const nftMarketplace = new NFTMarketplace(context.signerProvider)
+      setIsCancellingNFTListing(true)
+      const result = await nftMarketplace.cancelNFTListing(tokenId as string, marketplaceContractId)
+      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      setIsCancellingNFTListing(false)
+      router.push('/my-nfts')
+    } else {
+      console.debug(
+        "can not cancel NFT listing",
+        context.signerProvider?.nodeProvider,
+        context.signerProvider,
+        context.account,
+        nftListing
+      )
+    }
+  }
 
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
@@ -219,15 +239,17 @@ const AssetDetails = () => {
         <div className="flex flex-row sm:flex-col mt-10">
           {
             (isOwner && nftListing) ? (
-              <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
-                You cannot buy your own NFT
-              </p>
+              <Button
+                btnName="Cancel NFT Listing"
+                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                handleClick={cancelListing}
+              />
             ) : null
           }
           {
             (isOwner && !nftListing) ? (
               <Button
-                btnName="Sell on AlephiumNFT Marketplace"
+                btnName="Sell NFT"
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
                 handleClick={() => router.push(`/sell-nft?tokenId=${nft.tokenId}`)}
               />

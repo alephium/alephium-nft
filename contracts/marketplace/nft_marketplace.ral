@@ -83,7 +83,6 @@ Contract NFTMarketPlace(
         let tokenOwner = callerAddress!()
 
         let (encodeImmutableFields, encodeMutableFields) = NFTListing.encodeFields!(tokenId, tokenOwner, selfAddress!(), commissionRate, price)
-
         // Create the listing contract
         let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph, tokenId: 1}(
             tokenId, nftListingTemplateId, encodeImmutableFields, encodeMutableFields

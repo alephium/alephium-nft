@@ -118,7 +118,9 @@ describe('nft marketplace', function() {
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
 
       await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
-      // TODO: Verify NFTListingContract is gone
+
+      // NFTListing doesn't exist any more
+      await expect(fetchNFTListingState(nftListingContractAddress)).rejects.toThrow(Error)
     }
   }, 300000)
 
