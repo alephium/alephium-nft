@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useCollection } from '../components/NFTCollection'
-import { Button, Input, Banner, Loader } from '../components'
+import { Button, Input } from '../components'
 import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
