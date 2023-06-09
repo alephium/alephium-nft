@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { fetchNFTCollection, NFTCollection } from '../components/NFTCollection'
-import { Button, NFTCard } from '../components'
+import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../utils/shortenAddress';
@@ -13,6 +13,7 @@ export default function CollectionDetails() {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
+  const [isNFTCollectionLoading, setIsNFTCollectionLoading] = useState<boolean>(false)
   const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
 
   useEffect(() => {
@@ -22,13 +23,23 @@ export default function CollectionDetails() {
     web3.setCurrentExplorerProvider(explorerProvider)
 
     if (collectionId) {
-      fetchNFTCollection(collectionId as string).then((result) =>
+      setIsNFTCollectionLoading(true)
+      fetchNFTCollection(collectionId as string).then((result) => {
+        setIsNFTCollectionLoading(false)
         setCollection(result)
-      )
+      })
     }
   }, [collectionId])
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
+
+  if (isNFTCollectionLoading) {
+    return (
+      <div className="flexStart min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>
