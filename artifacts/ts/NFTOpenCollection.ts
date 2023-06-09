@@ -122,7 +122,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "eefcfbcee5bc0d2be90d5051d3aa3a618df01f8d4b03ff1e290f7f45c78745b5"
+    "26b97d1d503286d05d99884ca9bdc817d9f0f2c6ae597d1ce1feefef907f5641"
   )
 );
 

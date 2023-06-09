@@ -135,7 +135,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "7793d2f69fe3a53dcf82e5304ef6242a3d14d22e2f9536d811106121baaa990f"
+    "710c5e20c7ba8873be06e52f03d2e74fb228a4f2f87de0fb3281da80a8818bb0"
   )
 );
 
