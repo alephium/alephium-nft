@@ -10,6 +10,7 @@ import { useTheme } from 'next-themes'
 import { Button, Input, Loader } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner'
 import { waitTxConfirmed } from '../utils'
+import LoaderWithText from '../components/LoaderWithText'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -18,14 +19,25 @@ export default function CreateCollections() {
   const router = useRouter()
   const { theme } = useTheme();
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
     const file = acceptedFile[0]
     console.log("file", file)
     try {
-      const added = await ipfsClient.add({
-        content: file,
-      })
+      const added = await ipfsClient.add(
+        {
+          content: file,
+        },
+        {
+          progress: (bytes, path) => {
+            setIsUploading(true)
+            console.log("bytes", bytes)
+            console.log("path", path)
+          }
+        }
+      )
+      setIsUploading(false)
       const url: string = `https://alephium-nft.infura-ipfs.io/ipfs/${added.path}`
       console.log("url", url)
       setFileUrl(url)
@@ -109,16 +121,18 @@ export default function CreateCollections() {
                   <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
                     JPG, PNG, GIF, SVG, WEBM Max 100mb.
                   </p>
-                  <div className="my-12 w-full flex justify-center">
+                  {isUploading ? (
+                    <LoaderWithText text={`Uploading...`} />
+                  ) : (<div className="my-12 w-full flex justify-center">
                     <Image
-                      src={images.upload}
+                      src={fileUrl || images.upload}
                       width={100}
                       height={100}
                       objectFit="contain"
                       alt="file upload"
                       className={theme === 'light' ? 'filter invert' : ''}
                     />
-                  </div>
+                  </div>)}
                   <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm">
                     Drag and Drop File,
                   </p>
@@ -127,13 +141,6 @@ export default function CreateCollections() {
                   </p>
                 </div>
               </div>
-              {fileUrl && (
-                <aside>
-                  <div>
-                    <img src={fileUrl} alt="asset_file" />
-                  </div>
-                </aside>
-              )}
             </div>
           </div>
           <Input
