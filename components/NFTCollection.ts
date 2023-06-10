@@ -5,6 +5,7 @@ import { NFT, fetchNFT } from './nft'
 import { fetchNFTListings } from "./NFTListing"
 import { fetchNFTOpenCollectionState } from "../utils/contracts"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
+import { NFTOpenCollection } from "../artifacts/ts"
 
 export interface NFTCollection {
   id: string,
@@ -38,29 +39,32 @@ async function fetchNFTCollections(
   tokenIds: string[],
   listed: boolean,
 ): Promise<NFTCollection[]> {
+  const nodeProvider = web3.getCurrentNodeProvider()
   const items = []
 
   for (var tokenId of tokenIds) {
     const nft = await fetchNFT(tokenId, listed)
-
     if (!!nft) {
+      const collectionAddress = addressFromContractId(nft.collectionId)
+      const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
       const index = items.findIndex((item) => item.id === nft.collectionId)
-      if (index === -1) {
-        const collectionAddress = addressFromContractId(nft.collectionId)
-        const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-        const metadataUri = hexToString(collectionState.fields.collectionUri)
-        const metadata = (await axios.get(metadataUri)).data
-        items.push({
-          id: nft.collectionId,
-          name: metadata.name,
-          description: metadata.description,
-          totalSupply: collectionState.fields.totalSupply,
-          owner: collectionState.fields.collectionOwner,
-          image: metadata.image,
-          nfts: [nft]
-        })
-      } else {
-        items[index].nfts.push(nft)
+      if (state.codeHash == NFTOpenCollection.contract.codeHash) {
+        if (index === -1) {
+          const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
+          const metadataUri = hexToString(collectionState.fields.collectionUri)
+          const metadata = (await axios.get(metadataUri)).data
+          items.push({
+            id: nft.collectionId,
+            name: metadata.name,
+            description: metadata.description,
+            totalSupply: collectionState.fields.totalSupply,
+            owner: collectionState.fields.collectionOwner,
+            image: metadata.image,
+            nfts: [nft]
+          })
+        } else {
+          items[index].nfts.push(nft)
+        }
       }
     }
   }
