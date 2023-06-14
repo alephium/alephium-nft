@@ -3,7 +3,6 @@ import images from '../assets';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
-import { NFTListing, fetchNFTListings } from '../components/NFTListing';
 import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
 import { marketplaceContractAddress } from '../configs/nft'
 import { shortenAddress } from '../utils/shortenAddress';
@@ -13,7 +12,6 @@ import { useEffect, useState } from 'react';
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
 
-  const [nftListings, setNftListing] = useState<NFTListing[]>([])
   const [nftCollections, setNftCollections] = useState<NFTCollection[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -25,9 +23,11 @@ const MyNFTs = () => {
         && context.account?.address
       ) {
         setIsLoading(true)
-        const listings = await fetchNFTListings(marketplaceContractAddress, context.signerProvider.nodeProvider)
-        setNftListing(listings)
-        const collections = await fetchAllNFTCollections(context.signerProvider, marketplaceContractAddress, context.account.address)
+        const collections = await fetchAllNFTCollections(
+          context.signerProvider,
+          marketplaceContractAddress,
+          context.account.address
+        )
         setNftCollections(collections)
         setIsLoading(false)
       }
@@ -78,12 +78,10 @@ const MyNFTs = () => {
           <div className="mt-3 w-full flex flex-wrap">
             {nftCollections.flatMap((nftCollection) => {
               return nftCollection.nfts.map((nft) => {
-                const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
-                const nftLike = nftListing && { tokenId: nftListing._id, ...nftListing } || nft
                 return (
                   <NFTCard
                     key={nft.tokenId}
-                    nft={{ tokenOwner: context.account?.address || '', ...nftLike }}
+                    nft={{ tokenOwner: context.account?.address || '', ...nft }}
                   />
                 )
               })

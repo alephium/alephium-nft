@@ -2,8 +2,7 @@ import axios from "axios"
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT } from './nft'
-import { fetchNFTListings } from "./NFTListing"
-import { fetchNFTOpenCollectionState } from "../utils/contracts"
+import { fetchNFTListings, NFTListing } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
 import { NFTOpenCollection } from "../artifacts/ts"
 
@@ -25,10 +24,25 @@ export async function fetchListedNFTs(
   address: string
 ): Promise<NFTCollection[]> {
   if (signerProvider.nodeProvider) {
+    const items = []
     web3.setCurrentNodeProvider(signerProvider.nodeProvider)
     const listings = await fetchNFTListings(marketplaceContractAddress, signerProvider.nodeProvider, address)
-    const tokenIds = listings.map((listing) => listing._id)
-    return await fetchNFTCollections(tokenIds, true)
+    for (var listing of listings) {
+      const index = items.findIndex((item) => item.id === listing.collectionId)
+      if (index === -1) {
+        const metadata = await fetchNFTCollectionMetadata(listing.collectionId)
+        if (metadata) {
+          items.push({
+            ...metadata,
+            nfts: [{ tokenId: listing._id, listed: true, ...listing }]
+          })
+        }
+      } else {
+        items[index].nfts.push({ tokenId: listing._id, listed: true, ...listing })
+      }
+    }
+
+    return items
 
   } else {
     return Promise.resolve([])
@@ -36,35 +50,24 @@ export async function fetchListedNFTs(
 }
 
 async function fetchNFTCollections(
-  tokenIds: string[],
-  listed: boolean,
+  tokenIds: string[]
 ): Promise<NFTCollection[]> {
-  const nodeProvider = web3.getCurrentNodeProvider()
   const items = []
 
   for (var tokenId of tokenIds) {
-    const nft = await fetchNFT(tokenId, listed)
+    const nft = await fetchNFT(tokenId, false)
     if (!!nft) {
-      const collectionAddress = addressFromContractId(nft.collectionId)
-      const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
       const index = items.findIndex((item) => item.id === nft.collectionId)
-      if (state.codeHash == NFTOpenCollection.contract.codeHash) {
-        if (index === -1) {
-          const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-          const metadataUri = hexToString(collectionState.fields.collectionUri)
-          const metadata = (await axios.get(metadataUri)).data
+      if (index === -1) {
+        const metadata = await fetchNFTCollectionMetadata(nft.collectionId)
+        if (metadata) {
           items.push({
-            id: nft.collectionId,
-            name: metadata.name,
-            description: metadata.description,
-            totalSupply: collectionState.fields.totalSupply,
-            owner: collectionState.fields.collectionOwner,
-            image: metadata.image,
+            ...metadata,
             nfts: [nft]
           })
-        } else {
-          items[index].nfts.push(nft)
         }
+      } else {
+        items[index].nfts.push(nft)
       }
     }
   }
@@ -84,7 +87,7 @@ export async function fetchNFTsFromUTXOs(
       .filter((token) => +token.amount == 1)
       .map((token) => token.id)
 
-    return await fetchNFTCollections(tokenIds, false)
+    return await fetchNFTCollections(tokenIds)
   }
 
   return Promise.resolve([]);
@@ -123,44 +126,49 @@ export function mergeNFTCollections(
 
 export async function fetchNFTCollection(
   collectionId: string
-): Promise<NFTCollection> {
+): Promise<NFTCollection | undefined> {
   const metadata = await fetchNFTCollectionMetadata(collectionId)
-  const collectionAddress = addressFromContractId(collectionId)
-  const explorerProvider = web3.getCurrentExplorerProvider()
+  if (metadata) {
+    const collectionAddress = addressFromContractId(collectionId)
+    const explorerProvider = web3.getCurrentExplorerProvider()
 
-  const nfts = []
-  if (explorerProvider) {
-    const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
-    for (const tokenAddress of subContracts || []) {
-      const tokenId = binToHex(contractIdFromAddress(tokenAddress))
-      const nft = await fetchNFT(tokenId, false)
-      if (nft) {
-        nfts.push(nft)
+    const nfts = []
+    if (explorerProvider) {
+      const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
+      for (const tokenAddress of subContracts || []) {
+        const tokenId = binToHex(contractIdFromAddress(tokenAddress))
+        const nft = await fetchNFT(tokenId, false)
+        if (nft) {
+          nfts.push(nft)
+        }
       }
     }
-  }
 
-  return {
-    nfts: nfts,
-    ...metadata
+    return {
+      nfts: nfts,
+      ...metadata
+    }
   }
 }
 
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ) {
+  const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
-  const collectionState = await fetchNFTOpenCollectionState(collectionAddress)
-  const metadataUri = hexToString(collectionState.fields.collectionUri)
+  const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
+  if (state.codeHash == NFTOpenCollection.contract.codeHash) {
+    const metadataUri = hexToString(state.immFields[1].value as string)
+    const metadata = (await axios.get(metadataUri)).data
 
-  const metadata = (await axios.get(metadataUri)).data
-  return {
-    id: collectionId,
-    name: metadata.name,
-    description: metadata.description,
-    totalSupply: collectionState.fields.totalSupply,
-    owner: collectionState.fields.collectionOwner,
-    image: metadata.image,
+    return {
+      id: collectionId,
+      name: metadata.name,
+      description: metadata.description,
+      totalSupply: BigInt(state.mutFields[0].value as string),
+      owner: state.immFields[2].value as string,
+      image: metadata.image,
+    }
   }
 }
 

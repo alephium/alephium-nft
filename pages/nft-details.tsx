@@ -277,7 +277,7 @@ const AssetDetails = () => {
       {paymentModal && (
         <Modal
           header="Check Out"
-          body={<PaymentBodyCmp nft={nftListing && { collectionId: nft.collectionId, tokenId: nftListing._id, ...nftListing } || nft} />}
+          body={<PaymentBodyCmp nft={nftListing && { tokenId: nftListing._id, ...nftListing } || nft} />}
           footer={(
             <div className="flex flex-row sm:flex-col">
               <Button

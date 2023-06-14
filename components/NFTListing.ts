@@ -13,7 +13,8 @@ export interface NFTListing {
   tokenOwner: string,
   marketAddress: string
   commissionRate: bigint,
-  listingContractId: string
+  listingContractId: string,
+  collectionId: string
 }
 
 export async function fetchNFTListings(
@@ -73,7 +74,8 @@ async function fetchNFTListing(
       tokenOwner: listingState.fields.tokenOwner as string,
       marketAddress: listingState.fields.marketAddress as string,
       commissionRate: listingState.fields.commissionRate as bigint,
-      listingContractId: listingContractId
+      listingContractId: listingContractId,
+      collectionId: nftState.fields.collectionId
     }
   }
 }

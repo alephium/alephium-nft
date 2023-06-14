@@ -12,7 +12,8 @@ export interface NFT {
   image: string,
   tokenId: string,
   listed: boolean,
-  collectionId: string
+  collectionId: string,
+  price?: bigint
 }
 
 export async function fetchNFT(
