@@ -113,7 +113,7 @@ const Navbar = () => {
               setIsOpen(false);
             }}
           >
-            <Image src={images.logo02} objectFit="contain" width={40} height={40} alt="logomobile" />
+            <Image src={images.alephiumLogo} objectFit="contain" width={40} height={40} alt="logomobile" />
           </div>
         </Link>
       </div>

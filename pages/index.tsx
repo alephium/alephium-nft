@@ -14,9 +14,10 @@ const Home = () => {
   const context = useAlephiumConnectContext()
   const [hideButtons, setHideButtons] = useState(false);
   const [nfts, setNfts] = useState<NFTListing[]>([]);
-  const [activeSelect, setActiveSelect] = useState<string>('Price (low to high)');
+  const [activeSelect, setActiveSelect] = useState<string>('Recently Added');
   const { theme } = useTheme();
   const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [originNftListings, setOriginNftListing] = useState<NFTListing[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const parentRef: MutableRefObject<any> = useRef(null);
@@ -28,20 +29,26 @@ const Home = () => {
     fetchNFTListings(marketplaceContractAddress, nodeProvider).then((listings) => {
       setNftListing(listings)
       setIsLoading(false)
+      setOriginNftListing(listings)
     })
 
+  }, [context.signerProvider]);
+
+  useEffect(() => {
+    const nftListingsCopy = [...nftListings]
     switch (activeSelect) {
       case 'Price (low to high)':
-        setNfts(nftListings.sort((a, b) => Number(a.price - b.price)));
+        setNfts(nftListingsCopy.sort((a, b) => Number(a.price - b.price)));
         break;
       case 'Price (high to low)':
-        setNfts(nftListings.sort((a, b) => Number(b.price - a.price)));
+        setNfts(nftListingsCopy.sort((a, b) => Number(b.price - a.price)));
         break;
-      default:
-        setNfts(nfts);
+      case 'Recently Added':
+        setNfts(originNftListings);
         break;
     }
-  }, [activeSelect, context.signerProvider]);
+
+  }, [activeSelect, nftListings, originNftListings])
 
   const onHandleSearch = (value: string) => {
     const filteredNfts = nftListings.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
@@ -99,11 +106,11 @@ const Home = () => {
     return topCreatorObj
   }, {} as { [key: string]: bigint })
 
-  const rankedTopSellers = Object.entries(topSellers).map((creator) => {
+  const rankedTopNineSellers = Object.entries(topSellers).map((creator) => {
     return ({ address: creator[0], sum: creator[1] })
-  }).sort((a, b) => Number(a.sum - b.sum))
+  }).sort((a, b) => Number(b.sum - a.sum)).slice(0, 9)
 
-  if (!context) {
+  if (!context || isLoading) {
     return (
       <div className="flexStart min-h-screen">
         <Loader />
@@ -111,13 +118,18 @@ const Home = () => {
     );
   }
 
+  if (!isLoading && !nftListings.length) {
+    return (
+      <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
+        The marketplace is empty.
+      </h1>
+    )
+  }
+
   return (
     <div className="flex justify-center sm:px-4 p-12">
       <div className="w-full minmd:w-4/5">
-
-        {!isLoading && !nftListings.length ? (
-          <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">The marketplace is empty.</h1>
-        ) : isLoading ? <Loader /> : (
+        {
           <>
             <div>
               <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
@@ -125,7 +137,7 @@ const Home = () => {
               </h1>
               <div className="relative flex-1 max-w-full flex mt-3" ref={parentRef}>
                 <div className="flex flex-row w-max overflow-x-scroll no-scrollbar select-none" ref={scrollRef}>
-                  {rankedTopSellers.map((seller, i) => (
+                  {rankedTopNineSellers.map((seller, i) => (
                     <CreatorCard
                       key={seller.address}
                       rank={`${i + 1}`}
@@ -177,7 +189,7 @@ const Home = () => {
               </div>
             </div>
           </>
-        )}
+        }
       </div>
     </div>
   );
