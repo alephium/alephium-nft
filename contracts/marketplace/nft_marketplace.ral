@@ -51,7 +51,7 @@ Contract NFTMarketPlace(
         CommissionIsZero = 3
     }
 
-    @using(preapprovedAssets = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
     pub fn buyNFT(
         tokenId: ByteVec
     ) -> () {

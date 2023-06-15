@@ -186,7 +186,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "31c00711ac17c0993b4895b83eeac400b011f3ba91c99d4837f76b1182c127c7"
+    "c6d80a645bf5680158bafa24b0d4928a3e846b4fce820d66d7acf823f5fc2d46"
   )
 );
 
