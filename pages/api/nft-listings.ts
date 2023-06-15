@@ -2,7 +2,7 @@ import Validate from 'next-api-validation'
 import axios from "axios"
 import { IMarketplaceEvent, MaketplaceEvent } from '../../utils/mongodb/models/marketplace-event'
 import { NFTListing as NFTListingFactory } from '../../artifacts/ts'
-import { NFTListing, INFTListing } from '../../utils/mongodb/models/nft-listing'
+import { NFTListing } from '../../utils/mongodb/models/nft-listing'
 import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
 import { connectToDatabase } from '../../utils/mongodb'
 import { defaultNodeUrl, marketplaceContractAddress } from '../../configs/nft'
@@ -39,32 +39,6 @@ const nftListingsHandler = Validate({
     } catch (err) {
       console.log(err)
       res.status(500).send('error')
-    }
-  },
-  async post(req, res) {
-    try {
-      const body: INFTListing = req.body
-      const newListing = new NFTListing(body)
-      const result = await NFTListing.findOneAndUpdate(
-        { '_id': body._id },
-        newListing,
-        { upsert: true }
-      )
-      res.send(result)
-    } catch (err) {
-      console.log(err)
-      res.status(500).send('error')
-    }
-  },
-  async delete(req, res) {
-    const { id } = req.query
-    try {
-      const deletedListing = await NFTListing.findByIdAndDelete(id)
-      res.send(deletedListing)
-    } catch (err) {
-      res.status(500).send({
-        error: 'Failed to remove NFT listing'
-      })
     }
   }
 })
