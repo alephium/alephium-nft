@@ -50,7 +50,7 @@ Contract NFTMarketPlace(
         NFTPriceIsZero = 2
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = false, checkExternalCaller = false)
     pub fn buyNFT(
         tokenId: ByteVec
     ) -> () {
@@ -70,7 +70,7 @@ Contract NFTMarketPlace(
         emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, assetsInContract = false, checkExternalCaller = false)
     pub fn listNFT(
         tokenId: ByteVec,
         price: U256

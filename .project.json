@@ -81,9 +81,9 @@
     },
     "NFTMarketPlace": {
       "sourceFile": "marketplace/nft_marketplace.ral",
-      "sourceCodeHash": "804d24e852c79dfaba909958abba7505c1f69244ef64238cc3c09e6470864178",
+      "sourceCodeHash": "a6f7b078c6c6ab68b0cb0360cd27c6f84b266557623d394fbdc9cc2eac521686",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "0bd948518e9178d1b8801fd6cf7f23ade81cda7ca1cbefc3ecce0127e51dc5e3",
+      "codeHashDebug": "cdcb6bd1aa1cc18ac8376728747d01bf58fdc2d459a6180ca2d6386721199ef5",
       "warnings": []
     },
     "NFTOpenCollection": {
