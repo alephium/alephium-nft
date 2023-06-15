@@ -48,7 +48,6 @@ Contract NFTMarketPlace(
         AdminAllowedOnly = 0
         TokenOwnerAllowedOnly = 1
         NFTPriceIsZero = 2
-        CommissionIsZero = 3
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)

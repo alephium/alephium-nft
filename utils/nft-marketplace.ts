@@ -25,8 +25,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: 1000n,
           tokenId: randomContractId(),
           tokenOwner: randomContractAddress(),
-          marketAddress: randomContractAddress(),
-          commissionRate: 200n  // 200 basis point: 2%
+          marketAddress: randomContractAddress()
         }
       }
     )

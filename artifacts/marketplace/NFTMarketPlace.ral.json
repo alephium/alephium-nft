@@ -271,13 +271,6 @@
             "type": "U256",
             "value": "2"
           }
-        },
-        {
-          "name": "CommissionIsZero",
-          "value": {
-            "type": "U256",
-            "value": "3"
-          }
         }
       ]
     }

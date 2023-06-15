@@ -55,7 +55,6 @@ describe('nft marketplace', function() {
       expect(nftListingContractState.fields.tokenId).toEqual(tokenId)
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
       expect(nftListingContractState.fields.marketAddress).toEqual(nftMarketplaceContractAddress)
-      expect(nftListingContractState.fields.commissionRate).toEqual(200n)
     }
 
     // Update the price

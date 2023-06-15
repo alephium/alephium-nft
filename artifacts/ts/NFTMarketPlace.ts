@@ -105,7 +105,6 @@ class Factory extends ContractFactory<
       AdminAllowedOnly: BigInt(0),
       TokenOwnerAllowedOnly: BigInt(1),
       NFTPriceIsZero: BigInt(2),
-      CommissionIsZero: BigInt(3),
     },
   };
 
