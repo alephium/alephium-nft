@@ -1,6 +1,6 @@
 import mongoose, { Document, model, Model, Schema } from 'mongoose'
 
-export interface INFTListing extends Document {
+export interface NFTListing {
   _id: string,  // Token Id
   price: bigint
   name: string,
@@ -9,15 +9,20 @@ export interface INFTListing extends Document {
   tokenOwner: string,
   marketAddress: string
   commissionRate: bigint,
-  listingContractId: string
+  listingContractId: string,
+  collectionId: string
 }
+
+export interface INFTListing extends NFTListing { }
+export interface INFTListing2 extends Document { }
+
 
 const NFTListingSchema: Schema = new Schema({
   _id: {
     type: String
   },
   price: {
-    type: Number
+    type: String
   },
   name: {
     type: String
@@ -35,12 +40,15 @@ const NFTListingSchema: Schema = new Schema({
     type: String
   },
   commissionRate: {
-    type: Number
+    type: String
   },
   listingContractId: {
+    type: String
+  },
+  collectionId: {
     type: String
   }
 })
 
 export const NFTListing = (mongoose.models.NFTListing ||
-  model('NFTListing', NFTListingSchema)) as Model<INFTListing>
+  model('NFTListing', NFTListingSchema)) as Model<INFTListing2>

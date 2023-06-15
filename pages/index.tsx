@@ -2,9 +2,7 @@ import Image, { StaticImageData } from 'next/image';
 import images from '../assets';
 import { Loader, NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
 import { NFTListing, fetchNFTListings } from '../components/NFTListing';
-import { NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
-import { defaultNodeUrl } from '../configs/nft'
-import { marketplaceContractAddress } from '../configs/nft'
+import { prettifyAttoAlphAmount } from '@alephium/web3';
 import { shortenAddress } from '../utils/shortenAddress';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
@@ -24,9 +22,8 @@ const Home = () => {
   const scrollRef: MutableRefObject<any> = useRef(null);
 
   useEffect(() => {
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
     setIsLoading(true)
-    fetchNFTListings(marketplaceContractAddress, nodeProvider).then((listings) => {
+    fetchNFTListings().then((listings) => {
       setNftListing(listings)
       setIsLoading(false)
       setOriginNftListing(listings)
@@ -120,9 +117,11 @@ const Home = () => {
 
   if (!isLoading && !nftListings.length) {
     return (
-      <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
-        The marketplace is empty.
-      </h1>
+      <div className="flex justify-center sm:px-4 p-12">
+        <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
+          The marketplace is empty.
+        </h1>
+      </div>
     )
   }
 

@@ -26,7 +26,7 @@ export async function fetchListedNFTs(
   if (signerProvider.nodeProvider) {
     const items = []
     web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-    const listings = await fetchNFTListings(marketplaceContractAddress, signerProvider.nodeProvider, address)
+    const listings = await fetchNFTListings(address)
     for (var listing of listings) {
       const index = items.findIndex((item) => item.id === listing.collectionId)
       if (index === -1) {

@@ -4,7 +4,7 @@ export interface IMarketplaceEvent extends Document {
   txId: string,
   contractAddress: string,
   eventIndex: number,
-  fields: string[];
+  fields: { type: string, value: string }[];
 }
 
 const MarketplaceEventSchema: Schema = new Schema({
@@ -18,7 +18,7 @@ const MarketplaceEventSchema: Schema = new Schema({
     type: Number
   },
   fields: {
-    type: Array<String>
+    type: Array<{ String, String }>
   }
 })
 

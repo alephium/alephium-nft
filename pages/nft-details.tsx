@@ -5,12 +5,11 @@ import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
 import { NFTMarketplace } from '../utils/nft-marketplace';
-import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider, ExplorerProvider } from '@alephium/web3'
-import { defaultExplorerUrl, defaultNodeUrl, marketplaceContractId } from '../configs/nft';
+import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
+import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
 import { fetchNFT, NFT } from '../components/nft';
 import { fetchNFTListings, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { marketplaceContractAddress } from '../configs/nft'
 import { shortenAddress } from '../utils/shortenAddress';
 import { shortenName } from '../utils/shortenName';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
@@ -90,7 +89,6 @@ const AssetDetails = () => {
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
-    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
     web3.setCurrentNodeProvider(nodeProvider)
 
     // disable body scroll when navbar is open
@@ -106,20 +104,23 @@ const AssetDetails = () => {
       })
     }
 
-    setIsNFTLoading(true)
-    fetchNFT(tokenId as string, false).then((nft) => {
-      setNFT(nft)
-      setIsNFTLoading(false)
-    })
+    if (tokenId) {
+      setIsNFTLoading(true)
+      fetchNFT(tokenId as string, false).then((nft) => {
+        setNFT(nft)
+        setIsNFTLoading(false)
+      })
+    }
 
     setIsTokensLoading(true)
-    fetchTokens(explorerProvider, context.account?.address).then((tokens) => {
+    fetchTokens(nodeProvider, context.account?.address).then((tokens) => {
       setTokenIds(tokens)
       setIsTokensLoading(false)
     })
 
+
     setIsNFTListingLoading(true)
-    fetchNFTListings(marketplaceContractAddress, nodeProvider).then((listings) => {
+    fetchNFTListings().then((listings) => {
       setNftListing(listings)
       setIsNFTListingLoading(false)
     })
@@ -129,8 +130,8 @@ const AssetDetails = () => {
     return <Loader />;
   }
 
-  const isOwner = tokenIds.includes(nft.tokenId)
   const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
+  const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === context.account?.address)
 
   function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
     const commission = BigInt(nftPrice * commissionRate) / BigInt(10000)

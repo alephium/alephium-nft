@@ -1,10 +1,11 @@
 import useSWR from "swr"
-import { ExplorerProvider, SignerProvider } from "@alephium/web3"
+import { NodeProvider, SignerProvider } from "@alephium/web3"
+import { Balance } from "@alephium/web3/dist/src/api/api-alephium"
 
 const SUPPRESS_ERROR_STATUS = [429]
 
 export async function fetchTokens(
-  explorerProvider: ExplorerProvider,
+  nodeProvider: NodeProvider,
   address?: string
 ): Promise<string[]> {
   if (!address) {
@@ -12,7 +13,8 @@ export async function fetchTokens(
   }
 
   const allTokens: string[] = []
-  const tokenIds: string[] = await explorerProvider.addresses.getAddressesAddressTokens(address)
+  const balance: Balance = await nodeProvider.addresses.getAddressesAddressBalance(address)
+  const tokenIds = (balance?.tokenBalances || []).map((t) => t.id)
   for (const tokenId of tokenIds) {
     if (allTokens.findIndex((id) => id == tokenId) === -1) {
       allTokens.push(tokenId)
@@ -20,7 +22,6 @@ export async function fetchTokens(
   }
 
   return allTokens
-
 }
 
 export const useTokens = (
@@ -29,17 +30,17 @@ export const useTokens = (
 ) => {
   const { data, error, ...rest } = useSWR(
     signerProvider &&
-    signerProvider.explorerProvider &&
+    signerProvider.nodeProvider &&
     address && [
       address,
       "addressTokens",
     ],
     async () => {
-      if (!signerProvider?.explorerProvider || !address) {
+      if (!signerProvider?.nodeProvider || !address) {
         return []
       }
 
-      return await fetchTokens(signerProvider.explorerProvider, address)
+      return await fetchTokens(signerProvider.nodeProvider, address)
     },
     {
       refreshInterval: 30000,
