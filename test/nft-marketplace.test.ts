@@ -1,5 +1,5 @@
 import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep } from '@alephium/web3'
-import { testWallet1, testAddress1, testAddress2 } from './signers'
+import { testNodeWallet, testAddress } from '@alephium/web3-test'
 import { NFTCollection } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { fetchNFTMarketplaceState, fetchNFTListingState } from '../utils/contracts'
@@ -10,7 +10,7 @@ describe('nft marketplace', function() {
   const provider = web3.getCurrentNodeProvider()
 
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
-    const signer = await testWallet1()
+    const signer = await testNodeWallet()
     const nftCollection = new NFTCollection(signer)
     const nftMarketplace = new NFTMarketplace(signer)
     await nftMarketplace.buildProject()
@@ -47,13 +47,13 @@ describe('nft marketplace', function() {
       const nftListedEventFields = nftMarketplaceContractEvents.events[0].fields
       expect(BigInt(+nftListedEventFields[0].value)).toEqual(price)
       expect(nftListedEventFields[1].value).toEqual(tokenId)
-      expect(nftListedEventFields[2].value).toEqual(testAddress1)
+      expect(nftListedEventFields[2].value).toEqual(testAddress)
 
       // Check the initial state for NFT listing
       const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
       expect(nftListingContractState.fields.price).toEqual(price)
       expect(nftListingContractState.fields.tokenId).toEqual(tokenId)
-      expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
+      expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress)
       expect(nftListingContractState.fields.marketAddress).toEqual(nftMarketplaceContractAddress)
     }
 
@@ -92,8 +92,8 @@ describe('nft marketplace', function() {
       const nftPriceUpdatedEventFields = nftMarketplaceContractEvents.events[0].fields
       expect(BigInt(+nftPriceUpdatedEventFields[0].value)).toEqual(newPrice)
       expect(nftPriceUpdatedEventFields[1].value).toEqual(tokenId)
-      expect(nftPriceUpdatedEventFields[2].value).toEqual(testAddress1)
-      expect(nftPriceUpdatedEventFields[3].value).toEqual(testAddress1)
+      expect(nftPriceUpdatedEventFields[2].value).toEqual(testAddress)
+      expect(nftPriceUpdatedEventFields[3].value).toEqual(testAddress)
 
       // TODO: Verify NFTListingContract is gone
     }
@@ -114,7 +114,7 @@ describe('nft marketplace', function() {
       const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
       const nftListingContractState = await fetchNFTListingState(nftListingContractAddress)
-      expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress1)
+      expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress)
 
       await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
 
@@ -124,7 +124,7 @@ describe('nft marketplace', function() {
   }, 300000)
 
   test('Update metadata in the NFT marketplace', async () => {
-    const signer = await testWallet1()
+    const signer = await testNodeWallet()
     const nftMarketplace = new NFTMarketplace(signer)
     await nftMarketplace.buildProject()
 
@@ -147,11 +147,12 @@ describe('nft marketplace', function() {
     )(200, 250, 250)
 
     // Update Admin
+    const testAddress2 = '19PEu7VJMqbZDLtY8Jk9LNpwx5juUiC1WdFwo9QsPyX6y'
     await checkUpdateAdmin(
       nftMarketplace,
       nftMarketplaceContractId,
       nftMarketplaceContractAddress
-    )(testAddress1, testAddress2, testAddress2)
+    )(testAddress, testAddress2, testAddress2)
 
     // Update with the wrong admin will fail
     await expect(
@@ -163,7 +164,7 @@ describe('nft marketplace', function() {
     ).rejects.toThrow(Error)
 
     await expect(
-      nftMarketplace.updateAdmin(testAddress1, nftMarketplaceContractId)
+      nftMarketplace.updateAdmin(testAddress, nftMarketplaceContractId)
     ).rejects.toThrow(Error)
   }, 30000)
 

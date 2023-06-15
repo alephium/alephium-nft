@@ -26,7 +26,5 @@ jobs:
       - name: Run tests
         run: |
           yarn
-          npx --yes @h0ngcha0/alephium-cli wallets restore -w alephium-web3-test-only-wallet \
-            -c "vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava" -p alph
           yarn run deploy:contracts
           yarn run test:contracts

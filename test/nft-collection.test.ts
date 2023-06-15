@@ -1,7 +1,7 @@
 import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId } from '@alephium/web3'
+import { testNodeWallet } from '@alephium/web3-test'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
-import { testWallet1 } from './signers'
 import { fetchNonEnumerableNFTState, fetchEnumerableNFTState } from '../utils/contracts'
 import { EnumerableNFTInstance, NFTOpenCollectionInstance, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
 
@@ -16,7 +16,7 @@ describe('nft collection', function() {
     const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
     const nftCollectionInstance = nftCollectionDeployTx.contractInstance
 
-    const signer = await testWallet1()
+    const signer = await testNodeWallet()
     const ownerAccount = await signer.getSelectedAccount()
     const nftCollectionState = await nftCollectionInstance.fetchState()
     expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
@@ -34,7 +34,7 @@ describe('nft collection', function() {
     )
     const nftPreDesignedCollectionInstane = nftCollectionDeployTx.contractInstance
 
-    const signer = await testWallet1()
+    const signer = await testNodeWallet()
     const ownerAccount = await signer.getSelectedAccount()
     const nftCollectionState = await nftPreDesignedCollectionInstane.fetchState()
     expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
@@ -96,7 +96,7 @@ async function mintPreDesignedNFTAndVerify(
 }
 
 async function getNFTCollection() {
-  const signer = await testWallet1()
+  const signer = await testNodeWallet()
   return new NFTCollection(signer)
 }
 
