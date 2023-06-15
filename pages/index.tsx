@@ -95,9 +95,9 @@ const Home = () => {
 
   const topSellers: { [key: string]: bigint } = nftListings.reduce((topCreatorObj, listing) => {
     if (topCreatorObj[listing.tokenOwner]) {
-      topCreatorObj[listing.tokenOwner] = topCreatorObj[listing.tokenOwner] + listing.price
+      topCreatorObj[listing.tokenOwner] = BigInt(topCreatorObj[listing.tokenOwner]) + BigInt(listing.price)
     } else {
-      topCreatorObj[listing.tokenOwner] = listing.price
+      topCreatorObj[listing.tokenOwner] = BigInt(listing.price)
     }
 
     return topCreatorObj
