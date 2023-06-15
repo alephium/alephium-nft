@@ -65,7 +65,7 @@ Contract NFTMarketPlace(
         // Charge a commission for the marketplace
         if (commissionRate > 0) {
             let commission = (price * commissionRate) / 10000
-            transferToken!(buyer, selfAddress!(), ALPH, commission)
+            transferTokenToSelf!(buyer, ALPH, commission)
         }
         emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
