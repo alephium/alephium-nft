@@ -33,7 +33,6 @@ export namespace NFTListingTypes {
     tokenId: HexString;
     tokenOwner: Address;
     marketAddress: Address;
-    commissionRate: bigint;
     price: bigint;
   };
 
@@ -116,7 +115,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "9ad05920ee5ac04af5c82ec689e04b5464bc589186999dc60ce47e900dbc8fbf"
+    "cbb022544e83620da703f4eee7f6c9d628bc11c3dd3820f61d719df51780abf1"
   )
 );
 

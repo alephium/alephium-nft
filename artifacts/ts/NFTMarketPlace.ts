@@ -117,18 +117,10 @@ class Factory extends ContractFactory<
     buyNFT: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { tokenId: HexString; totalPayment: bigint }
+        { tokenId: HexString }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buyNFT", params);
-    },
-    payCommission: async (
-      params: TestContractParams<
-        NFTMarketPlaceTypes.Fields,
-        { buyer: Address; commission: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "payCommission", params);
     },
     listNFT: async (
       params: TestContractParams<
@@ -194,7 +186,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "cd9b5ad43f1f05fdc7e4623152f94aa29b6924428f0fb75a4df50e5965a9c90d"
+    "31c00711ac17c0993b4895b83eeac400b011f3ba91c99d4837f76b1182c127c7"
   )
 );
 

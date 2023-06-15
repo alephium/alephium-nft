@@ -2,7 +2,6 @@ Contract NFTListing(
     tokenId: ByteVec,
     tokenOwner: Address,
     marketAddress: Address,
-    commissionRate: U256,
     mut price: U256
 ) {
 
@@ -10,12 +9,10 @@ Contract NFTListing(
         MarketplaceAllowedOnly = 0
     }
 
-    @using(checkExternalCaller = false, updateFields = false)
     pub fn getTokenOwner() -> Address {
         return tokenOwner
     }
 
-    @using(checkExternalCaller = false, updateFields = false)
     pub fn getPrice() -> U256 {
         return price
     }
@@ -24,18 +21,7 @@ Contract NFTListing(
     pub fn buy(buyer: Address) -> () {
         checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
 
-        // Charge a commission for the marketplace
-        let commission = (price * commissionRate) / 10000
-        if (commission > 0) {
-            NFTMarketPlace(callerContractId!()).payCommission{
-                buyer -> ALPH: commission
-            }(buyer, commission)
-        }
-
-        if (buyer != tokenOwner) {
-            transferToken!(buyer, tokenOwner, ALPH, price)
-        }
-
+        transferToken!(buyer, tokenOwner, ALPH, price)
         transferTokenFromSelf!(buyer, tokenId, 1)
         destroySelf!(tokenOwner)
     }

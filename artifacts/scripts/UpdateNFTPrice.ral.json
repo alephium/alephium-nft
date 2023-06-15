@@ -1,7 +1,7 @@
 {
-  "version": "v2.3.3",
+  "version": "v2.3.4",
   "name": "UpdateNFTPrice",
-  "bytecodeTemplate": "01010300010008{2}1700{1}{0}0e0c16000104",
+  "bytecodeTemplate": "01010300010008{2}1700{1}{0}0e0c16000103",
   "fieldsSig": {
     "names": [
       "price",

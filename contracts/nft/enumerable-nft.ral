@@ -5,13 +5,11 @@ Contract EnumerableNFT(
     collection: NFTPreDesignedCollection,
     nftIndex: U256
 ) implements INFT {
-    // name; description; image
     pub fn getTokenUri() -> ByteVec {
-        checkCaller!(true, 0)
         return collection.getTokenUri(nftIndex)
     }
 
     pub fn getCollectionId() -> ByteVec {
-        return tokenId!(collection)
+        return contractId!(collection)
     }
 }

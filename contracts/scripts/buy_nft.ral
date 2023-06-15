@@ -3,9 +3,7 @@ TxScript BuyNFT(
     tokenId: ByteVec,
     nftMarketplaceContractId: ByteVec
 ) {
-    assert!(totalPayment > 0, 0)
-
     let nftMarketplace = NFTMarketPlace(nftMarketplaceContractId)
 
-    nftMarketplace.buyNFT{callerAddress!() -> ALPH: totalPayment}(tokenId, totalPayment)
+    nftMarketplace.buyNFT{callerAddress!() -> ALPH: totalPayment}(tokenId)
 }
