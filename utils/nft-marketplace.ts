@@ -57,7 +57,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           tokenId: tokenId,
           price: BigInt(price),
-          marketPlaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         },
         attoAlphAmount: this.defaultListingFee + ONE_ALPH + DUST_AMOUNT,
         tokens: [
@@ -81,7 +81,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           price: BigInt(price),
           tokenId: tokenId,
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         }
       }
     )
@@ -98,7 +98,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           totalPayment: BigInt(totalPayment),
           tokenId: tokenId,
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         },
         attoAlphAmount: totalPayment
       }
@@ -114,7 +114,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         }
       }
     )
@@ -129,7 +129,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           price: BigInt(price),
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         }
       }
     )
@@ -144,7 +144,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           newAdmin: admin,
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         }
       }
     )
@@ -159,7 +159,7 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           newCommissionRate: commissionRate,
-          nftMarketplaceContractId: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId
         }
       }
     )

@@ -1,12 +1,12 @@
 {
   "version": "v2.3.4",
   "name": "UpdateNFTPrice",
-  "bytecodeTemplate": "01010300010008{2}1700{1}{0}0e0c16000103",
+  "bytecodeTemplate": "01010300000006{1}{0}0e0c{2}0103",
   "fieldsSig": {
     "names": [
       "price",
       "tokenId",
-      "nftMarketplaceContractId"
+      "nftMarketplace"
     ],
     "types": [
       "U256",
