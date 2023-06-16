@@ -81,9 +81,9 @@
     },
     "NFTMarketPlace": {
       "sourceFile": "marketplace/nft_marketplace.ral",
-      "sourceCodeHash": "855707c65c0823df2d50c968b683985b88b934e6db271747529e253bdce9783c",
+      "sourceCodeHash": "083e1d8565dbb7967a89f3bf4d96e6b4ce5da0f633b70a106bd2e7627f7a3d53",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "c6d80a645bf5680158bafa24b0d4928a3e846b4fce820d66d7acf823f5fc2d46",
+      "codeHashDebug": "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8",
       "warnings": []
     },
     "NFTOpenCollection": {
@@ -131,6 +131,13 @@
     "UpdateNFTPrice": {
       "sourceFile": "scripts/update_nft_price.ral",
       "sourceCodeHash": "6bf7820f3380c05249db6e6513373a0e8a9975febce0ec07fa85f2d6cd9d7015",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "WithdrawFromMarketPlace": {
+      "sourceFile": "scripts/withdraw_from_marketplace.ral",
+      "sourceCodeHash": "dc85eb9e195a48da8d83806b1eb2bc711a5063742d3d5487aecf32fdf9ac8139",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

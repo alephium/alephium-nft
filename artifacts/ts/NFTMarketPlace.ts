@@ -177,6 +177,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getListingFee", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -185,7 +193,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "c6d80a645bf5680158bafa24b0d4928a3e846b4fce820d66d7acf823f5fc2d46"
+    "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8"
   )
 );
 

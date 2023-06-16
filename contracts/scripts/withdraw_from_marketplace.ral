@@ -1,0 +1,7 @@
+TxScript WithdrawFromMarketPlace(
+    to: Address,
+    amount: U256,
+    nftMarketplace: NFTMarketPlace
+) {
+    nftMarketplace.withdraw(to, amount)
+}

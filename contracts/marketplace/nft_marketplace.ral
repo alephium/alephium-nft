@@ -149,4 +149,10 @@ Contract NFTMarketPlace(
     pub fn getListingFee() -> U256 {
         return listingFee
     }
+
+    @using(assetsInContract = true)
+    pub fn withdraw(to: Address, amount: U256) -> () {
+        checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
+        transferTokenFromSelf!(to, ALPH, amount)
+    }
 }

@@ -8,13 +8,13 @@ import {
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
-import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate } from '../artifacts/ts/scripts'
+import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
 
 export class NFTMarketplace extends DeployHelpers {
-  defaultListingFee: bigint = 10n          // Listing price default to 10 ALPH
-  defaultCommissionRate: bigint = 200n     // 200 basis point: 2%
+  defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
+  defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
 
   async create(): Promise<DeployContractResult<NFTMarketPlaceInstance>> {
 
@@ -159,6 +159,23 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           newCommissionRate: commissionRate,
+          nftMarketplace: marketPlaceContractId
+        }
+      }
+    )
+  }
+
+  async withdrawFromMarketPlace(
+    to: string,
+    amount: bigint,
+    marketPlaceContractId: string
+  ): Promise<ExecuteScriptResult> {
+    return await WithdrawFromMarketPlace.execute(
+      this.signer,
+      {
+        initialFields: {
+          to,
+          amount,
           nftMarketplace: marketPlaceContractId
         }
       }
