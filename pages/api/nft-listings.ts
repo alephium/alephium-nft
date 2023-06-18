@@ -51,8 +51,15 @@ export async function nftListingEventReducer(
   if (event.eventIndex === 0) {
     const listedNFT = await fetchNFTListing(event)
     if (listedNFT) {
-      const result = await NFTListing.create(listedNFT)
-      console.log("Persist nft listing", result)
+      const result = await NFTListing.exists(
+        { '_id': listedNFT._id }
+      )
+      if (!result?._id) {
+        const result = await NFTListing.create(listedNFT)
+        console.log("Persist nft listing", result)
+      } else {
+        console.log("Persis nft listing but it already exists", listedNFT._id)
+      }
     }
   }
 
