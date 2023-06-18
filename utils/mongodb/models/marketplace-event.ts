@@ -22,7 +22,7 @@ const MarketplaceEventSchema: Schema = new Schema({
   }
 })
 
-MarketplaceEventSchema.index({ txId: 1, eventIndex: 1 }, { unique: true })
+MarketplaceEventSchema.index({ txId: 1, eventIndex: 1 }, { unique: false })
 
 export const MaketplaceEvent = (mongoose.models.MarketplaceEvent ||
   model('MarketplaceEvent', MarketplaceEventSchema)) as Model<IMarketplaceEvent>

@@ -27,10 +27,10 @@ const nftListingsHandler = Validate({
         var result = await MaketplaceEvent.exists(
           { 'txId': event.txId, 'eventIndex': event.eventIndex }
         )
-        if (!result?._id) {
-          result = await newEvent.save()
+        if (result?._id) {
+          console.log("Saving forked event", event)
         }
-
+        await newEvent.save()
         await nftListingEventReducer(newEvent)
       }
 
