@@ -1,8 +1,8 @@
 {
-  "version": "v2.3.3",
+  "version": "v2.3.4",
   "name": "NFTMarketPlace",
-  "bytecode": "04094039404b409e40c740f8410e4124413b414401030207001f1600cb170216021703b417040c0d1603010117050c0d16030100170616041601a216040d0c160301020616051600160616046101010202000916010c330f7b1600b21601a70101020601402b16010c330e7bb4170216001602b2a00213046416011301641704170316027a13c40de0b6b3a7640000a216000da31600ce0016031604c117051602a001a905160116001602160561160577020100010400171600cb1701160117020c0d160201001703b41603450d7b0c0c1602010307160016035f01000205001c1600cb170216021703b40c0d16030100450d7b0c0d16030101170416010d0c16030104081600160416016001000101000bb4a000450c7b1600a10009a00016005f01000101000bb4a000450c7b1600a1010aa00116005f01000101000bb4a000450c7b1600a1021206a00216005f010000000102a00102",
-  "codeHash": "cd9b5ad43f1f05fdc7e4623152f94aa29b6924428f0fb75a4df50e5965a9c90d",
+  "bytecode": "0409405140a240cb40fc41124128413f414841590101010700402d1600cb170116011702b417030c0d1602010117040c0d16020100170516031604a216030d0c16020102a0020c334c0a1604a0022c1367102d17061603b21606a7061604160016051603610101020601402a16010c330e7bb4170216001602b213036416011301641704170316027a13c40de0b6b3a7640000a216000da31600ce0016031604c117051602a001a905160116001602160561160577020100010400171600cb1701160117020c0d160201001703b41603450d7b0c0c1602010307160016035f01000205001c1600cb170216021703b40c0d16030100450d7b0c0d16030101170416010d0c16030104081600160416016001000101000bb4a000450c7b1600a10009a00016005f01000101000bb4a000450c7b1600a1010aa00116005f01000101000bb4a000450c7b1600a1021206a00216005f010000000102a00102010202020008b4a000450c7b16001601a8",
+  "codeHash": "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8",
   "fieldsSig": {
     "names": [
       "nftListingTemplateId",
@@ -116,37 +116,15 @@
     {
       "name": "buyNFT",
       "usePreapprovedAssets": true,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [
-        "tokenId",
-        "totalPayment"
-      ],
-      "paramTypes": [
-        "ByteVec",
-        "U256"
-      ],
-      "paramIsMutable": [
-        false,
-        false
-      ],
-      "returnTypes": []
-    },
-    {
-      "name": "payCommission",
-      "usePreapprovedAssets": true,
       "useAssetsInContract": true,
       "isPublic": true,
       "paramNames": [
-        "buyer",
-        "commission"
+        "tokenId"
       ],
       "paramTypes": [
-        "Address",
-        "U256"
+        "ByteVec"
       ],
       "paramIsMutable": [
-        false,
         false
       ],
       "returnTypes": []
@@ -266,6 +244,25 @@
       "returnTypes": [
         "U256"
       ]
+    },
+    {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
     }
   ],
   "constants": [],
@@ -292,13 +289,6 @@
           "value": {
             "type": "U256",
             "value": "2"
-          }
-        },
-        {
-          "name": "CommissionIsZero",
-          "value": {
-            "type": "U256",
-            "value": "3"
           }
         }
       ]

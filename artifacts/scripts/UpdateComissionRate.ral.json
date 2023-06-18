@@ -1,11 +1,11 @@
 {
-  "version": "v2.3.3",
+  "version": "v2.3.4",
   "name": "UpdateComissionRate",
-  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000107",
+  "bytecodeTemplate": "01010300000005{0}0d0c{1}0106",
   "fieldsSig": {
     "names": [
       "newCommissionRate",
-      "nftMarketplaceContractId"
+      "nftMarketplace"
     ],
     "types": [
       "U256",

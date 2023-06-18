@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@alephium/cli": "^0.12.5",
+    "@alephium/web3-test": "^0.12.5",
     "@types/node": "17.0.40",
     "@types/react": "18.0.12",
     "@types/react-dom": "18.0.5",

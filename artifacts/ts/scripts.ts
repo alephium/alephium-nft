@@ -20,20 +20,21 @@ import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.jso
 import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComissionRate.ral.json";
 import { default as UpdateListingFeeScriptJson } from "../scripts/UpdateListingFee.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
+import { default as WithdrawFromMarketPlaceScriptJson } from "../scripts/WithdrawFromMarketPlace.ral.json";
 
 export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
   tokenId: HexString;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(BuyNFTScriptJson));
 export const CancelListing = new ExecutableScript<{
   tokenId: HexString;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(CancelListingScriptJson));
 export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
   price: bigint;
-  marketPlaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(ListNFTScriptJson));
 export const MintOpenNFT = new ExecutableScript<{
   nftCollection: HexString;
@@ -44,18 +45,23 @@ export const MintPreDesignedNFT = new ExecutableScript<{
 }>(Script.fromJson(MintPreDesignedNFTScriptJson));
 export const UpdateAdmin = new ExecutableScript<{
   newAdmin: Address;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(UpdateAdminScriptJson));
 export const UpdateComissionRate = new ExecutableScript<{
   newCommissionRate: bigint;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(UpdateComissionRateScriptJson));
 export const UpdateListingFee = new ExecutableScript<{
   price: bigint;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(UpdateListingFeeScriptJson));
 export const UpdateNFTPrice = new ExecutableScript<{
   price: bigint;
   tokenId: HexString;
-  nftMarketplaceContractId: HexString;
+  nftMarketplace: HexString;
 }>(Script.fromJson(UpdateNFTPriceScriptJson));
+export const WithdrawFromMarketPlace = new ExecutableScript<{
+  to: Address;
+  amount: bigint;
+  nftMarketplace: HexString;
+}>(Script.fromJson(WithdrawFromMarketPlaceScriptJson));

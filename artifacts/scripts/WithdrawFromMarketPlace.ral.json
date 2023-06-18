@@ -1,17 +1,20 @@
 {
   "version": "v2.3.4",
-  "name": "MintOpenNFT",
-  "bytecodeTemplate": "01010300000009b413c40de0b6b3a7640000a2{1}0d0d{0}010318",
+  "name": "WithdrawFromMarketPlace",
+  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0108",
   "fieldsSig": {
     "names": [
-      "nftCollection",
-      "uri"
+      "to",
+      "amount",
+      "nftMarketplace"
     ],
     "types": [
-      "ByteVec",
+      "Address",
+      "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false
     ]

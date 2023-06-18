@@ -105,7 +105,6 @@ class Factory extends ContractFactory<
       AdminAllowedOnly: BigInt(0),
       TokenOwnerAllowedOnly: BigInt(1),
       NFTPriceIsZero: BigInt(2),
-      CommissionIsZero: BigInt(3),
     },
   };
 
@@ -117,18 +116,10 @@ class Factory extends ContractFactory<
     buyNFT: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { tokenId: HexString; totalPayment: bigint }
+        { tokenId: HexString }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buyNFT", params);
-    },
-    payCommission: async (
-      params: TestContractParams<
-        NFTMarketPlaceTypes.Fields,
-        { buyer: Address; commission: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "payCommission", params);
     },
     listNFT: async (
       params: TestContractParams<
@@ -186,6 +177,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getListingFee", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -194,7 +193,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "cd9b5ad43f1f05fdc7e4623152f94aa29b6924428f0fb75a4df50e5965a9c90d"
+    "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8"
   )
 );
 

@@ -1,7 +1,6 @@
 TxScript UpdateComissionRate(
     newCommissionRate: U256,
-    nftMarketplaceContractId: ByteVec
+    nftMarketplace: NFTMarketPlace
 ) {
-    let nftMarketPlace = NFTMarketPlace(nftMarketplaceContractId)
-    nftMarketPlace.updateCommissionRate(newCommissionRate)
+    nftMarketplace.updateCommissionRate(newCommissionRate)
 }

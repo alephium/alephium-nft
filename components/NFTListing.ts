@@ -8,7 +8,6 @@ export interface NFTListing {
   image: string,
   tokenOwner: string,
   marketAddress: string
-  commissionRate: bigint,
   listingContractId: string,
   collectionId: string
 }

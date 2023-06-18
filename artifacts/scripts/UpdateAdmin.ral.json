@@ -1,11 +1,11 @@
 {
-  "version": "v2.3.3",
+  "version": "v2.3.4",
   "name": "UpdateAdmin",
-  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000105",
+  "bytecodeTemplate": "01010300000005{0}0d0c{1}0104",
   "fieldsSig": {
     "names": [
       "newAdmin",
-      "nftMarketplaceContractId"
+      "nftMarketplace"
     ],
     "types": [
       "Address",

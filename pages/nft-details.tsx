@@ -133,8 +133,8 @@ const AssetDetails = () => {
   const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
   const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === context.account?.address)
 
-  function getPriceBreakdowns(nftPrice: bigint, commissionRate: bigint) {
-    const commission = BigInt(nftPrice * commissionRate) / BigInt(10000)
+  function getPriceBreakdowns(nftPrice: bigint) {
+    const commission = BigInt(nftPrice) * BigInt(200) / BigInt(10000)
     const nftDeposit = ONE_ALPH
     const gasAmount = BigInt(200000)
     const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
@@ -146,7 +146,7 @@ const AssetDetails = () => {
     if (nftListing && context.signerProvider?.nodeProvider) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
       // TODO: Display the price breakdowns
-      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price, nftListing.commissionRate)
+      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
 
       setIsBuyingNFT(true)
       const result = await nftMarketplace.buyNFT(

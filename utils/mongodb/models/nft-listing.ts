@@ -8,7 +8,6 @@ export interface NFTListing {
   image: string,
   tokenOwner: string,
   marketAddress: string
-  commissionRate: bigint,
   listingContractId: string,
   collectionId: string
 }
@@ -37,9 +36,6 @@ const NFTListingSchema: Schema = new Schema({
     type: String
   },
   marketAddress: {
-    type: String
-  },
-  commissionRate: {
     type: String
   },
   listingContractId: {

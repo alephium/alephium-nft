@@ -93,7 +93,7 @@ export const EnumerableNFT = new Factory(
   Contract.fromJson(
     EnumerableNFTContractJson,
     "",
-    "8b70b2781d2e60683abc67249fbcd966818816fd512d17edd02a8592085e49be"
+    "9754329f7623044ec5edeb7a3349eb36066ec1140fb41e2ba5828685df1e1012"
   )
 );
 

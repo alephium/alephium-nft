@@ -97,7 +97,6 @@ async function fetchNFTListing(
       image: metadata.image,
       tokenOwner: listingState.fields.tokenOwner as string,
       marketAddress: listingState.fields.marketAddress as string,
-      commissionRate: listingState.fields.commissionRate as bigint,
       listingContractId: listingContractId,
       collectionId: nftState.fields.collectionId
     }
