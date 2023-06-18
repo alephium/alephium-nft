@@ -13,8 +13,7 @@ export interface NFTListing {
 }
 
 export interface INFTListing extends NFTListing { }
-export interface INFTListing2 extends Document { }
-
+export interface INFTListingDoc extends Document { }
 
 const NFTListingSchema: Schema = new Schema({
   _id: {
@@ -47,4 +46,4 @@ const NFTListingSchema: Schema = new Schema({
 })
 
 export const NFTListing = (mongoose.models.NFTListing ||
-  model('NFTListing', NFTListingSchema)) as Model<INFTListing2>
+  model('NFTListing', NFTListingSchema)) as Model<INFTListingDoc>

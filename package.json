@@ -1,6 +1,6 @@
 {
   "name": "alephium-nft",
-  "version": "0.3.9",
+  "version": "0.4.6",
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev -p 3020",
