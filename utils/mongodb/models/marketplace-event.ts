@@ -1,6 +1,7 @@
 import mongoose, { Document, model, Model, Schema } from 'mongoose'
 
 export interface IMarketplaceEvent extends Document {
+  blockHash: string,
   txId: string,
   contractAddress: string,
   eventIndex: number,
@@ -8,6 +9,9 @@ export interface IMarketplaceEvent extends Document {
 }
 
 const MarketplaceEventSchema: Schema = new Schema({
+  blockHash: {
+    type: String
+  },
   txId: {
     type: String
   },
@@ -23,6 +27,7 @@ const MarketplaceEventSchema: Schema = new Schema({
 })
 
 MarketplaceEventSchema.index({ txId: 1, eventIndex: 1 }, { unique: false })
+MarketplaceEventSchema.index({ txId: 1, eventIndex: 1, blockHash: 1 }, { unique: true })
 
 export const MaketplaceEvent = (mongoose.models.MarketplaceEvent ||
   model('MarketplaceEvent', MarketplaceEventSchema)) as Model<IMarketplaceEvent>
