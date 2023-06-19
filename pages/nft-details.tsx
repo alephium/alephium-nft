@@ -215,17 +215,21 @@ const AssetDetails = () => {
           )
         }
 
-        <div className="mt-10">
-          <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-base font-normal">Owner</p>
-          <div className="flex flex-row items-center mt-3">
-            <div className="relative w-12 h-12 minlg:w-20 minlg:h-20 mr-2">
-              <Image src={images.creator1} objectFit="cover" className="rounded-full" />
+        {
+          nftListing?.tokenOwner ? (
+            <div className="mt-10">
+              <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-base font-normal">Owner</p>
+              <div className="flex flex-row items-center mt-3">
+                <div className="relative w-12 h-12 minlg:w-20 minlg:h-20 mr-2">
+                  <Image src={images.creator1} objectFit="cover" className="rounded-full" />
+                </div>
+                <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
+                  {shortenAddress(nftListing.tokenOwner)}
+                </p>
+              </div>
             </div>
-            <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-              {nftListing?.tokenOwner ? shortenAddress(nftListing.tokenOwner) : "Unknown"}
-            </p>
-          </div>
-        </div>
+          ) : null
+        }
 
         <div className="mt-10 flex flex-col">
           <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
