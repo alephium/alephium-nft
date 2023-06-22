@@ -19,30 +19,33 @@ const Home = () => {
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
 
-  useEffect(() => {
+  async function loadNFTListings(
+    address?: string,
+    priceOrder?: string,
+    searchText?: string
+  ) {
     setIsLoading(true)
-    fetchNFTListings(undefined, toPriceOrder(activeSelect), searchText).then((listings) => {
-      setNftListing(listings)
-      setIsLoading(false)
-    })
+    const listings = await fetchNFTListings(
+      address,
+      priceOrder,
+      searchText
+    )
+    setIsLoading(false)
+    setNftListing(listings)
+  }
+
+  useEffect(() => {
+    loadNFTListings(undefined, toPriceOrder(activeSelect), searchText)
   }, [activeSelect, setNftListing, searchText])
 
   const onHandleSearch = (value: string) => {
-    setSearchText(searchText)
-    setIsLoading(true)
-    fetchNFTListings(undefined, toPriceOrder(activeSelect), value).then((listings) => {
-      setNftListing(listings)
-      setIsLoading(false)
-    })
+    setSearchText(value)
+    loadNFTListings(undefined, toPriceOrder(activeSelect), value)
   };
 
   const onClearSearch = () => {
     setSearchText('')
-    setIsLoading(true)
-    fetchNFTListings(undefined, toPriceOrder(activeSelect), undefined).then((listings) => {
-      setNftListing(listings)
-      setIsLoading(false)
-    })
+    loadNFTListings(undefined, toPriceOrder(activeSelect), '')
   };
 
   const handleScroll = (direction: string) => {

@@ -25,7 +25,7 @@ export async function fetchNFTListings(
     url = `${url}?${query}`
   } else if (priceOrder) {
     url = `${url}?${priceOrderQuery}`
-  } else {
+  } else if (searchText) {
     url = `${url}?${searchTextQuery}`
   }
 
