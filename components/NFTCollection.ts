@@ -20,7 +20,6 @@ export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
 export async function fetchListedNFTs(
   signerProvider: SignerProvider,
-  marketplaceContractAddress: string,
   address: string
 ): Promise<NFTCollection[]> {
   if (signerProvider.nodeProvider) {
@@ -95,13 +94,11 @@ export async function fetchNFTsFromUTXOs(
 
 export async function fetchAllNFTCollections(
   signerProvider: SignerProvider,
-  marketplaceContractAddress: string,
   address: string
 ): Promise<NFTCollection[]> {
   const nftsFromUTXOs = await fetchNFTsFromUTXOs(signerProvider, address)
   const listedNFTs = await fetchListedNFTs(
     signerProvider,
-    marketplaceContractAddress,
     address
   )
 

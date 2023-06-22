@@ -7,12 +7,15 @@ import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephiu
 import { connectToDatabase } from '../../utils/mongodb'
 import { defaultNodeUrl, marketplaceContractAddress } from '../../configs/nft'
 import { fetchNFTListingState, fetchNonEnumerableNFTState } from "../../utils/contracts"
+import { SortOrder } from 'mongoose'
 
 connectToDatabase()
 
 const nftListingsHandler = Validate({
   async get(req, res) {
     try {
+      const searchText = req.query.search as string
+      const priceOrder = req.query.priceOrder as SortOrder | undefined
       const nodeProvider = new NodeProvider(defaultNodeUrl)
       web3.setCurrentNodeProvider(nodeProvider)
       const count = await MaketplaceEvent.count()
@@ -34,8 +37,12 @@ const nftListingsHandler = Validate({
         await nftListingEventReducer(newEvent)
       }
 
-      const listings = await NFTListing.find()
-      res.json(listings.reverse())
+      const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
+      const listings = priceOrder ?
+        await NFTListing.find(filterArgs).sort({ "price": priceOrder }) :
+        await NFTListing.find(filterArgs)
+
+      res.json(listings)
     } catch (err) {
       console.log(err)
       res.status(500).send('error')

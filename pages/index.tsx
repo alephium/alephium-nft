@@ -1,21 +1,19 @@
 import Image, { StaticImageData } from 'next/image';
 import images from '../assets';
-import { Loader, NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
+import { NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
 import { NFTListing, fetchNFTListings } from '../components/NFTListing';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
 import { shortenAddress } from '../utils/shortenAddress';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
+import LoaderWithText from '../components/LoaderWithText';
 
 const Home = () => {
-  const context = useAlephiumConnectContext()
   const [hideButtons, setHideButtons] = useState(false);
-  const [nfts, setNfts] = useState<NFTListing[]>([]);
   const [activeSelect, setActiveSelect] = useState<string>('Recently Added');
+  const [searchText, setSearchText] = useState<string>('')
   const { theme } = useTheme();
   const [nftListings, setNftListing] = useState<NFTListing[]>([])
-  const [originNftListings, setOriginNftListing] = useState<NFTListing[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const parentRef: MutableRefObject<any> = useRef(null);
@@ -23,41 +21,28 @@ const Home = () => {
 
   useEffect(() => {
     setIsLoading(true)
-    fetchNFTListings().then((listings) => {
+    fetchNFTListings(undefined, toPriceOrder(activeSelect), searchText).then((listings) => {
       setNftListing(listings)
       setIsLoading(false)
-      setOriginNftListing(listings)
     })
-
-  }, [context.signerProvider]);
-
-  useEffect(() => {
-    const nftListingsCopy = [...nftListings]
-    switch (activeSelect) {
-      case 'Price (low to high)':
-        setNfts(nftListingsCopy.sort((a, b) => Number(a.price - b.price)));
-        break;
-      case 'Price (high to low)':
-        setNfts(nftListingsCopy.sort((a, b) => Number(b.price - a.price)));
-        break;
-      case 'Recently Added':
-        setNfts(originNftListings);
-        break;
-    }
-
-  }, [activeSelect, nftListings, originNftListings])
+  }, [activeSelect, setNftListing, searchText])
 
   const onHandleSearch = (value: string) => {
-    const filteredNfts = nftListings.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
-    if (filteredNfts.length) {
-      setNfts(filteredNfts);
-    } else {
-      setNfts([]);
-    }
+    setSearchText(searchText)
+    setIsLoading(true)
+    fetchNFTListings(undefined, toPriceOrder(activeSelect), value).then((listings) => {
+      setNftListing(listings)
+      setIsLoading(false)
+    })
   };
 
   const onClearSearch = () => {
-    setNfts(nftListings);
+    setSearchText('')
+    setIsLoading(true)
+    fetchNFTListings(undefined, toPriceOrder(activeSelect), undefined).then((listings) => {
+      setNftListing(listings)
+      setIsLoading(false)
+    })
   };
 
   const handleScroll = (direction: string) => {
@@ -106,24 +91,6 @@ const Home = () => {
   const rankedTopNineSellers = Object.entries(topSellers).map((creator) => {
     return ({ address: creator[0], sum: creator[1] })
   }).sort((a, b) => Number(b.sum - a.sum)).slice(0, 9)
-
-  if (!context || isLoading) {
-    return (
-      <div className="flexStart min-h-screen">
-        <Loader />
-      </div>
-    );
-  }
-
-  if (!isLoading && !nftListings.length) {
-    return (
-      <div className="flex justify-center sm:px-4 p-12">
-        <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
-          The marketplace is empty.
-        </h1>
-      </div>
-    )
-  }
 
   return (
     <div className="flex justify-center sm:px-4 p-12">
@@ -183,15 +150,41 @@ const Home = () => {
                   />
                 </div>
               </div>
-              <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                {nfts.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
-              </div>
+              {
+                isLoading ? (
+                  <LoaderWithText text={`Loading...`} />
+                ) : (
+                  <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
+                    {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
+                  </div>
+                )
+              }
+              {
+                (!isLoading && !nftListings.length) ? (
+                  <div className="flex justify-center sm:px-4 p-12" >
+                    <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
+                      No NFT Listing found
+                    </h1>
+                  </div>
+                ) : null
+              }
             </div>
           </>
         }
       </div>
-    </div>
+    </div >
   );
 };
+
+function toPriceOrder(activeSelect: string): string | undefined {
+  switch (activeSelect) {
+    case 'Price (low to high)':
+      return 'asc'
+    case 'Price (high to low)':
+      return 'desc'
+    case 'Recently Added':
+      return undefined
+  }
+}
 
 export default withTransition(Home);
