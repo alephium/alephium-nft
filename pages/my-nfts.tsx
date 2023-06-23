@@ -25,7 +25,6 @@ const MyNFTs = () => {
         setIsLoading(true)
         const collections = await fetchAllNFTCollections(
           context.signerProvider,
-          marketplaceContractAddress,
           context.account.address
         )
         setNftCollections(collections)
