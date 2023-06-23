@@ -9,7 +9,8 @@ export interface NFTListing {
   tokenOwner: string,
   marketAddress: string
   listingContractId: string,
-  collectionId: string
+  collectionId: string,
+  createdAt: Date
 }
 
 export interface INFTListing extends NFTListing { }
@@ -42,11 +43,15 @@ const NFTListingSchema: Schema = new Schema({
   },
   collectionId: {
     type: String
+  },
+  createdAt: {
+    type: Date
   }
 })
 
 NFTListingSchema.index({ tokenOwner: 1 })
 NFTListingSchema.index({ price: 1 })
+NFTListingSchema.index({ createdAt: 1 })
 NFTListingSchema.index({ name: "text" })
 NFTListingSchema.index({ description: "text" })
 

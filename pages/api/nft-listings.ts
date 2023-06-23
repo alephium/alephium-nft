@@ -43,8 +43,7 @@ const nftListingsHandler = Validate({
       const skipped = page * size
       const listings = priceOrder ?
         await NFTListing.find(filterArgs).sort({ "price": priceOrder }).collation({ locale: "en_US", numericOrdering: true }).skip(skipped).limit(size) :
-        await NFTListing.find(filterArgs).skip(skipped).limit(size)  // FIXME: reverse
-
+        await NFTListing.find(filterArgs).sort({ "createdAt": -1 }).skip(skipped).limit(size)
       res.json(listings)
     } catch (err) {
       console.log(err)
@@ -115,7 +114,8 @@ async function fetchNFTListing(
       tokenOwner: listingState.fields.tokenOwner as string,
       marketAddress: listingState.fields.marketAddress as string,
       listingContractId: listingContractId,
-      collectionId: nftState.fields.collectionId
+      collectionId: nftState.fields.collectionId,
+      createdAt: new Date()
     }
   }
 }
