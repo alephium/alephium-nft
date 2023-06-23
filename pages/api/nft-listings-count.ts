@@ -7,7 +7,9 @@ connectToDatabase()
 const nftListingsCountHandler = Validate({
   async get(req, res) {
     try {
-      const total = await NFTListing.count()
+      const searchText = req.query.search as string
+      const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
+      const total = await NFTListing.count(filterArgs)
       res.json({ total })
     } catch (err) {
       console.log(err)

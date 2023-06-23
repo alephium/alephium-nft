@@ -32,10 +32,8 @@ const Home = () => {
     page?: number
   ) {
     setIsLoading(true)
-    if (pageCount === undefined) {
-      const result = await axios.get('api/nft-listings-count')
-      setPageCount(Math.ceil(result.data.total / pageSize))
-    }
+    const totalResult = await axios.get(`api/nft-listings-count?search=${searchText}`)
+    setPageCount(Math.ceil(totalResult.data.total / pageSize))
 
     const listings = await fetchNFTListings(
       address,
@@ -178,15 +176,17 @@ const Home = () => {
                     <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
                       {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
                     </div>
-                    <ReactPaginate
-                      containerClassName={"pagination"}
-                      breakLabel="..."
-                      nextLabel=">"
-                      previousLabel="<"
-                      onClick={handleOnClick}
-                      forcePage={page}
-                      pageCount={pageCount!}
-                    />
+                    {
+                      pageCount !== 0 && < ReactPaginate
+                        containerClassName={"pagination"}
+                        breakLabel="..."
+                        nextLabel=">"
+                        previousLabel="<"
+                        onClick={handleOnClick}
+                        forcePage={page}
+                        pageCount={pageCount!}
+                      />
+                    }
                   </>
                 )
               }
