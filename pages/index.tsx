@@ -19,6 +19,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [topSellers, setTopSellers] = useState<{ address: string, totalAmount: string }[]>([])
   const [page, setPage] = useState<number>(0)
+  const [pageCount, setPageCount] = useState<number | undefined>(undefined)
+  const pageSize = 20
 
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
@@ -30,11 +32,17 @@ const Home = () => {
     page?: number
   ) {
     setIsLoading(true)
+    if (pageCount === undefined) {
+      const result = await axios.get('api/nft-listings-count')
+      setPageCount(Math.ceil(result.data.total / pageSize))
+    }
+
     const listings = await fetchNFTListings(
       address,
       priceOrder,
       searchText,
-      page
+      page,
+      pageSize
     )
     setIsLoading(false)
     setNftListing(listings)
@@ -52,7 +60,7 @@ const Home = () => {
   useEffect(() => {
     loadTopSellers()
     loadNFTListings(undefined, toPriceOrder(activeSelect), searchText, page)
-  }, [activeSelect, setNftListing, searchText, page])
+  }, [activeSelect, searchText, page])
 
   const onHandleSearch = (value: string) => {
     setSearchText(value)
@@ -177,7 +185,7 @@ const Home = () => {
                       previousLabel="<"
                       onClick={handleOnClick}
                       forcePage={page}
-                      pageCount={2}
+                      pageCount={pageCount!}
                     />
                   </>
                 )
