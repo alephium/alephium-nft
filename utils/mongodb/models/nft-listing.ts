@@ -45,6 +45,7 @@ const NFTListingSchema: Schema = new Schema({
   }
 })
 
+NFTListingSchema.index({ tokenOwner: 1 })
 NFTListingSchema.index({ price: 1 })
 NFTListingSchema.index({ name: "text" })
 NFTListingSchema.index({ description: "text" })

@@ -7,6 +7,7 @@ import { shortenAddress } from '../utils/shortenAddress';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import LoaderWithText from '../components/LoaderWithText';
+import axios from "axios"
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
@@ -15,6 +16,7 @@ const Home = () => {
   const { theme } = useTheme();
   const [nftListings, setNftListing] = useState<NFTListing[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [topSellers, setTopSellers] = useState<{ address: string, totalAmount: string }[]>([])
 
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
@@ -34,7 +36,17 @@ const Home = () => {
     setNftListing(listings)
   }
 
+  async function loadTopSellers() {
+    const result = await axios.get('api/top-sellers')
+    const sellers = result.data.map((seller: any) => {
+      return { address: seller._id, totalAmount: seller.totalAmount['$numberDecimal'] }
+    })
+
+    setTopSellers(sellers)
+  }
+
   useEffect(() => {
+    loadTopSellers()
     loadNFTListings(undefined, toPriceOrder(activeSelect), searchText)
   }, [activeSelect, setNftListing, searchText])
 
@@ -81,20 +93,6 @@ const Home = () => {
     };
   });
 
-  const topSellers: { [key: string]: bigint } = nftListings.reduce((topCreatorObj, listing) => {
-    if (topCreatorObj[listing.tokenOwner]) {
-      topCreatorObj[listing.tokenOwner] = BigInt(topCreatorObj[listing.tokenOwner]) + BigInt(listing.price)
-    } else {
-      topCreatorObj[listing.tokenOwner] = BigInt(listing.price)
-    }
-
-    return topCreatorObj
-  }, {} as { [key: string]: bigint })
-
-  const rankedTopNineSellers = Object.entries(topSellers).map((creator) => {
-    return ({ address: creator[0], sum: creator[1] })
-  }).sort((a, b) => Number(b.sum - a.sum)).slice(0, 9)
-
   return (
     <div className="flex justify-center sm:px-4 p-12">
       <div className="w-full minmd:w-4/5">
@@ -106,13 +104,13 @@ const Home = () => {
               </h1>
               <div className="relative flex-1 max-w-full flex mt-3" ref={parentRef}>
                 <div className="flex flex-row w-max overflow-x-scroll no-scrollbar select-none" ref={scrollRef}>
-                  {rankedTopNineSellers.map((seller, i) => (
+                  {topSellers.map((seller, i) => (
                     <CreatorCard
                       key={seller.address}
                       rank={`${i + 1}`}
                       creatorImage={(images as { [key: string]: StaticImageData })[`creator${i + 1}`]}
                       creatorName={shortenAddress(seller.address)}
-                      creatorAlphs={prettifyAttoAlphAmount(seller.sum) || ''}
+                      creatorAlphs={prettifyAttoAlphAmount(seller.totalAmount) || ''}
                     />
                   ))}
                   {!hideButtons && (
