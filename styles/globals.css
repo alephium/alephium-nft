@@ -158,18 +158,23 @@ button[disabled]{
   position: relative;
   float: left;
   padding: 6px 12px;
-  text-decoration: none;
   color: white;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.pagination>li.active>a {
-  color: #fff;
-  background-color: #218838;
+.pagination>li.selected > a {
+  color: white;
+  background-color: #218800;
   border-color: #1e7e34;
 }
 
+.pagination>li.disabled > a {
+  color: gray;
+  pointer-events: none;
+  text-decoration: none;
+}
+
 .pagination > li > a:hover {
-  background-color:  #218838;
-  color: white;
+  background-color:  lightgray;
+  color: black;
 }
