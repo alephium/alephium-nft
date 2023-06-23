@@ -40,7 +40,7 @@ const nftListingsHandler = Validate({
       const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
       const listings = priceOrder ?
         await NFTListing.find(filterArgs).sort({ "price": priceOrder }).collation({ locale: "en_US", numericOrdering: true }) :
-        await NFTListing.find(filterArgs)
+        await NFTListing.find(filterArgs).sort({ $natural: -1 })
 
       res.json(listings)
     } catch (err) {
