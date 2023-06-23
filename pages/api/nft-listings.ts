@@ -16,6 +16,8 @@ const nftListingsHandler = Validate({
     try {
       const searchText = req.query.search as string
       const priceOrder = req.query.priceOrder as SortOrder | undefined
+      const page = Number(req.query.page as string)
+      const size = Number(req.query.size as string)
       const nodeProvider = new NodeProvider(defaultNodeUrl)
       web3.setCurrentNodeProvider(nodeProvider)
       const count = await MaketplaceEvent.count()
@@ -38,9 +40,10 @@ const nftListingsHandler = Validate({
       }
 
       const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
+      const skipped = page * size
       const listings = priceOrder ?
-        await NFTListing.find(filterArgs).sort({ "price": priceOrder }).collation({ locale: "en_US", numericOrdering: true }) :
-        await NFTListing.find(filterArgs).sort({ $natural: -1 })
+        await NFTListing.find(filterArgs).sort({ "price": priceOrder }).collation({ locale: "en_US", numericOrdering: true }).skip(skipped).limit(size) :
+        await NFTListing.find(filterArgs).skip(skipped).limit(size)  // FIXME: reverse
 
       res.json(listings)
     } catch (err) {

@@ -8,6 +8,7 @@ import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import LoaderWithText from '../components/LoaderWithText';
 import axios from "axios"
+import ReactPaginate from 'react-paginate';
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
@@ -17,6 +18,7 @@ const Home = () => {
   const [nftListings, setNftListing] = useState<NFTListing[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [topSellers, setTopSellers] = useState<{ address: string, totalAmount: string }[]>([])
+  const [page, setPage] = useState<number>(0)
 
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
@@ -24,13 +26,15 @@ const Home = () => {
   async function loadNFTListings(
     address?: string,
     priceOrder?: string,
-    searchText?: string
+    searchText?: string,
+    page?: number
   ) {
     setIsLoading(true)
     const listings = await fetchNFTListings(
       address,
       priceOrder,
-      searchText
+      searchText,
+      page
     )
     setIsLoading(false)
     setNftListing(listings)
@@ -47,17 +51,17 @@ const Home = () => {
 
   useEffect(() => {
     loadTopSellers()
-    loadNFTListings(undefined, toPriceOrder(activeSelect), searchText)
-  }, [activeSelect, setNftListing, searchText])
+    loadNFTListings(undefined, toPriceOrder(activeSelect), searchText, page)
+  }, [activeSelect, setNftListing, searchText, page])
 
   const onHandleSearch = (value: string) => {
     setSearchText(value)
-    loadNFTListings(undefined, toPriceOrder(activeSelect), value)
+    loadNFTListings(undefined, toPriceOrder(activeSelect), value, page)
   };
 
   const onClearSearch = () => {
     setSearchText('')
-    loadNFTListings(undefined, toPriceOrder(activeSelect), '')
+    loadNFTListings(undefined, toPriceOrder(activeSelect), '', page)
   };
 
   const handleScroll = (direction: string) => {
@@ -92,6 +96,13 @@ const Home = () => {
       window.removeEventListener('resize', isScrollable);
     };
   });
+
+  const handleOnClick = (event: any) => {
+    if (event.nextSelectedPage !== undefined) {
+      setPage(event.nextSelectedPage)
+      loadNFTListings(undefined, toPriceOrder(activeSelect), searchText, event.nextSelectedPage)
+    }
+  };
 
   return (
     <div className="flex justify-center sm:px-4 p-12">
@@ -155,9 +166,20 @@ const Home = () => {
                 isLoading ? (
                   <LoaderWithText text={`Loading...`} />
                 ) : (
-                  <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                    {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
-                  </div>
+                  <>
+                    <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
+                      {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
+                    </div>
+                    <ReactPaginate
+                      containerClassName={"pagination"}
+                      breakLabel="..."
+                      nextLabel=">"
+                      previousLabel="<"
+                      onClick={handleOnClick}
+                      forcePage={page}
+                      pageCount={2}
+                    />
+                  </>
                 )
               }
               {

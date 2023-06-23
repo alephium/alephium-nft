@@ -15,20 +15,19 @@ export interface NFTListing {
 export async function fetchNFTListings(
   address?: string,
   priceOrder?: string,
-  searchText?: string
+  searchText?: string,
+  page?: number,
+  size?: number
 ): Promise<NFTListing[]> {
-  let url: string = `api/nft-listings`
-  const priceOrderQuery = priceOrder ? `priceOrder=${priceOrder}` : undefined
-  const searchTextQuery = searchText ? `search=${searchText}` : undefined
-  if (priceOrder && searchText) {
-    const query = [priceOrderQuery, searchTextQuery].join('&')
-    url = `${url}?${query}`
-  } else if (priceOrder) {
-    url = `${url}?${priceOrderQuery}`
-  } else if (searchText) {
-    url = `${url}?${searchTextQuery}`
+  let url: string = `api/nft-listings?page=${page || 0}&size=${size || 20}`
+  if (priceOrder) {
+    url = `${url}&priceOrder=${priceOrder}`
+  }
+  if (searchText) {
+    url = `${url}&search=${searchText}`
   }
 
+  console.log("url", url)
   const result = await axios.get(url)
   const nftListings: NFTListing[] = result.data
 

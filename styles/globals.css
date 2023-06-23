@@ -136,3 +136,40 @@ button[disabled]{
   color: gray;
   text-decoration: underline;
 }
+
+/* Pagination */
+.pagination {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination > li {
+  display: block;
+  padding-left: 0;
+}
+
+.pagination > li {
+  list-style: none;
+  border: 0.9px solid;
+}
+.pagination > li > a,
+.pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  text-decoration: none;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.pagination>li.active>a {
+  color: #fff;
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.pagination > li > a:hover {
+  background-color:  #218838;
+  color: white;
+}
