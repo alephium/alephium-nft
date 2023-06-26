@@ -1,13 +1,12 @@
 import Validate from 'next-api-validation'
-import axios from "axios"
-import { IMarketplaceEvent, MaketplaceEvent } from '../../utils/mongodb/models/marketplace-event'
 import { NFTListing } from '../../utils/mongodb/models/nft-listing'
 import { connectToDatabase } from '../../utils/mongodb'
+import type { NextApiRequest, NextApiResponse } from "next";
 
 connectToDatabase()
 
 const topSellerHandler = Validate({
-  async get(req, res) {
+  async get(req: NextApiRequest, res: NextApiResponse) {
     try {
       // Only return top 9 for now
       const topSellers = await NFTListing.aggregate([

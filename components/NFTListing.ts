@@ -37,16 +37,3 @@ export async function fetchNFTListings(
     return nftListings
   }
 }
-
-export async function replayNFTListings(
-  address?: string
-): Promise<NFTListing[]> {
-  const result = await axios.post(`api/marketplace-events/replay`)
-  const nftListings: NFTListing[] = result.data
-
-  if (address) {
-    return nftListings.filter((listing) => listing.tokenOwner === address)
-  } else {
-    return nftListings
-  }
-}
