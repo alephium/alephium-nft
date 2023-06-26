@@ -12,7 +12,7 @@ import ReactPaginate from 'react-paginate';
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
-  const [activeSelect, setActiveSelect] = useState<string>('Recently Added');
+  const [activeSelect, setActiveSelect] = useState<string>('Recently Listed');
   const [searchText, setSearchText] = useState<string>('')
   const { theme } = useTheme();
   const [nftListings, setNftListing] = useState<NFTListing[]>([])
@@ -213,7 +213,7 @@ function toPriceOrder(activeSelect: string): string | undefined {
       return 'asc'
     case 'Price (high to low)':
       return 'desc'
-    case 'Recently Added':
+    case 'Recently Listed':
       return undefined
   }
 }
