@@ -5,5 +5,5 @@
   "marketplaceAdminAddress": "16VPvbF1ShQsj8TappJWtoW6gRM1AEQXYqwo5rQ7BiAy3",
   "defaultNodeUrl": "https://wallet-v20.testnet.alephium.org",
   "defaultExplorerUrl": "https://backend-v113.testnet.alephium.org",
-  "mongodbUrl": "mongodb+srv://alephium-nft-testnet:XWNWJMppsR0pxc8g@alephium-nft-testnet.kunfdpb.mongodb.net"
+  "mongodbUrl": "mongodb+srv://alephium-nft-testnet:XWNWJMppsR0pxc8g@alephium-nft-testnet.kunfdpb.mongodb.net/alephium-nft"
 }

@@ -1,6 +1,7 @@
 import Validate from 'next-api-validation'
 import axios from "axios"
 import { IMarketplaceEvent, MaketplaceEvent } from '../../utils/mongodb/models/marketplace-event'
+import { MaketplaceEventNextStart } from '../../utils/mongodb/models/marketplace-event-next-start'
 import { NFTListing as NFTListingFactory } from '../../artifacts/ts'
 import { NFTListing } from '../../utils/mongodb/models/nft-listing'
 import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
@@ -20,24 +21,41 @@ const nftListingsHandler = Validate({
       const size = Number(req.query.size as string)
       const nodeProvider = new NodeProvider(defaultNodeUrl)
       web3.setCurrentNodeProvider(nodeProvider)
-      const count = await MaketplaceEvent.count()
+
+      const nextStartResult = await MaketplaceEventNextStart.findOne()
+      let nextStart = nextStartResult && nextStartResult.nextStart || 0
+      if (!nextStartResult) {
+        await MaketplaceEventNextStart.create({ nextStart: 0 })
+      }
+
       const contractEvents = await nodeProvider.events.getEventsContractContractaddress(
         marketplaceContractAddress,
-        { start: count }
+        { start: nextStart }
       )
 
       const events = contractEvents.events;
       for (var event of events) {
         const newEvent = new MaketplaceEvent(event)
-        var result = await MaketplaceEvent.exists(
-          { 'txId': event.txId, 'eventIndex': event.eventIndex }
+        var eventExists = await MaketplaceEvent.exists(
+          { 'txId': event.txId, 'eventIndex': event.eventIndex, 'blockHash': event.blockHash }
         )
-        if (result?._id) {
-          console.log("Saving forked event", event)
+
+        if (!eventExists?._id) {
+          var result = await MaketplaceEvent.exists(
+            { 'txId': event.txId, 'eventIndex': event.eventIndex }
+          )
+
+          if (result?._id) {
+            console.log("Saving forked event", event)
+          }
+
+          await newEvent.save()
+          await nftListingEventReducer(newEvent)
+        } else {
+          console.log("Skipping duplicated event", event)
         }
-        await newEvent.save()
-        await nftListingEventReducer(newEvent)
       }
+      await MaketplaceEventNextStart.findOneAndUpdate({}, { $set: { nextStart: contractEvents.nextStart } })
 
       const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
       const skipped = page * size
