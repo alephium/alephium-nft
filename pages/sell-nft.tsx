@@ -95,7 +95,6 @@ const SellNFT = () => {
             objectFit="contain"
             loading="lazy"
             alt="file upload"
-            className={theme === 'light' ? 'filter invert' : ''}
           />
         </div>
       </div>
