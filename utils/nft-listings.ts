@@ -7,7 +7,7 @@ import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
 import axios from "axios"
 
-export async function trySaveNewNFTListing() {
+export async function trySaveNewNFTListings() {
   const nodeProvider = new NodeProvider(defaultNodeUrl)
   web3.setCurrentNodeProvider(nodeProvider)
 

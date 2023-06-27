@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { NFTListing } from '../../utils/mongodb/models/nft-listing'
 import { SortOrder } from 'mongoose'
 import { connectToDatabase } from '../../utils/mongodb'
-import { trySaveNewNFTListing } from '../../utils/nft-listings'
+import { trySaveNewNFTListings } from '../../utils/nft-listings'
 
 connectToDatabase()
 
@@ -15,7 +15,7 @@ const nftListingsHandler = Validate({
       const page = Number(req.query.page as string)
       const size = Number(req.query.size as string)
 
-      await trySaveNewNFTListing()
+      await trySaveNewNFTListings()
 
       const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
       const skipped = page * size
