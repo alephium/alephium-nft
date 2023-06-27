@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import images from '../assets';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
@@ -191,7 +190,7 @@ const AssetDetails = () => {
   return (
     <div className="relative flex justify-center md:flex-col min-h-screen">
       <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
-        <div className="relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
+        <div className="relative sm:w-full sm:h-300 h-557">
           <Image src={nft.image} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
         </div>
       </div>

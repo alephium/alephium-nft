@@ -27,7 +27,6 @@ export async function fetchNFTListings(
     url = `${url}&search=${searchText}`
   }
 
-  console.log("url", url)
   const result = await axios.get(url)
   const nftListings: NFTListing[] = result.data
 
