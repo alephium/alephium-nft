@@ -4,7 +4,7 @@ import { useCollection } from '../components/NFTCollection'
 import { Button, Input } from '../components'
 import Image from 'next/image';
 import images from '../assets';
-import { shortenAddress } from '../utils/shortenAddress';
+import { shortenAddress } from '../utils/address';
 import { useCallback, useState, useMemo } from 'react';
 import { ipfsClient } from '../utils/ipfs';
 import { useDropzone } from 'react-dropzone';

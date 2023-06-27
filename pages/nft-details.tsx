@@ -10,7 +10,7 @@ import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
 import { fetchNFT, NFT } from '../components/nft';
 import { fetchNFTListings, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { shortenAddress } from '../utils/shortenAddress';
+import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { shortenName } from '../utils/shortenName';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
@@ -221,7 +221,7 @@ const AssetDetails = () => {
               <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-base font-normal">Owner</p>
               <div className="flex flex-row items-center mt-3">
                 <div className="relative w-12 h-12 minlg:w-20 minlg:h-20 mr-2">
-                  <Image src={images.creator1} objectFit="cover" className="rounded-full" />
+                  <Image src={addressToCreatorImage(nftListing.tokenOwner)} objectFit="cover" className="rounded-full" />
                 </div>
                 <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
                   {shortenAddress(nftListing.tokenOwner)}
@@ -324,7 +324,7 @@ const AssetDetails = () => {
                 <Image src={nft.image} objectFit="cover" layout="fill" />
               </div>
               <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
-                You successfully purchased <span className="font-semibold">{nft.name}</span> from <span className="font-semibold">{shortenAddress(context.account?.address)}</span>.
+                You successfully purchased <span className="font-semibold">{nft.name}</span>.
               </p>
             </div>
           )}

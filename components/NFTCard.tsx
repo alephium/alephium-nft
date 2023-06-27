@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { shortenAddress } from '../utils/shortenAddress';
+import { shortenAddress } from '../utils/address';
 import { shortenName } from '../utils/shortenName';
 import { motion } from 'framer-motion';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
@@ -12,7 +12,7 @@ interface NFTCardProps {
     name: string,
     description: string,
     image: string,
-    tokenOwner: string,
+    tokenOwner?: string,
     collectionId?: string
     price?: bigint
     marketAddress?: string
@@ -50,7 +50,11 @@ const NFTCard = ({ nft }: NFTCardProps) => {
                 </p>
               ) : null
             }
-            <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">{shortenAddress(nft.tokenOwner)}</p>
+            {
+              nft.tokenOwner ? (
+                <p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">{shortenAddress(nft.tokenOwner)}</p>
+              ) : null
+            }
           </div>
         </div>
       </motion.div>

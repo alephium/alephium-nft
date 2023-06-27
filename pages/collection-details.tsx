@@ -4,7 +4,7 @@ import { fetchNFTCollection, NFTCollection } from '../components/NFTCollection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
-import { shortenAddress } from '../utils/shortenAddress';
+import { shortenAddress } from '../utils/address';
 import { useEffect, useState } from 'react';
 import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
 import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3';
@@ -89,7 +89,7 @@ export default function CollectionDetails() {
                     return (
                       <NFTCard
                         key={i}
-                        nft={{ tokenOwner: context.account?.address || '', ...nft }}
+                        nft={nft}
                       />
                     )
                   })

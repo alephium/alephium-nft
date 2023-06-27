@@ -4,8 +4,7 @@ import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
 import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
-import { marketplaceContractAddress } from '../configs/nft'
-import { shortenAddress } from '../utils/shortenAddress';
+import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 
@@ -59,12 +58,12 @@ const MyNFTs = () => {
         <div className="flexCenter flex-col -mt-20 z-0">
           <div className="flexCenter w-40 h-40 sm:w-36 sm:h-36 p-1 dark:bg-nft-black-4 bg-white rounded-full">
             <Image
-              src={images.creator1}
+              src={addressToCreatorImage(context.account.address)}
               className="rounded-full object-cover"
               objectFit="cover"
             />
           </div>
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(context.account?.address)}</p>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(context.account.address)}</p>
         </div>
       </div>
 

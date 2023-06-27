@@ -3,7 +3,7 @@ import images from '../assets';
 import { NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
 import { NFTListing, fetchNFTListings } from '../components/NFTListing';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
-import { shortenAddress } from '../utils/shortenAddress';
+import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import LoaderWithText from '../components/LoaderWithText';
@@ -117,7 +117,7 @@ const Home = () => {
           <>
             <div>
               <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
-                ⭐ Top Sellers
+                ⭐ Top Listers
               </h1>
               <div className="relative flex-1 max-w-full flex mt-3" ref={parentRef}>
                 <div className="flex flex-row w-max overflow-x-scroll no-scrollbar select-none" ref={scrollRef}>
@@ -125,7 +125,7 @@ const Home = () => {
                     <CreatorCard
                       key={seller.address}
                       rank={`${i + 1}`}
-                      creatorImage={(images as { [key: string]: StaticImageData })[`creator${i + 1}`]}
+                      creatorImage={addressToCreatorImage(seller.address)}
                       creatorName={shortenAddress(seller.address)}
                       creatorAlphs={prettifyAttoAlphAmount(seller.totalAmount) || ''}
                     />
@@ -158,7 +158,7 @@ const Home = () => {
 
             <div className="mt-10">
               <div className="flexBetween mx-4 xs:mx-0 minlg:mx-8 sm:flex-col sm:items-start">
-                <h1 className="flex-1 font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">❇️  Hot NFTs</h1>
+                <h1 className="flex-1 font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">❇️  Hot Listings</h1>
                 <div className="flex-2 sm:w-full flex flex-row sm:flex-col">
                   <SearchBar
                     activeSelect={activeSelect}
