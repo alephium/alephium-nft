@@ -7,11 +7,12 @@ import Head from 'next/head';
 import { Navbar } from '../components';
 import Script from 'next/script';
 import '../styles/globals.css'
+import minimalistic from '../styles/minimalistic'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class">
-      <AlephiumConnectProvider useTheme="retro" addressGroup={0} network={NETWORK}>
+      <AlephiumConnectProvider useCustomTheme={minimalistic} addressGroup={0} network={NETWORK}>
         <div className="dark:bg-nft-dark bg-white min-h-screen">
           <Head>
             <title>Alelphium</title>
