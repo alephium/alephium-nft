@@ -19,7 +19,10 @@ export async function fetchNFTListings(
   page?: number,
   size?: number
 ): Promise<NFTListing[]> {
-  let url: string = `api/nft-listings?page=${page || 0}&size=${size || 20}`
+  let url: string = `api/nft-listings?page=${page || 0}`
+  if (size) {
+    url = `${url}&size=${size}`
+  }
   if (priceOrder) {
     url = `${url}&priceOrder=${priceOrder}`
   }
