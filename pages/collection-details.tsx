@@ -47,7 +47,7 @@ export default function CollectionDetails() {
         collection && (
           <div className="relative flex justify-center md:flex-col min-h-screen">
             <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
-              <div className="relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
+              <div className="relative sm:w-full sm:h-300 h-full w-auto">
                 <Image src={collection.image} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
               </div>
             </div>

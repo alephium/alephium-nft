@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import images from '../assets';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
