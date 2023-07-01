@@ -38,6 +38,7 @@ module.exports = {
       height: {
         300: '300px',
         557: '557px',
+        886: '886px',
       },
       inset: {
         45: '45%',
