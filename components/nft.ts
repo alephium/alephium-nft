@@ -1,10 +1,9 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NonEnumerableNFT } from '../artifacts/ts'
+import { EnumerableNFT, EnumerableNFTInstance, NFTPreDesignedCollectionInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { fetchNFTMarketplaceState } from '../utils/contracts'
-import { fetchNonEnumerableNFTState } from "../utils/contracts"
 import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId } from "@alephium/web3"
 
 export interface NFT {
   name: string,
@@ -12,6 +11,7 @@ export interface NFT {
   image: string,
   tokenId: string,
   listed: boolean,
+  minted: boolean,
   collectionId: string,
   price?: bigint
 }
@@ -20,33 +20,74 @@ export async function fetchNFT(
   tokenId: string,
   listed: boolean
 ): Promise<NFT | undefined> {
-  var nftState = undefined
-
   const nodeProvider = web3.getCurrentNodeProvider()
+  const tokenAddress = addressFromTokenId(tokenId)
+
   if (!!nodeProvider) {
     try {
-      nftState = await fetchNonEnumerableNFTState(
-        addressFromTokenId(tokenId)
-      )
+      const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
+      if (nftState) {
+        let metadataUri: string | undefined
+        let collectionId: string | undefined
+        if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
+          const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
+          metadataUri = (await nonEnumerableNFTInstance.methods.getTokenUri()).returns
+          collectionId = (await nonEnumerableNFTInstance.methods.getCollectionId()).returns
+        } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
+          const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
+          metadataUri = (await enumerableNFTInstance.methods.getTokenUri()).returns
+          collectionId = (await enumerableNFTInstance.methods.getCollectionId()).returns
+        }
+
+        if (metadataUri && collectionId) {
+          try {
+            const metadata = (await axios.get(metadataUri)).data
+            return {
+              name: metadata.name,
+              description: metadata.description,
+              image: metadata.image,
+              tokenId: tokenId,
+              collectionId: collectionId,
+              minted: true,
+              listed
+            }
+          } catch {
+            return undefined
+          }
+        }
+      }
     } catch (e) {
       console.debug(`error fetching state for ${tokenId}`, e)
     }
+  }
+}
 
-    if (nftState && nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
-      const metadataUri = hexToString(nftState.fields.uri as string)
-      try {
-        const metadata = (await axios.get(metadataUri)).data
-        return {
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image,
-          tokenId: tokenId,
-          collectionId: nftState.fields.collectionId,
-          listed
-        }
-      } catch {
-        return undefined
+export async function fetchPreMintNFT(
+  collectionId: string,
+  tokenIndex: bigint,
+  mintPrice: bigint
+): Promise<NFT | undefined> {
+  const nodeProvider = web3.getCurrentNodeProvider()
+  const tokenId = subContractId(collectionId, tokenIndex.toString(), 0)
+  if (!!nodeProvider) {
+    try {
+      const collectionAddress = addressFromContractId(collectionId)
+      const collection = new NFTPreDesignedCollectionInstance(collectionAddress)
+      const tokenUri = hexToString((await collection.methods.getTokenUri({ args: { index: tokenIndex } })).returns)
+      const metadata = (await axios.get(tokenUri)).data
+      return {
+        name: metadata.name,
+        description: metadata.description,
+        image: metadata.image,
+        tokenId: tokenId,
+        collectionId: collectionId,
+        listed: false,
+        minted: false,
+        price: mintPrice
       }
+    } catch (e) {
+      console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
+      return undefined
     }
   }
 }

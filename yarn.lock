@@ -2699,6 +2699,11 @@ cliui@^8.0.1:
     strip-ansi "^6.0.1"
     wrap-ansi "^7.0.0"
 
+clsx@^1.1.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.npmjs.org/co/-/co-4.6.0.tgz"
@@ -6081,7 +6086,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15, prop-types@^15.8.1:
+prop-types@^15, prop-types@^15.5.0, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -6251,6 +6256,14 @@ react-paginate@^8.2.0:
   integrity sha512-sJCz1PW+9PNIjUSn919nlcRVuleN2YPoFBOvL+6TPgrH/3lwphqiSOgdrLafLdyLDxsgK+oSgviqacF4hxsDIw==
   dependencies:
     prop-types "^15"
+
+react-tabs@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/react-tabs/-/react-tabs-6.0.1.tgz#3fdb6fd7408f38adfa7b1815b607cd5228e76c8b"
+  integrity sha512-XE5D/iCcwUsr06wf6fWrjA/HbUaj3G2+6NMVJygZuKALHkWYp+D3ZPcG2VctuaOHHzMU48eSOuxwBALBnuXldA==
+  dependencies:
+    clsx "^1.1.0"
+    prop-types "^15.5.0"
 
 react-transition-state@^1.1.5:
   version "1.1.5"

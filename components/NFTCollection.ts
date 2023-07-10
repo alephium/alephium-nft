@@ -1,19 +1,23 @@
 import axios from "axios"
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
-import { NFT, fetchNFT } from './nft'
+import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
 import { fetchNFTListings, NFTListing } from "./NFTListing"
-import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account } from "@alephium/web3"
-import { NFTOpenCollection } from "../artifacts/ts"
+import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId } from "@alephium/web3"
+import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
+import { contractExists } from "../utils/contracts"
 
 export interface NFTCollection {
   id: string,
+  collectionType: 'NFTOpenCollection' | 'NFTPreDesignedCollection',
   name: string,
   description: string,
   owner: string,
   totalSupply: bigint,
   image: string,
-  nfts: NFT[]
+  nfts: NFT[],
+  maxSupply?: bigint
+  mintPrice?: bigint
 }
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
@@ -33,11 +37,11 @@ export async function fetchListedNFTs(
         if (metadata) {
           items.push({
             ...metadata,
-            nfts: [{ tokenId: listing._id, listed: true, ...listing }]
+            nfts: [{ tokenId: listing._id, listed: true, minted: true, ...listing }]
           })
         }
       } else {
-        items[index].nfts.push({ tokenId: listing._id, listed: true, ...listing })
+        items[index].nfts.push({ tokenId: listing._id, listed: true, minted: true, ...listing })
       }
     }
 
@@ -125,16 +129,37 @@ export async function fetchNFTCollection(
   collectionId: string
 ): Promise<NFTCollection | undefined> {
   const metadata = await fetchNFTCollectionMetadata(collectionId)
+  console.log("metadata", metadata)
   if (metadata) {
     const collectionAddress = addressFromContractId(collectionId)
     const explorerProvider = web3.getCurrentExplorerProvider()
 
     const nfts = []
-    if (explorerProvider) {
-      const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
-      for (const tokenAddress of subContracts || []) {
-        const tokenId = binToHex(contractIdFromAddress(tokenAddress))
-        const nft = await fetchNFT(tokenId, false)
+    if (metadata.collectionType == "NFTOpenCollection") {
+      if (explorerProvider) {
+        const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
+        for (const tokenAddress of subContracts || []) {
+          const tokenId = binToHex(contractIdFromAddress(tokenAddress))
+          const nft = await fetchNFT(tokenId, false)
+          if (nft) {
+            nfts.push(nft)
+          }
+        }
+      }
+    } else {
+      const nodeProvider = web3.getCurrentNodeProvider()
+      const maxSupply = metadata.maxSupply!
+      const mintPrice = metadata.mintPrice!
+
+      for (let i = 0; i < maxSupply; i++) {
+        const tokenId = subContractId(collectionAddress, i.toString(), 0)
+        const minted = await contractExists(tokenId, nodeProvider)
+        let nft: NFT | undefined
+        if (minted) {
+          nft = await fetchNFT(tokenId, false)
+        } else {
+          nft = await fetchPreMintNFT(collectionId, BigInt(i), mintPrice)
+        }
         if (nft) {
           nfts.push(nft)
         }
@@ -148,23 +173,43 @@ export async function fetchNFTCollection(
   }
 }
 
+// TODO: Improve, using method calls
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ) {
   const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
-  if (state.codeHash == NFTOpenCollection.contract.codeHash) {
+  // TODO: More reliable to use function to get metadata info
+  if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
     const metadataUri = hexToString(state.immFields[1].value as string)
     const metadata = (await axios.get(metadataUri)).data
 
+    let collectionType: string
+    let maxSupply: bigint | undefined
+    let mintPrice: bigint | undefined
+    let tokenBaseUri: string | undefined
+
+    if (state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
+      collectionType = "NFTPreDesignedCollection"
+      tokenBaseUri = state.immFields[3].value as string
+      maxSupply = BigInt(state.immFields[4].value as string)
+      mintPrice = BigInt(state.immFields[5].value as string)
+    } else {
+      collectionType = "NFTOpenCollection"
+    }
+
     return {
       id: collectionId,
+      collectionType: collectionType,
       name: metadata.name,
       description: metadata.description,
       totalSupply: BigInt(state.mutFields[0].value as string),
       owner: state.immFields[2].value as string,
       image: metadata.image,
+      maxSupply: maxSupply,
+      mintPrice: mintPrice,
+      tokenBaseUri: tokenBaseUri
     }
   }
 }

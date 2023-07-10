@@ -8,6 +8,7 @@ import { shortenAddress } from '../utils/address';
 import { useEffect, useState } from 'react';
 import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
 import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3';
+import { fetchPreMintNFT } from '../components/nft';
 
 export default function CollectionDetails() {
   const context = useAlephiumConnectContext()
@@ -81,7 +82,7 @@ export default function CollectionDetails() {
               <div className="mt-10 flex flex-wrap">
                 <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                   <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
-                    {`${collection.totalSupply} NFTs`}
+                    {`Minted NFTs ${collection.totalSupply}`} {collection.maxSupply && `; Max Supply ${collection.maxSupply}`}
                   </p>
                 </div>
                 {
@@ -98,17 +99,19 @@ export default function CollectionDetails() {
 
               <div className="flex flex-row sm:flex-col mt-10">
                 {
-                  (context.account?.address != collection.owner) ? (
-                    <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
-                      Only collection owner can mint NFT
-                    </p>
-                  ) : (
-                    <Button
-                      btnName={"Mint More"}
-                      classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                      handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
-                    />
-                  )
+                  collection.collectionType === 'NFTOpenCollection' ? (
+                    (context.account?.address != collection.owner) ? (
+                      <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                        Only collection owner can mint NFT
+                      </p>
+                    ) : (
+                      <Button
+                        btnName={"Mint More"}
+                        classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                        handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
+                      />
+                    )
+                  ) : null
                 }
               </div>
             </div>
