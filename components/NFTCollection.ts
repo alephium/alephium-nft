@@ -6,6 +6,7 @@ import { fetchNFTListings, NFTListing } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId } from "@alephium/web3"
 import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
 import { contractExists } from "../utils/contracts"
+import { zeroPad } from "../utils"
 
 export interface NFTCollection {
   id: string,
@@ -129,7 +130,6 @@ export async function fetchNFTCollection(
   collectionId: string
 ): Promise<NFTCollection | undefined> {
   const metadata = await fetchNFTCollectionMetadata(collectionId)
-  console.log("metadata", metadata)
   if (metadata) {
     const collectionAddress = addressFromContractId(collectionId)
     const explorerProvider = web3.getCurrentExplorerProvider()
@@ -152,7 +152,7 @@ export async function fetchNFTCollection(
       const mintPrice = metadata.mintPrice!
 
       for (let i = 0; i < maxSupply; i++) {
-        const tokenId = subContractId(collectionAddress, i.toString(), 0)
+        const tokenId = subContractId(collectionId, zeroPad(i.toString(16), 1), 0)
         const minted = await contractExists(tokenId, nodeProvider)
         let nft: NFT | undefined
         if (minted) {
@@ -185,7 +185,7 @@ export async function fetchNFTCollectionMetadata(
     const metadataUri = hexToString(state.immFields[1].value as string)
     const metadata = (await axios.get(metadataUri)).data
 
-    let collectionType: string
+    let collectionType: 'NFTOpenCollection' | 'NFTPreDesignedCollection'
     let maxSupply: bigint | undefined
     let mintPrice: bigint | undefined
     let tokenBaseUri: string | undefined

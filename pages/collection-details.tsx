@@ -8,7 +8,6 @@ import { shortenAddress } from '../utils/address';
 import { useEffect, useState } from 'react';
 import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
 import { ExplorerProvider, NodeProvider, web3 } from '@alephium/web3';
-import { fetchPreMintNFT } from '../components/nft';
 
 export default function CollectionDetails() {
   const context = useAlephiumConnectContext()
@@ -82,7 +81,7 @@ export default function CollectionDetails() {
               <div className="mt-10 flex flex-wrap">
                 <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                   <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
-                    {`Minted NFTs ${collection.totalSupply}`} {collection.maxSupply && `; Max Supply ${collection.maxSupply}`}
+                    {collection.maxSupply ? `Minted NFTs ${collection.totalSupply}; Max Supply ${collection.maxSupply}` : `Minted NFTs ${collection.totalSupply}`}
                   </p>
                 </div>
                 {

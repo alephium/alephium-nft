@@ -13,7 +13,8 @@ export interface NFT {
   listed: boolean,
   minted: boolean,
   collectionId: string,
-  price?: bigint
+  price?: bigint,
+  tokenIndex?: number
 }
 
 export async function fetchNFT(
@@ -26,19 +27,22 @@ export async function fetchNFT(
   if (!!nodeProvider) {
     try {
       const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
+      console.log("nftState", nftState)
       if (nftState) {
         let metadataUri: string | undefined
         let collectionId: string | undefined
         if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
           const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
-          metadataUri = (await nonEnumerableNFTInstance.methods.getTokenUri()).returns
+          metadataUri = hexToString((await nonEnumerableNFTInstance.methods.getTokenUri()).returns)
           collectionId = (await nonEnumerableNFTInstance.methods.getCollectionId()).returns
         } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
           const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
-          metadataUri = (await enumerableNFTInstance.methods.getTokenUri()).returns
+          metadataUri = hexToString((await enumerableNFTInstance.methods.getTokenUri()).returns)
           collectionId = (await enumerableNFTInstance.methods.getCollectionId()).returns
         }
 
+        console.log("metadataUri", metadataUri)
+        console.log("collectionId", collectionId)
         if (metadataUri && collectionId) {
           try {
             const metadata = (await axios.get(metadataUri)).data
@@ -65,7 +69,7 @@ export async function fetchNFT(
 export async function fetchPreMintNFT(
   collectionId: string,
   tokenIndex: bigint,
-  mintPrice: bigint
+  mintPrice?: bigint
 ): Promise<NFT | undefined> {
   const nodeProvider = web3.getCurrentNodeProvider()
   const tokenId = subContractId(collectionId, tokenIndex.toString(), 0)
@@ -74,6 +78,9 @@ export async function fetchPreMintNFT(
       const collectionAddress = addressFromContractId(collectionId)
       const collection = new NFTPreDesignedCollectionInstance(collectionAddress)
       const tokenUri = hexToString((await collection.methods.getTokenUri({ args: { index: tokenIndex } })).returns)
+      if (mintPrice === undefined) {
+        mintPrice = (await collection.methods.getMintPrice()).returns
+      }
       const metadata = (await axios.get(tokenUri)).data
       return {
         name: metadata.name,
@@ -83,7 +90,8 @@ export async function fetchPreMintNFT(
         collectionId: collectionId,
         listed: false,
         minted: false,
-        price: mintPrice
+        price: mintPrice,
+        tokenIndex: Number(tokenIndex)
       }
     } catch (e) {
       console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
