@@ -18,7 +18,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['alephium-nft.infura-ipfs.io']
+    domains: ['alephium-nft.infura-ipfs.io', 'ipfs.io']
   }
 }
 
