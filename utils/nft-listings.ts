@@ -2,7 +2,7 @@ import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace
 import { NFTListing } from './mongodb/models/nft-listing'
 import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
 import { fetchNFTListingState, fetchNonEnumerableNFTState } from "./contracts"
-import { NFTListing as NFTListingFactory } from '../artifacts/ts'
+import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
 import axios from "axios"
@@ -95,23 +95,36 @@ async function fetchNFTListing(
   }
 
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-    const nftState = await fetchNonEnumerableNFTState(
-      addressFromContractId(tokenId)
-    )
+    const tokenAddress = addressFromContractId(tokenId)
+    const nodeProvider = web3.getCurrentNodeProvider()
+    const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
 
-    const metadataUri = hexToString(nftState.fields.uri as string)
-    const metadata = (await axios.get(metadataUri)).data
-    return {
-      _id: tokenId,
-      price: listingState.fields.price as bigint,
-      name: metadata.name,
-      description: metadata.description,
-      image: metadata.image,
-      tokenOwner: listingState.fields.tokenOwner as string,
-      marketAddress: listingState.fields.marketAddress as string,
-      listingContractId: listingContractId,
-      collectionId: nftState.fields.collectionId,
-      createdAt: new Date()
+    let metadataUri: string | undefined
+    let collectionId: string | undefined
+    if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
+      const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
+      metadataUri = hexToString((await nonEnumerableNFTInstance.methods.getTokenUri()).returns)
+      collectionId = (await nonEnumerableNFTInstance.methods.getCollectionId()).returns
+    } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
+      const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
+      metadataUri = hexToString((await enumerableNFTInstance.methods.getTokenUri()).returns)
+      collectionId = (await enumerableNFTInstance.methods.getCollectionId()).returns
+    }
+
+    if (metadataUri && collectionId) {
+      const metadata = (await axios.get(metadataUri)).data
+      return {
+        _id: tokenId,
+        price: listingState.fields.price as bigint,
+        name: metadata.name,
+        description: metadata.description,
+        image: metadata.image,
+        tokenOwner: listingState.fields.tokenOwner as string,
+        marketAddress: listingState.fields.marketAddress as string,
+        listingContractId: listingContractId,
+        collectionId: collectionId,
+        createdAt: new Date()
+      }
     }
   }
 }

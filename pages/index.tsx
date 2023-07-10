@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import images from '../assets';
 import { NFTCard, SearchBar, withTransition, CreatorCard } from '../components';
 import { NFTListing, fetchNFTListings } from '../components/NFTListing';
@@ -174,7 +174,7 @@ const Home = () => {
                 ) : (
                   <>
                     <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                      {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, ...nft }} />)}
+                      {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, minted: true, ...nft }} />)}
                     </div>
                     {
                       pageCount !== 0 && < ReactPaginate

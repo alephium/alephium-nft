@@ -3,7 +3,8 @@ import useSWR from "swr"
 import { EnumerableNFT, EnumerableNFTInstance, NFTPreDesignedCollectionInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId } from "@alephium/web3"
+import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { zeroPad } from "../utils"
 
 export interface NFT {
   name: string,
@@ -72,7 +73,7 @@ export async function fetchPreMintNFT(
   mintPrice?: bigint
 ): Promise<NFT | undefined> {
   const nodeProvider = web3.getCurrentNodeProvider()
-  const tokenId = subContractId(collectionId, tokenIndex.toString(), 0)
+  const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
   if (!!nodeProvider) {
     try {
       const collectionAddress = addressFromContractId(collectionId)

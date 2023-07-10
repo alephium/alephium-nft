@@ -3,7 +3,7 @@ import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
 import { fetchNFTListings, NFTListing } from "./NFTListing"
-import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId } from "@alephium/web3"
+import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
 import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
 import { contractExists } from "../utils/contracts"
 import { zeroPad } from "../utils"
@@ -152,7 +152,7 @@ export async function fetchNFTCollection(
       const mintPrice = metadata.mintPrice!
 
       for (let i = 0; i < maxSupply; i++) {
-        const tokenId = subContractId(collectionId, zeroPad(i.toString(16), 1), 0)
+        const tokenId = subContractId(collectionId, binToHex(encodeU256(BigInt(i))), 0)
         const minted = await contractExists(tokenId, nodeProvider)
         let nft: NFT | undefined
         if (minted) {
