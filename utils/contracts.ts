@@ -1,3 +1,4 @@
+import { addressFromContractId, NodeProvider } from '@alephium/web3'
 import {
   NonEnumerableNFTInstance,
   NFTListingInstance,
@@ -29,4 +30,18 @@ export async function fetchNonEnumerableNFTState(address: string) {
 
 export async function fetchEnumerableNFTState(address: string) {
   return new EnumerableNFTInstance(address).fetchState()
+}
+
+export async function contractExists(contractId: string, provider: NodeProvider): Promise<boolean> {
+  const address = addressFromContractId(contractId)
+  return provider
+    .addresses
+    .getAddressesAddressGroup(address)
+    .then(_ => true)
+    .catch((e: any) => {
+      if (e instanceof Error && e.message.indexOf("Group not found") !== -1) {
+        return false
+      }
+      throw e
+    })
 }

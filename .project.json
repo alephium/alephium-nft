@@ -60,7 +60,7 @@
     },
     "MintPreDesignedNFT": {
       "sourceFile": "scripts/mint_pre_designed_nft.ral",
-      "sourceCodeHash": "7513c170dc85ceed81ad74f1bf2a0d2f5304487e594bf757c9aaadcc5597cb16",
+      "sourceCodeHash": "005be15209066c433ba14db36b298f0074fd53d683e82eafebb487559cf45a46",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -95,9 +95,9 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "5e32bdd93dd8000c8bd2c15eb738ffaf3890c3eae9b34018734094d47ce5d02a",
+      "sourceCodeHash": "aabff1f15b644c93d5810ccf59e3bed0cbef12398e79ed24a3493346c3723f82",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "f64ed2c6d97080d127f038b84ee66217ab0f9e8b2208e0ea7bb5eb6a853dea49",
+      "codeHashDebug": "8ea18d05dc4a5caee4df26aad9796ab1611a016281ee1ccd58310c0b12b22178",
       "warnings": []
     },
     "NonEnumerableNFT": {

@@ -1,4 +1,4 @@
-import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId } from '@alephium/web3'
+import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH } from '@alephium/web3'
 import { testNodeWallet } from '@alephium/web3-test'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
@@ -27,8 +27,12 @@ describe('nft collection', function() {
   }, 60000)
 
   it('should test minting nft in pre designed collection', async () => {
+    const maxSupply = 10n
+    const mintPrice = ONE_ALPH
     const nftCollection = await getNFTCollection()
     const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
+      maxSupply,
+      mintPrice,
       "https://crypto-punk-uri",
       "https://cryptopunks.app/cryptopunks/details/"
     )
@@ -39,8 +43,8 @@ describe('nft collection', function() {
     const nftCollectionState = await nftPreDesignedCollectionInstane.fetchState()
     expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
 
-    for (let i = 0n; i < 10n; i++) {
-      await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i)
+    for (let i = 0n; i < maxSupply; i++) {
+      await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i, mintPrice)
     }
   }, 30000)
 })
@@ -74,12 +78,13 @@ async function mintPreDesignedNFTAndVerify(
   nftCollection: NFTCollection,
   nftPreDesignedCollectionInstance: NFTPreDesignedCollectionInstance,
   tokenIndex: bigint,
+  mintPrice: bigint
 ) {
   const nftCollectionContractAddress = addressFromContractId(nftPreDesignedCollectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(nftPreDesignedCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
 
-  await nftCollection.mintPreDesignedNFT(nftPreDesignedCollectionInstance.contractId)
+  await nftCollection.mintPreDesignedNFT(tokenIndex, mintPrice, nftPreDesignedCollectionInstance.contractId)
 
   // NFT just minted
   const nftByIndexResult = await nftPreDesignedCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })

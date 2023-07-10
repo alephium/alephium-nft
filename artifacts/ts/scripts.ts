@@ -41,6 +41,8 @@ export const MintOpenNFT = new ExecutableScript<{
   uri: HexString;
 }>(Script.fromJson(MintOpenNFTScriptJson));
 export const MintPreDesignedNFT = new ExecutableScript<{
+  index: bigint;
+  mintPrice: bigint;
   nftCollection: HexString;
 }>(Script.fromJson(MintPreDesignedNFTScriptJson));
 export const UpdateAdmin = new ExecutableScript<{

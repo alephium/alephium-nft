@@ -27,6 +27,8 @@ export class NFTCollection extends DeployHelpers {
   }
 
   async createPreDesignedCollection(
+    maxSupply: bigint,
+    mintPrice: bigint,
     collectionUri: string,
     baseUri: string
   ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
@@ -39,6 +41,8 @@ export class NFTCollection extends DeployHelpers {
           collectionUri: web3.stringToHex(collectionUri),
           tokenBaseUri: web3.stringToHex(baseUri),
           collectionOwner: ownerAddress,
+          maxSupply: maxSupply,
+          mintPrice: mintPrice,
           totalSupply: 0n
         }
       }
@@ -64,15 +68,19 @@ export class NFTCollection extends DeployHelpers {
   }
 
   async mintPreDesignedNFT(
+    index: bigint,
+    mintPrice: bigint,
     nftCollectionContractId: string,
   ) {
     return await MintPreDesignedNFT.execute(
       this.signer,
       {
         initialFields: {
+          index: index,
+          mintPrice: mintPrice,
           nftCollection: nftCollectionContractId
         },
-        attoAlphAmount: BigInt(1.1e18)
+        attoAlphAmount: BigInt(1.1e18) + mintPrice
       }
     )
   }

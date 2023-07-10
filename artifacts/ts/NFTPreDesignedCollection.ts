@@ -32,8 +32,10 @@ export namespace NFTPreDesignedCollectionTypes {
   export type Fields = {
     enumerableNftTemplateId: HexString;
     collectionUri: HexString;
-    tokenBaseUri: HexString;
     collectionOwner: Address;
+    tokenBaseUri: HexString;
+    maxSupply: bigint;
+    mintPrice: bigint;
     totalSupply: bigint;
   };
 
@@ -53,12 +55,24 @@ export namespace NFTPreDesignedCollectionTypes {
       result: CallContractResult<HexString>;
     };
     mint: {
-      params: Omit<CallContractParams<{}>, "args">;
+      params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
     };
     getTokenUri: {
       params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
+    };
+    getCollectionOwner: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<Address>;
+    };
+    getMaxSupply: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    getMintPrice: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -117,9 +131,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "nftByIndex", params);
     },
     mint: async (
-      params: Omit<
-        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
-        "testArgs"
+      params: TestContractParams<
+        NFTPreDesignedCollectionTypes.Fields,
+        { index: bigint }
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
@@ -132,6 +146,38 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
+    getCollectionOwner: async (
+      params: Omit<
+        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<Address>> => {
+      return testMethod(this, "getCollectionOwner", params);
+    },
+    getMaxSupply: async (
+      params: Omit<
+        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getMaxSupply", params);
+    },
+    getMintPrice: async (
+      params: Omit<
+        TestContractParams<NFTPreDesignedCollectionTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getMintPrice", params);
+    },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPreDesignedCollectionTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -140,7 +186,7 @@ export const NFTPreDesignedCollection = new Factory(
   Contract.fromJson(
     NFTPreDesignedCollectionContractJson,
     "",
-    "f64ed2c6d97080d127f038b84ee66217ab0f9e8b2208e0ea7bb5eb6a853dea49"
+    "8ea18d05dc4a5caee4df26aad9796ab1611a016281ee1ccd58310c0b12b22178"
   )
 );
 
@@ -195,13 +241,13 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
       );
     },
     mint: async (
-      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
+      params: NFTPreDesignedCollectionTypes.CallMethodParams<"mint">
     ): Promise<NFTPreDesignedCollectionTypes.CallMethodResult<"mint">> => {
       return callMethod(
         NFTPreDesignedCollection,
         this,
         "mint",
-        params === undefined ? {} : params,
+        params,
         getContractByCodeHash
       );
     },
@@ -215,6 +261,45 @@ export class NFTPreDesignedCollectionInstance extends ContractInstance {
         this,
         "getTokenUri",
         params,
+        getContractByCodeHash
+      );
+    },
+    getCollectionOwner: async (
+      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getCollectionOwner">
+    ): Promise<
+      NFTPreDesignedCollectionTypes.CallMethodResult<"getCollectionOwner">
+    > => {
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "getCollectionOwner",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getMaxSupply: async (
+      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getMaxSupply">
+    ): Promise<
+      NFTPreDesignedCollectionTypes.CallMethodResult<"getMaxSupply">
+    > => {
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "getMaxSupply",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getMintPrice: async (
+      params?: NFTPreDesignedCollectionTypes.CallMethodParams<"getMintPrice">
+    ): Promise<
+      NFTPreDesignedCollectionTypes.CallMethodResult<"getMintPrice">
+    > => {
+      return callMethod(
+        NFTPreDesignedCollection,
+        this,
+        "getMintPrice",
+        params === undefined ? {} : params,
         getContractByCodeHash
       );
     },
