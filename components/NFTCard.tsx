@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { shortenAddress } from '../utils/address';
 import { shortenName } from '../utils';
 import { motion } from 'framer-motion';
-import { prettifyAttoAlphAmount } from '@alephium/web3';
+import { prettifyNumber, prettifyNumberConfig } from '@alephium/web3';
 
 interface NFTCardProps {
   nft: {
@@ -51,7 +51,7 @@ const NFTCard = ({ nft }: NFTCardProps) => {
             {
               nft.price ? (
                 <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-lg">
-                  {prettifyAttoAlphAmount(nft.price)} <span className="normal">ALPH</span>
+                  {formatNFTPrice(nft.price)} <span className="normal">ALPH</span>
                 </p>
               ) : null
             }
@@ -66,5 +66,27 @@ const NFTCard = ({ nft }: NFTCardProps) => {
     </Link>
   );
 };
+
+const prettifyConfig = {
+  ...prettifyNumberConfig['ALPH'],
+  maxDecimalPlaces: 2
+}
+
+function formatNFTPrice(price: bigint): string | undefined {
+  const priceStr = price.toString()
+  if (priceStr.length > 24) {
+    return prettifyNumberWithUnit(price, 24, 'M')
+  }
+  if (priceStr.length > 21) {
+    return prettifyNumberWithUnit(price, 21, 'K')
+  }
+  return prettifyNumberWithUnit(price, 18, '')
+}
+
+function prettifyNumberWithUnit(number: bigint, decimals: number, unit: string): string | undefined {
+  const prettifyAmount = prettifyNumber(number, decimals, prettifyConfig)
+  if (prettifyAmount === undefined) return undefined
+  return prettifyAmount + unit
+}
 
 export default NFTCard;
