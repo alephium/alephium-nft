@@ -1,7 +1,7 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
 import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
-import { fetchNFTListingState, fetchNonEnumerableNFTState } from "./contracts"
+import { fetchNFTListingState } from "./contracts"
 import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
@@ -103,12 +103,20 @@ async function fetchNFTListing(
     let collectionId: string | undefined
     if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
       const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
-      metadataUri = hexToString((await nonEnumerableNFTInstance.methods.getTokenUri()).returns)
-      collectionId = (await nonEnumerableNFTInstance.methods.getCollectionId()).returns
+      const multiCallResult = await nonEnumerableNFTInstance.multicall({
+        getTokenUri: {},
+        getCollectionId: {}
+      })
+      metadataUri = hexToString(multiCallResult.getTokenUri.returns)
+      collectionId = multiCallResult.getCollectionId.returns
     } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
       const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
-      metadataUri = hexToString((await enumerableNFTInstance.methods.getTokenUri()).returns)
-      collectionId = (await enumerableNFTInstance.methods.getCollectionId()).returns
+      const multiCallResult = await enumerableNFTInstance.multicall({
+        getTokenUri: {},
+        getCollectionId: {}
+      })
+      metadataUri = hexToString(multiCallResult.getTokenUri.returns)
+      collectionId = multiCallResult.getCollectionId.returns
     }
 
     if (metadataUri && collectionId) {

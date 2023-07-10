@@ -38,12 +38,3 @@ export async function waitTxConfirmed(
 }
 
 export const maxU256 = (1n << 256n) - 1n
-
-export function zeroPad(value: string, byteLength: number): string {
-  const expectedLength = 2 * byteLength
-  if (value.length < expectedLength) {
-    const prefix = Array(expectedLength - value.length).fill('0').join("")
-    return prefix + value
-  }
-  return value
-}

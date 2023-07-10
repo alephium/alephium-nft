@@ -2,11 +2,10 @@ import axios from "axios"
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
-import { fetchNFTListings, NFTListing } from "./NFTListing"
+import { fetchNFTListings } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
 import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
 import { contractExists } from "../utils/contracts"
-import { zeroPad } from "../utils"
 
 export interface NFTCollection {
   id: string,
@@ -173,14 +172,13 @@ export async function fetchNFTCollection(
   }
 }
 
-// TODO: Improve, using method calls
+// TODO: Improve using multi-call, but it doesn't seem to work for NFTPreDesignedCollection?
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ) {
   const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
-  // TODO: More reliable to use function to get metadata info
   if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
     const metadataUri = hexToString(state.immFields[1].value as string)
     const metadata = (await axios.get(metadataUri)).data
@@ -188,11 +186,9 @@ export async function fetchNFTCollectionMetadata(
     let collectionType: 'NFTOpenCollection' | 'NFTPreDesignedCollection'
     let maxSupply: bigint | undefined
     let mintPrice: bigint | undefined
-    let tokenBaseUri: string | undefined
 
     if (state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
       collectionType = "NFTPreDesignedCollection"
-      tokenBaseUri = state.immFields[3].value as string
       maxSupply = BigInt(state.immFields[4].value as string)
       mintPrice = BigInt(state.immFields[5].value as string)
     } else {
@@ -208,8 +204,7 @@ export async function fetchNFTCollectionMetadata(
       owner: state.immFields[2].value as string,
       image: metadata.image,
       maxSupply: maxSupply,
-      mintPrice: mintPrice,
-      tokenBaseUri: tokenBaseUri
+      mintPrice: mintPrice
     }
   }
 }

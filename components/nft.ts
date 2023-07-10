@@ -4,7 +4,6 @@ import { EnumerableNFT, EnumerableNFTInstance, NFTPreDesignedCollectionInstance,
 import { fetchNFTMarketplaceState } from '../utils/contracts'
 import { marketplaceContractId } from '../configs/nft'
 import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
-import { zeroPad } from "../utils"
 
 export interface NFT {
   name: string,
@@ -28,22 +27,27 @@ export async function fetchNFT(
   if (!!nodeProvider) {
     try {
       const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
-      console.log("nftState", nftState)
       if (nftState) {
         let metadataUri: string | undefined
         let collectionId: string | undefined
         if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
           const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
-          metadataUri = hexToString((await nonEnumerableNFTInstance.methods.getTokenUri()).returns)
-          collectionId = (await nonEnumerableNFTInstance.methods.getCollectionId()).returns
+          const multiCallResult = await nonEnumerableNFTInstance.multicall({
+            getTokenUri: {},
+            getCollectionId: {}
+          })
+          metadataUri = hexToString(multiCallResult.getTokenUri.returns)
+          collectionId = multiCallResult.getCollectionId.returns
         } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
           const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
-          metadataUri = hexToString((await enumerableNFTInstance.methods.getTokenUri()).returns)
-          collectionId = (await enumerableNFTInstance.methods.getCollectionId()).returns
+          const multiCallResult = await enumerableNFTInstance.multicall({
+            getTokenUri: {},
+            getCollectionId: {}
+          })
+          metadataUri = hexToString(multiCallResult.getTokenUri.returns)
+          collectionId = multiCallResult.getCollectionId.returns
         }
 
-        console.log("metadataUri", metadataUri)
-        console.log("collectionId", collectionId)
         if (metadataUri && collectionId) {
           try {
             const metadata = (await axios.get(metadataUri)).data
