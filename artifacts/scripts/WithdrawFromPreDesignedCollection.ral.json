@@ -1,0 +1,34 @@
+{
+  "version": "v2.3.4",
+  "name": "WithdrawFromPreDesignedCollection",
+  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0108",
+  "fieldsSig": {
+    "names": [
+      "to",
+      "amount",
+      "preDesignedCollection"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

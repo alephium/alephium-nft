@@ -1,0 +1,7 @@
+TxScript WithdrawFromPreDesignedCollection(
+    to: Address,
+    amount: U256,
+    preDesignedCollection: NFTPreDesignedCollection
+) {
+    preDesignedCollection.withdraw(to, amount)
+}

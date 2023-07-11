@@ -21,6 +21,7 @@ import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComis
 import { default as UpdateListingFeeScriptJson } from "../scripts/UpdateListingFee.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
 import { default as WithdrawFromMarketPlaceScriptJson } from "../scripts/WithdrawFromMarketPlace.ral.json";
+import { default as WithdrawFromPreDesignedCollectionScriptJson } from "../scripts/WithdrawFromPreDesignedCollection.ral.json";
 
 export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
@@ -67,3 +68,8 @@ export const WithdrawFromMarketPlace = new ExecutableScript<{
   amount: bigint;
   nftMarketplace: HexString;
 }>(Script.fromJson(WithdrawFromMarketPlaceScriptJson));
+export const WithdrawFromPreDesignedCollection = new ExecutableScript<{
+  to: Address;
+  amount: bigint;
+  preDesignedCollection: HexString;
+}>(Script.fromJson(WithdrawFromPreDesignedCollectionScriptJson));

@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
-import { MintOpenNFT, MintPreDesignedNFT } from '../artifacts/ts/scripts'
+import { MintOpenNFT, MintPreDesignedNFT, WithdrawFromPreDesignedCollection } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 import { nonEnumerableNFTTemplateId, enumerableNFTTemplateId } from '../configs/nft'
 
@@ -81,6 +81,23 @@ export class NFTCollection extends DeployHelpers {
           nftCollection: nftCollectionContractId
         },
         attoAlphAmount: BigInt(1.1e18) + mintPrice
+      }
+    )
+  }
+
+  async withdrawFromPreDesignedCollection(
+    to: string,
+    amount: bigint,
+    preDesignedCollectionId: string,
+  ) {
+    return await WithdrawFromPreDesignedCollection.execute(
+      this.signer,
+      {
+        initialFields: {
+          to: to,
+          amount: amount,
+          preDesignedCollection: preDesignedCollectionId
+        }
       }
     )
   }

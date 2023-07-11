@@ -141,6 +141,13 @@
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
+    },
+    "WithdrawFromPreDesignedCollection": {
+      "sourceFile": "scripts/withdraw_from_pre-designed-collection.ral",
+      "sourceCodeHash": "bda2526c5525057aaf1479133a60d1f3c622a9838625a07ab38374d1d35ed097",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
     }
   }
 }

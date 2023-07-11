@@ -30,6 +30,7 @@ describe('nft collection', function() {
     const mintPrice = ONE_ALPH
     const nftCollection = await getNFTCollection()
     const nftPreDesignedCollectionInstance = await getNftPreDesignedCollectionInstance(nftCollection, maxSupply, mintPrice)
+    const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
     const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     for (let i = 0n; i < maxSupply; i++) {
@@ -42,6 +43,10 @@ describe('nft collection', function() {
     await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 4n, mintPrice)).rejects.toThrow(Error)
     // Can't mint the NFT with out-of-bound index
     await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, maxSupply, mintPrice)).rejects.toThrow(Error)
+    // Withdraw too much
+    await expect(checkWithdraw(nftCollection, nftPreDesignedCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
+    // Successful Withdraw
+    await checkWithdraw(nftCollection, nftPreDesignedCollectionInstance.contractId, signerAddress, BigInt(10e18))
   }, 30000)
 
   it('should test minting nft non-sequentially in pre designed collection', async () => {
@@ -49,12 +54,12 @@ describe('nft collection', function() {
     const mintPrice = ONE_ALPH
     const nftCollection = await getNFTCollection()
     const nftPreDesignedCollectionInstance = await getNftPreDesignedCollectionInstance(nftCollection, maxSupply, mintPrice)
-    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
+    const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
+    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 0n, mintPrice)
     await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 6n, mintPrice)
     await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 9n, mintPrice)
-
     const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * 3n)
 
@@ -62,6 +67,10 @@ describe('nft collection', function() {
     await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 6n, mintPrice)).rejects.toThrow(Error)
     // Can't mint the NFT with out-of-bound index
     await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, maxSupply + 1n, mintPrice)).rejects.toThrow(Error)
+    // Withdraw too much
+    await expect(checkWithdraw(nftCollection, nftPreDesignedCollectionInstance.contractId, signerAddress, BigInt(3.1e18))).rejects.toThrow(Error)
+    // Successful Withdraw
+    await checkWithdraw(nftCollection, nftPreDesignedCollectionInstance.contractId, signerAddress, BigInt(3e18))
   }, 30000)
 })
 
@@ -141,4 +150,17 @@ async function getNftPreDesignedCollectionInstance(nftCollection: NFTCollection,
   expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
 
   return nftPreDesignedCollectionInstane
+}
+
+async function checkWithdraw(
+  nftCollection: NFTCollection,
+  preDesignedCollectionId: string,
+  to: string,
+  withdrawAmount: bigint
+) {
+  const preDesignedCollectionAddress = addressFromContractId(preDesignedCollectionId)
+  const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(preDesignedCollectionAddress)
+  await nftCollection.withdrawFromPreDesignedCollection(to, withdrawAmount, preDesignedCollectionId)
+  const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(preDesignedCollectionAddress)
+  expect(BigInt(balanceAfter.balance)).toEqual(BigInt(balanceBefore.balance) - withdrawAmount)
 }
