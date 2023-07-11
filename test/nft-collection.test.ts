@@ -37,6 +37,11 @@ describe('nft collection', function() {
     }
     const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * maxSupply)
+
+    // Can't mint the same NFT again
+    await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 4n, mintPrice)).rejects.toThrow(Error)
+    // Can't mint the NFT with out-of-bound index
+    await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, maxSupply, mintPrice)).rejects.toThrow(Error)
   }, 30000)
 
   it('should test minting nft non-sequentially in pre designed collection', async () => {
@@ -52,6 +57,11 @@ describe('nft collection', function() {
 
     const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * 3n)
+
+    // Can't mint the same NFT again
+    await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 6n, mintPrice)).rejects.toThrow(Error)
+    // Can't mint the NFT with out-of-bound index
+    await expect(mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, maxSupply + 1n, mintPrice)).rejects.toThrow(Error)
   }, 30000)
 })
 
