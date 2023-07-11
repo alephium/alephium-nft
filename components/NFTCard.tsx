@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { shortenAddress } from '../utils/address';
-import { shortenName } from '../utils/shortenName';
+import { shortenName } from '../utils';
 import { motion } from 'framer-motion';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
 

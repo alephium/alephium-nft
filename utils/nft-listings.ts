@@ -1,8 +1,7 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
 import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
-import { fetchNFTListingState } from "./contracts"
-import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
+import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NFTListingInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
 import axios from "axios"
@@ -87,9 +86,7 @@ async function fetchNFTListing(
   var listingState = undefined
 
   try {
-    listingState = await fetchNFTListingState(
-      addressFromContractId(listingContractId)
-    )
+    listingState = await new NFTListingInstance(addressFromContractId(listingContractId)).fetchState()
   } catch (e) {
     console.debug(`error fetching state for ${tokenId}`, e)
   }

@@ -1,5 +1,5 @@
 import * as web3 from '@alephium/web3'
-import { binToHex, contractIdFromAddress, NodeProvider, node } from '@alephium/web3'
+import { addressFromContractId, binToHex, contractIdFromAddress, NodeProvider, node } from '@alephium/web3'
 import * as base58 from 'bs58'
 import { randomBytes } from 'crypto'
 
@@ -38,3 +38,21 @@ export async function waitTxConfirmed(
 }
 
 export const maxU256 = (1n << 256n) - 1n
+
+export const shortenName = (name: string) => (
+  `${name.slice(0, 14)}...`
+);
+
+export async function contractExists(contractId: string, provider: NodeProvider): Promise<boolean> {
+  const address = addressFromContractId(contractId)
+  return provider
+    .addresses
+    .getAddressesAddressGroup(address)
+    .then(_ => true)
+    .catch((e: any) => {
+      if (e instanceof Error && e.message.indexOf("Group not found") !== -1) {
+        return false
+      }
+      throw e
+    })
+}

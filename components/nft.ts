@@ -1,7 +1,6 @@
 import axios from "axios"
 import useSWR from "swr"
-import { EnumerableNFT, EnumerableNFTInstance, NFTPreDesignedCollectionInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
-import { fetchNFTMarketplaceState } from '../utils/contracts'
+import { EnumerableNFT, EnumerableNFTInstance, NFTMarketPlaceInstance, NFTPreDesignedCollectionInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { marketplaceContractId } from '../configs/nft'
 import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
 
@@ -121,10 +120,7 @@ export const useCommissionRate = (
 
       web3.setCurrentNodeProvider(signerProvider.nodeProvider)
 
-      const marketplaceState = await fetchNFTMarketplaceState(
-        addressFromContractId(marketplaceContractId)
-      )
-
+      const marketplaceState = await new NFTMarketPlaceInstance(addressFromContractId(marketplaceContractId)).fetchState()
       return marketplaceState.fields.commissionRate as bigint
     },
     {

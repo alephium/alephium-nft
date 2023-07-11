@@ -10,11 +10,10 @@ import { fetchNFT, fetchPreMintNFT, NFT } from '../components/nft';
 import { fetchNFTListings, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
-import { shortenName } from '../utils/shortenName';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { waitTxConfirmed } from '../utils';
+import { waitTxConfirmed, shortenName } from '../utils';
 import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
 
 interface PaymentBodyCmpProps {

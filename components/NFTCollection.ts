@@ -5,7 +5,7 @@ import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
 import { fetchNFTListings } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
 import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
-import { contractExists } from "../utils/contracts"
+import { contractExists } from "../utils"
 
 export interface NFTCollection {
   id: string,

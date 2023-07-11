@@ -2,8 +2,7 @@ import { web3, subContractId, addressFromContractId, encodeU256, binToHex, group
 import { testNodeWallet } from '@alephium/web3-test'
 import * as utils from '../utils'
 import { NFTCollection } from '../utils/nft-collection'
-import { fetchNonEnumerableNFTState, fetchEnumerableNFTState } from '../utils/contracts'
-import { EnumerableNFTInstance, NFTOpenCollectionInstance, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
+import { EnumerableNFTInstance, NFTOpenCollectionInstance, NFTPreDesignedCollectionInstance, NonEnumerableNFTInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -68,7 +67,7 @@ async function mintOpenNFTAndVerify(
   // NFT doesn't exist yet
   await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
-  const nftContractState = await fetchNonEnumerableNFTState(addressFromContractId(nftContractId))
+  const nftContractState = await new NonEnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
   utils.checkHexString(nftContractState.fields.uri, getNFTUri(tokenIndex))
 
   return txId
@@ -90,7 +89,7 @@ async function mintPreDesignedNFTAndVerify(
   const nftByIndexResult = await nftPreDesignedCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-  const nftContractState = await fetchEnumerableNFTState(addressFromContractId(nftContractId))
+  const nftContractState = await new EnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
   expect(nftContractState.fields.collection).toEqual(nftPreDesignedCollectionInstance.contractId)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
   const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
