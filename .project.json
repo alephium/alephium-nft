@@ -1,7 +1,7 @@
 {
   "fullNodeVersion": "v2.3.4",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": true,
+    "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -95,9 +95,9 @@
     },
     "NFTPreDesignedCollection": {
       "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "aabff1f15b644c93d5810ccf59e3bed0cbef12398e79ed24a3493346c3723f82",
+      "sourceCodeHash": "182efae89aff6c43053fe88a0982715ed3135d7b3c69810ff90b7f7096def805",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "8ea18d05dc4a5caee4df26aad9796ab1611a016281ee1ccd58310c0b12b22178",
+      "codeHashDebug": "3d1df3ef100afd8333c395380ef5495148d33e7edafa6f73fff1a6dd572e6fe4",
       "warnings": []
     },
     "NonEnumerableNFT": {

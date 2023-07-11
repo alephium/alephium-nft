@@ -8,16 +8,22 @@ Contract NFTPreDesignedCollection(
     maxSupply: U256,
     mintPrice: U256,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply) {
+) {
+    enum ErrorCodes {
+        IncorrectTokenIndex = 0
+        NFTNotFound = 1
+        TokenOwnerAllowedOnly = 2
+    }
+
     @using(preapprovedAssets = true, updateFields = true, assetsInContract = true)
     pub fn mint(index: U256) -> (ByteVec) {
         checkCaller!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContract!(), totalSupply)
+        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContract!(), index)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(totalSupply),
+            toByteVec!(index),
             enumerableNftTemplateId,
             encodeImmutableFields,
             encodeMutableFields,
@@ -29,6 +35,24 @@ Contract NFTPreDesignedCollection(
 
         totalSupply = totalSupply + 1
         return contractId
+    }
+
+    @using(checkExternalCaller = false)
+    pub fn nftByIndex(index: U256) -> NFTPreDesignedCollection {
+        assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
+
+        let nftTokenId = subContractId!(toByteVec!(index))
+        assert!(contractExists!(nftTokenId), ErrorCodes.NFTNotFound)
+
+        return NFTPreDesignedCollection(nftTokenId)
+    }
+
+    pub fn getCollectionUri() -> ByteVec {
+        return collectionUri
+    }
+
+    pub fn totalSupply() -> U256 {
+        return totalSupply
     }
 
     pub fn getTokenUri(index: U256) -> ByteVec {

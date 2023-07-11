@@ -25,26 +25,33 @@ describe('nft collection', function() {
     }
   }, 60000)
 
-  it('should test minting nft in pre designed collection', async () => {
+  it('should test minting nft sequentially in pre designed collection', async () => {
     const maxSupply = 10n
     const mintPrice = ONE_ALPH
     const nftCollection = await getNFTCollection()
-    const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
-      maxSupply,
-      mintPrice,
-      "https://crypto-punk-uri",
-      "https://cryptopunks.app/cryptopunks/details/"
-    )
-    const nftPreDesignedCollectionInstane = nftCollectionDeployTx.contractInstance
+    const nftPreDesignedCollectionInstance = await getNftPreDesignedCollectionInstance(nftCollection, maxSupply, mintPrice)
 
-    const signer = await testNodeWallet()
-    const ownerAccount = await signer.getSelectedAccount()
-    const nftCollectionState = await nftPreDesignedCollectionInstane.fetchState()
-    expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
-
+    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
     for (let i = 0n; i < maxSupply; i++) {
-      await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstane, i, mintPrice)
+      await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, i, mintPrice)
     }
+    const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
+    expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * maxSupply)
+  }, 30000)
+
+  it('should test minting nft non-sequentially in pre designed collection', async () => {
+    const maxSupply = 10n
+    const mintPrice = ONE_ALPH
+    const nftCollection = await getNFTCollection()
+    const nftPreDesignedCollectionInstance = await getNftPreDesignedCollectionInstance(nftCollection, maxSupply, mintPrice)
+    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
+
+    await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 0n, mintPrice)
+    await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 6n, mintPrice)
+    await mintPreDesignedNFTAndVerify(nftCollection, nftPreDesignedCollectionInstance, 9n, mintPrice)
+
+    const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPreDesignedCollectionInstance.address)
+    expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * 3n)
   }, 30000)
 })
 
@@ -107,4 +114,21 @@ async function getNFTCollection() {
 const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
 function getNFTUri(tokenIndex: bigint): string {
   return `${nftBaseUri}${tokenIndex}`
+}
+
+async function getNftPreDesignedCollectionInstance(nftCollection: NFTCollection, maxSupply: bigint, mintPrice: bigint) {
+  const nftCollectionDeployTx = await nftCollection.createPreDesignedCollection(
+    maxSupply,
+    mintPrice,
+    "https://crypto-punk-uri",
+    "https://cryptopunks.app/cryptopunks/details/"
+  )
+  const nftPreDesignedCollectionInstane = nftCollectionDeployTx.contractInstance
+
+  const signer = await testNodeWallet()
+  const ownerAccount = await signer.getSelectedAccount()
+  const nftCollectionState = await nftPreDesignedCollectionInstane.fetchState()
+  expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
+
+  return nftPreDesignedCollectionInstane
 }
