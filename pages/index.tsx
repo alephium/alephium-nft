@@ -111,8 +111,8 @@ const Home = () => {
   };
 
   return (
-    <div className="flex justify-center sm:px-4 p-12">
-      <div className="w-full minmd:w-4/5">
+    <div className="flex justify-center p-12">
+      <div className="w-full ml-32 mr-32 md:ml-20 md:mr-20 sm:ml-10 sm:mr-10">
         {
           <>
             <div>
@@ -173,8 +173,10 @@ const Home = () => {
                   <LoaderWithText text={`Loading...`} />
                 ) : (
                   <>
-                    <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                      {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, minted: true, ...nft }} />)}
+                    <div className="mt-3">
+                      <div className="grid-container">
+                        {nftListings.map((nft) => <NFTCard key={nft._id} nft={{ tokenId: nft._id, minted: true, ...nft }} />)}
+                      </div>
                     </div>
                     {
                       pageCount !== 0 && < ReactPaginate
