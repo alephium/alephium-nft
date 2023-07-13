@@ -1,6 +1,7 @@
 import axios from "axios"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { NFTCard, SearchBar } from '.';
+import { InfiniteScroll } from "./InfiniteScroll";
 
 export interface NFTListing {
   _id: string,
@@ -61,7 +62,6 @@ export function ListNFTListings() {
   const [hasMore, setHasMore] = useState<boolean>(false)
   const [totalCount, setTotalCount] = useState<number | undefined>()
   const [page, setPage] = useState<number>(0)
-  const target = useRef(null)
   const pageSize = 20
 
   useEffect(() => {
@@ -109,26 +109,9 @@ export function ListNFTListings() {
     }
   }, [page, searchText, activeSelect, totalCount])
 
-  useEffect(() => {
-    let cancelled = false
-    const observer = new IntersectionObserver(entries => {
-      const firstEntry = entries[0]
-      if (firstEntry.isIntersecting && !isLoading && hasMore && !cancelled) {
-        setPage(prevPage => prevPage + 1)
-      }
-    }, { root: null, threshold: 1.0 })
-
-    if (target.current) {
-      observer.observe(target.current)
-    }
-    const targetRef = target.current
-    return () => {
-      cancelled = true
-      if (targetRef) {
-        observer.unobserve(targetRef)
-      }
-    }
-  }, [isLoading, hasMore])
+  const onNextPage = () => {
+    setPage(prevPage => prevPage + 1)
+  }
 
   const reset = () => {
     setNftListing([])
@@ -183,16 +166,18 @@ export function ListNFTListings() {
           />
         </div>
       </div>
-      {
-        <>
-          <div className="mt-3">
-            <div className="grid-container">
-              {displayNFTListings(nftListings)}
+      <InfiniteScroll onNextPage={onNextPage} hasMore={hasMore} isLoading={isLoading}>
+        {({bottomSentinelRef}) => {
+          return <>
+            <div className="mt-3">
+              <div className="grid-container">
+                {displayNFTListings(nftListings)}
+              </div>
             </div>
-          </div>
-          <div ref={target}></div>
-        </>
-      }
+            <div ref={bottomSentinelRef}></div>
+          </>
+        }}
+      </InfiniteScroll>
       {
         (totalCount !== undefined && totalCount === 0) ? (
           <div className="flex justify-center sm:px-4 p-12" >
