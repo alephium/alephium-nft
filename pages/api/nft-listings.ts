@@ -17,10 +17,11 @@ const nftListingsHandler = Validate({
 
       await trySaveNewNFTListings()
 
+      const idOrder = (priceOrder === 'asc' || priceOrder === 'ascending') ? -1 : 1
       const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
       const skipped = page * size
       const listings = priceOrder ?
-        await NFTListing.find(filterArgs).sort({ "price": priceOrder }).collation({ locale: "en_US", numericOrdering: true }).skip(skipped).limit(size) :
+        await NFTListing.find(filterArgs).sort({ "price": priceOrder, "_id": idOrder }).collation({ locale: "en_US", numericOrdering: true }).skip(skipped).limit(size) :
         await NFTListing.find(filterArgs).sort({ "createdAt": -1 }).skip(skipped).limit(size)
       res.json(listings)
     } catch (err) {
