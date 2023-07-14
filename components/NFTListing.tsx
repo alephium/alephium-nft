@@ -1,3 +1,4 @@
+import { Address } from "@alephium/web3";
 import axios from "axios"
 import { useEffect, useState } from "react";
 import { NFTCard, SearchBar } from '.';
@@ -27,7 +28,6 @@ function toPriceOrder(activeSelect: string): string | undefined {
 }
 
 export async function fetchNFTListings(
-  address?: string,
   priceOrder?: string,
   searchText?: string,
   page?: number,
@@ -45,13 +45,17 @@ export async function fetchNFTListings(
   }
 
   const result = await axios.get(url)
-  const nftListings: NFTListing[] = result.data
+  return result.data
+}
 
-  if (address) {
-    return nftListings.filter((listing) => listing.tokenOwner === address)
-  } else {
-    return nftListings
-  }
+export async function fetchNFTListingById(id: string): Promise<NFTListing | undefined> {
+  const result = await axios.get(`api/nft-listing-by-id/${id}`)
+  return result.data === null ? undefined : result.data
+}
+
+export async function fetchNFTListingsByOwner(owner: Address): Promise<NFTListing[]> {
+  const result = await axios.get(`api/nft-listings-by-owner/${owner}`)
+  return result.data
 }
 
 export function ListNFTListings() {
@@ -92,7 +96,7 @@ export function ListNFTListings() {
       const fetchCount = remainCount > pageSize ? pageSize : remainCount
       return [...prev, ...Array(fetchCount).fill(undefined)]
     })
-    fetchNFTListings(undefined, toPriceOrder(activeSelect), searchText, page, pageSize)
+    fetchNFTListings(toPriceOrder(activeSelect), searchText, page, pageSize)
       .then((listings) => {
         if (!cancelled) {
           setHasMore(listings.length === pageSize)

@@ -2,7 +2,7 @@ import axios from "axios"
 import useSWR from "swr"
 import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
-import { fetchNFTListings } from "./NFTListing"
+import { fetchNFTListingsByOwner } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
 import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
 import { contractExists } from "../utils"
@@ -29,7 +29,7 @@ export async function fetchListedNFTs(
   if (signerProvider.nodeProvider) {
     const items = []
     web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-    const listings = await fetchNFTListings(address)
+    const listings = await fetchNFTListingsByOwner(address)
     for (var listing of listings) {
       const index = items.findIndex((item) => item.id === listing.collectionId)
       if (index === -1) {

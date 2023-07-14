@@ -7,7 +7,7 @@ import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
 import { fetchNFT, fetchPreMintNFT, NFT } from '../components/nft';
-import { fetchNFTListings, NFTListing } from '../components/NFTListing';
+import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
@@ -80,7 +80,7 @@ const AssetDetails = () => {
   const [isNFTLoading, setIsNFTLoading] = useState<boolean>(false)
   const [tokenIds, setTokenIds] = useState<string[]>([])
   const [isTokensLoading, setIsTokensLoading] = useState<boolean>(false)
-  const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [nftListing, setNftListing] = useState<NFTListing | undefined>()
   const [isNFTListingLoading, setIsNFTListingLoading] = useState<boolean>(false)
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
@@ -118,8 +118,8 @@ const AssetDetails = () => {
 
 
       setIsNFTListingLoading(true)
-      fetchNFTListings().then((listings) => {
-        setNftListing(listings)
+      fetchNFTListingById(tokenId as string).then((listing) => {
+        setNftListing(listing)
         setIsNFTListingLoading(false)
       })
     }
@@ -138,7 +138,6 @@ const AssetDetails = () => {
     return <Loader />;
   }
 
-  const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
   const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === context.account?.address)
 
   function getPriceBreakdowns(nftPrice: bigint) {

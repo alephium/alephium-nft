@@ -84,16 +84,9 @@ export default function CollectionDetails() {
                     {collection.maxSupply ? `Minted NFTs ${collection.totalSupply}; Max Supply ${collection.maxSupply}` : `Minted NFTs ${collection.totalSupply}`}
                   </p>
                 </div>
-                {
-                  collection.nfts.map((nft, i) => {
-                    return (
-                      <NFTCard
-                        key={i}
-                        nft={nft}
-                      />
-                    )
-                  })
-                }
+                <div className='grid-container w-full'>
+                  {collection.nfts.map((nft, i) => <NFTCard key={i} nft={nft}/>)}
+                </div>
               </div>
 
               <div className="flex flex-row sm:flex-col mt-10">
