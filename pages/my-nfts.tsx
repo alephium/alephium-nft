@@ -71,8 +71,8 @@ const MyNFTs = () => {
           <h1 className="font-poppins dark:text-white text-nft-black-1 font-extrabold text-3xl">No NFTs Owned!</h1>
         </div>
       ) : (
-        <div className="sm:px-4 p-12 w-full minmd:w-4/5 flexCenter flex-col">
-          <div className="mt-3 w-full flex flex-wrap">
+        <div className="sm:px-4 p-12 w-full ml-32 mr-32 md:ml-20 md:mr-20 sm:ml-10 sm:mr-10 mt-3">
+          <div className="grid-container">
             {nftCollections.flatMap((nftCollection) => {
               return nftCollection.nfts.map((nft) => {
                 return (
