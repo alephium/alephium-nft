@@ -1,6 +1,7 @@
 // This is for the scenario where an artist or AI creates a set of arts
-// in advance and sell to the public for minting
-Contract NFTPreDesignedCollection(
+// in advance and sell to the public for minting, users can mint any of
+// the arts in the collection by paying the mint price.
+Contract NFTPublicSaleCollectionRandom(
     enumerableNftTemplateId: ByteVec,
     collectionUri: ByteVec,
     collectionOwner: Address,
@@ -38,13 +39,13 @@ Contract NFTPreDesignedCollection(
     }
 
     @using(checkExternalCaller = false)
-    pub fn nftByIndex(index: U256) -> NFTPreDesignedCollection {
+    pub fn nftByIndex(index: U256) -> NFTPublicSaleCollectionRandom {
         assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let nftTokenId = subContractId!(toByteVec!(index))
         assert!(contractExists!(nftTokenId), ErrorCodes.NFTNotFound)
 
-        return NFTPreDesignedCollection(nftTokenId)
+        return NFTPublicSaleCollectionRandom(nftTokenId)
     }
 
     pub fn getCollectionUri() -> ByteVec {

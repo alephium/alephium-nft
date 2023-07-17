@@ -4,12 +4,12 @@ import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
-import { NFTOpenCollection, NFTPreDesignedCollection } from "../artifacts/ts"
+import { NFTOpenCollection, NFTPublicSaleCollectionRandom } from "../artifacts/ts"
 import { contractExists } from "../utils"
 
 export interface NFTCollection {
   id: string,
-  collectionType: 'NFTOpenCollection' | 'NFTPreDesignedCollection',
+  collectionType: 'NFTOpenCollection' | 'NFTPublicSaleCollection',
   name: string,
   description: string,
   owner: string,
@@ -172,23 +172,23 @@ export async function fetchNFTCollection(
   }
 }
 
-// TODO: Improve using multi-call, but it doesn't seem to work for NFTPreDesignedCollection?
+// TODO: Improve using multi-call, but it doesn't seem to work for NFTPublicSaleCollection?
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ) {
   const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
-  if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
+  if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPublicSaleCollectionRandom.contract.codeHash) {
     const metadataUri = hexToString(state.immFields[1].value as string)
     const metadata = (await axios.get(metadataUri)).data
 
-    let collectionType: 'NFTOpenCollection' | 'NFTPreDesignedCollection'
+    let collectionType: 'NFTOpenCollection' | 'NFTPublicSaleCollection'
     let maxSupply: bigint | undefined
     let mintPrice: bigint | undefined
 
-    if (state.codeHash == NFTPreDesignedCollection.contract.codeHash) {
-      collectionType = "NFTPreDesignedCollection"
+    if (state.codeHash == NFTPublicSaleCollectionRandom.contract.codeHash) {
+      collectionType = "NFTPublicSaleCollection"
       maxSupply = BigInt(state.immFields[4].value as string)
       mintPrice = BigInt(state.immFields[5].value as string)
     } else {

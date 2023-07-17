@@ -1,0 +1,7 @@
+TxScript WithdrawFromPublicSaleCollection(
+    to: Address,
+    amount: U256,
+    nftCollection: NFTPublicSaleCollectionRandom
+) {
+    nftCollection.withdraw(to, amount)
+}

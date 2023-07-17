@@ -1,7 +1,7 @@
 {
   "fullNodeVersion": "v2.3.4",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -25,7 +25,7 @@
     },
     "EnumerableNFT": {
       "sourceFile": "nft/enumerable-nft.ral",
-      "sourceCodeHash": "ec4a3bc76fe5dbaef892d13b493ea31f76a35d3e09304d1c5ace8a8b61dfb0f4",
+      "sourceCodeHash": "dee8a7a3ac5cd46f5f5d31c2a2df36fd3bbb63fd43320f27da5b88a602735c00",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "9754329f7623044ec5edeb7a3349eb36066ec1140fb41e2ba5828685df1e1012",
       "warnings": []
@@ -58,9 +58,9 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "MintPreDesignedNFT": {
-      "sourceFile": "scripts/mint_pre_designed_nft.ral",
-      "sourceCodeHash": "005be15209066c433ba14db36b298f0074fd53d683e82eafebb487559cf45a46",
+    "MintSpecificPublicSaleNFT": {
+      "sourceFile": "scripts/mint_specific_public_sale_nft.ral",
+      "sourceCodeHash": "410576e3d5646cdbface29cb5455dbb4f73d5211efaa3337a9d8c5e102b63727",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -93,9 +93,9 @@
       "codeHashDebug": "fb23053f2696a73cad5756f9ea077152c5adaecd408491b06300b3291698dd28",
       "warnings": []
     },
-    "NFTPreDesignedCollection": {
-      "sourceFile": "nft/nft-pre-designed-collection.ral",
-      "sourceCodeHash": "cf40007a8781e0a48842cb8cfde12805b23b9c11c62d5d71976b43b33e5279ed",
+    "NFTPublicSaleCollectionRandom": {
+      "sourceFile": "nft/nft_public_sale_colletion_random.ral",
+      "sourceCodeHash": "0f85d0c9d358fd690341ee8c07a29830bac48907042360a4d9cee09ad2997872",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "3d1df3ef100afd8333c395380ef5495148d33e7edafa6f73fff1a6dd572e6fe4",
       "warnings": []
@@ -142,9 +142,9 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "WithdrawFromPreDesignedCollection": {
-      "sourceFile": "scripts/withdraw_from_pre-designed-collection.ral",
-      "sourceCodeHash": "bda2526c5525057aaf1479133a60d1f3c622a9838625a07ab38374d1d35ed097",
+    "WithdrawFromPublicSaleCollection": {
+      "sourceFile": "scripts/withdraw_from_public_sale_collection.ral",
+      "sourceCodeHash": "4d4608cadbef112ce1e2bdd85d886f7575886dade06c7645f8a448aa5779f31a",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

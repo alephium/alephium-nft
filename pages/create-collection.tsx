@@ -93,7 +93,7 @@ export default function CreateCollections() {
     }
   }
 
-  async function createPreDesignedCollection() {
+  async function createPublicSaleCollectionRandom() {
     const { tokenBaseUri } = formInput
     // Verify that this URL is correct, metadata is valid
     if (!tokenBaseUri) return
@@ -103,7 +103,7 @@ export default function CreateCollections() {
     if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollection(context.signerProvider)
       setIsCreatingCollection(true)
-      const createCollectionTxResult = await nftCollection.createPreDesignedCollection(maxSupply, ONE_ALPH, collectionUri, tokenBaseUri)
+      const createCollectionTxResult = await nftCollection.createPublicSaleCollectionRandom(maxSupply, ONE_ALPH, collectionUri, tokenBaseUri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
       router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
     } else {

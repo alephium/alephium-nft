@@ -165,7 +165,7 @@ const AssetDetails = () => {
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
           const nftCollection = new NFTCollectionHelper(context.signerProvider)
-          result = await nftCollection.mintPreDesignedNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
+          result = await nftCollection.mintSpecificPublicSaleNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
         }
 
         setPaymentModal(false);

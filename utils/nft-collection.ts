@@ -1,7 +1,7 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
-import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPreDesignedCollection, NFTPreDesignedCollectionInstance } from '../artifacts/ts'
-import { MintOpenNFT, MintPreDesignedNFT, WithdrawFromPreDesignedCollection } from '../artifacts/ts/scripts'
+import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance } from '../artifacts/ts'
+import { MintOpenNFT, MintSpecificPublicSaleNFT, WithdrawFromPublicSaleCollection } from '../artifacts/ts/scripts'
 import { DeployContractResult } from '@alephium/web3'
 import { nonEnumerableNFTTemplateId, enumerableNFTTemplateId } from '../configs/nft'
 
@@ -26,14 +26,14 @@ export class NFTCollection extends DeployHelpers {
     return nftCollectionDeployTx
   }
 
-  async createPreDesignedCollection(
+  async createPublicSaleCollectionRandom(
     maxSupply: bigint,
     mintPrice: bigint,
     collectionUri: string,
     baseUri: string
-  ): Promise<DeployContractResult<NFTPreDesignedCollectionInstance>> {
+  ): Promise<DeployContractResult<NFTPublicSaleCollectionRandomInstance>> {
     const ownerAddress = (await this.signer.getSelectedAccount()).address
-    const nftCollectionDeployTx = await NFTPreDesignedCollection.deploy(
+    const nftCollectionDeployTx = await NFTPublicSaleCollectionRandom.deploy(
       this.signer,
       {
         initialFields: {
@@ -67,12 +67,12 @@ export class NFTCollection extends DeployHelpers {
     )
   }
 
-  async mintPreDesignedNFT(
+  async mintSpecificPublicSaleNFT(
     index: bigint,
     mintPrice: bigint,
     nftCollectionContractId: string,
   ) {
-    return await MintPreDesignedNFT.execute(
+    return await MintSpecificPublicSaleNFT.execute(
       this.signer,
       {
         initialFields: {
@@ -85,18 +85,18 @@ export class NFTCollection extends DeployHelpers {
     )
   }
 
-  async withdrawFromPreDesignedCollection(
+  async withdrawFromPublicSaleCollection(
     to: string,
     amount: bigint,
-    preDesignedCollectionId: string,
+    nftCollectionId: string,
   ) {
-    return await WithdrawFromPreDesignedCollection.execute(
+    return await WithdrawFromPublicSaleCollection.execute(
       this.signer,
       {
         initialFields: {
           to: to,
           amount: amount,
-          preDesignedCollection: preDesignedCollectionId
+          nftCollection: nftCollectionId
         }
       }
     )
