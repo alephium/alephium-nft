@@ -6,6 +6,7 @@ Contract NFTPublicSaleCollectionSequential(
     nftBaseUri: ByteVec,
     collectionOwner: Address,
     maxSupply: U256,
+    mintPrice: U256,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply){
     @using(preapprovedAssets = true, updateFields = true)
@@ -23,6 +24,8 @@ Contract NFTPublicSaleCollectionSequential(
             1,
             minter
         )
+
+        transferTokenToSelf!(minter, ALPH, mintPrice)
 
         totalSupply = totalSupply + 1
         return contractId

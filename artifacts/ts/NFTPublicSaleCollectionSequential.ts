@@ -35,6 +35,7 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
     nftBaseUri: HexString;
     collectionOwner: Address;
     maxSupply: bigint;
+    mintPrice: bigint;
     totalSupply: bigint;
   };
 
@@ -159,7 +160,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "f08c5d8f22cb62471f4bb10c79c820c3935ec3b9483368a2a77709c301c376c2"
+    "d540a48e7d77afa02e305e4f373a9a9512270a7169bef4fa803c4eed929fedcf"
   )
 );
 

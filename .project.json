@@ -1,7 +1,7 @@
 {
   "fullNodeVersion": "v2.3.4",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -109,9 +109,9 @@
     },
     "NFTPublicSaleCollectionSequential": {
       "sourceFile": "nft/nft_public_sale_colletion_sequential.ral",
-      "sourceCodeHash": "ffdbeb5820bebe3145e45594d600e692996cd19c9405bc1d6eee7ca0b74d72d9",
+      "sourceCodeHash": "49e83a5730373c6e72c80252cdbce44d37f4b67e5443710dc28eec9d93e498e2",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "f08c5d8f22cb62471f4bb10c79c820c3935ec3b9483368a2a77709c301c376c2",
+      "codeHashDebug": "d540a48e7d77afa02e305e4f373a9a9512270a7169bef4fa803c4eed929fedcf",
       "warnings": []
     },
     "NonEnumerableNFT": {
