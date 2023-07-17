@@ -205,10 +205,25 @@ export default function CreateCollections() {
     <>
       <div className="flex justify-center sm:px-4 p-12">
         <div className="w-3/5 md:w-full">
-          {collectionImage()}
-          {collectionName()}
-          {collectionDescription()}
-          {createCollectionButton(() => createOpenCollection())}
+          <Tabs>
+            <TabList>
+              <Tab>Open Collection</Tab>
+              <Tab>Pre-designed Collection</Tab>
+            </TabList>
+            <TabPanel>
+              {collectionImage()}
+              {collectionName()}
+              {collectionDescription()}
+              {createCollectionButton(() => createOpenCollection())}
+            </TabPanel>
+            <TabPanel>
+              {collectionImage()}
+              {collectionTokenBaseURI()}
+              {collectionName()}
+              {collectionDescription()}
+              {createCollectionButton(() => createPreDesignedCollection())}
+            </TabPanel>
+          </Tabs>
         </div>
       </div>
     </>
