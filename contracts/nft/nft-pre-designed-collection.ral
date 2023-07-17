@@ -15,9 +15,9 @@ Contract NFTPreDesignedCollection(
         TokenOwnerAllowedOnly = 2
     }
 
-    @using(preapprovedAssets = true, updateFields = true, assetsInContract = true)
+    @using(preapprovedAssets = true, updateFields = true, assetsInContract = true, checkExternalCaller = false)
     pub fn mint(index: U256) -> (ByteVec) {
-        checkCaller!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
+        assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
         let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContract!(), index)

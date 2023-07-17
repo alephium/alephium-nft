@@ -1,6 +1,6 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
-import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
+import { NodeProvider, hexToString, addressFromContractId, web3, groupOfAddress } from '@alephium/web3'
 import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NFTListingInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
@@ -94,7 +94,7 @@ async function fetchNFTListing(
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
     const tokenAddress = addressFromContractId(tokenId)
     const nodeProvider = web3.getCurrentNodeProvider()
-    const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
+    const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: groupOfAddress(tokenAddress) })
 
     let metadataUri: string | undefined
     let collectionId: string | undefined
