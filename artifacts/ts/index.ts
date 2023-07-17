@@ -7,5 +7,6 @@ export * from "./NFTMarketPlace";
 export * from "./EnumerableNFT";
 export * from "./NFTOpenCollection";
 export * from "./NFTPublicSaleCollectionRandom";
+export * from "./NFTPublicSaleCollectionSequential";
 export * from "./NonEnumerableNFT";
 export * from "./scripts";

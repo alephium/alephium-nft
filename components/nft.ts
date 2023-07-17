@@ -81,7 +81,7 @@ export async function fetchPreMintNFT(
     try {
       const collectionAddress = addressFromContractId(collectionId)
       const collection = new NFTPublicSaleCollectionRandomInstance(collectionAddress)
-      const tokenUri = hexToString((await collection.methods.getTokenUri({ args: { index: tokenIndex } })).returns)
+      const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
       if (mintPrice === undefined) {
         mintPrice = (await collection.methods.getMintPrice()).returns
       }

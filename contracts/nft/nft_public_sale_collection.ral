@@ -1,0 +1,16 @@
+Abstract Contract NFTPublicSaleCollection(
+    nftBaseUri: ByteVec,
+    maxSupply: U256
+) {
+    enum PublicSaleErrorCodes {
+        IncorrectTokenIndex = 0
+    }
+
+    pub fn getNFTUri(index: U256) -> ByteVec {
+        assert!(index < maxSupply, PublicSaleErrorCodes.IncorrectTokenIndex)
+        return nftBaseUri ++ u256ToString!(index)
+    }
+
+    @using(assetsInContract = true)
+    pub fn withdraw(to: Address, amount: U256) -> ()
+}

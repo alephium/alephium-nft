@@ -1,14 +1,14 @@
 {
   "version": "v2.3.4",
   "name": "NFTPublicSaleCollectionRandom",
-  "bytecode": "07094050406b4074407d4091409a40a340ac40bd010101050140251600ce04310c7bb41701b116001406414c5048000313036413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa10016040201000102010f1600ce04310c7b160040cb17011601c50d7b160102010000000102ce0102010000000102a0000201000101010a1600ce04310c7bce031600894402010000000102ce0202010000000102ce0402010000000102ce0502010202020008b4ce02450e7b16001601a8",
-  "codeHash": "3d1df3ef100afd8333c395380ef5495148d33e7edafa6f73fff1a6dd572e6fe4",
+  "bytecode": "070911402540794094409d40a640af40b840c1010202020008b4ce02450e7b16001601a801000101010a1600ce04310c7bce031600894402010101050140271600ce04310c7bb41701b11600000116001406414c5048000313046413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa10016040201000102010f1600ce04310c7b160040cb17011601c50d7b160102010000000102ce0102010000000102a00002010000000102ce0202010000000102ce0402010000000102ce0502",
+  "codeHash": "5e6f60c8c0f79a224708f4d89541bcb6b27e3aed519c7e181468da1b4a4d38af",
   "fieldsSig": {
     "names": [
       "enumerableNftTemplateId",
       "collectionUri",
       "collectionOwner",
-      "tokenBaseUri",
+      "nftBaseUri",
       "maxSupply",
       "mintPrice",
       "totalSupply"
@@ -34,6 +34,43 @@
   },
   "eventsSig": [],
   "functions": [
+    {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getNFTUri",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
     {
       "name": "mint",
       "usePreapprovedAssets": true,
@@ -95,24 +132,6 @@
       ]
     },
     {
-      "name": "getTokenUri",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [
-        "index"
-      ],
-      "paramTypes": [
-        "U256"
-      ],
-      "paramIsMutable": [
-        false
-      ],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
       "name": "getCollectionOwner",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
@@ -147,29 +166,22 @@
       "returnTypes": [
         "U256"
       ]
-    },
-    {
-      "name": "withdraw",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": true,
-      "isPublic": true,
-      "paramNames": [
-        "to",
-        "amount"
-      ],
-      "paramTypes": [
-        "Address",
-        "U256"
-      ],
-      "paramIsMutable": [
-        false,
-        false
-      ],
-      "returnTypes": []
     }
   ],
   "constants": [],
   "enums": [
+    {
+      "name": "PublicSaleErrorCodes",
+      "fields": [
+        {
+          "name": "IncorrectTokenIndex",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        }
+      ]
+    },
     {
       "name": "ErrorCodes",
       "fields": [

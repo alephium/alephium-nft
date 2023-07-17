@@ -39,7 +39,7 @@ export class NFTCollection extends DeployHelpers {
         initialFields: {
           enumerableNftTemplateId: enumerableNFTTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
-          tokenBaseUri: web3.stringToHex(baseUri),
+          nftBaseUri: web3.stringToHex(baseUri),
           collectionOwner: ownerAddress,
           maxSupply: maxSupply,
           mintPrice: mintPrice,

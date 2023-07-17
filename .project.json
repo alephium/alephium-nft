@@ -1,7 +1,7 @@
 {
   "fullNodeVersion": "v2.3.4",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": true,
+    "ignoreUnusedConstantsWarnings": false,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -25,9 +25,9 @@
     },
     "EnumerableNFT": {
       "sourceFile": "nft/enumerable-nft.ral",
-      "sourceCodeHash": "dee8a7a3ac5cd46f5f5d31c2a2df36fd3bbb63fd43320f27da5b88a602735c00",
+      "sourceCodeHash": "849192355b70dea9643a091b778d2cece2e75dc18a2f814813bb28878d15bca1",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "9754329f7623044ec5edeb7a3349eb36066ec1140fb41e2ba5828685df1e1012",
+      "codeHashDebug": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
       "warnings": []
     },
     "INFT": {
@@ -93,11 +93,25 @@
       "codeHashDebug": "fb23053f2696a73cad5756f9ea077152c5adaecd408491b06300b3291698dd28",
       "warnings": []
     },
+    "NFTPublicSaleCollection": {
+      "sourceFile": "nft/nft_public_sale_collection.ral",
+      "sourceCodeHash": "4483b85280c3c666ab913fe60567ad4d4164cd4ddb3a44ed56a14253d53c4d81",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "NFTPublicSaleCollectionRandom": {
       "sourceFile": "nft/nft_public_sale_colletion_random.ral",
-      "sourceCodeHash": "0f85d0c9d358fd690341ee8c07a29830bac48907042360a4d9cee09ad2997872",
+      "sourceCodeHash": "95c0719dac3b2a079c61522dced3907b542c3412f05761bd7ba6485a47152dbf",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "3d1df3ef100afd8333c395380ef5495148d33e7edafa6f73fff1a6dd572e6fe4",
+      "codeHashDebug": "5e6f60c8c0f79a224708f4d89541bcb6b27e3aed519c7e181468da1b4a4d38af",
+      "warnings": []
+    },
+    "NFTPublicSaleCollectionSequential": {
+      "sourceFile": "nft/nft_public_sale_colletion_sequential.ral",
+      "sourceCodeHash": "ffdbeb5820bebe3145e45594d600e692996cd19c9405bc1d6eee7ca0b74d72d9",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "f08c5d8f22cb62471f4bb10c79c820c3935ec3b9483368a2a77709c301c376c2",
       "warnings": []
     },
     "NonEnumerableNFT": {

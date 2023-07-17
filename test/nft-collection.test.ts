@@ -116,7 +116,7 @@ async function mintSpecificPublicSaleNFTAndVerify(
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
   const nftContractState = await new EnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
-  expect(nftContractState.fields.collection).toEqual(nftPublicSaleCollectionInstance.contractId)
+  expect(nftContractState.fields.collectionId).toEqual(nftPublicSaleCollectionInstance.contractId)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
   const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
   const tokenUri = (await nftInstance.methods.getTokenUri()).returns

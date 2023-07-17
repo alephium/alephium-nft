@@ -5,11 +5,11 @@ Contract NFTPublicSaleCollectionRandom(
     enumerableNftTemplateId: ByteVec,
     collectionUri: ByteVec,
     collectionOwner: Address,
-    tokenBaseUri: ByteVec,
+    nftBaseUri: ByteVec,
     maxSupply: U256,
     mintPrice: U256,
     mut totalSupply: U256
-) {
+) extends NFTPublicSaleCollection(nftBaseUri, maxSupply) {
     enum ErrorCodes {
         IncorrectTokenIndex = 0
         NFTNotFound = 1
@@ -21,7 +21,7 @@ Contract NFTPublicSaleCollectionRandom(
         assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContract!(), index)
+        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),
@@ -54,11 +54,6 @@ Contract NFTPublicSaleCollectionRandom(
 
     pub fn totalSupply() -> U256 {
         return totalSupply
-    }
-
-    pub fn getTokenUri(index: U256) -> ByteVec {
-        assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
-        return tokenBaseUri ++ u256ToString!(index)
     }
 
     pub fn getCollectionOwner() -> Address {
