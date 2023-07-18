@@ -9,7 +9,7 @@ Contract NFTPublicSaleCollectionSequential(
     mintPrice: U256,
     maxBatchMintSize: U256,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply){
+) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice){
     enum ErrorCodes {
         IncorrectTokenIndex = 2
         InvalidMintBatchSize = 3

@@ -9,7 +9,7 @@ Contract NFTPublicSaleCollectionRandom(
     maxSupply: U256,
     mintPrice: U256,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply) {
+) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice) {
     enum ErrorCodes {
         IncorrectTokenIndex = 2
     }
@@ -42,10 +42,6 @@ Contract NFTPublicSaleCollectionRandom(
 
     pub fn getMaxSupply() -> U256 {
         return maxSupply
-    }
-
-    pub fn getMintPrice() -> U256 {
-        return mintPrice
     }
 
     @using(assetsInContract = true)
