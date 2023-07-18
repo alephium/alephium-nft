@@ -4,7 +4,7 @@ import { NETWORK } from '../configs/nft'
 import { NFT, fetchNFT, fetchPreMintNFT } from './nft'
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
-import { NFTOpenCollection, NFTPublicSaleCollectionRandom } from "../artifacts/ts"
+import { NFTOpenCollection, NFTPublicSaleCollectionSequential } from "../artifacts/ts"
 import { contractExists } from "../utils"
 
 export interface NFTCollection {
@@ -18,6 +18,7 @@ export interface NFTCollection {
   nfts: NFT[],
   maxSupply?: bigint
   mintPrice?: bigint
+  maxBatchMintSize?: number
 }
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
@@ -179,18 +180,20 @@ export async function fetchNFTCollectionMetadata(
   const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
-  if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPublicSaleCollectionRandom.contract.codeHash) {
+  if (state.codeHash == NFTOpenCollection.contract.codeHash || state.codeHash == NFTPublicSaleCollectionSequential.contract.codeHash) {
     const metadataUri = hexToString(state.immFields[1].value as string)
     const metadata = (await axios.get(metadataUri)).data
 
     let collectionType: 'NFTOpenCollection' | 'NFTPublicSaleCollection'
     let maxSupply: bigint | undefined
     let mintPrice: bigint | undefined
+    let maxBatchMintSize: number | undefined
 
-    if (state.codeHash == NFTPublicSaleCollectionRandom.contract.codeHash) {
+    if (state.codeHash == NFTPublicSaleCollectionSequential.contract.codeHash) {
       collectionType = "NFTPublicSaleCollection"
       maxSupply = BigInt(state.immFields[4].value as string)
       mintPrice = BigInt(state.immFields[5].value as string)
+      maxBatchMintSize = parseInt(state.immFields[6].value as string)
     } else {
       collectionType = "NFTOpenCollection"
     }
@@ -204,7 +207,8 @@ export async function fetchNFTCollectionMetadata(
       owner: state.immFields[2].value as string,
       image: metadata.image,
       maxSupply: maxSupply,
-      mintPrice: mintPrice
+      mintPrice: mintPrice,
+      maxBatchMintSize: maxBatchMintSize
     }
   }
 }
