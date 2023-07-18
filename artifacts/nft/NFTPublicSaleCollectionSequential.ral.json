@@ -1,8 +1,8 @@
 {
-  "version": "v2.3.4",
+  "version": "v2.3.5",
   "name": "NFTPublicSaleCollectionSequential",
-  "bytecode": "08060912402d403e405240a6010000000102ce0102010000000102a0000201000102010f1600a000310c7b160040cb17011601c50d7b160102010202020008b4ce03450e7b16001601a801000101010a1600ce04310c7bce02160089440201030004014027b417001600ce03450e7bb1a0000004a0001406414c5048000313046413006417021701160013c40de0b6b3a7640000a2a00040ce00160116020d1600c917031600ce05a9a0000d2aa100160302",
-  "codeHash": "d540a48e7d77afa02e305e4f373a9a9512270a7169bef4fa803c4eed929fedcf",
+  "bytecode": "0908091240264037404b408540b84116010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b160102010202020008b4ce03450d7b16001601a801000101010a1600ce04310c7bce021600894402000302040117b11601000416011406414c5048000313046413006417031702160013c40de0b6b3a7640000a2160140ce00160216030d1600c9020101000a0117a000ce04310e7bb41700160013c40de0b6b3a7640000a21600a000000517011600ce05a9a0000d2aa100160102010101040140311600ce06320f7b1600ce04a0002b32107bb41701140017020c170316031600314c101602160113c40de0b6b3a7640000a21601a00016032a000544170216030d2a17034a2c1601ce0516002ca9a00016002aa100160202",
+  "codeHash": "9616ea1924074e77a59dfa90614bf240f17279abb96e18ac4914689214a4e0f9",
   "fieldsSig": {
     "names": [
       "enumerableNftTemplateId",
@@ -11,6 +11,7 @@
       "collectionOwner",
       "maxSupply",
       "mintPrice",
+      "maxBatchMintSize",
       "totalSupply",
       "__stdInterfaceId"
     ],
@@ -22,9 +23,11 @@
       "U256",
       "U256",
       "U256",
+      "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -117,13 +120,52 @@
       ]
     },
     {
-      "name": "mint",
+      "name": "mint_",
       "usePreapprovedAssets": true,
       "useAssetsInContract": false,
+      "isPublic": false,
+      "paramNames": [
+        "minter",
+        "index"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "mint",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
       "isPublic": true,
       "paramNames": [],
       "paramTypes": [],
       "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "mintBatch",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "size"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": [
         "ByteVec"
       ]
@@ -147,24 +189,38 @@
       "name": "ErrorCodes",
       "fields": [
         {
-          "name": "IncorrectTokenIndex",
+          "name": "NFTNotFound",
           "value": {
             "type": "U256",
             "value": "0"
           }
         },
         {
-          "name": "NFTNotFound",
+          "name": "TokenOwnerAllowedOnly",
           "value": {
             "type": "U256",
             "value": "1"
           }
         },
         {
-          "name": "TokenOwnerAllowedOnly",
+          "name": "IncorrectTokenIndex",
           "value": {
             "type": "U256",
             "value": "2"
+          }
+        },
+        {
+          "name": "InvalidMintBatchSize",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        },
+        {
+          "name": "InsufficientNumOfUnminted",
+          "value": {
+            "type": "U256",
+            "value": "4"
           }
         }
       ]

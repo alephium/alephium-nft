@@ -1,0 +1,4 @@
+TxScript MintBatchSequential(nftCollection: NFTPublicSaleCollectionSequential, batchSize: U256, mintPrice: U256) {
+  let alphAmount = batchSize * (1 alph + mintPrice)
+  nftCollection.mintBatch{callerAddress!() -> ALPH: alphAmount}(batchSize)
+}

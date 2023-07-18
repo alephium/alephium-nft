@@ -42,18 +42,6 @@ export namespace NFTPublicSaleCollectionRandomTypes {
   export type State = ContractState<Fields>;
 
   export interface CallMethodTable {
-    getNFTUri: {
-      params: CallContractParams<{ index: bigint }>;
-      result: CallContractResult<HexString>;
-    };
-    mint: {
-      params: CallContractParams<{ index: bigint }>;
-      result: CallContractResult<HexString>;
-    };
-    nftByIndex: {
-      params: CallContractParams<{ index: bigint }>;
-      result: CallContractResult<HexString>;
-    };
     getCollectionUri: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
@@ -61,6 +49,18 @@ export namespace NFTPublicSaleCollectionRandomTypes {
     totalSupply: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
+    };
+    nftByIndex: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+    getNFTUri: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+    mint: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
     };
     getCollectionOwner: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -96,9 +96,9 @@ class Factory extends ContractFactory<
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
-      IncorrectTokenIndex: BigInt(0),
-      NFTNotFound: BigInt(1),
-      TokenOwnerAllowedOnly: BigInt(2),
+      NFTNotFound: BigInt(0),
+      TokenOwnerAllowedOnly: BigInt(1),
+      IncorrectTokenIndex: BigInt(2),
     },
   };
 
@@ -107,6 +107,30 @@ class Factory extends ContractFactory<
   }
 
   tests = {
+    getCollectionUri: async (
+      params: Omit<
+        TestContractParams<NFTPublicSaleCollectionRandomTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionUri", params);
+    },
+    totalSupply: async (
+      params: Omit<
+        TestContractParams<NFTPublicSaleCollectionRandomTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "totalSupply", params);
+    },
+    nftByIndex: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionRandomTypes.Fields,
+        { index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "nftByIndex", params);
+    },
     withdraw: async (
       params: TestContractParams<
         NFTPublicSaleCollectionRandomTypes.Fields,
@@ -130,30 +154,6 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
-    },
-    nftByIndex: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionRandomTypes.Fields,
-        { index: bigint }
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "nftByIndex", params);
-    },
-    getCollectionUri: async (
-      params: Omit<
-        TestContractParams<NFTPublicSaleCollectionRandomTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionUri", params);
-    },
-    totalSupply: async (
-      params: Omit<
-        TestContractParams<NFTPublicSaleCollectionRandomTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "totalSupply", params);
     },
     getCollectionOwner: async (
       params: Omit<
@@ -187,7 +187,7 @@ export const NFTPublicSaleCollectionRandom = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomContractJson,
     "",
-    "5e6f60c8c0f79a224708f4d89541bcb6b27e3aed519c7e181468da1b4a4d38af"
+    "bbd736e7f8ff0bba72d43395748893bb362affe4dce73be0af966933204bd801"
   )
 );
 
@@ -202,43 +202,6 @@ export class NFTPublicSaleCollectionRandomInstance extends ContractInstance {
   }
 
   methods = {
-    getNFTUri: async (
-      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"getNFTUri">
-    ): Promise<
-      NFTPublicSaleCollectionRandomTypes.CallMethodResult<"getNFTUri">
-    > => {
-      return callMethod(
-        NFTPublicSaleCollectionRandom,
-        this,
-        "getNFTUri",
-        params,
-        getContractByCodeHash
-      );
-    },
-    mint: async (
-      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"mint">
-    ): Promise<NFTPublicSaleCollectionRandomTypes.CallMethodResult<"mint">> => {
-      return callMethod(
-        NFTPublicSaleCollectionRandom,
-        this,
-        "mint",
-        params,
-        getContractByCodeHash
-      );
-    },
-    nftByIndex: async (
-      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"nftByIndex">
-    ): Promise<
-      NFTPublicSaleCollectionRandomTypes.CallMethodResult<"nftByIndex">
-    > => {
-      return callMethod(
-        NFTPublicSaleCollectionRandom,
-        this,
-        "nftByIndex",
-        params,
-        getContractByCodeHash
-      );
-    },
     getCollectionUri: async (
       params?: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"getCollectionUri">
     ): Promise<
@@ -262,6 +225,43 @@ export class NFTPublicSaleCollectionRandomInstance extends ContractInstance {
         this,
         "totalSupply",
         params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    nftByIndex: async (
+      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"nftByIndex">
+    ): Promise<
+      NFTPublicSaleCollectionRandomTypes.CallMethodResult<"nftByIndex">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionRandom,
+        this,
+        "nftByIndex",
+        params,
+        getContractByCodeHash
+      );
+    },
+    getNFTUri: async (
+      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"getNFTUri">
+    ): Promise<
+      NFTPublicSaleCollectionRandomTypes.CallMethodResult<"getNFTUri">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionRandom,
+        this,
+        "getNFTUri",
+        params,
+        getContractByCodeHash
+      );
+    },
+    mint: async (
+      params: NFTPublicSaleCollectionRandomTypes.CallMethodParams<"mint">
+    ): Promise<NFTPublicSaleCollectionRandomTypes.CallMethodResult<"mint">> => {
+      return callMethod(
+        NFTPublicSaleCollectionRandom,
+        this,
+        "mint",
+        params,
         getContractByCodeHash
       );
     },

@@ -75,11 +75,7 @@ class Factory extends ContractFactory<
   NFTOpenCollectionTypes.Fields
 > {
   consts = {
-    ErrorCodes: {
-      IncorrectTokenIndex: BigInt(0),
-      NFTNotFound: BigInt(1),
-      TokenOwnerAllowedOnly: BigInt(2),
-    },
+    ErrorCodes: { NFTNotFound: BigInt(0), TokenOwnerAllowedOnly: BigInt(1) },
   };
 
   at(address: string): NFTOpenCollectionInstance {
@@ -127,7 +123,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "fb23053f2696a73cad5756f9ea077152c5adaecd408491b06300b3291698dd28"
+    "8e5fc066857bf3b9f44512aaabe7921d0593b82b9f1153c5582ce6c2ac7a52cd"
   )
 );
 

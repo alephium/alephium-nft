@@ -36,6 +36,7 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
     collectionOwner: Address;
     maxSupply: bigint;
     mintPrice: bigint;
+    maxBatchMintSize: bigint;
     totalSupply: bigint;
   };
 
@@ -62,6 +63,10 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
+    mintBatch: {
+      params: CallContractParams<{ size: bigint }>;
+      result: CallContractResult<HexString>;
+    };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
     CallMethodTable[T]["params"];
@@ -84,9 +89,11 @@ class Factory extends ContractFactory<
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
-      IncorrectTokenIndex: BigInt(0),
-      NFTNotFound: BigInt(1),
-      TokenOwnerAllowedOnly: BigInt(2),
+      NFTNotFound: BigInt(0),
+      TokenOwnerAllowedOnly: BigInt(1),
+      IncorrectTokenIndex: BigInt(2),
+      InvalidMintBatchSize: BigInt(3),
+      InsufficientNumOfUnminted: BigInt(4),
     },
   };
 
@@ -141,6 +148,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getNFTUri", params);
     },
+    mint_: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { minter: Address; index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "mint_", params);
+    },
     mint: async (
       params: Omit<
         TestContractParams<
@@ -152,6 +167,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    mintBatch: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { size: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "mintBatch", params);
+    },
   };
 }
 
@@ -160,7 +183,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "d540a48e7d77afa02e305e4f373a9a9512270a7169bef4fa803c4eed929fedcf"
+    "9616ea1924074e77a59dfa90614bf240f17279abb96e18ac4914689214a4e0f9"
   )
 );
 
@@ -237,6 +260,19 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
         this,
         "mint",
         params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    mintBatch: async (
+      params: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"mintBatch">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"mintBatch">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequential,
+        this,
+        "mintBatch",
+        params,
         getContractByCodeHash
       );
     },

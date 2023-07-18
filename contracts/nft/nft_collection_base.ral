@@ -5,9 +5,8 @@ Abstract Contract NFTCollectionBase(
     mut totalSupply: U256
 ) implements INFTCollection {
     enum ErrorCodes {
-        IncorrectTokenIndex = 0
-        NFTNotFound = 1
-        TokenOwnerAllowedOnly = 2
+        NFTNotFound = 0
+        TokenOwnerAllowedOnly = 1
     }
 
     pub fn getCollectionUri() -> ByteVec {
@@ -20,8 +19,6 @@ Abstract Contract NFTCollectionBase(
 
     @using(checkExternalCaller = false)
     pub fn nftByIndex(index: U256) -> INFT {
-        assert!(index < totalSupply, ErrorCodes.IncorrectTokenIndex)
-
         let nftTokenId = subContractId!(toByteVec!(index))
         assert!(contractExists!(nftTokenId), ErrorCodes.NFTNotFound)
 

@@ -7,28 +7,56 @@ Contract NFTPublicSaleCollectionSequential(
     collectionOwner: Address,
     maxSupply: U256,
     mintPrice: U256,
+    maxBatchMintSize: U256,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply){
-    @using(preapprovedAssets = true, updateFields = true)
-    pub fn mint() -> (ByteVec) {
-        let minter = callerAddress!()
-        checkCaller!(minter == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
+    enum ErrorCodes {
+        IncorrectTokenIndex = 2
+        InvalidMintBatchSize = 3
+        InsufficientNumOfUnminted = 4
+    }
 
-        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContractId!(), getNFTUri(totalSupply), totalSupply)
-
-        let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(totalSupply),
+    @using(preapprovedAssets = true)
+    fn mint_(minter: Address, index: U256) -> ByteVec {
+        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
+        return copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
+            toByteVec!(index),
             enumerableNftTemplateId,
             encodeImmutableFields,
             encodeMutableFields,
             1,
             minter
         )
+    }
+
+    @using(preapprovedAssets = true, updateFields = true, assetsInContract = true, checkExternalCaller = false)
+    pub fn mint() -> (ByteVec) {
+        assert!(totalSupply < maxSupply, ErrorCodes.IncorrectTokenIndex)
+
+        let minter = callerAddress!()
+        let contractId = mint_{minter -> ALPH: 1 alph}(minter, totalSupply)
 
         transferTokenToSelf!(minter, ALPH, mintPrice)
 
         totalSupply = totalSupply + 1
         return contractId
+    }
+
+    @using(preapprovedAssets = true, updateFields = true, assetsInContract = true, checkExternalCaller = false)
+    pub fn mintBatch(size: U256) -> ByteVec {
+        assert!(size <= maxBatchMintSize, ErrorCodes.InvalidMintBatchSize)
+        assert!(size <= (maxSupply - totalSupply), ErrorCodes.InsufficientNumOfUnminted)
+
+        let minter = callerAddress!()
+        let mut contractIds = #
+        for (let mut i = 0; i < size; i = i + 1) {
+            contractIds = contractIds ++ mint_{minter -> ALPH: 1 alph}(minter, totalSupply + i)
+        }
+
+        transferTokenToSelf!(minter, ALPH, mintPrice * size)
+
+        totalSupply = totalSupply + size
+        return contractIds
     }
 
     @using(assetsInContract = true)
