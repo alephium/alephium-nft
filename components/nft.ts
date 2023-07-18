@@ -1,6 +1,6 @@
 import axios from "axios"
 import useSWR from "swr"
-import { EnumerableNFT, EnumerableNFTInstance, NFTMarketPlaceInstance, NFTPublicSaleCollectionRandomInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
+import { EnumerableNFT, EnumerableNFTInstance, NFTMarketPlaceInstance, NFTPublicSaleCollectionSequentialInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
 import { marketplaceContractId } from '../configs/nft'
 import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
 
@@ -80,7 +80,7 @@ export async function fetchPreMintNFT(
   if (!!nodeProvider) {
     try {
       const collectionAddress = addressFromContractId(collectionId)
-      const collection = new NFTPublicSaleCollectionRandomInstance(collectionAddress)
+      const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
       const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
       if (mintPrice === undefined) {
         mintPrice = (await collection.methods.getMintPrice()).returns

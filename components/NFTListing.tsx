@@ -3,6 +3,7 @@ import axios from "axios"
 import { useEffect, useState } from "react";
 import { NFTCard, SearchBar } from '.';
 import { InfiniteScroll } from "./InfiniteScroll";
+import { NFTSkeletonLoader } from "./NFTCard";
 
 export interface NFTListing {
   _id: string,
@@ -149,7 +150,7 @@ export function ListNFTListings() {
   const displayNFTListings = (listings: (NFTListing | undefined)[]) => {
     return listings.map((nft, index) => {
       if (nft === undefined) {
-        return <SkeletonLoader key={index}/>
+        return <NFTSkeletonLoader key={index}/>
       } else {
         return <NFTCard key={nft._id} nft={{tokenId: nft._id, minted: true, ...nft}}/>
       }
@@ -192,24 +193,6 @@ export function ListNFTListings() {
         ) : null
       }
     </div>
-    </div>
-  )
-}
-
-const SkeletonLoader = () => {
-  return (
-    <div className="w-full">
-      <div className="animate-pulse">
-        <div className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 h-52 sm:h-48 minmd:h-60 minlg:h-280 rounded"></div>
-      </div>
-      <div className="mt-2">
-        <div className="animate-pulse">
-          <div className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 h-4 w-1/2 mb-2 rounded"></div>
-        </div>
-        <div className="animate-pulse">
-          <div className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 h-4 w-full rounded"></div>
-        </div>
-      </div>
     </div>
   )
 }

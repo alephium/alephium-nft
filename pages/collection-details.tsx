@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { fetchNFTCollection, NFTCollection } from '../components/NFTCollection'
+import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata } from '../components/NFTCollection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -11,14 +11,17 @@ import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount, web3 } from '@a
 import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
 import { waitTxConfirmed } from '../utils';
 import LoaderWithText from '../components/LoaderWithText';
+import { NFT } from '../components/nft';
+import { InfiniteScroll } from "../components/InfiniteScroll";
+import { NFTSkeletonLoader } from '../components/NFTCard';
 
-const MintBatch = ({ collection } : { collection: NFTCollection}) => {
+const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTCollectionMetadata}) => {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const [batchSize, setBatchSize] = useState(1)
   const minBatchSize = 1
-  const maxBatchSize = collection.maxBatchMintSize!
+  const maxBatchSize = collectionMetadata.maxBatchMintSize!
 
   const updateValue = (newValue: number) => {
     if (newValue >= minBatchSize && newValue <= maxBatchSize) {
@@ -36,10 +39,10 @@ const MintBatch = ({ collection } : { collection: NFTCollection}) => {
 
   const mintBatch = async () => {
     try {
-      if (context.signerProvider?.nodeProvider && context.account && collection) {
+      if (context.signerProvider?.nodeProvider && context.account && collectionMetadata) {
         const nftCollection = new NFTCollectionHelper(context.signerProvider)
         setIsMinting(true)
-        const result = await nftCollection.mintBatchSequential(BigInt(batchSize), collection.mintPrice!, collection.id)
+        const result = await nftCollection.mintBatchSequential(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id)
         await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
         setIsMinting(false)
         router.push('/my-nfts')
@@ -53,7 +56,7 @@ const MintBatch = ({ collection } : { collection: NFTCollection}) => {
   return (
     <div className="flex flex-col">
       <div className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">Public Sale</div>
-      <div className="text-sm font-light mt-1">{prettifyAttoAlphAmount(collection.mintPrice!)} ALPH</div>
+      <div className="text-sm font-light mt-1">{prettifyAttoAlphAmount(collectionMetadata.mintPrice!)} ALPH</div>
       <div className="flex flex-row border-box ">
         <div className="flex items-center mt-2 h-10">
           <button
@@ -91,8 +94,13 @@ export default function CollectionDetails() {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { collectionId } = router.query
-  const [isNFTCollectionLoading, setIsNFTCollectionLoading] = useState<boolean>(false)
-  const [collection, setCollection] = useState<NFTCollection | undefined>(undefined)
+  const [isMetadataLoading, setIsMetadataLoading] = useState<boolean>(false)
+  const [collectionMetadata, setCollectionMetadata] = useState<NFTCollectionMetadata | undefined>()
+  const [nfts, setNFTs] = useState<(NFT | undefined)[]>([])
+  const [isNFTsLoading, setIsNFTsLoading] = useState<boolean>(false)
+  const [hasMore, setHasMore] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(0)
+  const pageSize = 20
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
@@ -101,17 +109,50 @@ export default function CollectionDetails() {
     web3.setCurrentExplorerProvider(explorerProvider)
 
     if (collectionId) {
-      setIsNFTCollectionLoading(true)
-      fetchNFTCollection(collectionId as string).then((result) => {
-        setIsNFTCollectionLoading(false)
-        setCollection(result)
-      })
+      setIsMetadataLoading(true)
+      fetchNFTCollectionMetadata(collectionId as string)
+        .then((result) => {
+          setIsMetadataLoading(false)
+          setCollectionMetadata(result)
+        })
+        .catch((error) => {
+          setIsMetadataLoading(false)
+          console.error(`failed to loading collection metadata, collection id: ${collectionId}, error: ${error}`)
+        })
     }
   }, [collectionId])
 
+  useEffect(() => {
+    if (collectionMetadata === undefined) return
+
+    let cancelled = false
+    setIsNFTsLoading(true)
+    setNFTs(prev => {
+      const maxSupply = collectionMetadata.collectionType === 'NFTOpenCollection' ? Number(collectionMetadata.totalSupply) : Number(collectionMetadata.maxSupply!)
+      const remainCount = maxSupply - prev.length
+      const fetchCount = remainCount > pageSize ? pageSize : remainCount
+      return [...prev, ...Array(fetchCount).fill(undefined)]
+    })
+    fetchNFTByPage(collectionMetadata, page, pageSize)
+      .then((nfts) => {
+        if (!cancelled) {
+          setHasMore(nfts.length === pageSize)
+          setIsNFTsLoading(false)
+          setNFTs(prev => [...prev.filter((v) => v !== undefined), ...nfts])
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) setIsNFTsLoading(false)
+        console.error(`failed to load nft listings, error: ${err}`)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [page, collectionMetadata])
+
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
 
-  if (isNFTCollectionLoading) {
+  if (isMetadataLoading) {
     return (
       <div className="flexStart min-h-screen">
         <Loader />
@@ -119,20 +160,30 @@ export default function CollectionDetails() {
     );
   }
 
+  const onNextPage = () => {
+    setPage(prevPage => prevPage + 1)
+  }
+
+  const displayNFTs = (listings: (NFT | undefined)[]) => {
+    return listings.map((nft, index) => {
+      return nft === undefined ? (<NFTSkeletonLoader key={index}/>) : (<NFTCard key={index} nft={nft}/>)
+    })
+  }
+
   return (
     <>
       {
-        collection && (
+        collectionMetadata && (
           <div className="relative flex flex-col w-full">
             <div className="relative flex justify-center md:flex-col">
               <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
                 <div className="relative sm:w-full sm:h-300 w-full h-557">
-                  <Image src={collection.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
+                  <Image src={collectionMetadata.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
                 </div>
               </div>
               <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
                 <div className="flex flex-row sm:flex-col">
-                  <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{collection.name}</h2>
+                  <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{collectionMetadata.name}</h2>
                 </div>
 
                 <div className="mt-10">
@@ -142,7 +193,7 @@ export default function CollectionDetails() {
                       <Image src={images.creator1} objectFit="cover" className="rounded-full" />
                     </div>
                     <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-                      {shortenAddress(collection.owner)}
+                      {shortenAddress(collectionMetadata.owner)}
                     </p>
                   </div>
                 </div>
@@ -153,22 +204,22 @@ export default function CollectionDetails() {
                   </div>
                   <div className="mt-3">
                     <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
-                      {collection.description}
+                      {collectionMetadata.description}
                     </p>
                   </div>
                 </div>
                 <div className="mt-10 flex flex-wrap">
                   <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                     <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
-                      {collection.maxSupply ? `Minted NFTs ${collection.totalSupply}; Max Supply ${collection.maxSupply}` : `Minted NFTs ${collection.totalSupply}`}
+                      {collectionMetadata.maxSupply ? `Minted NFTs ${collectionMetadata.totalSupply}; Max Supply ${collectionMetadata.maxSupply}` : `Minted NFTs ${collectionMetadata.totalSupply}`}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-row sm:flex-col mt-10">
                   {
-                    collection.collectionType === 'NFTOpenCollection' ? (
-                      (context.account?.address != collection.owner) ? (
+                    collectionMetadata.collectionType === 'NFTOpenCollection' ? (
+                      (context.account?.address != collectionMetadata.owner) ? (
                         <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
                           Only collection owner can mint NFT
                         </p>
@@ -176,18 +227,25 @@ export default function CollectionDetails() {
                         <Button
                           btnName={"Mint More"}
                           classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                          handleClick={() => router.push(`/mint-nft?collectionId=${collection.id}`)}
+                          handleClick={() => router.push(`/mint-nft?collectionId=${collectionMetadata.id}`)}
                         />
                       )
-                    ) : (<MintBatch collection={collection}/>)
+                    ) : (<MintBatch collectionMetadata={collectionMetadata}/>)
                   }
                 </div>
               </div>
             </div>
 
-            <div className="grid-container sm:px-4 p-12">
-              {collection.nfts.map((nft, i) => <NFTCard key={i} nft={nft}/>)}
-            </div>
+            <InfiniteScroll onNextPage={onNextPage} hasMore={hasMore} isLoading={isNFTsLoading}>
+              {({bottomSentinelRef}) => {
+                return <>
+                  <div className="grid-container sm:px-4 p-12">
+                    {displayNFTs(nfts)}
+                  </div>
+                  <div ref={bottomSentinelRef}></div>
+                </>
+              }}
+            </InfiniteScroll>
           </div>
         )
       }

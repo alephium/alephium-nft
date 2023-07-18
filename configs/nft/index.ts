@@ -1,6 +1,6 @@
 export const NETWORK: NetworkId = process.env.NEXT_PUBLIC_NETWORK as NetworkId || 'devnet'
 
-import { addressFromContractId, NetworkId } from '@alephium/web3'
+import { addressFromContractId, groupOfAddress, NetworkId } from '@alephium/web3'
 import { loadDeployments } from '../../artifacts/ts/deployments'
 
 import devnetConfig from './devnet.json'
@@ -18,3 +18,4 @@ const config = NETWORK === 'devnet' ? devnetConfig : NETWORK === 'testnet' ? tes
 export const defaultNodeUrl = config.defaultNodeUrl
 export const defaultExplorerUrl = config.defaultExplorerUrl
 export const mongoUrl = config.mongodbUrl
+export const groupIndex = groupOfAddress(marketplaceContractAddress)
