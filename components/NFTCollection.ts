@@ -21,6 +21,8 @@ export interface NFTCollection {
   maxBatchMintSize?: number
 }
 
+export type NFTCollectionMetadata = Omit<NFTCollection, 'nfts'>
+
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
 export async function fetchListedNFTs(
@@ -176,7 +178,7 @@ export async function fetchNFTCollection(
 // TODO: Improve using multi-call, but it doesn't seem to work for NFTPublicSaleCollection?
 export async function fetchNFTCollectionMetadata(
   collectionId: string
-) {
+): Promise<NFTCollectionMetadata | undefined> {
   const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
@@ -213,11 +215,11 @@ export async function fetchNFTCollectionMetadata(
   }
 }
 
-export const useCollection = (
+export const useCollectionMetadata = (
   collectionId?: string,
   signerProvider?: SignerProvider
 ) => {
-  const { data: collection, error, ...rest } = useSWR(
+  const { data: collectionMetadata, error, ...rest } = useSWR(
     collectionId &&
     signerProvider?.nodeProvider &&
     signerProvider?.explorerProvider &&
@@ -233,7 +235,7 @@ export const useCollection = (
       web3.setCurrentNodeProvider(signerProvider.nodeProvider)
       web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
 
-      return await fetchNFTCollection(collectionId as string)
+      return await fetchNFTCollectionMetadata(collectionId as string)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,
@@ -241,7 +243,7 @@ export const useCollection = (
     },
   )
 
-  return { collection, ...rest }
+  return { collectionMetadata, ...rest }
 }
 
 export const getAccountIdentifier = (account: Account) =>
