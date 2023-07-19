@@ -6,7 +6,7 @@ import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTColl
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
-import { fetchNFT, fetchPreMintNFT, NFT } from '../components/nft';
+import { fetchMintedNFT, fetchPreMintNFT, NFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
@@ -105,7 +105,7 @@ const AssetDetails = () => {
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchNFT(tokenId as string, false).then((nft) => {
+      fetchMintedNFT(tokenId as string, false).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
