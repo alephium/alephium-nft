@@ -115,15 +115,15 @@
       "warnings": []
     },
     "NFTPublicSaleCollectionRandom": {
-      "sourceFile": "nft/nft_public_sale_colletion_random.ral",
+      "sourceFile": "nft/nft_public_sale_collection_random.ral",
       "sourceCodeHash": "bebf773599acbc424442d148c43e01767d40649fdd66c9902dfd380e49073342",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "91c8ad7e2ce5e1ffae7c0f16f5f613876ab96e9795325d8a6f6f803c32bb9727",
       "warnings": []
     },
     "NFTPublicSaleCollectionSequential": {
-      "sourceFile": "nft/nft_public_sale_colletion_sequential.ral",
-      "sourceCodeHash": "880e76a1c18bab6f80aa4942107c795af8a94410f18719132f0f6719a0d8c239",
+      "sourceFile": "nft/nft_public_sale_collection_sequential.ral",
+      "sourceCodeHash": "13d428c8114f3a8e243549ce55b047d1cb0e15b1626b8043102b34f925ef8386",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "38281e7c64a3595f6086618e9bb4a04da89143852eb2e646c03c5ace7ee9aa4d",
       "warnings": []
