@@ -11,9 +11,9 @@ import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount, web3 } from '@a
 import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
 import { waitTxConfirmed } from '../utils';
 import LoaderWithText from '../components/LoaderWithText';
-import { NFT } from '../components/nft';
 import { InfiniteScroll } from "../components/InfiniteScroll";
 import { NFTSkeletonLoader } from '../components/NFTCard';
+import { NFT } from '../utils/nft';
 
 const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTCollectionMetadata}) => {
   const context = useAlephiumConnectContext()

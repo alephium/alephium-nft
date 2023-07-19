@@ -1,9 +1,9 @@
 import axios from "axios"
 import useSWR from "swr"
 import { groupIndex, NETWORK } from '../configs/nft'
-import { NFT } from './nft'
-import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256, groupOfAddress, sleep, NodeProvider } from "@alephium/web3"
+import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, contractIdFromAddress, Account, subContractId, encodeU256 } from "@alephium/web3"
 import { NFTOpenCollection, NFTOpenCollectionTypes, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialTypes } from "../artifacts/ts"
+import { NFT } from "../utils/nft"
 
 export interface NFTCollection {
   id: string,

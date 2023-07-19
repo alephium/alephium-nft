@@ -3,7 +3,6 @@ import LoaderWithText from '../components/LoaderWithText';
 import withTransition from '../components/withTransition';
 import { Button, Input, Loader } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
-import { NFT } from '../components/nft'
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { convertAlphAmountWithDecimals } from '@alephium/web3';
 import { marketplaceContractId } from '../configs/nft'
@@ -13,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { waitTxConfirmed } from '../utils';
+import { NFT } from '../utils/nft';
 
 const SellNFT = () => {
   const context = useAlephiumConnectContext()

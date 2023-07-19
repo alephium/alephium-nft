@@ -5,7 +5,8 @@ import { Loader, NFTCard, Banner } from '../components';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
-import { fetNFTsByAddress, NFT } from '../components/nft';
+import { fetNFTsByAddress } from '../components/nft';
+import { NFT } from '../utils/nft';
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
