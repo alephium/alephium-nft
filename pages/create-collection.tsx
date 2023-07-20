@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react'
+import { useCallback, useState, useMemo, useEffect } from 'react'
 import { NFTCollection } from '../utils/nft-collection'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
@@ -13,16 +13,19 @@ import { waitTxConfirmed } from '../utils'
 import LoaderWithText from '../components/LoaderWithText'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { ONE_ALPH } from '@alephium/web3'
+import { convertAlphAmountWithDecimals, convertAmountWithDecimals, ONE_ALPH } from '@alephium/web3'
+import { useSnackbar } from 'notistack'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '', tokenBaseUri: '' })
+  const [formInput, updateFormInput] = useState({ name: '', description: '', tokenBaseUri: '', maxSupply: '', mintPrice: '' })
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { theme } = useTheme();
   const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const maxBatchMintSize = 5n
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
     const file = acceptedFile[0]
@@ -93,21 +96,33 @@ export default function CreateCollections() {
     }
   }
 
-  async function createPublicSaleCollectionRandom() {
-    const { tokenBaseUri } = formInput
-    // Verify that this URL is correct, metadata is valid
-    if (!tokenBaseUri) return
+  async function createPublicSaleCollectionSequential() {
+    try {
+      const { tokenBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr } = formInput
+      // Verify that this URL is correct, metadata is valid
+      if (!tokenBaseUri || !maxSupplyStr || !mintPriceStr) return
 
-    const collectionUri = await uploadToIPFS()
-    const maxSupply = 2n  // Derive from the tokenBaseUri
-    if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
-      const nftCollection = new NFTCollection(context.signerProvider)
-      setIsCreatingCollection(true)
-      const createCollectionTxResult = await nftCollection.createPublicSaleCollectionRandom(maxSupply, ONE_ALPH, collectionUri, tokenBaseUri)
-      await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
-      router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
-    } else {
-      console.debug('context..', context)
+      // TODO: how do we verify the max supply?
+      const maxSupply = convertAmountWithDecimals(maxSupplyStr, 0)
+      if (maxSupply === undefined || maxSupply <= 0) {
+        throw new Error('Invalid max supply')
+      }
+      const mintPrice = convertAlphAmountWithDecimals(mintPriceStr)
+      if (mintPrice === undefined || mintPrice < 0) {
+        throw new Error('Invalid mint price')
+      }
+      const collectionUri = await uploadToIPFS()
+      if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
+        const nftCollection = new NFTCollection(context.signerProvider)
+        setIsCreatingCollection(true)
+        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, tokenBaseUri, maxBatchMintSize)
+        await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
+        router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
+      } else {
+        console.debug('context..', context)
+      }
+    } catch (error) {
+      enqueueSnackbar(`${error}`, { variant: 'error', persist: false })
     }
   }
 
@@ -169,6 +184,28 @@ export default function CreateCollections() {
     )
   }
 
+  function collectionMaxSupply() {
+    return (
+      <Input
+        inputType="number"
+        title="Max Supply"
+        placeholder="NFT Collection Max Supply"
+        handleClick={(e) => updateFormInput({ ...formInput, maxSupply: (e.target as HTMLInputElement).value })}
+      />
+    )
+  }
+
+  function collectionMintPrice() {
+    return (
+      <Input
+        inputType="alph"
+        title="Mint Price"
+        placeholder="NFT Collection Mint Price"
+        handleClick={(e) => updateFormInput({ ...formInput, mintPrice: (e.target as HTMLInputElement).value })}
+      />
+    )
+  }
+
   function collectionTokenBaseURI() {
     return (
       <Input
@@ -180,7 +217,10 @@ export default function CreateCollections() {
     )
   }
 
-  function createCollectionButton(handleClick: () => void) {
+  function createCollectionButton(handleClick: () => void, type: 'NFTOpenCollection' | 'NFTPublicSaleCollection') {
+    const disabled = type === 'NFTOpenCollection'
+      ? (!fileUrl || !formInput.name || !formInput.description)
+      : (!fileUrl || !formInput.name || !formInput.description || !formInput.maxSupply || !formInput.mintPrice)
     return isCreatingCollection ? (
       <LoaderWithText text={`Sign and create collection...`} />
     ) : (
@@ -189,7 +229,7 @@ export default function CreateCollections() {
           btnName="Create NFT Collection"
           classStyles="rounded-xl"
           handleClick={handleClick}
-          disabled={!fileUrl || !formInput.name || !formInput.description}
+          disabled={disabled}
         />
       </div>
     )
@@ -214,14 +254,16 @@ export default function CreateCollections() {
               {collectionImage()}
               {collectionName()}
               {collectionDescription()}
-              {createCollectionButton(() => createOpenCollection())}
+              {createCollectionButton(() => createOpenCollection(), 'NFTOpenCollection')}
             </TabPanel>
             <TabPanel>
               {collectionImage()}
+              {collectionMaxSupply()}
+              {collectionMintPrice()}
               {collectionTokenBaseURI()}
               {collectionName()}
               {collectionDescription()}
-              {createCollectionButton(() => createPreDesignedCollection())}
+              {createCollectionButton(() => createPublicSaleCollectionSequential(), 'NFTPublicSaleCollection')}
             </TabPanel>
           </Tabs>
         </div>

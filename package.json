@@ -33,6 +33,7 @@
     "next": "12.1.6",
     "next-api-validation": "^1.0.5",
     "next-themes": "0.1.1",
+    "notistack": "^3.0.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-dropzone": "12.0.4",
