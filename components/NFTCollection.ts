@@ -5,22 +5,33 @@ import { web3, hexToString, binToHex, SignerProvider, addressFromContractId, con
 import { NFTOpenCollection, NFTOpenCollectionTypes, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialTypes } from "../artifacts/ts"
 import { NFT } from "../utils/nft"
 
-export interface NFTCollection {
-  id: string,
-  collectionType: 'NFTOpenCollection' | 'NFTPublicSaleCollection',
-  name: string,
-  description: string,
-  owner: string,
-  totalSupply: bigint,
-  image: string,
-  nfts: NFT[],
-  maxSupply?: bigint
-  mintPrice?: bigint
-  maxBatchMintSize?: number,
-  nftBaseUri?: string
+export interface NFTCollectionBase {
+  id: string
+  name: string
+  description: string
+  owner: string
+  totalSupply: bigint
+  image: string
+  nfts: NFT[]
 }
 
-export type NFTCollectionMetadata = Omit<NFTCollection, 'nfts'>
+export interface NFTOpenCollection extends NFTCollectionBase {
+  collectionType: 'NFTOpenCollection'
+}
+
+export interface NFTPublicSaleCollection extends NFTCollectionBase {
+  collectionType: 'NFTPublicSaleCollection'
+  maxSupply: bigint
+  mintPrice: bigint
+  maxBatchMintSize: number
+  nftBaseUri: string
+}
+
+export type NFTOpenCollectionMetadata = Omit<NFTOpenCollection, 'nfts'>
+export type NFTPublicSaleCollectionMetadata = Omit<NFTPublicSaleCollection, 'nfts'>
+
+export type NFTCollection = NFTOpenCollection | NFTPublicSaleCollection
+export type NFTCollectionMetadata = NFTOpenCollectionMetadata | NFTPublicSaleCollectionMetadata
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
@@ -62,7 +73,7 @@ async function fetchNonEnumerableNFTs(addresses: string[], listed: boolean): Pro
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
-async function fetchEnumerableNFTs(collectionMetadata: NFTCollectionMetadata, indexes: number[], listed: boolean): Promise<NFT[]> {
+async function fetchEnumerableNFTs(collectionMetadata: NFTPublicSaleCollectionMetadata, indexes: number[], listed: boolean): Promise<NFT[]> {
   if (collectionMetadata.nftBaseUri === undefined) return []
   const getNFT = async (index: number): Promise<NFT | undefined> => {
     try {

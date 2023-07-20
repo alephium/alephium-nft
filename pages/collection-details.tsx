@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata } from '../components/NFTCollection'
+import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from '../components/NFTCollection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -15,7 +15,7 @@ import { InfiniteScroll } from "../components/InfiniteScroll";
 import { NFTSkeletonLoader } from '../components/NFTCard';
 import { NFT } from '../utils/nft';
 
-const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTCollectionMetadata}) => {
+const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTPublicSaleCollectionMetadata}) => {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const [isMinting, setIsMinting] = useState<boolean>(false)
@@ -213,7 +213,7 @@ export default function CollectionDetails() {
                 <div className="mt-10 flex flex-wrap">
                   <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                     <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
-                      {collectionMetadata.maxSupply ? `Minted NFTs ${collectionMetadata.totalSupply}; Max Supply ${collectionMetadata.maxSupply}` : `Minted NFTs ${collectionMetadata.totalSupply}`}
+                      {collectionMetadata.collectionType === 'NFTPublicSaleCollection' ? `Minted NFTs ${collectionMetadata.totalSupply}; Max Supply ${collectionMetadata.maxSupply}` : `Minted NFTs ${collectionMetadata.totalSupply}`}
                     </p>
                   </div>
                 </div>
