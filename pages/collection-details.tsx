@@ -21,7 +21,8 @@ const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTCollectionM
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const [batchSize, setBatchSize] = useState(1)
   const minBatchSize = 1
-  const maxBatchSize = collectionMetadata.maxBatchMintSize!
+  const remain = Number(collectionMetadata.maxSupply! - collectionMetadata.totalSupply!)
+  const maxBatchSize = collectionMetadata.maxBatchMintSize! > remain ? remain : collectionMetadata.maxBatchMintSize!
 
   const updateValue = (newValue: number) => {
     if (newValue >= minBatchSize && newValue <= maxBatchSize) {
@@ -82,6 +83,7 @@ const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTCollectionM
             btnName={"Mint"}
             classStyles="mr-5 ml-5 sm:mr-0 sm:mb-5 rounded-xl h-10"
             handleClick={mintBatch}
+            disabled={remain === 0}
           />
         </div>
       </div>
