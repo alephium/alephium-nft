@@ -5,6 +5,8 @@ import { NFTListing as NFTListingFactory, NFTListingInstance } from '../artifact
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
 import { fetchMintedNFT } from './nft'
+import { fetchNFTCollectionMetadata } from './nft-collection'
+import { NFTCollection } from './mongodb/models/nft-collection'
 
 export async function trySaveNewNFTListings() {
   const nodeProvider = new NodeProvider(defaultNodeUrl)
@@ -55,6 +57,7 @@ async function nftListingEventReducer(
   if (event.eventIndex === 0) {
     const listedNFT = await fetchNFTListing(event)
     if (listedNFT) {
+      await trySaveCollection(listedNFT.collectionId)
       const result = await NFTListing.exists(
         { '_id': listedNFT._id }
       )
@@ -107,4 +110,20 @@ async function fetchNFTListing(
       createdAt: new Date()
     }
   }
+}
+
+async function trySaveCollection(collectionId: string) {
+  const exists = await NFTCollection.exists({ '_id': collectionId })
+  if (exists) return
+  const collectionMetadata = await fetchNFTCollectionMetadata(collectionId)
+  if (collectionMetadata === undefined) return
+  const nftCollection = new NFTCollection({
+    _id: collectionId,
+    type: collectionMetadata.collectionType,
+    name: collectionMetadata.name,
+    description: collectionMetadata.description,
+    image: collectionMetadata.image,
+    createdAt: new Date()
+  })
+  await nftCollection.save()
 }

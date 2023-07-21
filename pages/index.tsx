@@ -6,7 +6,7 @@ import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import axios from "axios"
-import { ListNFTListings } from '../components/NFTListing';
+import { NFTCollections } from '../components/NFTCollection';
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
@@ -108,7 +108,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <ListNFTListings />
+            <NFTCollections />
           </>
         }
       </div>
