@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
-import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTCollection';
+import { NFTCollection, fetchNFTCollectionMetadata, NFTCollectionDeployer } from '../utils/nft-collection';
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
@@ -14,7 +14,6 @@ import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed, shortenName } from '../utils';
-import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
 import { fetchMintedNFT, NFT } from '../utils/nft';
 
 interface PaymentBodyCmpProps {
@@ -165,7 +164,7 @@ const AssetDetails = () => {
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
-          const nftCollection = new NFTCollectionHelper(context.signerProvider)
+          const nftCollection = new NFTCollectionDeployer(context.signerProvider)
           result = await nftCollection.mintSpecificPublicSaleNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
         }
 

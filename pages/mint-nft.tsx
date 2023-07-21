@@ -9,7 +9,7 @@ import { useCallback, useState, useMemo } from 'react';
 import { ipfsClient } from '../utils/ipfs';
 import { useDropzone } from 'react-dropzone';
 import { useTheme } from 'next-themes';
-import { NFTCollection } from '../utils/nft-collection';
+import { NFTCollectionDeployer } from '../utils/nft-collection';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { waitTxConfirmed } from '../utils';
 import LoaderWithText from '../components/LoaderWithText';
@@ -85,7 +85,7 @@ export default function MintNFT() {
   async function mintNFT() {
     const uri = await uploadToIPFS()
     if (uri && context.signerProvider?.nodeProvider && context.account && collectionMetadata) {
-      const nftCollection = new NFTCollection(context.signerProvider)
+      const nftCollection = new NFTCollectionDeployer(context.signerProvider)
       setIsMinting(true)
       const result = await nftCollection.mintOpenNFT(collectionMetadata.id, uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
