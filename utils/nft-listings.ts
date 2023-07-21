@@ -1,12 +1,13 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
-import { NodeProvider, addressFromContractId, web3 } from '@alephium/web3'
-import { NFTListing as NFTListingFactory, NFTListingInstance } from '../artifacts/ts'
+import { NodeProvider, addressFromContractId, fromApiVals, web3 } from '@alephium/web3'
+import { NFTListing as NFTListingFactory, NFTListingInstance, NFTMarketPlace, NFTMarketPlaceTypes } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
 import { fetchMintedNFT } from './nft'
 import { fetchNFTCollectionMetadata } from './nft-collection'
 import { NFTCollection } from './mongodb/models/nft-collection'
+import { NFTSold } from './mongodb/models/nft-sold'
 
 export async function trySaveNewNFTListings() {
   const nodeProvider = new NodeProvider(defaultNodeUrl)
@@ -78,6 +79,10 @@ async function nftListingEventReducer(
     const result = await NFTListing.findByIdAndDelete(tokenId)
     console.log("Deleted nft listing", result, tokenId)
   }
+
+  if (event.eventIndex === 1) {
+    await trySaveNFTSold(event)
+  }
 }
 
 async function fetchNFTListing(
@@ -126,4 +131,18 @@ async function trySaveCollection(collectionId: string) {
     createdAt: new Date()
   })
   await nftCollection.save()
+}
+
+async function trySaveNFTSold(event: IMarketplaceEvent) {
+  const nftSoldEventSig = NFTMarketPlace.contract.eventsSig[1]
+  const fields = fromApiVals(event.fields, nftSoldEventSig.fieldNames, nftSoldEventSig.fieldTypes) as NFTMarketPlaceTypes.NFTSoldEvent['fields']
+  const nftSold = new NFTSold({
+    _id: event.txId,
+    tokenId: fields.tokenId,
+    price: fields.price.toString(),
+    previousOwner: fields.previousOwner,
+    newOwner: fields.newOwner,
+    createdAt: new Date()
+  })
+  await nftSold.save()
 }

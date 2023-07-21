@@ -1,5 +1,5 @@
 import Validate from 'next-api-validation'
-import { NFTListing } from '../../utils/mongodb/models/nft-listing'
+import { NFTSold } from '../../utils/mongodb/models/nft-sold'
 import { connectToDatabase } from '../../utils/mongodb'
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -9,9 +9,9 @@ const topSellerHandler = Validate({
   async get(req: NextApiRequest, res: NextApiResponse) {
     try {
       // Only return top 9 for now
-      const topSellers = await NFTListing.aggregate([
+      const topSellers = await NFTSold.aggregate([
         {
-          $group: { _id: "$tokenOwner", totalAmount: { $sum: { $toDecimal: "$price" } } }
+          $group: { _id: "$previousOwner", totalAmount: { $sum: { $toDecimal: "$price" } } }
         },
         {
           $sort: { totalAmount: -1 }
