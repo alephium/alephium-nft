@@ -18,14 +18,13 @@ import { useSnackbar } from 'notistack'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '', tokenBaseUri: '', maxSupply: '', mintPrice: '' })
+  const [formInput, updateFormInput] = useState({name: '', description: '', tokenBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { theme } = useTheme();
   const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const { enqueueSnackbar } = useSnackbar()
-  const maxBatchMintSize = 5n
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
     const file = acceptedFile[0]
@@ -98,9 +97,9 @@ export default function CreateCollections() {
 
   async function createPublicSaleCollectionSequential() {
     try {
-      const { tokenBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr } = formInput
+      const { tokenBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid
-      if (!tokenBaseUri || !maxSupplyStr || !mintPriceStr) return
+      if (!tokenBaseUri || !maxSupplyStr || !mintPriceStr || !maxBatchMintSizeStr) return
 
       // TODO: how do we verify the max supply?
       const maxSupply = convertAmountWithDecimals(maxSupplyStr, 0)
@@ -110,6 +109,10 @@ export default function CreateCollections() {
       const mintPrice = convertAlphAmountWithDecimals(mintPriceStr)
       if (mintPrice === undefined || mintPrice < 0) {
         throw new Error('Invalid mint price')
+      }
+      const maxBatchMintSize = convertAmountWithDecimals(maxBatchMintSizeStr, 0)
+      if (maxBatchMintSize === undefined || maxBatchMintSize <= 0 || maxBatchMintSize > maxSupply) {
+        throw new Error('Invalid max batch mint size')
       }
       const collectionUri = await uploadToIPFS()
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
@@ -195,6 +198,17 @@ export default function CreateCollections() {
     )
   }
 
+  function collectionMaxBatchMintSize() {
+    return (
+      <Input
+        inputType="number"
+        title="Max Batch Mint Size"
+        placeholder="NFT Collection Max Batch Mint Size"
+        handleClick={(e) => updateFormInput({ ...formInput, maxBatchMintSize: (e.target as HTMLInputElement).value })}
+      />
+    )
+  }
+
   function collectionMintPrice() {
     return (
       <Input
@@ -220,7 +234,7 @@ export default function CreateCollections() {
   function createCollectionButton(handleClick: () => void, type: 'NFTOpenCollection' | 'NFTPublicSaleCollection') {
     const disabled = type === 'NFTOpenCollection'
       ? (!fileUrl || !formInput.name || !formInput.description)
-      : (!fileUrl || !formInput.name || !formInput.description || !formInput.maxSupply || !formInput.mintPrice)
+      : (!fileUrl || !formInput.name || !formInput.description || !formInput.maxSupply || !formInput.mintPrice || !formInput.maxBatchMintSize)
     return isCreatingCollection ? (
       <LoaderWithText text={`Sign and create collection...`} />
     ) : (
@@ -259,6 +273,7 @@ export default function CreateCollections() {
             <TabPanel>
               {collectionImage()}
               {collectionMaxSupply()}
+              {collectionMaxBatchMintSize()}
               {collectionMintPrice()}
               {collectionTokenBaseURI()}
               {collectionName()}
