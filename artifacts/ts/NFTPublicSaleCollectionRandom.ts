@@ -30,7 +30,7 @@ import { getContractByCodeHash } from "./contracts";
 // Custom types for the contract
 export namespace NFTPublicSaleCollectionRandomTypes {
   export type Fields = {
-    enumerableNftTemplateId: HexString;
+    nftTemplateId: HexString;
     collectionUri: HexString;
     collectionOwner: Address;
     nftBaseUri: HexString;

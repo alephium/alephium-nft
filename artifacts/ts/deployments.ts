@@ -9,12 +9,9 @@ import {
   NFTListingInstance,
   NFTMarketPlace,
   NFTMarketPlaceInstance,
-  EnumerableNFT,
-  EnumerableNFTInstance,
-  NonEnumerableNFT,
-  NonEnumerableNFTInstance,
+  NFT,
+  NFTInstance,
 } from ".";
-import { default as testnetDeployments } from "../.deployments.testnet.json";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
 
 export type Deployments = {
@@ -22,8 +19,7 @@ export type Deployments = {
   contracts: {
     NFTListing: DeployContractExecutionResult<NFTListingInstance>;
     NFTMarketPlace: DeployContractExecutionResult<NFTMarketPlaceInstance>;
-    EnumerableNFT: DeployContractExecutionResult<EnumerableNFTInstance>;
-    NonEnumerableNFT: DeployContractExecutionResult<NonEnumerableNFTInstance>;
+    NFT: DeployContractExecutionResult<NFTInstance>;
   };
 };
 
@@ -41,17 +37,9 @@ function toDeployments(json: any): Deployments {
         json.contracts.NFTMarketPlace.contractInstance.address
       ),
     },
-    EnumerableNFT: {
-      ...json.contracts.EnumerableNFT,
-      contractInstance: EnumerableNFT.at(
-        json.contracts.EnumerableNFT.contractInstance.address
-      ),
-    },
-    NonEnumerableNFT: {
-      ...json.contracts.NonEnumerableNFT,
-      contractInstance: NonEnumerableNFT.at(
-        json.contracts.NonEnumerableNFT.contractInstance.address
-      ),
+    NFT: {
+      ...json.contracts.NFT,
+      contractInstance: NFT.at(json.contracts.NFT.contractInstance.address),
     },
   };
   return {
@@ -64,12 +52,7 @@ export function loadDeployments(
   networkId: NetworkId,
   deployerAddress?: string
 ): Deployments {
-  const deployments =
-    networkId === "testnet"
-      ? testnetDeployments
-      : networkId === "devnet"
-      ? devnetDeployments
-      : undefined;
+  const deployments = networkId === "devnet" ? devnetDeployments : undefined;
   if (deployments === undefined) {
     throw Error("The contract has not been deployed to the " + networkId);
   }

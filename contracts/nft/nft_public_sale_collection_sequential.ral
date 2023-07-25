@@ -2,7 +2,7 @@
 // in advance and sell to the public for minting, users can mint the arts
 // in the collection sequentially by paying the mint price.
 Contract NFTPublicSaleCollectionSequential(
-    enumerableNftTemplateId: ByteVec,
+    nftTemplateId: ByteVec,
     collectionUri: ByteVec,
     nftBaseUri: ByteVec,
     collectionOwner: Address,
@@ -19,10 +19,10 @@ Contract NFTPublicSaleCollectionSequential(
 
     @using(preapprovedAssets = true)
     fn mint_(minter: Address, index: U256) -> ByteVec {
-        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
         return copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),
-            enumerableNftTemplateId,
+            nftTemplateId,
             encodeImmutableFields,
             encodeMutableFields,
             1,
