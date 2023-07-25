@@ -2,7 +2,7 @@ import { web3, subContractId, addressFromContractId, encodeU256, binToHex, group
 import { testNodeWallet } from '@alephium/web3-test'
 import * as utils from '../utils'
 import { NFTCollectionDeployer } from '../utils/nft-collection'
-import { EnumerableNFTInstance, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequentialInstance, NonEnumerableNFTInstance } from '../artifacts/ts'
+import { NFTInstance, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -149,8 +149,8 @@ async function mintOpenNFTAndVerify(
   // NFT doesn't exist yet
   await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + 1n } })).rejects.toThrow(Error)
 
-  const nftContractState = await new NonEnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
-  utils.checkHexString(nftContractState.fields.uri, getNFTUri(tokenIndex))
+  const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
+  utils.checkHexString(nftContractState.fields.tokenUri, getNFTUri(tokenIndex))
 
   return txId
 }
@@ -171,10 +171,10 @@ async function mintSpecificPublicSaleNFTAndVerify(
   const nftByIndexResult = await nftPublicSaleCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-  const nftContractState = await new EnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
+  const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
   expect(nftContractState.fields.collectionId).toEqual(nftPublicSaleCollectionInstance.contractId)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-  const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
+  const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
   const tokenUri = (await nftInstance.methods.getTokenUri()).returns
   utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
   const collectionId = (await nftInstance.methods.getCollectionId()).returns
@@ -202,10 +202,10 @@ async function mintNextPublicSaleNFTAndVerify(
   const nftByIndexResult = await nftCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-  const nftContractState = await new EnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
+  const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
   expect(nftContractState.fields.collectionId).toEqual(nftCollectionInstance.contractId)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-  const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
+  const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
   const tokenUri = (await nftInstance.methods.getTokenUri()).returns
   utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
   const collectionId = (await nftInstance.methods.getCollectionId()).returns
@@ -236,10 +236,10 @@ async function mintBatchPublicSaleNFTAndVerify(
     const nftByIndexResult = await nftCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
     expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-    const nftContractState = await new EnumerableNFTInstance(addressFromContractId(nftContractId)).fetchState()
+    const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
     expect(nftContractState.fields.collectionId).toEqual(nftCollectionInstance.contractId)
     expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-    const nftInstance = new EnumerableNFTInstance(addressFromTokenId(nftContractId))
+    const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
     const tokenUri = (await nftInstance.methods.getTokenUri()).returns
     utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
     const collectionId = (await nftInstance.methods.getCollectionId()).returns

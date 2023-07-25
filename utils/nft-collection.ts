@@ -29,7 +29,7 @@ import {
   encodeU256,
   addressFromContractId
 } from '@alephium/web3'
-import { nonEnumerableNFTTemplateId, enumerableNFTTemplateId, groupIndex } from '../configs/nft'
+import { nftTemplateId, groupIndex } from '../configs/nft'
 import { NFT } from "../utils/nft"
 import axios from "axios"
 
@@ -43,7 +43,7 @@ export class NFTCollectionDeployer extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nonEnumerableNftTemplateId: nonEnumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: stringToHex(collectionUri),
           collectionOwner: ownerAddress,
           totalSupply: 0n
@@ -65,7 +65,7 @@ export class NFTCollectionDeployer extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          enumerableNftTemplateId: enumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: stringToHex(collectionUri),
           nftBaseUri: stringToHex(baseUri),
           collectionOwner: ownerAddress,
@@ -91,7 +91,7 @@ export class NFTCollectionDeployer extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          enumerableNftTemplateId: enumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: stringToHex(collectionUri),
           nftBaseUri: stringToHex(baseUri),
           collectionOwner: ownerAddress,
@@ -217,7 +217,7 @@ export type NFTCollectionMetadata = NFTOpenCollectionMetadata | NFTPublicSaleCol
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
-async function fetchNonEnumerableNFTs(addresses: string[], listed: boolean): Promise<NFT[]> {
+async function fetchNFTsByTokenAddresses(addresses: string[], listed: boolean): Promise<NFT[]> {
   if (addresses.length === 0) return []
   const nodeProvider = web3.getCurrentNodeProvider()
   const methodIndexes = [0, 1] // getTokenUri, getCollectionId
@@ -242,7 +242,7 @@ async function fetchNonEnumerableNFTs(addresses: string[], listed: boolean): Pro
         }
       }
     } catch (error) {
-      console.error(`failed to get non-enumerable nft, collection id: ${collectionId}, address: ${address} error: ${error}`)
+      console.error(`failed to get nft by token address, collection id: ${collectionId}, address: ${address} error: ${error}`)
     }
     return undefined
   }
@@ -255,7 +255,7 @@ async function fetchNonEnumerableNFTs(addresses: string[], listed: boolean): Pro
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
-async function fetchEnumerableNFTs(collectionMetadata: NFTPublicSaleCollectionMetadata, indexes: number[], listed: boolean): Promise<NFT[]> {
+async function fetchPublicSaleNFTs(collectionMetadata: NFTPublicSaleCollectionMetadata, indexes: number[], listed: boolean): Promise<NFT[]> {
   if (collectionMetadata.nftBaseUri === undefined) return []
   const getNFT = async (index: number): Promise<NFT | undefined> => {
     try {
@@ -274,7 +274,7 @@ async function fetchEnumerableNFTs(collectionMetadata: NFTPublicSaleCollectionMe
         tokenIndex: index
       }
     } catch (error) {
-      console.error(`failed to fetch enumerable nft, collection id: ${collectionMetadata.id}, index: ${index}, error: ${error}`)
+      console.error(`failed to fetch public sale nft, collection id: ${collectionMetadata.id}, index: ${index}, error: ${error}`)
     }
     return undefined
   }
@@ -290,14 +290,14 @@ export async function fetchNFTByPage(collectionMetadata: NFTCollectionMetadata, 
     const collectionAddress = addressFromContractId(collectionMetadata.id)
     const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
     const addresses = (subContracts ?? []).slice(skipped, skipped + pageSize)
-    return await fetchNonEnumerableNFTs(addresses, false)
+    return await fetchNFTsByTokenAddresses(addresses, false)
   }
 
   const range = (from: number, count: number): number[] => Array.from(Array(count).keys()).map((v) => from + v)
   const totalSupply = Number(collectionMetadata.totalSupply)
   const maxSupply = Number(collectionMetadata.maxSupply!)
   const indexes = range(skipped, pageSize).filter((idx) => idx < maxSupply)
-  const nfts = await fetchEnumerableNFTs(collectionMetadata, indexes, false)
+  const nfts = await fetchPublicSaleNFTs(collectionMetadata, indexes, false)
   return nfts.map<NFT>((nft) => {
     if (nft.tokenIndex! < totalSupply) {
       return {...nft, minted: true}

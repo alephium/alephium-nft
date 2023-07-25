@@ -2,7 +2,7 @@
 // in advance and sell to the public for minting, users can mint any of
 // the arts in the collection by paying the mint price.
 Contract NFTPublicSaleCollectionRandom(
-    enumerableNftTemplateId: ByteVec,
+    nftTemplateId: ByteVec,
     collectionUri: ByteVec,
     collectionOwner: Address,
     nftBaseUri: ByteVec,
@@ -19,11 +19,11 @@ Contract NFTPublicSaleCollectionRandom(
         assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let (encodeImmutableFields, encodeMutableFields) = EnumerableNFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),
-            enumerableNftTemplateId,
+            nftTemplateId,
             encodeImmutableFields,
             encodeMutableFields,
             1,
