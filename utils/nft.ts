@@ -1,4 +1,4 @@
-import { addressFromTokenId, groupOfAddress, hexToString, web3 } from "@alephium/web3"
+import { addressFromTokenId, groupOfAddress, hexToString, node, web3 } from "@alephium/web3"
 import axios from "axios"
 import { EnumerableNFT, EnumerableNFTTypes, NonEnumerableNFT, NonEnumerableNFTTypes } from "../artifacts/ts"
 
@@ -14,24 +14,29 @@ export interface NFT {
   tokenIndex?: number
 }
 
+export function getNFTMetadataFromContractState(nftState: node.ContractState): { collectionId: string, tokenUri: string } | undefined {
+  if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
+    const contractState = NonEnumerableNFT.contract.fromApiContractState(nftState) as NonEnumerableNFTTypes.State
+    return {
+      tokenUri: hexToString(contractState.fields.uri),
+      collectionId: contractState.fields.collectionId
+    }
+  } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
+    const contractState = EnumerableNFT.contract.fromApiContractState(nftState) as EnumerableNFTTypes.State
+    return {
+      tokenUri: hexToString(contractState.fields.tokenUri),
+      collectionId: contractState.fields.collectionId
+    }
+  }
+  return undefined
+}
+
 export async function fetchMintedNFTMetadata(tokenId: string): Promise<{ collectionId: string, tokenUri: string } | undefined> {
   const tokenAddress = addressFromTokenId(tokenId)
   const nodeProvider = web3.getCurrentNodeProvider()
   try {
     const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: groupOfAddress(tokenAddress) })
-    if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
-      const contractState = NonEnumerableNFT.contract.fromApiContractState(nftState) as NonEnumerableNFTTypes.State
-      return {
-        tokenUri: hexToString(contractState.fields.uri),
-        collectionId: contractState.fields.collectionId
-      }
-    } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
-      const contractState = EnumerableNFT.contract.fromApiContractState(nftState) as EnumerableNFTTypes.State
-      return {
-        tokenUri: hexToString(contractState.fields.tokenUri),
-        collectionId: contractState.fields.collectionId
-      }
-    }
+    return getNFTMetadataFromContractState(nftState)
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
   }

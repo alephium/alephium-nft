@@ -2,9 +2,9 @@ import axios from "axios"
 import useSWR from "swr"
 import { NFTMarketPlaceInstance, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 import { marketplaceContractId } from '../configs/nft'
-import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, groupOfAddress } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
-import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../utils/nft"
+import { fetchMintedNFT, fetchMintedNFTByMetadata, getNFTMetadataFromContractState, NFT } from "../utils/nft"
 
 export async function fetchPreMintNFT(
   collectionId: string,
@@ -55,12 +55,28 @@ async function fetchNFTsFromUTXOs(
     .filter((token) => +token.amount == 1)
     .map((token) => token.id)
 
-  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(tokenId))
-  const nftMetadatas = await Promise.all(nftMetadataPromises)
-  const nftPromises = tokenIds.map((tokenId, index) => {
-    const metadata = nftMetadatas[index]
-    if (metadata === undefined) return Promise.resolve(undefined)
-    return fetchMintedNFTByMetadata(tokenId, metadata, false)
+  const calls = tokenIds.flatMap((tokenId) => {
+    const address = addressFromContractId(tokenId)
+    const groupIndex = groupOfAddress(address)
+    return {
+      group: groupIndex,
+      address: address,
+      methodIndex: 0
+    }
+  })
+  const callResult = await nodeProvider.contracts.postContractsMulticallContract({ calls })
+  const nftMetadatas: { tokenId: string, tokenUri: string, collectionId: string }[] = []
+  // TODO: check the result
+  for (let index = 0; index < tokenIds.length; index++) {
+    const address = addressFromContractId(tokenIds[index])
+    const contractState = callResult.results[index].contracts.find((c) => c.address === address)
+    if (contractState === undefined) continue
+    const metadataOpt = getNFTMetadataFromContractState(contractState)
+    if (metadataOpt === undefined) continue
+    nftMetadatas.push({ tokenId: tokenIds[index], ...metadataOpt })
+  }
+  const nftPromises = nftMetadatas.map((metadata) => {
+    return fetchMintedNFTByMetadata(metadata.tokenId, metadata, false)
   })
   return (await Promise.all(nftPromises)).filter((nft) => nft !== undefined) as NFT[]
 }
