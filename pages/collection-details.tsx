@@ -213,7 +213,7 @@ export default function CollectionDetails() {
                 <div className="mt-10 flex flex-wrap">
                   <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                     <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
-                      {collectionMetadata.collectionType === 'NFTPublicSaleCollection' ? `Minted NFTs ${collectionMetadata.totalSupply}; Max Supply ${collectionMetadata.maxSupply}` : `Minted NFTs ${collectionMetadata.totalSupply}`}
+                      {collectionMetadata.collectionType === 'NFTPublicSaleCollectionSequential' ? `Minted NFTs ${collectionMetadata.totalSupply}; Max Supply ${collectionMetadata.maxSupply}` : `Minted NFTs ${collectionMetadata.totalSupply}`}
                     </p>
                   </div>
                 </div>
@@ -232,7 +232,9 @@ export default function CollectionDetails() {
                           handleClick={() => router.push(`/mint-nft?collectionId=${collectionMetadata.id}`)}
                         />
                       )
-                    ) : (<MintBatch collectionMetadata={collectionMetadata}/>)
+                    ) : collectionMetadata.collectionType === 'NFTPublicSaleCollectionSequential' ? (
+                      <MintBatch collectionMetadata={collectionMetadata}/>
+                    ) : null
                   }
                 </div>
               </div>

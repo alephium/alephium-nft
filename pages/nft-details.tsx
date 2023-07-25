@@ -286,11 +286,15 @@ const AssetDetails = () => {
           }
           {
             (context.account && nft.price && nft.minted === false) ? (
-              <Button
-                btnName={`Mint for ${prettifyAttoAlphAmount(nft.price)} ALPH`}
-                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => setPaymentModal(true)}
-              />
+              (collectionMetadata?.collectionType === 'NFTPublicSaleCollectionRandom') ?
+                <Button
+                  btnName={`Mint for ${prettifyAttoAlphAmount(nft.price)} ALPH`}
+                  classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                  handleClick={() => setPaymentModal(true)}
+                />
+                : <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                    Not minted yet
+                  </p>
             ) : null
           }
           {
