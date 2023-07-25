@@ -84,14 +84,14 @@ describe('nft collection', function() {
     const state0 = await nftCollectionInstance.fetchState()
     expect(state0.fields.totalSupply).toEqual(0n)
     for (let i = 0n; i < maxSupply; i++) {
-      await mintNextPublicSaleNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)
+      await mintNextPublicSaleSequentialNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)
     }
     const state1 = await nftCollectionInstance.fetchState()
     expect(state1.fields.totalSupply).toEqual(maxSupply)
     expect(BigInt(state1.asset.alphAmount)).toEqual(BigInt(state0.asset.alphAmount) + maxSupply * mintPrice)
 
     // Can't mint NFT any more
-    await expect(mintNextPublicSaleNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)).rejects.toThrow(Error)
+    await expect(mintNextPublicSaleSequentialNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)).rejects.toThrow(Error)
     // Withdraw too much
     await expect(checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
     // Successful Withdraw
@@ -109,7 +109,7 @@ describe('nft collection', function() {
     const state0 = await nftCollectionInstance.fetchState()
     expect(state0.fields.totalSupply).toEqual(0n)
     // Mint one nft
-    await mintNextPublicSaleNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)
+    await mintNextPublicSaleSequentialNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)
     // Batch size exceed the maxBatchMintSize
     await expect(nftCollection.mintBatchSequential(maxBatchMintSize + 1n, mintPrice, nftCollectionInstance.contractId)).rejects.toThrow(Error)
     // Batch size exceed the number of unminted nfts
@@ -121,7 +121,7 @@ describe('nft collection', function() {
     expect(BigInt(state1.asset.alphAmount)).toEqual(BigInt(state0.asset.alphAmount) + mintPrice * maxSupply)
 
     // Can't mint NFT any more
-    await expect(mintNextPublicSaleNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)).rejects.toThrow(Error)
+    await expect(mintNextPublicSaleSequentialNFTAndVerify(nftCollection, nftCollectionInstance, mintPrice)).rejects.toThrow(Error)
     await expect(nftCollection.mintBatchSequential(1n, mintPrice, nftCollectionInstance.contractId)).rejects.toThrow(Error)
     // Withdraw too much
     await expect(checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
@@ -181,7 +181,7 @@ async function mintSpecificPublicSaleNFTAndVerify(
   expect(collectionId).toEqual(nftPublicSaleCollectionInstance.contractId)
 }
 
-async function mintNextPublicSaleNFTAndVerify(
+async function mintNextPublicSaleSequentialNFTAndVerify(
   nftCollection: NFTCollection,
   nftCollectionInstance: NFTPublicSaleCollectionSequentialInstance,
   mintPrice: bigint
