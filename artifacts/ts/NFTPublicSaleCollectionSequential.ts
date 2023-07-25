@@ -36,6 +36,7 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
     collectionOwner: Address;
     maxSupply: bigint;
     mintPrice: bigint;
+    maxBatchMintSize: bigint;
     totalSupply: bigint;
   };
 
@@ -58,8 +59,16 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
       params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
     };
+    getMintPrice: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
     mint: {
       params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<HexString>;
+    };
+    mintBatch: {
+      params: CallContractParams<{ size: bigint }>;
       result: CallContractResult<HexString>;
     };
   }
@@ -84,9 +93,11 @@ class Factory extends ContractFactory<
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
-      IncorrectTokenIndex: BigInt(0),
-      NFTNotFound: BigInt(1),
-      TokenOwnerAllowedOnly: BigInt(2),
+      NFTNotFound: BigInt(0),
+      TokenOwnerAllowedOnly: BigInt(1),
+      IncorrectTokenIndex: BigInt(2),
+      InvalidMintBatchSize: BigInt(3),
+      InsufficientNumOfUnminted: BigInt(4),
     },
   };
 
@@ -141,6 +152,25 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getNFTUri", params);
     },
+    getMintPrice: async (
+      params: Omit<
+        TestContractParams<
+          NFTPublicSaleCollectionSequentialTypes.Fields,
+          never
+        >,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getMintPrice", params);
+    },
+    mint_: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { minter: Address; index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "mint_", params);
+    },
     mint: async (
       params: Omit<
         TestContractParams<
@@ -152,6 +182,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    mintBatch: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { size: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "mintBatch", params);
+    },
   };
 }
 
@@ -160,7 +198,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "d540a48e7d77afa02e305e4f373a9a9512270a7169bef4fa803c4eed929fedcf"
+    "38281e7c64a3595f6086618e9bb4a04da89143852eb2e646c03c5ace7ee9aa4d"
   )
 );
 
@@ -227,6 +265,19 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
         getContractByCodeHash
       );
     },
+    getMintPrice: async (
+      params?: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"getMintPrice">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"getMintPrice">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequential,
+        this,
+        "getMintPrice",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
     mint: async (
       params?: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"mint">
     ): Promise<
@@ -237,6 +288,19 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
         this,
         "mint",
         params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    mintBatch: async (
+      params: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"mintBatch">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"mintBatch">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequential,
+        this,
+        "mintBatch",
+        params,
         getContractByCodeHash
       );
     },

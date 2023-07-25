@@ -6,7 +6,7 @@ import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTColl
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
-import { fetchNFT, fetchPreMintNFT, NFT } from '../components/nft';
+import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed, shortenName } from '../utils';
 import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
+import { fetchMintedNFT, NFT } from '../utils/nft';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -105,7 +106,7 @@ const AssetDetails = () => {
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchNFT(tokenId as string, false).then((nft) => {
+      fetchMintedNFT(tokenId as string, false).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
@@ -285,11 +286,15 @@ const AssetDetails = () => {
           }
           {
             (context.account && nft.price && nft.minted === false) ? (
-              <Button
-                btnName={`Mint for ${prettifyAttoAlphAmount(nft.price)} ALPH`}
-                classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
-                handleClick={() => setPaymentModal(true)}
-              />
+              (collectionMetadata?.collectionType === 'NFTPublicSaleCollectionRandom') ?
+                <Button
+                  btnName={`Mint for ${prettifyAttoAlphAmount(nft.price)} ALPH`}
+                  classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                  handleClick={() => setPaymentModal(true)}
+                />
+                : <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                    Not minted yet
+                  </p>
             ) : null
           }
           {

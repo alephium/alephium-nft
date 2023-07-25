@@ -1,10 +1,10 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
-import { NodeProvider, hexToString, addressFromContractId, web3, groupOfAddress } from '@alephium/web3'
-import { EnumerableNFT, EnumerableNFTInstance, NFTListing as NFTListingFactory, NFTListingInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
+import { NodeProvider, addressFromContractId, web3 } from '@alephium/web3'
+import { NFTListing as NFTListingFactory, NFTListingInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
-import axios from "axios"
+import { fetchMintedNFT } from './nft'
 
 export async function trySaveNewNFTListings() {
   const nodeProvider = new NodeProvider(defaultNodeUrl)
@@ -92,44 +92,19 @@ async function fetchNFTListing(
   }
 
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-    const tokenAddress = addressFromContractId(tokenId)
-    const nodeProvider = web3.getCurrentNodeProvider()
-    const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: groupOfAddress(tokenAddress) })
-
-    let metadataUri: string | undefined
-    let collectionId: string | undefined
-    if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
-      const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
-      const multiCallResult = await nonEnumerableNFTInstance.multicall({
-        getTokenUri: {},
-        getCollectionId: {}
-      })
-      metadataUri = hexToString(multiCallResult.getTokenUri.returns)
-      collectionId = multiCallResult.getCollectionId.returns
-    } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
-      const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
-      const multiCallResult = await enumerableNFTInstance.multicall({
-        getTokenUri: {},
-        getCollectionId: {}
-      })
-      metadataUri = hexToString(multiCallResult.getTokenUri.returns)
-      collectionId = multiCallResult.getCollectionId.returns
-    }
-
-    if (metadataUri && collectionId) {
-      const metadata = (await axios.get(metadataUri)).data
-      return {
-        _id: tokenId,
-        price: listingState.fields.price as bigint,
-        name: metadata.name,
-        description: metadata.description,
-        image: metadata.image,
-        tokenOwner: listingState.fields.tokenOwner as string,
-        marketAddress: listingState.fields.marketAddress as string,
-        listingContractId: listingContractId,
-        collectionId: collectionId,
-        createdAt: new Date()
-      }
+    const nft = await fetchMintedNFT(tokenId, true)
+    if (nft === undefined) return undefined
+    return {
+      _id: tokenId,
+      price: listingState.fields.price as bigint,
+      name: nft.name,
+      description: nft.description,
+      image: nft.image,
+      tokenOwner: listingState.fields.tokenOwner as string,
+      marketAddress: listingState.fields.marketAddress as string,
+      listingContractId: listingContractId,
+      collectionId: nft.collectionId,
+      createdAt: new Date()
     }
   }
 }

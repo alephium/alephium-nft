@@ -14,6 +14,8 @@ import {
 import { default as BuyNFTScriptJson } from "../scripts/BuyNFT.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/ListNFT.ral.json";
+import { default as MintBatchSequentialScriptJson } from "../scripts/MintBatchSequential.ral.json";
+import { default as MintNextSequentialScriptJson } from "../scripts/MintNextSequential.ral.json";
 import { default as MintOpenNFTScriptJson } from "../scripts/MintOpenNFT.ral.json";
 import { default as MintSpecificPublicSaleNFTScriptJson } from "../scripts/MintSpecificPublicSaleNFT.ral.json";
 import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.json";
@@ -37,6 +39,15 @@ export const ListNFT = new ExecutableScript<{
   price: bigint;
   nftMarketplace: HexString;
 }>(Script.fromJson(ListNFTScriptJson));
+export const MintBatchSequential = new ExecutableScript<{
+  nftCollection: HexString;
+  batchSize: bigint;
+  mintPrice: bigint;
+}>(Script.fromJson(MintBatchSequentialScriptJson));
+export const MintNextSequential = new ExecutableScript<{
+  nftCollection: HexString;
+  mintPrice: bigint;
+}>(Script.fromJson(MintNextSequentialScriptJson));
 export const MintOpenNFT = new ExecutableScript<{
   nftCollection: HexString;
   uri: HexString;

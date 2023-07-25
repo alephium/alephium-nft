@@ -1,74 +1,10 @@
 import axios from "axios"
 import useSWR from "swr"
-import { EnumerableNFT, EnumerableNFTInstance, NFTMarketPlaceInstance, NFTPublicSaleCollectionRandomInstance, NonEnumerableNFT, NonEnumerableNFTInstance } from '../artifacts/ts'
+import { NFTMarketPlaceInstance, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 import { marketplaceContractId } from '../configs/nft'
-import { web3, addressFromTokenId, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
-
-export interface NFT {
-  name: string,
-  description: string,
-  image: string,
-  tokenId: string,
-  listed: boolean,
-  minted: boolean,
-  collectionId: string,
-  price?: bigint,
-  tokenIndex?: number
-}
-
-export async function fetchNFT(
-  tokenId: string,
-  listed: boolean
-): Promise<NFT | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
-  const tokenAddress = addressFromTokenId(tokenId)
-
-  if (!!nodeProvider) {
-    try {
-      const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: 0 })
-      if (nftState) {
-        let metadataUri: string | undefined
-        let collectionId: string | undefined
-        if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
-          const nonEnumerableNFTInstance = new NonEnumerableNFTInstance(tokenAddress)
-          const multiCallResult = await nonEnumerableNFTInstance.multicall({
-            getTokenUri: {},
-            getCollectionId: {}
-          })
-          metadataUri = hexToString(multiCallResult.getTokenUri.returns)
-          collectionId = multiCallResult.getCollectionId.returns
-        } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
-          const enumerableNFTInstance = new EnumerableNFTInstance(tokenAddress)
-          const multiCallResult = await enumerableNFTInstance.multicall({
-            getTokenUri: {},
-            getCollectionId: {}
-          })
-          metadataUri = hexToString(multiCallResult.getTokenUri.returns)
-          collectionId = multiCallResult.getCollectionId.returns
-        }
-
-        if (metadataUri && collectionId) {
-          try {
-            const metadata = (await axios.get(metadataUri)).data
-            return {
-              name: metadata.name,
-              description: metadata.description,
-              image: metadata.image,
-              tokenId: tokenId,
-              collectionId: collectionId,
-              minted: true,
-              listed
-            }
-          } catch {
-            return undefined
-          }
-        }
-      }
-    } catch (e) {
-      console.debug(`error fetching state for ${tokenId}`, e)
-    }
-  }
-}
+import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { fetchNFTListingsByOwner } from "./NFTListing"
+import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../utils/nft"
 
 export async function fetchPreMintNFT(
   collectionId: string,
@@ -80,7 +16,7 @@ export async function fetchPreMintNFT(
   if (!!nodeProvider) {
     try {
       const collectionAddress = addressFromContractId(collectionId)
-      const collection = new NFTPublicSaleCollectionRandomInstance(collectionAddress)
+      const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
       const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
       if (mintPrice === undefined) {
         mintPrice = (await collection.methods.getMintPrice()).returns
@@ -102,6 +38,41 @@ export async function fetchPreMintNFT(
       return undefined
     }
   }
+}
+
+async function fetchListedNFTs(address: string): Promise<NFT[]> {
+  const listings = await fetchNFTListingsByOwner(address)
+  return listings.map((listing) => ({ tokenId: listing._id, listed: true, minted: true, ...listing }))
+}
+
+async function fetchNFTsFromUTXOs(
+  nodeProvider: NodeProvider,
+  address: string
+): Promise<NFT[]> {
+  const balances = await nodeProvider.addresses.getAddressesAddressBalance(address, { mempool: false })
+  const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
+  const tokenIds = tokenBalances
+    .filter((token) => +token.amount == 1)
+    .map((token) => token.id)
+
+  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(tokenId))
+  const nftMetadatas = await Promise.all(nftMetadataPromises)
+  const nftPromises = tokenIds.map((tokenId, index) => {
+    const metadata = nftMetadatas[index]
+    if (metadata === undefined) return Promise.resolve(undefined)
+    return fetchMintedNFTByMetadata(tokenId, metadata, false)
+  })
+  return (await Promise.all(nftPromises)).filter((nft) => nft !== undefined) as NFT[]
+}
+
+export async function fetNFTsByAddress(nodeProvider: NodeProvider, address: string): Promise<NFT[]> {
+  web3.setCurrentNodeProvider(nodeProvider)
+  const nftsFromUTXOs = await fetchNFTsFromUTXOs(nodeProvider, address)
+  const listedNFTs = await fetchListedNFTs(address)
+
+  const isListed = (nftTokenId: string) => listedNFTs.find((nft) => nft.tokenId === nftTokenId) !== undefined
+  const removeDuplicates = nftsFromUTXOs.filter((nft) => !isListed(nft.tokenId))
+  return [...removeDuplicates, ...listedNFTs]
 }
 
 export const useCommissionRate = (
@@ -150,7 +121,7 @@ export const useNFT = (
 
       web3.setCurrentNodeProvider(nodeProvider)
 
-      return await fetchNFT(tokenId, listed)
+      return await fetchMintedNFT(tokenId, listed)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,

@@ -1,15 +1,15 @@
 {
   "version": "v2.3.5",
-  "name": "CancelListing",
-  "bytecodeTemplate": "01010300000005{0}0d0c{1}0102",
+  "name": "MintNextSequential",
+  "bytecodeTemplate": "0101030000000ab413c40de0b6b3a7640000{1}2aa20c0d{0}010718",
   "fieldsSig": {
     "names": [
-      "tokenId",
-      "nftMarketplace"
+      "nftCollection",
+      "mintPrice"
     ],
     "types": [
       "ByteVec",
-      "ByteVec"
+      "U256"
     ],
     "isMutable": [
       false,

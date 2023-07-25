@@ -9,11 +9,9 @@ Contract NFTPublicSaleCollectionRandom(
     maxSupply: U256,
     mintPrice: U256,
     mut totalSupply: U256
-) extends NFTPublicSaleCollection(nftBaseUri, maxSupply) {
+) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice) {
     enum ErrorCodes {
-        IncorrectTokenIndex = 0
-        NFTNotFound = 1
-        TokenOwnerAllowedOnly = 2
+        IncorrectTokenIndex = 2
     }
 
     @using(preapprovedAssets = true, updateFields = true, assetsInContract = true, checkExternalCaller = false)
@@ -38,34 +36,12 @@ Contract NFTPublicSaleCollectionRandom(
         return contractId
     }
 
-    @using(checkExternalCaller = false)
-    pub fn nftByIndex(index: U256) -> NFTPublicSaleCollectionRandom {
-        assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
-
-        let nftTokenId = subContractId!(toByteVec!(index))
-        assert!(contractExists!(nftTokenId), ErrorCodes.NFTNotFound)
-
-        return NFTPublicSaleCollectionRandom(nftTokenId)
-    }
-
-    pub fn getCollectionUri() -> ByteVec {
-        return collectionUri
-    }
-
-    pub fn totalSupply() -> U256 {
-        return totalSupply
-    }
-
     pub fn getCollectionOwner() -> Address {
         return collectionOwner
     }
 
     pub fn getMaxSupply() -> U256 {
         return maxSupply
-    }
-
-    pub fn getMintPrice() -> U256 {
-        return mintPrice
     }
 
     @using(assetsInContract = true)
