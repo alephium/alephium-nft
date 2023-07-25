@@ -202,7 +202,7 @@ export interface NFTOpenCollection extends NFTCollectionBase {
 }
 
 export interface NFTPublicSaleCollection extends NFTCollectionBase {
-  collectionType: 'NFTPublicSaleCollection'
+  collectionType: 'NFTPublicSaleCollectionSequential' | 'NFTPublicSaleCollectionRandom'
   maxSupply: bigint
   mintPrice: bigint
   maxBatchMintSize: number
@@ -333,7 +333,7 @@ export async function fetchNFTCollectionMetadata(
     const metadata = (await axios.get(metadataUri)).data
     return {
       id: collectionId,
-      collectionType: 'NFTPublicSaleCollection',
+      collectionType: 'NFTPublicSaleCollectionSequential',
       name: metadata.name,
       description: metadata.description,
       totalSupply: contractState.fields.totalSupply,
