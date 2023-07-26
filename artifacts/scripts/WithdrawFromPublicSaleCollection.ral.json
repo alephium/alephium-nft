@@ -1,15 +1,21 @@
 {
-  "version": "v2.3.4",
-  "name": "MintPreDesignedNFT",
-  "bytecodeTemplate": "01010300000008b413c40de0b6b3a7640000a20c0d{0}010318",
+  "version": "v2.3.5",
+  "name": "WithdrawFromPublicSaleCollection",
+  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0103",
   "fieldsSig": {
     "names": [
+      "to",
+      "amount",
       "nftCollection"
     ],
     "types": [
+      "Address",
+      "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
+      false,
       false
     ]
   },

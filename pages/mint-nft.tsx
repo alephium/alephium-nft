@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { useCollection } from '../components/NFTCollection'
+import { useCollectionMetadata } from '../components/NFTCollection'
 import { Button, Input } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -22,7 +22,7 @@ export default function MintNFT() {
   const { theme } = useTheme();
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const { collectionId } = router.query
-  const { collection } = useCollection(collectionId as string, context.signerProvider)
+  const { collectionMetadata } = useCollectionMetadata(collectionId as string, context.signerProvider)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
@@ -84,10 +84,10 @@ export default function MintNFT() {
 
   async function mintNFT() {
     const uri = await uploadToIPFS()
-    if (uri && context.signerProvider?.nodeProvider && context.account && collection) {
+    if (uri && context.signerProvider?.nodeProvider && context.account && collectionMetadata) {
       const nftCollection = new NFTCollection(context.signerProvider)
       setIsMinting(true)
-      const result = await nftCollection.mintOpenNFT(collection.id, uri)
+      const result = await nftCollection.mintOpenNFT(collectionMetadata.id, uri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
       setIsMinting(false)
       router.push('/my-nfts')
@@ -107,16 +107,16 @@ export default function MintNFT() {
   return (
     <>
       {
-        collection && (
+        collectionMetadata && (
           <div className="relative flex justify-center md:flex-col min-h-screen">
             <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
               <div className="relative w-557 minmd:w-2/3 minmd:h-2/3 sm:w-full sm:h-300 h-557 ">
-                <Image src={collection.image} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
+                <Image src={collectionMetadata.image} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
               </div>
             </div>
             <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
               <div className="flex flex-row sm:flex-col">
-                <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{collection.name}</h2>
+                <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{collectionMetadata.name}</h2>
               </div>
 
               <div className="mt-10">
@@ -137,7 +137,7 @@ export default function MintNFT() {
                 </div>
                 <div className="mt-3">
                   <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base">
-                    {collection.description}
+                    {collectionMetadata.description}
                   </p>
                 </div>
               </div>

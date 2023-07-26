@@ -1,0 +1,216 @@
+{
+  "version": "v2.3.5",
+  "name": "NFTPublicSaleCollectionRandom",
+  "bytecode": "0809091240264037404b405440a840b140ba010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b160102010202020008b4ce02450d7b16001601a801000101010a1600ce04310c7bce031600894402010000000102ce0502010101050140271600ce04310e7bb41701b11600000416001406414c5048000313046413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa100160402010000000102ce0202010000000102ce0402",
+  "codeHash": "91c8ad7e2ce5e1ffae7c0f16f5f613876ab96e9795325d8a6f6f803c32bb9727",
+  "fieldsSig": {
+    "names": [
+      "enumerableNftTemplateId",
+      "collectionUri",
+      "collectionOwner",
+      "nftBaseUri",
+      "maxSupply",
+      "mintPrice",
+      "totalSupply",
+      "__stdInterfaceId"
+    ],
+    "types": [
+      "ByteVec",
+      "ByteVec",
+      "Address",
+      "ByteVec",
+      "U256",
+      "U256",
+      "U256",
+      "ByteVec"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "eventsSig": [],
+  "functions": [
+    {
+      "name": "getCollectionUri",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "totalSupply",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "nftByIndex",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "getNFTUri",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getMintPrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "mint",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "getCollectionOwner",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Address"
+      ]
+    },
+    {
+      "name": "getMaxSupply",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    }
+  ],
+  "constants": [],
+  "enums": [
+    {
+      "name": "PublicSaleErrorCodes",
+      "fields": [
+        {
+          "name": "IncorrectTokenIndex",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "NFTNotFound",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        },
+        {
+          "name": "TokenOwnerAllowedOnly",
+          "value": {
+            "type": "U256",
+            "value": "1"
+          }
+        },
+        {
+          "name": "IncorrectTokenIndex",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        }
+      ]
+    }
+  ],
+  "stdInterfaceId": "0002"
+}

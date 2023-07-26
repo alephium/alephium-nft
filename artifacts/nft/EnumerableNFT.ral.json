@@ -1,20 +1,23 @@
 {
-  "version": "v2.3.4",
+  "version": "v2.3.5",
   "name": "EnumerableNFT",
-  "bytecode": "03020f18010000000106ce010d0dce00010402010000000102ce0002",
-  "codeHash": "9754329f7623044ec5edeb7a3349eb36066ec1140fb41e2ba5828685df1e1012",
+  "bytecode": "040309121b010000000102ce0102010000000102ce0002010000000102ce0202",
+  "codeHash": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
   "fieldsSig": {
     "names": [
-      "collection",
+      "collectionId",
+      "tokenUri",
       "nftIndex",
       "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
+      "ByteVec",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false
@@ -44,6 +47,18 @@
       "paramIsMutable": [],
       "returnTypes": [
         "ByteVec"
+      ]
+    },
+    {
+      "name": "getNFTIndex",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
       ]
     }
   ],

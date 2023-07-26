@@ -6,15 +6,16 @@ import { NFTCollection, fetchNFTCollectionMetadata } from '../components/NFTColl
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
-import { fetchNFT, NFT } from '../components/nft';
-import { fetchNFTListings, NFTListing } from '../components/NFTListing';
+import { fetchPreMintNFT } from '../components/nft';
+import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
-import { shortenName } from '../utils/shortenName';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { waitTxConfirmed } from '../utils';
+import { waitTxConfirmed, shortenName } from '../utils';
+import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
+import { fetchMintedNFT, NFT } from '../utils/nft';
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -75,12 +76,12 @@ const AssetDetails = () => {
   const [paymentModal, setPaymentModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
-  const { tokenId } = router.query
+  const { tokenId, collectionId, tokenIndex } = router.query
   const [nft, setNFT] = useState<NFT | undefined>(undefined)
   const [isNFTLoading, setIsNFTLoading] = useState<boolean>(false)
   const [tokenIds, setTokenIds] = useState<string[]>([])
   const [isTokensLoading, setIsTokensLoading] = useState<boolean>(false)
-  const [nftListings, setNftListing] = useState<NFTListing[]>([])
+  const [nftListing, setNftListing] = useState<NFTListing | undefined>()
   const [isNFTListingLoading, setIsNFTListingLoading] = useState<boolean>(false)
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
@@ -105,31 +106,39 @@ const AssetDetails = () => {
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchNFT(tokenId as string, false).then((nft) => {
+      fetchMintedNFT(tokenId as string, false).then((nft) => {
+        setNFT(nft)
+        setIsNFTLoading(false)
+      })
+
+      setIsTokensLoading(true)
+      fetchTokens(nodeProvider, context.account?.address).then((tokens) => {
+        setTokenIds(tokens)
+        setIsTokensLoading(false)
+      })
+
+
+      setIsNFTListingLoading(true)
+      fetchNFTListingById(tokenId as string).then((listing) => {
+        setNftListing(listing)
+        setIsNFTListingLoading(false)
+      })
+    }
+
+    if (collectionId && tokenIndex) {
+      setIsNFTLoading(true)
+      fetchPreMintNFT(collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
     }
 
-    setIsTokensLoading(true)
-    fetchTokens(nodeProvider, context.account?.address).then((tokens) => {
-      setTokenIds(tokens)
-      setIsTokensLoading(false)
-    })
-
-
-    setIsNFTListingLoading(true)
-    fetchNFTListings().then((listings) => {
-      setNftListing(listings)
-      setIsNFTListingLoading(false)
-    })
   }, [paymentModal, successModal, nft?.collectionId, context.account?.address, tokenId]);
 
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT || isCancellingNFTListing) {
     return <Loader />;
   }
 
-  const nftListing = nftListings.find((listing) => listing._id == nft.tokenId)
   const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === context.account?.address)
 
   function getPriceBreakdowns(nftPrice: bigint) {
@@ -142,29 +151,36 @@ const AssetDetails = () => {
   }
 
   const checkout = async () => {
-    if (nftListing && context.signerProvider?.nodeProvider) {
-      const nftMarketplace = new NFTMarketplace(context.signerProvider)
-      // TODO: Display the price breakdowns
-      const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
+    if (context.signerProvider?.nodeProvider) {
+      try {
+        let result
+        setIsBuyingNFT(true)
+        if (nft.minted === true && nftListing) {
+          const nftMarketplace = new NFTMarketplace(context.signerProvider)
+          // TODO: Display the price breakdowns
+          const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
+          result = await nftMarketplace.buyNFT(
+            totalAmount,
+            nftListing._id,
+            binToHex(contractIdFromAddress(nftListing.marketAddress))
+          )
+        } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
+          const nftCollection = new NFTCollectionHelper(context.signerProvider)
+          result = await nftCollection.mintSpecificPublicSaleNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
+        }
 
-      setIsBuyingNFT(true)
-      const result = await nftMarketplace.buyNFT(
-        totalAmount,
-        nftListing._id,
-        binToHex(contractIdFromAddress(nftListing.marketAddress))
-      )
-      setPaymentModal(false);
-      setSuccessModal(true);
-      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
-      setIsBuyingNFT(false)
-    } else {
-      console.debug(
-        "can not buy NFT",
-        context.signerProvider?.nodeProvider,
-        context.signerProvider,
-        context.account,
-        nftListing
-      )
+        setPaymentModal(false);
+        setSuccessModal(true);
+        if (result) {
+          await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+        }
+        setIsBuyingNFT(false)
+      } catch (e) {
+        setPaymentModal(false);
+        setIsBuyingNFT(false)
+        setSuccessModal(false);
+        console.debug("Can not buy NFT", e)
+      }
     }
   };
 
@@ -269,6 +285,19 @@ const AssetDetails = () => {
             ) : null
           }
           {
+            (context.account && nft.price && nft.minted === false) ? (
+              (collectionMetadata?.collectionType === 'NFTPublicSaleCollectionRandom') ?
+                <Button
+                  btnName={`Mint for ${prettifyAttoAlphAmount(nft.price)} ALPH`}
+                  classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                  handleClick={() => setPaymentModal(true)}
+                />
+                : <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
+                    Not minted yet
+                  </p>
+            ) : null
+          }
+          {
             (!context.account) ? (
               <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
                 To transact, please connect to wallet
@@ -285,7 +314,7 @@ const AssetDetails = () => {
           footer={(
             <div className="flex flex-row sm:flex-col">
               <Button
-                btnName="Checkout"
+                btnName={nft.minted ? "Checkout" : "Mint"}
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
                 handleClick={checkout}
               />
@@ -323,7 +352,7 @@ const AssetDetails = () => {
                 <Image src={nft.image} objectFit="cover" layout="fill" />
               </div>
               <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
-                You successfully purchased <span className="font-semibold">{nft.name}</span>.
+                You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{nft.name}</span>.
               </p>
             </div>
           )}

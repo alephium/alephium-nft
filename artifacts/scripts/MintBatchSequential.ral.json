@@ -1,17 +1,20 @@
 {
-  "version": "v2.3.3",
-  "name": "UpdateAdmin",
-  "bytecodeTemplate": "01010300010007{1}1700{0}0d0c16000105",
+  "version": "v2.3.5",
+  "name": "MintBatchSequential",
+  "bytecodeTemplate": "0101030001000f{1}13c40de0b6b3a7640000{2}2a2c1700b41600a2{1}0d0d{0}010818",
   "fieldsSig": {
     "names": [
-      "newAdmin",
-      "nftMarketplaceContractId"
+      "nftCollection",
+      "batchSize",
+      "mintPrice"
     ],
     "types": [
-      "Address",
-      "ByteVec"
+      "ByteVec",
+      "U256",
+      "U256"
     ],
     "isMutable": [
+      false,
       false,
       false
     ]

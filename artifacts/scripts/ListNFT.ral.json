@@ -1,5 +1,5 @@
 {
-  "version": "v2.3.4",
+  "version": "v2.3.5",
   "name": "ListNFT",
   "bytecodeTemplate": "010103000300190c0d{2}0107170013c40de0b6b3a76400001701160016012a1702b47a1602a2{0}0da3{0}{1}0e0d{2}010118",
   "fieldsSig": {

@@ -1,0 +1,7 @@
+TxScript MintSpecificPublicSaleNFT(
+    index: U256,
+    mintPrice: U256,
+    nftCollection: NFTPublicSaleCollectionRandom
+) {
+    nftCollection.mint{callerAddress!() -> ALPH: 1 alph + mintPrice}(index)
+}

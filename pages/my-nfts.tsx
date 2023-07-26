@@ -2,15 +2,16 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
-import { fetchAllNFTCollections, NFTCollection } from '../components/NFTCollection';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
+import { fetNFTsByAddress } from '../components/nft';
+import { NFT } from '../utils/nft';
 
 const MyNFTs = () => {
   const context = useAlephiumConnectContext()
 
-  const [nftCollections, setNftCollections] = useState<NFTCollection[]>([])
+  const [nfts, setNFTs] = useState<NFT[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -21,11 +22,11 @@ const MyNFTs = () => {
         && context.account?.address
       ) {
         setIsLoading(true)
-        const collections = await fetchAllNFTCollections(
-          context.signerProvider,
+        const nfts = await fetNFTsByAddress(
+          context.signerProvider.nodeProvider,
           context.account.address
         )
-        setNftCollections(collections)
+        setNFTs(nfts)
         setIsLoading(false)
       }
     })()
@@ -66,23 +67,19 @@ const MyNFTs = () => {
         </div>
       </div>
 
-      {!isLoading && !nftCollections.length ? (
+      {!isLoading && !nfts.length ? (
         <div className="flexCenter sm:p-4 p-16">
           <h1 className="font-poppins dark:text-white text-nft-black-1 font-extrabold text-3xl">No NFTs Owned!</h1>
         </div>
       ) : (
-        <div className="sm:px-4 p-12 w-full minmd:w-4/5 flexCenter flex-col">
-          <div className="mt-3 w-full flex flex-wrap">
-            {nftCollections.flatMap((nftCollection) => {
-              return nftCollection.nfts.map((nft) => {
-                return (
-                  <NFTCard
-                    key={nft.tokenId}
-                    nft={{ tokenOwner: context.account?.address || '', ...nft }}
-                  />
-                )
-              })
-            })}
+        <div className="sm:px-4 p-12 w-full ml-32 mr-32 md:ml-20 md:mr-20 sm:ml-10 sm:mr-10 mt-3">
+          <div className="grid-container">
+            {nfts.map((nft) => (
+              <NFTCard
+                key={nft.tokenId}
+                nft={{ tokenOwner: context.account?.address || '', ...nft }}
+              />
+            ))}
           </div>
         </div>
       )}

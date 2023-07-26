@@ -2,14 +2,19 @@ import "std/nft_interface"
 
 // Only 1 token is supported
 Contract EnumerableNFT(
-    collection: NFTPreDesignedCollection,
+    collectionId: ByteVec,
+    tokenUri: ByteVec,
     nftIndex: U256
 ) implements INFT {
-    pub fn getTokenUri() -> ByteVec {
-        return collection.getTokenUri(nftIndex)
+    pub fn getCollectionId() -> ByteVec {
+        return collectionId
     }
 
-    pub fn getCollectionId() -> ByteVec {
-        return contractId!(collection)
+    pub fn getTokenUri() -> ByteVec {
+        return tokenUri
+    }
+
+    pub fn getNFTIndex() -> U256 {
+        return nftIndex
     }
 }

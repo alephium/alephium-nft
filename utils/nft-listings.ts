@@ -1,11 +1,10 @@
 import { IMarketplaceEvent, MaketplaceEvent } from './mongodb/models/marketplace-event'
 import { NFTListing } from './mongodb/models/nft-listing'
-import { NodeProvider, hexToString, addressFromContractId, web3 } from '@alephium/web3'
-import { fetchNFTListingState, fetchNonEnumerableNFTState } from "./contracts"
-import { NFTListing as NFTListingFactory } from '../artifacts/ts'
+import { NodeProvider, addressFromContractId, web3 } from '@alephium/web3'
+import { NFTListing as NFTListingFactory, NFTListingInstance } from '../artifacts/ts'
 import { defaultNodeUrl, marketplaceContractAddress } from '../configs/nft'
 import { MaketplaceEventNextStart } from './mongodb/models/marketplace-event-next-start'
-import axios from "axios"
+import { fetchMintedNFT } from './nft'
 
 export async function trySaveNewNFTListings() {
   const nodeProvider = new NodeProvider(defaultNodeUrl)
@@ -87,30 +86,24 @@ async function fetchNFTListing(
   var listingState = undefined
 
   try {
-    listingState = await fetchNFTListingState(
-      addressFromContractId(listingContractId)
-    )
+    listingState = await new NFTListingInstance(addressFromContractId(listingContractId)).fetchState()
   } catch (e) {
     console.debug(`error fetching state for ${tokenId}`, e)
   }
 
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-    const nftState = await fetchNonEnumerableNFTState(
-      addressFromContractId(tokenId)
-    )
-
-    const metadataUri = hexToString(nftState.fields.uri as string)
-    const metadata = (await axios.get(metadataUri)).data
+    const nft = await fetchMintedNFT(tokenId, true)
+    if (nft === undefined) return undefined
     return {
       _id: tokenId,
       price: listingState.fields.price as bigint,
-      name: metadata.name,
-      description: metadata.description,
-      image: metadata.image,
+      name: nft.name,
+      description: nft.description,
+      image: nft.image,
       tokenOwner: listingState.fields.tokenOwner as string,
       marketAddress: listingState.fields.marketAddress as string,
       listingContractId: listingContractId,
-      collectionId: nftState.fields.collectionId,
+      collectionId: nft.collectionId,
       createdAt: new Date()
     }
   }

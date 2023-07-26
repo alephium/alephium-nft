@@ -7,8 +7,9 @@ import {
   NFTListing,
   NFTMarketPlace,
   EnumerableNFT,
-  NFTPreDesignedCollection,
   NFTOpenCollection,
+  NFTPublicSaleCollectionRandom,
+  NFTPublicSaleCollectionSequential,
   NonEnumerableNFT,
 } from ".";
 
@@ -19,8 +20,9 @@ export function getContractByCodeHash(codeHash: string): Contract {
       NFTListing,
       NFTMarketPlace,
       EnumerableNFT,
-      NFTPreDesignedCollection,
       NFTOpenCollection,
+      NFTPublicSaleCollectionRandom,
+      NFTPublicSaleCollectionSequential,
       NonEnumerableNFT,
     ];
   }

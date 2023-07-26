@@ -1,5 +1,0 @@
-TxScript MintPreDesignedNFT(
-    nftCollection: NFTPreDesignedCollection
-) {
-    nftCollection.mint{callerAddress!() -> ALPH: 1 alph}()
-}
