@@ -138,7 +138,7 @@ export default function CreateCollections() {
             <input {...getInputProps()} />
             <div className="flexCenter flex-col text-center">
               <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-                JPG, PNG, GIF, SVG, WEBM Max 100mb.
+                JPG, PNG, GIF, SVG, WEBM Max 5mb.
               </p>
               {isUploading ? (
                 <LoaderWithText text={`Uploading...`} />
