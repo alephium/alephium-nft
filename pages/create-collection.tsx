@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo, useEffect } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import { NFTCollection } from '../utils/nft-collection'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
@@ -7,18 +7,18 @@ import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import images from '../assets';
 import { useTheme } from 'next-themes'
-import { Button, Input, Loader } from '../components';
+import { Button, Input } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner'
 import { waitTxConfirmed } from '../utils'
 import LoaderWithText from '../components/LoaderWithText'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { convertAlphAmountWithDecimals, convertAmountWithDecimals, ONE_ALPH } from '@alephium/web3'
+import { convertAlphAmountWithDecimals, convertAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({name: '', description: '', tokenBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
+  const [formInput, updateFormInput] = useState({ name: '', description: '', nftBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const { theme } = useTheme();
@@ -97,9 +97,9 @@ export default function CreateCollections() {
 
   async function createPublicSaleCollectionSequential() {
     try {
-      const { tokenBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
+      const { nftBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid
-      if (!tokenBaseUri || !maxSupplyStr || !mintPriceStr || !maxBatchMintSizeStr) return
+      if (!nftBaseUri || !maxSupplyStr || !mintPriceStr || !maxBatchMintSizeStr) return
 
       // TODO: how do we verify the max supply?
       const maxSupply = convertAmountWithDecimals(maxSupplyStr, 0)
@@ -118,7 +118,7 @@ export default function CreateCollections() {
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
         const nftCollection = new NFTCollection(context.signerProvider)
         setIsCreatingCollection(true)
-        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, tokenBaseUri, maxBatchMintSize)
+        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
         await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
         router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
       } else {
@@ -220,13 +220,13 @@ export default function CreateCollections() {
     )
   }
 
-  function collectionTokenBaseURI() {
+  function collectionNFTBaseURI() {
     return (
       <Input
         inputType="input"
-        title="Token Base URI"
-        placeholder="Token Base URI"
-        handleClick={(e) => updateFormInput({ ...formInput, tokenBaseUri: (e.target as HTMLInputElement).value })}
+        title="NFT Base URI"
+        placeholder="NFT Base URI"
+        handleClick={(e) => updateFormInput({ ...formInput, nftBaseUri: (e.target as HTMLInputElement).value })}
       />
     )
   }
@@ -275,7 +275,7 @@ export default function CreateCollections() {
               {collectionMaxSupply()}
               {collectionMaxBatchMintSize()}
               {collectionMintPrice()}
-              {collectionTokenBaseURI()}
+              {collectionNFTBaseURI()}
               {collectionName()}
               {collectionDescription()}
               {createCollectionButton(() => createPublicSaleCollectionSequential(), 'NFTPublicSaleCollection')}
