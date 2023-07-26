@@ -13,8 +13,9 @@ import { waitTxConfirmed } from '../utils'
 import LoaderWithText from '../components/LoaderWithText'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { convertAlphAmountWithDecimals, convertAmountWithDecimals, ONE_ALPH } from '@alephium/web3'
+import { convertAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
+import SwitchButton from '../components/SwitchButton'
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -24,6 +25,7 @@ export default function CreateCollections() {
   const { theme } = useTheme();
   const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [mintRandomly, setMintRandomly] = useState<boolean>(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
@@ -95,36 +97,36 @@ export default function CreateCollections() {
     }
   }
 
-  async function createPublicSaleCollectionSequential() {
+  function tryParseInt(inputName: string, maxSupplyStr: string, decimals: number): bigint {
+    if (!maxSupplyStr) throw new Error(`${inputName} is not specified`)
+    const maxSupply = convertAmountWithDecimals(maxSupplyStr, decimals)
+    if (maxSupply === undefined || maxSupply <= 0) throw new Error(`Invalid ${inputName}`)
+    return maxSupply
+  }
+
+  async function createPublicSaleCollection() {
     try {
       const { tokenBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid
-      if (!tokenBaseUri || !maxSupplyStr || !mintPriceStr || !maxBatchMintSizeStr) return
+      if (!tokenBaseUri) throw new Error(`token base uri is not specified`)
 
       // TODO: how do we verify the max supply?
-      const maxSupply = convertAmountWithDecimals(maxSupplyStr, 0)
-      if (maxSupply === undefined || maxSupply <= 0) {
-        throw new Error('Invalid max supply')
-      }
-      const mintPrice = convertAlphAmountWithDecimals(mintPriceStr)
-      if (mintPrice === undefined || mintPrice < 0) {
-        throw new Error('Invalid mint price')
-      }
-      const maxBatchMintSize = convertAmountWithDecimals(maxBatchMintSizeStr, 0)
-      if (maxBatchMintSize === undefined || maxBatchMintSize <= 0 || maxBatchMintSize > maxSupply) {
-        throw new Error('Invalid max batch mint size')
-      }
+      const maxSupply = tryParseInt('max supply', maxSupplyStr, 0)
+      const mintPrice = tryParseInt('mint price', mintPriceStr, 18)
       const collectionUri = await uploadToIPFS()
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
         const nftCollection = new NFTCollectionDeployer(context.signerProvider)
         setIsCreatingCollection(true)
-        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, tokenBaseUri, maxBatchMintSize)
+        const createCollectionTxResult = mintRandomly
+          ? (await nftCollection.createPublicSaleCollectionRandom(maxSupply, mintPrice, collectionUri, tokenBaseUri))
+          : (await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, tokenBaseUri, tryParseInt('max batch mint size', maxBatchMintSizeStr, 0)))
         await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
         router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
       } else {
         console.debug('context..', context)
       }
     } catch (error) {
+      setIsCreatingCollection(false)
       enqueueSnackbar(`${error}`, { variant: 'error', persist: false })
     }
   }
@@ -234,18 +236,29 @@ export default function CreateCollections() {
   function createCollectionButton(handleClick: () => void, type: 'NFTOpenCollection' | 'NFTPublicSaleCollection') {
     const disabled = type === 'NFTOpenCollection'
       ? (!fileUrl || !formInput.name || !formInput.description)
-      : (!fileUrl || !formInput.name || !formInput.description || !formInput.maxSupply || !formInput.mintPrice || !formInput.maxBatchMintSize)
+      : (!fileUrl || !formInput.name || !formInput.description || !formInput.maxSupply || !formInput.mintPrice)
     return isCreatingCollection ? (
       <LoaderWithText text={`Sign and create collection...`} />
     ) : (
-      <div className="mt-7 w-full flex justify-end">
-        <Button
-          btnName="Create NFT Collection"
-          classStyles="rounded-xl"
-          handleClick={handleClick}
-          disabled={disabled}
-        />
+      <>
+      <div className="flex items-center justify-between mt-3">
+        {type === 'NFTPublicSaleCollection'
+          ? <>
+              <SwitchButton onToggle={(enabled) => {setMintRandomly(enabled)}}/>
+              <div className="ml-2">Mint Randomly</div>
+            </>
+          : null
+        }
+        <div className='ml-auto'>
+          <Button
+            btnName="Create NFT Collection"
+            classStyles="rounded-xl"
+            handleClick={handleClick}
+            disabled={disabled}
+          />
+        </div>
       </div>
+      </>
     )
   }
 
@@ -273,12 +286,12 @@ export default function CreateCollections() {
             <TabPanel>
               {collectionImage()}
               {collectionMaxSupply()}
-              {collectionMaxBatchMintSize()}
+              {!mintRandomly ? <div>{collectionMaxBatchMintSize()}</div> : null}
               {collectionMintPrice()}
               {collectionTokenBaseURI()}
               {collectionName()}
               {collectionDescription()}
-              {createCollectionButton(() => createPublicSaleCollectionSequential(), 'NFTPublicSaleCollection')}
+              {createCollectionButton(() => createPublicSaleCollection(), 'NFTPublicSaleCollection')}
             </TabPanel>
           </Tabs>
         </div>

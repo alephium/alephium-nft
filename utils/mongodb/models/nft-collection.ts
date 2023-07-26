@@ -2,7 +2,7 @@ import mongoose, { Document, model, Model, Schema } from 'mongoose'
 
 export interface INFTCollection extends Document {
   _id: string  // NFTCollection contract id
-  type: 'NFTOpenCollection' | 'NFTPublicSaleCollection'
+  type: 'NFTOpenCollection' | 'NFTPublicSaleCollectionSequential' | 'NFTPublicSaleCollectionRandom'
   name: string
   description: string
   image: string

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { NFTCollectionDeployer, fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from '../utils/nft-collection'
+import { NFTCollectionDeployer, fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata, NFTPublicSaleCollectionSequentialMetadata } from '../utils/nft-collection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -14,7 +14,7 @@ import { InfiniteScroll } from "../components/InfiniteScroll";
 import { NFTSkeletonLoader } from '../components/NFTCard';
 import { NFT } from '../utils/nft';
 
-const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTPublicSaleCollectionMetadata}) => {
+const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTPublicSaleCollectionSequentialMetadata}) => {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const [isMinting, setIsMinting] = useState<boolean>(false)

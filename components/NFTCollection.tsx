@@ -12,7 +12,7 @@ import Loader from "./Loader";
 
 export interface NFTCollection {
   _id: string
-  type: 'NFTOpenCollection' | 'NFTPublicSaleCollection'
+  type: 'NFTOpenCollection' | 'NFTPublicSaleCollectionSequential' | 'NFTPublicSaleCollectionRandom'
   name: string
   description: string
   image: string

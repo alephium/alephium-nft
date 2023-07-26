@@ -7,7 +7,8 @@ import {
   NFTPublicSaleCollectionRandom,
   NFTPublicSaleCollectionRandomInstance,
   NFTPublicSaleCollectionSequential,
-  NFTPublicSaleCollectionSequentialInstance
+  NFTPublicSaleCollectionSequentialInstance,
+  NFTPublicSaleCollectionRandomTypes
 } from '../artifacts/ts'
 import {
   MintBatchSequential,
@@ -32,6 +33,7 @@ import {
 import { nftTemplateId, groupIndex } from '../configs/nft'
 import { NFT } from "../utils/nft"
 import axios from "axios"
+import { contractExists } from '.'
 
 export class NFTCollectionDeployer extends DeployHelpers {
   async createOpenCollection(
@@ -86,6 +88,7 @@ export class NFTCollectionDeployer extends DeployHelpers {
     baseUri: string,
     maxBatchMintSize: bigint
   ): Promise<DeployContractResult<NFTPublicSaleCollectionSequentialInstance>> {
+    if (maxBatchMintSize > maxSupply) throw new Error('Invalid max batch mint size')
     const ownerAddress = (await this.signer.getSelectedAccount()).address
     return await NFTPublicSaleCollectionSequential.deploy(
       this.signer,
@@ -201,18 +204,27 @@ export interface NFTOpenCollection extends NFTCollectionBase {
   collectionType: 'NFTOpenCollection'
 }
 
-export interface NFTPublicSaleCollection extends NFTCollectionBase {
-  collectionType: 'NFTPublicSaleCollectionSequential' | 'NFTPublicSaleCollectionRandom'
+export interface NFTPublicSaleCollectionSequential extends NFTCollectionBase {
+  collectionType: 'NFTPublicSaleCollectionSequential'
   maxSupply: bigint
   mintPrice: bigint
   maxBatchMintSize: number
   nftBaseUri: string
 }
 
-export type NFTOpenCollectionMetadata = Omit<NFTOpenCollection, 'nfts'>
-export type NFTPublicSaleCollectionMetadata = Omit<NFTPublicSaleCollection, 'nfts'>
+export interface NFTPublicSaleCollectionRandom extends NFTCollectionBase {
+  collectionType: 'NFTPublicSaleCollectionRandom'
+  maxSupply: bigint
+  mintPrice: bigint
+  nftBaseUri: string
+}
 
-export type NFTCollection = NFTOpenCollection | NFTPublicSaleCollection
+export type NFTOpenCollectionMetadata = Omit<NFTOpenCollection, 'nfts'>
+export type NFTPublicSaleCollectionSequentialMetadata = Omit<NFTPublicSaleCollectionSequential, 'nfts'>
+export type NFTPublicSaleCollectionRandomMetadata = Omit<NFTPublicSaleCollectionRandom, 'nfts'>
+
+export type NFTCollection = NFTOpenCollection | NFTPublicSaleCollectionSequential | NFTPublicSaleCollectionRandom
+export type NFTPublicSaleCollectionMetadata = NFTPublicSaleCollectionSequentialMetadata | NFTPublicSaleCollectionRandomMetadata
 export type NFTCollectionMetadata = NFTOpenCollectionMetadata | NFTPublicSaleCollectionMetadata
 
 export type NFTsByCollection = Map<NFTCollection, NFT[]>
@@ -282,6 +294,19 @@ async function fetchPublicSaleNFTs(collectionMetadata: NFTPublicSaleCollectionMe
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
+// TODO: query if NFTs have been minted in one request.
+async function checkRandomCollectionNFTMinted(collectionId: string, nfts: NFT[]): Promise<NFT[]> {
+  const collectionAddress = addressFromContractId(collectionId)
+  const collection = NFTPublicSaleCollectionRandom.at(collectionAddress)
+  const promises = nfts.map((nft) =>
+    collection.methods.nftByIndex({ args: { index: BigInt(nft.tokenIndex!) }})
+      .then(() => true)
+      .catch((err) => false) // TODO: handle error properly
+  )
+  const nftMinted = await Promise.all(promises)
+  return nfts.map<NFT>((nft, index) => ({ ...nft, minted: nftMinted[index] }))
+}
+
 export async function fetchNFTByPage(collectionMetadata: NFTCollectionMetadata, page: number, pageSize: number): Promise<NFT[]> {
   const skipped = page * pageSize
   if (collectionMetadata.collectionType === 'NFTOpenCollection') {
@@ -298,13 +323,15 @@ export async function fetchNFTByPage(collectionMetadata: NFTCollectionMetadata, 
   const maxSupply = Number(collectionMetadata.maxSupply!)
   const indexes = range(skipped, pageSize).filter((idx) => idx < maxSupply)
   const nfts = await fetchPublicSaleNFTs(collectionMetadata, indexes, false)
-  return nfts.map<NFT>((nft) => {
-    if (nft.tokenIndex! < totalSupply) {
-      return {...nft, minted: true}
-    } else {
-      return {...nft, mintPrice: collectionMetadata.mintPrice }
-    }
-  })
+  return collectionMetadata.collectionType === 'NFTPublicSaleCollectionSequential'
+    ? nfts.map<NFT>((nft) => {
+        if (nft.tokenIndex! < totalSupply) {
+          return {...nft, minted: true}
+        } else {
+          return {...nft, mintPrice: collectionMetadata.mintPrice }
+        }
+      })
+    : (await checkRandomCollectionNFTMinted(collectionMetadata.id, nfts))
 }
 
 // TODO: Improve using multi-call, but it doesn't seem to work for NFTPublicSaleCollection?
@@ -327,7 +354,7 @@ export async function fetchNFTCollectionMetadata(
       owner: contractState.fields.collectionOwner,
       image: metadata.image
     }
-  } else if (state.codeHash == NFTPublicSaleCollectionSequential.contract.codeHash) {
+  } else if (state.codeHash === NFTPublicSaleCollectionSequential.contract.codeHash) {
     const contractState = NFTPublicSaleCollectionSequential.contract.fromApiContractState(state) as NFTPublicSaleCollectionSequentialTypes.State
     const metadataUri = hexToString(contractState.fields.collectionUri)
     const metadata = (await axios.get(metadataUri)).data
@@ -342,6 +369,22 @@ export async function fetchNFTCollectionMetadata(
       maxSupply: contractState.fields.maxSupply,
       mintPrice: contractState.fields.mintPrice,
       maxBatchMintSize: Number(contractState.fields.maxBatchMintSize),
+      nftBaseUri: contractState.fields.nftBaseUri
+    }
+  } else if (state.codeHash === NFTPublicSaleCollectionRandom.contract.codeHash) {
+    const contractState = NFTPublicSaleCollectionRandom.contract.fromApiContractState(state) as NFTPublicSaleCollectionRandomTypes.State
+    const metadataUri = hexToString(contractState.fields.collectionUri)
+    const metadata = (await axios.get(metadataUri)).data
+    return {
+      id: collectionId,
+      collectionType: 'NFTPublicSaleCollectionRandom',
+      name: metadata.name,
+      description: metadata.description,
+      totalSupply: contractState.fields.totalSupply,
+      owner: contractState.fields.collectionOwner,
+      image: metadata.image,
+      maxSupply: contractState.fields.maxSupply,
+      mintPrice: contractState.fields.mintPrice,
       nftBaseUri: contractState.fields.nftBaseUri
     }
   }
