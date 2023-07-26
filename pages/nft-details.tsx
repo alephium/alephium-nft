@@ -2,11 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
-import { NFTCollection, fetchNFTCollectionMetadata, NFTCollectionDeployer } from '../utils/nft-collection';
+import { NFTCollection, fetchNFTCollectionMetadata, NFTCollectionDeployer, NFTCollectionMetadata } from '../utils/nft-collection';
 import { NFTMarketplace } from '../utils/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
 import { defaultNodeUrl, marketplaceContractId } from '../configs/nft';
-import { fetchPreMintNFT } from '../components/nft';
+import { fetchNFTByIndex, fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed, shortenName } from '../utils';
 import { fetchMintedNFT, NFT } from '../utils/nft';
+import { useSnackbar } from 'notistack'
 
 interface PaymentBodyCmpProps {
   nft: {
@@ -82,9 +83,10 @@ const AssetDetails = () => {
   const [isTokensLoading, setIsTokensLoading] = useState<boolean>(false)
   const [nftListing, setNftListing] = useState<NFTListing | undefined>()
   const [isNFTListingLoading, setIsNFTListingLoading] = useState<boolean>(false)
-  const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
+  const [collectionMetadata, setCollectionMetadata] = useState<NFTCollectionMetadata | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
+  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
@@ -97,42 +99,62 @@ const AssetDetails = () => {
       document.body.style.overflow = 'visible';
     }
 
-    if (nft?.collectionId) {
-      fetchNFTCollectionMetadata(nft.collectionId).then((metadata) => {
-        setCollectionMetadata(metadata)
-      })
-    }
-
-    if (tokenId) {
-      setIsNFTLoading(true)
-      fetchMintedNFT(tokenId as string, false).then((nft) => {
-        setNFT(nft)
+    const fetchByTokenId = async (tokenId: string, fetchCollectionMetadata: boolean) => {
+      try {
+        setIsNFTLoading(true)
+        const mintedNFT = await fetchMintedNFT(tokenId, false)
+        if (mintedNFT === undefined) throw new Error('failed to fetch nft')
+        setNFT(mintedNFT)
+        if (fetchCollectionMetadata) {
+          const collectionMetadata = await fetchNFTCollectionMetadata(mintedNFT.collectionId)
+          setCollectionMetadata(collectionMetadata)
+        }
         setIsNFTLoading(false)
-      })
 
-      setIsTokensLoading(true)
-      fetchTokens(nodeProvider, context.account?.address).then((tokens) => {
+        setIsTokensLoading(true)
+        const tokens = await fetchTokens(nodeProvider, context.account?.address)
         setTokenIds(tokens)
         setIsTokensLoading(false)
-      })
 
-
-      setIsNFTListingLoading(true)
-      fetchNFTListingById(tokenId as string).then((listing) => {
-        setNftListing(listing)
+        setIsNFTListingLoading(true)
+        const nftListing = await fetchNFTListingById(tokenId)
+        setNftListing(nftListing)
         setIsNFTListingLoading(false)
-      })
-    }
-
-    if (collectionId && tokenIndex) {
-      setIsNFTLoading(true)
-      fetchPreMintNFT(collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
-        setNFT(nft)
+      } catch (error) {
         setIsNFTLoading(false)
-      })
+        setIsTokensLoading(false)
+        setIsNFTListingLoading(false)
+        enqueueSnackbar(`${error}`, { variant: 'error', persist: false })
+      }
     }
 
-  }, [paymentModal, successModal, nft?.collectionId, context.account?.address, tokenId]);
+    const fetchByNFTIndex = async (collectionId: string, tokenIndex: string) => {
+      try {
+        setIsNFTLoading(true)
+        const metadata = await fetchNFTCollectionMetadata(collectionId)
+        if (metadata === undefined) throw new Error('collection does not exist')
+        setCollectionMetadata(metadata)
+
+        const nftInfo = await fetchNFTByIndex(metadata, BigInt(tokenIndex))
+        if (nftInfo.minted) {
+          await fetchByTokenId(nftInfo.tokenId, false)
+        } else if (metadata.collectionType === 'NFTOpenCollection') {
+          throw new Error('invalid collection type')
+        } else {
+          const nft = await fetchPreMintNFT(metadata, BigInt(tokenIndex))
+          setNFT(nft)
+        }
+        setIsNFTLoading(false)
+      } catch (error) {
+        setIsNFTLoading(false)
+        enqueueSnackbar(`${error}`, { variant: 'error', persist: false })
+      }
+    }
+
+    if (tokenId) fetchByTokenId(tokenId as string, true)
+    if (collectionId && tokenIndex) fetchByNFTIndex(collectionId as string, tokenIndex as string)
+
+  }, [paymentModal, successModal, context.account?.address, tokenId, context.signerProvider?.nodeProvider, collectionId, tokenIndex, enqueueSnackbar]);
 
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT || isCancellingNFTListing) {
     return <Loader />;

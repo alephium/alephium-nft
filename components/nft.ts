@@ -2,41 +2,48 @@ import axios from "axios"
 import useSWR from "swr"
 import { NFTMarketPlaceInstance, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 import { marketplaceContractId } from '../configs/nft'
-import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, groupOfAddress } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../utils/nft"
+import { NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from "../utils/nft-collection"
+import { contractExists } from "../utils"
+
+export async function fetchNFTByIndex(
+  metadata: NFTCollectionMetadata,
+  tokenIndex: bigint
+): Promise<{ tokenId: string, minted: boolean }> {
+  const collectionAddress = addressFromContractId(metadata.id)
+  const tokenId = subContractId(metadata.id, binToHex(encodeU256(tokenIndex)), groupOfAddress(collectionAddress))
+  if (metadata.collectionType === 'NFTOpenCollection' || metadata.collectionType === 'NFTPublicSaleCollectionSequential') {
+    return { tokenId, minted: tokenIndex < metadata.totalSupply }
+  }
+  const minted = await contractExists(tokenId, web3.getCurrentNodeProvider())
+  return { tokenId, minted }
+}
 
 export async function fetchPreMintNFT(
-  collectionId: string,
-  tokenIndex: bigint,
-  mintPrice?: bigint
+  collectionMetadata: NFTPublicSaleCollectionMetadata,
+  tokenIndex: bigint
 ): Promise<NFT | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
-  const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
-  if (!!nodeProvider) {
-    try {
-      const collectionAddress = addressFromContractId(collectionId)
-      const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-      const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
-      if (mintPrice === undefined) {
-        mintPrice = (await collection.methods.getMintPrice()).returns
-      }
-      const metadata = (await axios.get(tokenUri)).data
-      return {
-        name: metadata.name,
-        description: metadata.description,
-        image: metadata.image,
-        tokenId: tokenId,
-        collectionId: collectionId,
-        listed: false,
-        minted: false,
-        price: mintPrice,
-        tokenIndex: Number(tokenIndex)
-      }
-    } catch (e) {
-      console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
-      return undefined
+  const collectionAddress = addressFromContractId(collectionMetadata.id)
+  const tokenId = subContractId(collectionMetadata.id, binToHex(encodeU256(tokenIndex)), groupOfAddress(collectionAddress))
+  try {
+    const hexStr = collectionMetadata.nftBaseUri + Buffer.from(tokenIndex.toString(), 'ascii').toString('hex')
+    const nftMetadata = (await axios.get(hexToString(hexStr))).data
+    return {
+      name: nftMetadata.name,
+      description: nftMetadata.description,
+      image: nftMetadata.image,
+      tokenId: tokenId,
+      collectionId: collectionMetadata.id,
+      listed: false,
+      minted: false,
+      price: collectionMetadata.mintPrice,
+      tokenIndex: Number(tokenIndex)
     }
+  } catch (e) {
+    console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
+    return undefined
   }
 }
 
