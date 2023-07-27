@@ -23,13 +23,6 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "EnumerableNFT": {
-      "sourceFile": "nft/enumerable-nft.ral",
-      "sourceCodeHash": "849192355b70dea9643a091b778d2cece2e75dc18a2f814813bb28878d15bca1",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
-      "warnings": []
-    },
     "INFT": {
       "sourceFile": "../node_modules/@alephium/web3/std/nft_interface.ral",
       "sourceCodeHash": "491b0726ad455d7f2df52f71e071f34c2630de3e17f1e3fb9fd5d7efd81461a0",
@@ -79,6 +72,13 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "NFT": {
+      "sourceFile": "nft/nft.ral",
+      "sourceCodeHash": "4661df2d0bad5bd322f19201e11323aca6ec8e6c9b90baf8afbcd6df9e5734d6",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
+      "warnings": []
+    },
     "NFTCollectionBase": {
       "sourceFile": "nft/nft_collection_base.ral",
       "sourceCodeHash": "fae915dab1d8ee8ea07ede0f4699d1af125fa45df69a2e7fc2b4bc5be822fc32",
@@ -102,9 +102,9 @@
     },
     "NFTOpenCollection": {
       "sourceFile": "nft/nft_open_collection.ral",
-      "sourceCodeHash": "26b3c5fe8fa1d321ed69c188e271430647680513d2394ea4f957c922c31dc10c",
+      "sourceCodeHash": "e3fe9572b6ccbfcf3bf9704f016e597fd7e42fca38d4eab46b73f41a8bee534d",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "8e5fc066857bf3b9f44512aaabe7921d0593b82b9f1153c5582ce6c2ac7a52cd",
+      "codeHashDebug": "b8cfe3ae71f9c76f6fdaf3339d8ca69762130ae61fe6c32d6aaffa3707ea6a8b",
       "warnings": []
     },
     "NFTPublicSaleCollection": {
@@ -116,23 +116,16 @@
     },
     "NFTPublicSaleCollectionRandom": {
       "sourceFile": "nft/nft_public_sale_collection_random.ral",
-      "sourceCodeHash": "bebf773599acbc424442d148c43e01767d40649fdd66c9902dfd380e49073342",
+      "sourceCodeHash": "4a3568d5c60b131f51c9c198cf3ec570964b877ca34b20b39ce98c4b700c6d5b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "91c8ad7e2ce5e1ffae7c0f16f5f613876ab96e9795325d8a6f6f803c32bb9727",
       "warnings": []
     },
     "NFTPublicSaleCollectionSequential": {
       "sourceFile": "nft/nft_public_sale_collection_sequential.ral",
-      "sourceCodeHash": "13d428c8114f3a8e243549ce55b047d1cb0e15b1626b8043102b34f925ef8386",
+      "sourceCodeHash": "d3bb825740f67102c1ab42bf69b555b33318e4941ab7a1d1302e94eeaea71394",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "38281e7c64a3595f6086618e9bb4a04da89143852eb2e646c03c5ace7ee9aa4d",
-      "warnings": []
-    },
-    "NonEnumerableNFT": {
-      "sourceFile": "nft/non-enumerable-nft.ral",
-      "sourceCodeHash": "4104d596ad5d59229b2427570bc0e3974b256e0bf0235332b0aff2618b20a6d6",
-      "bytecodeDebugPatch": "",
-      "codeHashDebug": "657b46b2236b78c955660db6731d43b42dd8204bb6220181de3c5f8678d90da0",
       "warnings": []
     },
     "UpdateAdmin": {

@@ -193,3 +193,7 @@ button[disabled]{
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
+
+.react-tabs__tab:focus:after {
+  display: none;
+}

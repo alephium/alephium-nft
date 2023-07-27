@@ -5,7 +5,7 @@
   "codeHash": "38281e7c64a3595f6086618e9bb4a04da89143852eb2e646c03c5ace7ee9aa4d",
   "fieldsSig": {
     "names": [
-      "enumerableNftTemplateId",
+      "nftTemplateId",
       "collectionUri",
       "nftBaseUri",
       "collectionOwner",

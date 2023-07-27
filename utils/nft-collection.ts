@@ -3,7 +3,7 @@ import { DeployHelpers } from './deploy-helpers'
 import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 import { MintBatchSequential, MintNextSequential, MintOpenNFT, MintSpecificPublicSaleNFT, WithdrawFromPublicSaleCollection } from '../artifacts/ts/scripts'
 import { DeployContractResult, DUST_AMOUNT, ONE_ALPH } from '@alephium/web3'
-import { nonEnumerableNFTTemplateId, enumerableNFTTemplateId } from '../configs/nft'
+import { nftTemplateId } from '../configs/nft'
 
 export class NFTCollection extends DeployHelpers {
   async createOpenCollection(
@@ -15,7 +15,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          nonEnumerableNftTemplateId: nonEnumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
           collectionOwner: ownerAddress,
           totalSupply: 0n
@@ -37,7 +37,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          enumerableNftTemplateId: enumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
           nftBaseUri: web3.stringToHex(baseUri),
           collectionOwner: ownerAddress,
@@ -63,7 +63,7 @@ export class NFTCollection extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          enumerableNftTemplateId: enumerableNFTTemplateId,
+          nftTemplateId: nftTemplateId,
           collectionUri: web3.stringToHex(collectionUri),
           nftBaseUri: web3.stringToHex(baseUri),
           collectionOwner: ownerAddress,

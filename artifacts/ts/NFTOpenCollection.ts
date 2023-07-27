@@ -30,7 +30,7 @@ import { getContractByCodeHash } from "./contracts";
 // Custom types for the contract
 export namespace NFTOpenCollectionTypes {
   export type Fields = {
-    nonEnumerableNftTemplateId: HexString;
+    nftTemplateId: HexString;
     collectionUri: HexString;
     collectionOwner: Address;
     totalSupply: bigint;
@@ -123,7 +123,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "8e5fc066857bf3b9f44512aaabe7921d0593b82b9f1153c5582ce6c2ac7a52cd"
+    "b8cfe3ae71f9c76f6fdaf3339d8ca69762130ae61fe6c32d6aaffa3707ea6a8b"
   )
 );
 

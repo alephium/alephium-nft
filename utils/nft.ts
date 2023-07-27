@@ -1,6 +1,6 @@
 import { addressFromTokenId, groupOfAddress, hexToString, web3 } from "@alephium/web3"
 import axios from "axios"
-import { EnumerableNFT, EnumerableNFTTypes, NonEnumerableNFT, NonEnumerableNFTTypes } from "../artifacts/ts"
+import { NFT, NFTTypes } from "../artifacts/ts"
 
 export interface NFT {
   name: string,
@@ -19,14 +19,8 @@ export async function fetchMintedNFTMetadata(tokenId: string): Promise<{ collect
   const nodeProvider = web3.getCurrentNodeProvider()
   try {
     const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: groupOfAddress(tokenAddress) })
-    if (nftState.codeHash === NonEnumerableNFT.contract.codeHash) {
-      const contractState = NonEnumerableNFT.contract.fromApiContractState(nftState) as NonEnumerableNFTTypes.State
-      return {
-        tokenUri: hexToString(contractState.fields.uri),
-        collectionId: contractState.fields.collectionId
-      }
-    } else if (nftState.codeHash === EnumerableNFT.contract.codeHash) {
-      const contractState = EnumerableNFT.contract.fromApiContractState(nftState) as EnumerableNFTTypes.State
+    if (nftState.codeHash === NFT.contract.codeHash) {
+      const contractState = NFT.contract.fromApiContractState(nftState) as NFTTypes.State
       return {
         tokenUri: hexToString(contractState.fields.tokenUri),
         collectionId: contractState.fields.collectionId

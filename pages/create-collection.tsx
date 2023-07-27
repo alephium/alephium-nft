@@ -13,8 +13,10 @@ import { waitTxConfirmed } from '../utils'
 import LoaderWithText from '../components/LoaderWithText'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { convertAlphAmountWithDecimals, convertAmountWithDecimals } from '@alephium/web3'
+import { convertAlphAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
+
+const MaximumBatchMintSize: bigint = 15n
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
@@ -102,17 +104,17 @@ export default function CreateCollections() {
       if (!nftBaseUri || !maxSupplyStr || !mintPriceStr || !maxBatchMintSizeStr) return
 
       // TODO: how do we verify the max supply?
-      const maxSupply = convertAmountWithDecimals(maxSupplyStr, 0)
-      if (maxSupply === undefined || maxSupply <= 0) {
-        throw new Error('Invalid max supply')
-      }
+      const maxSupply = BigInt(maxSupplyStr)
       const mintPrice = convertAlphAmountWithDecimals(mintPriceStr)
       if (mintPrice === undefined || mintPrice < 0) {
         throw new Error('Invalid mint price')
       }
-      const maxBatchMintSize = convertAmountWithDecimals(maxBatchMintSizeStr, 0)
-      if (maxBatchMintSize === undefined || maxBatchMintSize <= 0 || maxBatchMintSize > maxSupply) {
-        throw new Error('Invalid max batch mint size')
+      const maxBatchMintSize = BigInt(maxBatchMintSizeStr)
+      if (maxBatchMintSize > maxSupply) {
+        throw new Error('Max batch mint size cannot be greater than max supply')
+      }
+      if (maxBatchMintSize > MaximumBatchMintSize) {
+        throw new Error(`Max batch mint size cannot be greater than ${MaximumBatchMintSize}`)
       }
       const collectionUri = await uploadToIPFS()
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
@@ -138,7 +140,7 @@ export default function CreateCollections() {
             <input {...getInputProps()} />
             <div className="flexCenter flex-col text-center">
               <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xl">
-                JPG, PNG, GIF, SVG, WEBM Max 100mb.
+                JPG, PNG, GIF, SVG, WEBM Max 5mb.
               </p>
               {isUploading ? (
                 <LoaderWithText text={`Uploading...`} />
@@ -190,10 +192,11 @@ export default function CreateCollections() {
   function collectionMaxSupply() {
     return (
       <Input
-        inputType="number"
+        inputType="positiveInteger"
         title="Max Supply"
         placeholder="NFT Collection Max Supply"
         handleClick={(e) => updateFormInput({ ...formInput, maxSupply: (e.target as HTMLInputElement).value })}
+        value={formInput.maxSupply}
       />
     )
   }
@@ -201,10 +204,11 @@ export default function CreateCollections() {
   function collectionMaxBatchMintSize() {
     return (
       <Input
-        inputType="number"
+        inputType="positiveInteger"
         title="Max Batch Mint Size"
         placeholder="NFT Collection Max Batch Mint Size"
         handleClick={(e) => updateFormInput({ ...formInput, maxBatchMintSize: (e.target as HTMLInputElement).value })}
+        value={formInput.maxBatchMintSize}
       />
     )
   }

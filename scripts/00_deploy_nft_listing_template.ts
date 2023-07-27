@@ -1,40 +1,28 @@
-import { addressFromContractId, binToHex, contractIdFromAddress } from '@alephium/web3'
+import { addressFromTokenId, ALPH_TOKEN_ID } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
-import { randomBytes } from 'crypto'
-import base58 from 'bs58'
 import { NFTListing } from '../artifacts/ts'
+
+const dummyAddress = addressFromTokenId(ALPH_TOKEN_ID)
 
 const deployNFTListingTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
   network: Network<Settings>
 ): Promise<void> => {
   const initialFields = {
-    price: 1000,
-    tokenId: randomContractId(),
-    tokenOwner: randomContractAddress(),
-    marketAddress: randomContractAddress(),
+    price: 0n,
+    tokenId: '',
+    tokenOwner: dummyAddress,
+    marketAddress: dummyAddress,
     commissionRate: network.settings.commissionRate
   }
 
   const result = await deployer.deployContract(NFTListing, {
-    // @ts-ignore
-    initialFields: initialFields,
-    gasAmount: 100000
+    initialFields: initialFields
   })
   const contractId = result.contractInstance.contractId
-  const contractAddress = addressFromContractId(contractId)
+  const contractAddress = result.contractInstance.address
   console.log(`NFTListing Template: ${contractAddress}, contract id: ${contractId}`)
-}
-
-function randomContractId() {
-  return binToHex(contractIdFromAddress(randomContractAddress()))
-}
-
-function randomContractAddress() {
-  const prefix = Buffer.from([0x03])
-  const bytes = Buffer.concat([prefix, randomBytes(32)])
-  return base58.encode(bytes)
 }
 
 export default deployNFTListingTemplate

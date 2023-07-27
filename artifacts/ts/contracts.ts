@@ -6,11 +6,10 @@ import { Contract, ContractFactory } from "@alephium/web3";
 import {
   NFTListing,
   NFTMarketPlace,
-  EnumerableNFT,
+  NFT,
   NFTOpenCollection,
   NFTPublicSaleCollectionRandom,
   NFTPublicSaleCollectionSequential,
-  NonEnumerableNFT,
 } from ".";
 
 let contracts: ContractFactory<any>[] | undefined = undefined;
@@ -19,11 +18,10 @@ export function getContractByCodeHash(codeHash: string): Contract {
     contracts = [
       NFTListing,
       NFTMarketPlace,
-      EnumerableNFT,
+      NFT,
       NFTOpenCollection,
       NFTPublicSaleCollectionRandom,
       NFTPublicSaleCollectionSequential,
-      NonEnumerableNFT,
     ];
   }
   const c = contracts.find(
