@@ -16,6 +16,8 @@ import 'react-tabs/style/react-tabs.css';
 import { convertAlphAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
 
+const MaximumBatchMintSize: bigint = 15n
+
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '', nftBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
@@ -110,6 +112,9 @@ export default function CreateCollections() {
       const maxBatchMintSize = BigInt(maxBatchMintSizeStr)
       if (maxBatchMintSize > maxSupply) {
         throw new Error('Max batch mint size cannot be greater than max supply')
+      }
+      if (maxBatchMintSize > MaximumBatchMintSize) {
+        throw new Error(`Max batch mint size cannot be greater than ${MaximumBatchMintSize}`)
       }
       const collectionUri = await uploadToIPFS()
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
