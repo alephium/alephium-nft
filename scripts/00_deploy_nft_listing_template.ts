@@ -1,9 +1,7 @@
-import { addressFromTokenId, ALPH_TOKEN_ID } from '@alephium/web3'
 import { Deployer, DeployFunction, Network } from '@alephium/cli'
 import { Settings } from '../alephium.config'
 import { NFTListing } from '../artifacts/ts'
-
-const dummyAddress = addressFromTokenId(ALPH_TOKEN_ID)
+import { ZERO_ADDRESS } from '@alephium/web3'
 
 const deployNFTListingTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
@@ -12,8 +10,8 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
   const initialFields = {
     price: 0n,
     tokenId: '',
-    tokenOwner: dummyAddress,
-    marketAddress: dummyAddress,
+    tokenOwner: ZERO_ADDRESS,
+    marketAddress: ZERO_ADDRESS,
     commissionRate: network.settings.commissionRate
   }
 

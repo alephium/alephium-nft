@@ -1,15 +1,13 @@
 import { Deployer, DeployFunction } from '@alephium/cli'
 import { NFTOpenCollection, NFTPublicSaleCollectionSequential } from '../artifacts/ts'
-import { addressFromContractId, ALPH_TOKEN_ID } from '@alephium/web3'
-
-const dummyAddress = addressFromContractId(ALPH_TOKEN_ID)
+import { ZERO_ADDRESS } from '@alephium/web3'
 
 const deployCollectionTemplate: DeployFunction = async (deployer: Deployer): Promise<void> => {
   const openCollection = await deployer.deployContract(NFTOpenCollection, {
     initialFields: {
       nftTemplateId: '',
       collectionUri: '',
-      collectionOwner: dummyAddress,
+      collectionOwner: ZERO_ADDRESS,
       totalSupply: 0n
     }
   })
@@ -21,7 +19,7 @@ const deployCollectionTemplate: DeployFunction = async (deployer: Deployer): Pro
       nftTemplateId: '',
       collectionUri: '',
       nftBaseUri: '',
-      collectionOwner: dummyAddress,
+      collectionOwner: ZERO_ADDRESS,
       maxSupply: 0n,
       mintPrice: 0n,
       maxBatchMintSize: 0n,
