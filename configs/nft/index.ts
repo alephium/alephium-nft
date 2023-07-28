@@ -12,6 +12,8 @@ const deployment = loadDeployments(NETWORK)
 export const marketplaceContractId: string = deployment.contracts.NFTMarketPlace.contractInstance.contractId
 export const marketplaceContractAddress = addressFromContractId(marketplaceContractId)
 export const nftTemplateId: string = deployment.contracts.NFT.contractInstance.contractId
+export const openCollectionTemplateId: string = deployment.contracts.NFTOpenCollection.contractInstance.contractId
+export const publicSaleCollectionTemplateId: string = deployment.contracts.NFTPublicSaleCollectionSequential.contractInstance.contractId
 
 const config = NETWORK === 'devnet' ? devnetConfig : NETWORK === 'testnet' ? testnetConfig : mainnetConfig
 export const defaultNodeUrl = config.defaultNodeUrl

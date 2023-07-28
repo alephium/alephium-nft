@@ -11,6 +11,10 @@ import {
   NFTMarketPlaceInstance,
   NFT,
   NFTInstance,
+  NFTOpenCollection,
+  NFTOpenCollectionInstance,
+  NFTPublicSaleCollectionSequential,
+  NFTPublicSaleCollectionSequentialInstance,
 } from ".";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
 
@@ -20,6 +24,8 @@ export type Deployments = {
     NFTListing: DeployContractExecutionResult<NFTListingInstance>;
     NFTMarketPlace: DeployContractExecutionResult<NFTMarketPlaceInstance>;
     NFT: DeployContractExecutionResult<NFTInstance>;
+    NFTOpenCollection: DeployContractExecutionResult<NFTOpenCollectionInstance>;
+    NFTPublicSaleCollectionSequential: DeployContractExecutionResult<NFTPublicSaleCollectionSequentialInstance>;
   };
 };
 
@@ -40,6 +46,19 @@ function toDeployments(json: any): Deployments {
     NFT: {
       ...json.contracts.NFT,
       contractInstance: NFT.at(json.contracts.NFT.contractInstance.address),
+    },
+    NFTOpenCollection: {
+      ...json.contracts.NFTOpenCollection,
+      contractInstance: NFTOpenCollection.at(
+        json.contracts.NFTOpenCollection.contractInstance.address
+      ),
+    },
+    NFTPublicSaleCollectionSequential: {
+      ...json.contracts.NFTPublicSaleCollectionSequential,
+      contractInstance: NFTPublicSaleCollectionSequential.at(
+        json.contracts.NFTPublicSaleCollectionSequential.contractInstance
+          .address
+      ),
     },
   };
   return {

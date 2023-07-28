@@ -1,9 +1,10 @@
 import * as web3 from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTOpenCollection, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
-import { MintBatchSequential, MintNextSequential, MintOpenNFT, MintSpecificPublicSaleNFT, WithdrawFromPublicSaleCollection } from '../artifacts/ts/scripts'
+import { CreateOpenCollection, CreatePublicSaleCollectionSequential, MintBatchSequential, MintNextSequential, MintOpenNFT, MintSpecificPublicSaleNFT, WithdrawFromPublicSaleCollection } from '../artifacts/ts/scripts'
 import { DeployContractResult, DUST_AMOUNT, ONE_ALPH } from '@alephium/web3'
-import { nftTemplateId } from '../configs/nft'
+import { nftTemplateId, openCollectionTemplateId, publicSaleCollectionTemplateId } from '../configs/nft'
+import * as blake from 'blakejs'
 
 export class NFTCollection extends DeployHelpers {
   async createOpenCollection(
@@ -11,19 +12,22 @@ export class NFTCollection extends DeployHelpers {
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
 
     const ownerAddress = (await this.signer.getSelectedAccount()).address
-    const nftCollectionDeployTx = await NFTOpenCollection.deploy(
-      this.signer,
-      {
-        initialFields: {
-          nftTemplateId: nftTemplateId,
-          collectionUri: web3.stringToHex(collectionUri),
-          collectionOwner: ownerAddress,
-          totalSupply: 0n
-        }
-      }
-    )
-
-    return nftCollectionDeployTx
+    const result = await CreateOpenCollection.execute(this.signer, {
+      initialFields: {
+        openCollectionTemplateId: openCollectionTemplateId,
+        nftTemplateId: nftTemplateId,
+        collectionUri: web3.stringToHex(collectionUri),
+        collectionOwner: ownerAddress,
+        totalSupply: 0n
+      },
+      attoAlphAmount: ONE_ALPH
+    })
+    const groupIndex = web3.groupOfAddress(ownerAddress)
+    const contractId = await calcContractId(result.txId, groupIndex)
+    return {
+      ...result,
+      contractInstance: NFTOpenCollection.at(web3.addressFromContractId(contractId))
+    }
   }
 
   async createPublicSaleCollectionRandom(
@@ -59,21 +63,26 @@ export class NFTCollection extends DeployHelpers {
     maxBatchMintSize: bigint
   ): Promise<DeployContractResult<NFTPublicSaleCollectionSequentialInstance>> {
     const ownerAddress = (await this.signer.getSelectedAccount()).address
-    return await NFTPublicSaleCollectionSequential.deploy(
-      this.signer,
-      {
-        initialFields: {
-          nftTemplateId: nftTemplateId,
-          collectionUri: web3.stringToHex(collectionUri),
-          nftBaseUri: web3.stringToHex(baseUri),
-          collectionOwner: ownerAddress,
-          maxSupply: maxSupply,
-          mintPrice: mintPrice,
-          maxBatchMintSize: maxBatchMintSize,
-          totalSupply: 0n
-        }
-      }
-    )
+    const result = await CreatePublicSaleCollectionSequential.execute(this.signer, {
+      initialFields: {
+        publicSaleCollectionTemplateId: publicSaleCollectionTemplateId,
+        nftTemplateId: nftTemplateId,
+        collectionUri: web3.stringToHex(collectionUri),
+        nftBaseUri: web3.stringToHex(baseUri),
+        collectionOwner: ownerAddress,
+        maxSupply: maxSupply,
+        mintPrice: mintPrice,
+        maxBatchMintSize: maxBatchMintSize,
+        totalSupply: 0n
+      },
+      attoAlphAmount: ONE_ALPH
+    })
+    const groupIndex = web3.groupOfAddress(ownerAddress)
+    const contractId = await calcContractId(result.txId, groupIndex)
+    return {
+      ...result,
+      contractInstance: NFTPublicSaleCollectionSequential.at(web3.addressFromContractId(contractId))
+    }
   }
 
   async mintBatchSequential(
@@ -157,4 +166,13 @@ export class NFTCollection extends DeployHelpers {
       }
     )
   }
+}
+
+async function calcContractId(txId: string, groupIndex: number) {
+  const nodeProvider = web3.web3.getCurrentNodeProvider()
+  const txDetails = await nodeProvider.transactions.getTransactionsDetailsTxid(txId, { fromGroup: groupIndex, toGroup: groupIndex })
+  const outputIndex = txDetails.unsigned.fixedOutputs.length
+  const hex = txId + outputIndex.toString(16).padStart(8, '0')
+  const hashHex = web3.binToHex(blake.blake2b(web3.hexToBinUnsafe(hex), undefined, 32))
+  return hashHex.slice(0, 62) + groupIndex.toString(16).padStart(2, '0')
 }
