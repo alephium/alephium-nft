@@ -1,7 +1,7 @@
 import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH } from '@alephium/web3'
 import { testNodeWallet } from '@alephium/web3-test'
 import * as utils from '../utils'
-import { NFTCollection } from '../utils/nft-collection'
+import { NFTCollectionHelper } from '../utils/nft-collection'
 import { NFTInstance, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
@@ -131,7 +131,7 @@ describe('nft collection', function() {
 })
 
 async function mintOpenNFTAndVerify(
-  nftCollection: NFTCollection,
+  nftCollection: NFTCollectionHelper,
   nftOpenCollectionInstance: NFTOpenCollectionInstance,
   tokenIndex: bigint
 ) {
@@ -156,7 +156,7 @@ async function mintOpenNFTAndVerify(
 }
 
 async function mintSpecificPublicSaleNFTAndVerify(
-  nftCollection: NFTCollection,
+  nftCollection: NFTCollectionHelper,
   nftPublicSaleCollectionInstance: NFTPublicSaleCollectionRandomInstance,
   tokenIndex: bigint,
   mintPrice: bigint
@@ -182,7 +182,7 @@ async function mintSpecificPublicSaleNFTAndVerify(
 }
 
 async function mintNextPublicSaleSequentialNFTAndVerify(
-  nftCollection: NFTCollection,
+  nftCollection: NFTCollectionHelper,
   nftCollectionInstance: NFTPublicSaleCollectionSequentialInstance,
   mintPrice: bigint
 ) {
@@ -213,7 +213,7 @@ async function mintNextPublicSaleSequentialNFTAndVerify(
 }
 
 async function mintBatchPublicSaleNFTAndVerify(
-  nftCollection: NFTCollection,
+  nftCollection: NFTCollectionHelper,
   nftCollectionInstance: NFTPublicSaleCollectionSequentialInstance,
   mintPrice: bigint,
   batchSize: bigint
@@ -249,7 +249,7 @@ async function mintBatchPublicSaleNFTAndVerify(
 
 async function getNFTCollection() {
   const signer = await testNodeWallet()
-  return new NFTCollection(signer)
+  return new NFTCollectionHelper(signer)
 }
 
 const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
@@ -257,7 +257,7 @@ function getNFTUri(tokenIndex: bigint): string {
   return `${nftBaseUri}${tokenIndex}`
 }
 
-async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollection, maxSupply: bigint, mintPrice: bigint) {
+async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollectionHelper, maxSupply: bigint, mintPrice: bigint) {
   const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionRandom(
     maxSupply,
     mintPrice,
@@ -274,7 +274,7 @@ async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollec
   return nftPublicSaleCollectionRandomInstance
 }
 
-async function getNFTPublicSaleCollectionSequentialInstance(nftCollection: NFTCollection, maxSupply: bigint, mintPrice: bigint, maxBatchMintSize: bigint) {
+async function getNFTPublicSaleCollectionSequentialInstance(nftCollection: NFTCollectionHelper, maxSupply: bigint, mintPrice: bigint, maxBatchMintSize: bigint) {
   const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionSequential(
     maxSupply,
     mintPrice,
@@ -293,7 +293,7 @@ async function getNFTPublicSaleCollectionSequentialInstance(nftCollection: NFTCo
 }
 
 async function checkWithdraw(
-  nftCollection: NFTCollection,
+  nftCollection: NFTCollectionHelper,
   collectionId: string,
   to: string,
   withdrawAmount: bigint

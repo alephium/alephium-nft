@@ -1,7 +1,7 @@
 /* pages/_app.js */
 import { AppProps } from 'next/app'
 import { AlephiumConnectProvider } from '@alephium/web3-react'
-import { NETWORK } from '../configs/nft'
+import { NETWORK, groupIndex } from '../configs/nft'
 import { ThemeProvider } from 'next-themes';
 import Head from 'next/head';
 import { Navbar } from '../components';
@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class">
       <SnackbarProvider maxSnack={3}>
-        <AlephiumConnectProvider useTheme="retro" addressGroup={0} network={NETWORK}>
+        <AlephiumConnectProvider useTheme="retro" addressGroup={groupIndex} network={NETWORK}>
           <div className="dark:bg-nft-dark bg-white min-h-screen">
             <Head>
               <title>Alephium</title>

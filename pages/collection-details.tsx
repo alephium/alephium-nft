@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
-import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from '../components/NFTCollection'
+import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from '../utils/nft-collection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
@@ -8,7 +8,7 @@ import { shortenAddress } from '../utils/address';
 import { useEffect, useState } from 'react';
 import { defaultExplorerUrl, defaultNodeUrl } from '../configs/nft';
 import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount, web3 } from '@alephium/web3';
-import { NFTCollection as NFTCollectionHelper } from '../utils/nft-collection';
+import { NFTCollectionHelper } from '../utils/nft-collection';
 import { waitTxConfirmed } from '../utils';
 import LoaderWithText from '../components/LoaderWithText';
 import { InfiniteScroll } from "../components/InfiniteScroll";

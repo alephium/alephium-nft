@@ -1,6 +1,6 @@
 import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep, ONE_ALPH } from '@alephium/web3'
 import { testNodeWallet, testAddress } from '@alephium/web3-test'
-import { NFTCollection } from '../utils/nft-collection'
+import { NFTCollectionHelper } from '../utils/nft-collection'
 import { NFTMarketplace } from '../utils/nft-marketplace'
 import { NFTListingInstance, NFTMarketPlaceInstance } from '../artifacts/ts'
 
@@ -12,7 +12,7 @@ describe('nft marketplace', function() {
 
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
     const signer = await testNodeWallet()
-    const nftCollection = new NFTCollection(signer)
+    const nftCollection = new NFTCollectionHelper(signer)
     const nftMarketplace = new NFTMarketplace(signer)
     await nftMarketplace.buildProject()
 

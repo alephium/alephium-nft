@@ -1,5 +1,5 @@
 import { useCallback, useState, useMemo } from 'react'
-import { NFTCollection } from '../utils/nft-collection'
+import { NFTCollectionHelper } from '../utils/nft-collection'
 import { ipfsClient } from '../utils/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useRouter } from 'next/router'
@@ -87,7 +87,7 @@ export default function CreateCollections() {
   async function createOpenCollection() {
     const collectionUri = await uploadToIPFS()
     if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
-      const nftCollection = new NFTCollection(context.signerProvider)
+      const nftCollection = new NFTCollectionHelper(context.signerProvider)
       setIsCreatingCollection(true)
       const createCollectionTxResult = await nftCollection.createOpenCollection(collectionUri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
@@ -118,7 +118,7 @@ export default function CreateCollections() {
       }
       const collectionUri = await uploadToIPFS()
       if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
-        const nftCollection = new NFTCollection(context.signerProvider)
+        const nftCollection = new NFTCollectionHelper(context.signerProvider)
         setIsCreatingCollection(true)
         const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
         await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
