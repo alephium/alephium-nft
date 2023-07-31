@@ -13,6 +13,8 @@ import {
 } from "@alephium/web3";
 import { default as BuyNFTScriptJson } from "../scripts/BuyNFT.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral.json";
+import { default as CreateOpenCollectionScriptJson } from "../scripts/CreateOpenCollection.ral.json";
+import { default as CreatePublicSaleCollectionSequentialScriptJson } from "../scripts/CreatePublicSaleCollectionSequential.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/ListNFT.ral.json";
 import { default as MintBatchSequentialScriptJson } from "../scripts/MintBatchSequential.ral.json";
 import { default as MintNextSequentialScriptJson } from "../scripts/MintNextSequential.ral.json";
@@ -34,6 +36,24 @@ export const CancelListing = new ExecutableScript<{
   tokenId: HexString;
   nftMarketplace: HexString;
 }>(Script.fromJson(CancelListingScriptJson));
+export const CreateOpenCollection = new ExecutableScript<{
+  openCollectionTemplateId: HexString;
+  nftTemplateId: HexString;
+  collectionUri: HexString;
+  collectionOwner: Address;
+  totalSupply: bigint;
+}>(Script.fromJson(CreateOpenCollectionScriptJson));
+export const CreatePublicSaleCollectionSequential = new ExecutableScript<{
+  publicSaleCollectionTemplateId: HexString;
+  nftTemplateId: HexString;
+  collectionUri: HexString;
+  nftBaseUri: HexString;
+  collectionOwner: Address;
+  maxSupply: bigint;
+  mintPrice: bigint;
+  maxBatchMintSize: bigint;
+  totalSupply: bigint;
+}>(Script.fromJson(CreatePublicSaleCollectionSequentialScriptJson));
 export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
   price: bigint;

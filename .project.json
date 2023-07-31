@@ -23,6 +23,20 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "CreateOpenCollection": {
+      "sourceFile": "scripts/create_open_collection.ral",
+      "sourceCodeHash": "61305c1d907d342a63b6f27538d5460d501f3e520e000fa912506192d3ee41fe",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "CreatePublicSaleCollectionSequential": {
+      "sourceFile": "scripts/create_public_sale_collection_sequential.ral",
+      "sourceCodeHash": "007ef83801b19fc8d54572f4cb4f422f08c0e300af8085d95f98180aae03563d",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "INFT": {
       "sourceFile": "../node_modules/@alephium/web3/std/nft_interface.ral",
       "sourceCodeHash": "491b0726ad455d7f2df52f71e071f34c2630de3e17f1e3fb9fd5d7efd81461a0",

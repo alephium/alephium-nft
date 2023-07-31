@@ -179,7 +179,7 @@ export default function CollectionDetails() {
           <div className="relative flex flex-col w-full">
             <div className="relative flex justify-center md:flex-col">
               <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
-                <div className="relative sm:w-full sm:h-300 w-full h-557">
+                <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
                   <Image src={collectionMetadata.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
                 </div>
               </div>
