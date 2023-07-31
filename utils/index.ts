@@ -2,6 +2,7 @@ import * as web3 from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, NodeProvider, node } from '@alephium/web3'
 import * as base58 from 'bs58'
 import { randomBytes } from 'crypto'
+import { ONE_ALPH, prettifyNumber, prettifyNumberConfig } from '@alephium/web3';
 
 export function checkHexString(value: any, expected: string) {
   expect(web3.hexToString(value)).toEqual(expected)
@@ -55,4 +56,34 @@ export async function contractExists(contractId: string, provider: NodeProvider)
       }
       throw e
     })
+}
+
+const prettifyConfig = {
+  ...prettifyNumberConfig['ALPH'],
+  maxDecimalPlaces: 2
+}
+
+export function formatAlphAmount(price: bigint): string | undefined {
+  const priceStr = price.toString()
+  if (priceStr.length > 30) {
+    const result = (Number(price) / Number(ONE_ALPH * 1000000000000n)).toExponential(2)
+    return result + 'T'
+  }
+
+  if (priceStr.length > 27) {
+    return prettifyNumberWithUnit(price, 27, 'B')
+  }
+  if (priceStr.length > 24) {
+    return prettifyNumberWithUnit(price, 24, 'M')
+  }
+  if (priceStr.length > 21) {
+    return prettifyNumberWithUnit(price, 21, 'K')
+  }
+  return prettifyNumberWithUnit(price, 18, '')
+}
+
+function prettifyNumberWithUnit(number: bigint, decimals: number, unit: string): string | undefined {
+  const prettifyAmount = prettifyNumber(number, decimals, prettifyConfig)
+  if (prettifyAmount === undefined) return undefined
+  return prettifyAmount + unit
 }
