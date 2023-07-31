@@ -15,6 +15,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import { convertAlphAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
+import axios from 'axios'
 
 const MaximumBatchMintSize: bigint = 15n
 
@@ -91,7 +92,9 @@ export default function CreateCollections() {
       setIsCreatingCollection(true)
       const createCollectionTxResult = await nftCollection.createOpenCollection(collectionUri)
       await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
-      router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
+      const collectionId = createCollectionTxResult.contractInstance.contractId
+      await axios.post(`/api/create-collection`, { collectionId: collectionId })
+      router.push(`/collection-details?collectionId=${collectionId}`)
     } else {
       console.debug('context..', context)
     }
@@ -122,7 +125,9 @@ export default function CreateCollections() {
         setIsCreatingCollection(true)
         const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
         await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
-        router.push(`/collection-details?collectionId=${createCollectionTxResult.contractInstance.contractId}`)
+        const collectionId = createCollectionTxResult.contractInstance.contractId
+        await axios.post(`/api/create-collection`, { collectionId: collectionId })
+        router.push(`/collection-details?collectionId=${collectionId}`)
       } else {
         console.debug('context..', context)
       }

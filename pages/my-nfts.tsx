@@ -5,7 +5,7 @@ import { Loader, NFTCard, Banner } from '../components';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
-import { fetNFTsByAddress } from '../components/nft';
+import { fetchNFTsByAddress } from '../components/nft';
 import { NFT } from '../utils/nft';
 
 const MyNFTs = () => {
@@ -22,7 +22,7 @@ const MyNFTs = () => {
         && context.account?.address
       ) {
         setIsLoading(true)
-        const nfts = await fetNFTsByAddress(
+        const nfts = await fetchNFTsByAddress(
           context.signerProvider.nodeProvider,
           context.account.address
         )

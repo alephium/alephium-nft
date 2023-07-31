@@ -65,7 +65,7 @@ async function fetchNFTsFromUTXOs(
   return (await Promise.all(nftPromises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
-export async function fetNFTsByAddress(nodeProvider: NodeProvider, address: string): Promise<NFT[]> {
+export async function fetchNFTsByAddress(nodeProvider: NodeProvider, address: string): Promise<NFT[]> {
   web3.setCurrentNodeProvider(nodeProvider)
   const nftsFromUTXOs = await fetchNFTsFromUTXOs(nodeProvider, address)
   const listedNFTs = await fetchListedNFTs(address)

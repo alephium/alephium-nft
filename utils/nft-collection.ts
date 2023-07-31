@@ -31,9 +31,10 @@ import {
   hexToString,
   contractIdFromAddress,
   subContractId,
-  encodeU256
+  encodeU256,
+  isHexString
 } from '@alephium/web3'
-import { nftTemplateId, openCollectionTemplateId, publicSaleCollectionTemplateId } from '../configs/nft'
+import { defaultNodeUrl, nftTemplateId, openCollectionTemplateId, publicSaleCollectionTemplateId } from '../configs/nft'
 import * as blake from 'blakejs'
 import axios from 'axios'
 import { NFT } from './nft'
@@ -368,4 +369,16 @@ export async function fetchNFTCollectionMetadata(
       nftBaseUri: contractState.fields.nftBaseUri
     }
   }
+}
+
+export async function checkAndGetCollectionMetadata(collectionId: string): Promise<NFTCollectionMetadata> {
+  web3.setCurrentNodeProvider(defaultNodeUrl)
+  if (!isHexString(collectionId) || collectionId.length !== 64) {
+    throw new Error('Invalid nft collection id')
+  }
+  const metadata = await fetchNFTCollectionMetadata(collectionId)
+  if (metadata === undefined) {
+    throw new Error('Unknown nft collection type')
+  }
+  return metadata
 }
