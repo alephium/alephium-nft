@@ -1,7 +1,7 @@
 import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep, ONE_ALPH } from '@alephium/web3'
 import { testNodeWallet, testAddress } from '@alephium/web3-test'
-import { NFTCollectionHelper } from '../utils/nft-collection'
-import { NFTMarketplace } from '../utils/nft-marketplace'
+import { NFTCollectionHelper } from '../shared/nft-collection'
+import { NFTMarketplace } from '../shared/nft-marketplace'
 import { NFTListingInstance, NFTMarketPlaceInstance } from '../artifacts/ts'
 
 describe('nft marketplace', function() {

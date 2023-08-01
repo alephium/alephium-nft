@@ -1,7 +1,7 @@
 import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH, Contract, ContractFactory, ContractEvent } from '@alephium/web3'
 import { testNodeWallet } from '@alephium/web3-test'
-import * as utils from '../utils'
-import { NFTCollectionHelper } from '../utils/nft-collection'
+import * as utils from '../shared'
+import { NFTCollectionHelper } from '../shared/nft-collection'
 import { NFTInstance, NFTOpenCollection, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
 
 describe('nft collection', function() {
