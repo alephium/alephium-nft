@@ -6,15 +6,23 @@ RUN apk add --no-cache sqlite
 RUN apk add --no-cache python3
 RUN apk add --no-cache make
 RUN apk add --no-cache build-base
+WORKDIR /
+COPY ./package.json ./yarn.lock ./
+RUN yarn install --frozen-lockfile
+
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY ./frontend/package.json ./frontend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM node:16.15.0-alpine AS builder
 WORKDIR /app
-COPY . .
+COPY ./frontend .
+COPY ./configs /configs
+COPY ./artifacts /artifacts
+COPY ./shared /shared
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /node_modules /node_modules
 ARG NEXT_PUBLIC_NETWORK=devnet
 RUN NEXT_PUBLIC_NETWORK=${NEXT_PUBLIC_NETWORK} yarn build
 
@@ -25,14 +33,13 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 # You only need to copy next.config.js if you are NOT using the default configuration
+COPY --from=builder /artifacts /artifacts
+COPY --from=builder /configs /configs
+COPY --from=builder /shared /shared
+COPY --from=builder /node_modules /node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/configs ./configs
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/contracts ./contracts
-COPY --from=builder /app/artifacts ./artifacts
 COPY --from=builder /app/styles ./styles
-COPY --from=builder /app/utils ./utils
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
@@ -41,7 +48,7 @@ COPY --from=builder /app/pages ./pages
 USER nextjs
 
 # Expose
-EXPOSE 3000
+EXPOSE 3020
 
 ENV NEXT_TELEMETRY_DISABLED 1
 CMD ["yarn", "start"]

@@ -6,7 +6,7 @@ version: "3.3"
 
 services:
   alephium:
-    image: alephium/alephium:v2.3.4
+    image: alephium/alephium:v2.3.5
     restart: "no"
     ports:
       - 19973:19973/tcp
@@ -84,7 +84,7 @@ services:
 
   explorer-frontend:
     container_name: alephium_explorer_frontend
-    image: alephium/explorer:1.6.5
+    image: alephium/explorer:1.6.13
     depends_on:
       - explorer-backend
     restart: "no"
@@ -112,3 +112,23 @@ services:
       - mongodb
     ports:
       - 127.0.0.1:8888:8081
+
+  nft-backend:
+    container_name: nft-backend
+    image: alephium-nft-backend:0.4.31
+    ports:
+      - 127.0.0.1:3019:3019
+    environment:
+      - NODE_URL=http://alephium:22973
+      - MONGO_URL=mongodb://mongodb:27017/alephium-nft
+    depends_on:
+      alephium:
+        condition: service_healthy
+
+  nft-frontend:
+    container_name: nft-frontend
+    image: alephium-nft-frontend:0.4.31
+    ports:
+      - 127.0.0.1:3020:3020
+    depends_on:
+      - nft-backend
