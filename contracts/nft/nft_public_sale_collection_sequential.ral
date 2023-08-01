@@ -11,6 +11,8 @@ Contract NFTPublicSaleCollectionSequential(
     maxBatchMintSize: U256,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice){
+    event Mint(minter: Address, fromIndex: U256, mintSize: U256)
+
     enum ErrorCodes {
         IncorrectTokenIndex = 2
         InvalidMintBatchSize = 3
@@ -35,11 +37,14 @@ Contract NFTPublicSaleCollectionSequential(
         assert!(totalSupply < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let contractId = mint_{minter -> ALPH: 1 alph}(minter, totalSupply)
+        let fromIndex = totalSupply
+        let contractId = mint_{minter -> ALPH: 1 alph}(minter, fromIndex)
 
         transferTokenToSelf!(minter, ALPH, mintPrice)
 
         totalSupply = totalSupply + 1
+
+        emit Mint(minter, fromIndex, 1)
         return contractId
     }
 
@@ -49,14 +54,17 @@ Contract NFTPublicSaleCollectionSequential(
         assert!(size <= (maxSupply - totalSupply), ErrorCodes.InsufficientNumOfUnminted)
 
         let minter = callerAddress!()
+        let fromIndex = totalSupply
         let mut contractIds = #
         for (let mut i = 0; i < size; i = i + 1) {
-            contractIds = contractIds ++ mint_{minter -> ALPH: 1 alph}(minter, totalSupply + i)
+            contractIds = contractIds ++ mint_{minter -> ALPH: 1 alph}(minter, fromIndex + i)
         }
 
         transferTokenToSelf!(minter, ALPH, mintPrice * size)
 
         totalSupply = totalSupply + size
+
+        emit Mint(minter, fromIndex, size)
         return contractIds
     }
 

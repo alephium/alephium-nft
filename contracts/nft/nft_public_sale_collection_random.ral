@@ -10,6 +10,8 @@ Contract NFTPublicSaleCollectionRandom(
     mintPrice: U256,
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice) {
+    event Mint(minter: Address, index: U256)
+
     enum ErrorCodes {
         IncorrectTokenIndex = 2
     }
@@ -33,6 +35,8 @@ Contract NFTPublicSaleCollectionRandom(
         transferTokenToSelf!(minter, ALPH, mintPrice)
 
         totalSupply = totalSupply + 1
+
+        emit Mint(minter, index)
         return contractId
     }
 

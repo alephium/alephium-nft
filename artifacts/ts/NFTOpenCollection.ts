@@ -38,6 +38,8 @@ export namespace NFTOpenCollectionTypes {
 
   export type State = ContractState<Fields>;
 
+  export type MintEvent = ContractEvent<{ minter: Address; index: bigint }>;
+
   export interface CallMethodTable {
     getCollectionUri: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -123,7 +125,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "b8cfe3ae71f9c76f6fdaf3339d8ca69762130ae61fe6c32d6aaffa3707ea6a8b"
+    "34880ed9de1e709b511299a7fb61c4cedc74f7518e9e0de709580d49705a97e4"
   )
 );
 
@@ -135,6 +137,23 @@ export class NFTOpenCollectionInstance extends ContractInstance {
 
   async fetchState(): Promise<NFTOpenCollectionTypes.State> {
     return fetchContractState(NFTOpenCollection, this);
+  }
+
+  async getContractEventsCurrentCount(): Promise<number> {
+    return getContractEventsCurrentCount(this.address);
+  }
+
+  subscribeMintEvent(
+    options: SubscribeOptions<NFTOpenCollectionTypes.MintEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      NFTOpenCollection.contract,
+      this,
+      options,
+      "Mint",
+      fromCount
+    );
   }
 
   methods = {
