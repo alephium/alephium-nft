@@ -81,6 +81,14 @@ export namespace NFTMarketPlaceTypes {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
+    checkListingPriceAfterFee: {
+      params: CallContractParams<{
+        price: bigint;
+        commissionRateIn: bigint;
+        listingFeeIn: bigint;
+      }>;
+      result: CallContractResult<bigint>;
+    };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
     CallMethodTable[T]["params"];
@@ -104,7 +112,7 @@ class Factory extends ContractFactory<
     ErrorCodes: {
       AdminAllowedOnly: BigInt(0),
       TokenOwnerAllowedOnly: BigInt(1),
-      NFTPriceIsZero: BigInt(2),
+      NFTPriceTooLow: BigInt(2),
     },
   };
 
@@ -185,6 +193,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "withdraw", params);
     },
+    checkListingPriceAfterFee: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { price: bigint; commissionRateIn: bigint; listingFeeIn: bigint }
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "checkListingPriceAfterFee", params);
+    },
   };
 }
 
@@ -193,7 +209,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8"
+    "0a68954af14fc2ea2bd3c50ab7cfc645e3d641710243a212037a4d2bb7ca7e73"
   )
 );
 
@@ -342,6 +358,19 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         this,
         "getListingFee",
         params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    checkListingPriceAfterFee: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"checkListingPriceAfterFee">
+    ): Promise<
+      NFTMarketPlaceTypes.CallMethodResult<"checkListingPriceAfterFee">
+    > => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "checkListingPriceAfterFee",
+        params,
         getContractByCodeHash
       );
     },

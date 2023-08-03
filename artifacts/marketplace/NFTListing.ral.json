@@ -1,22 +1,28 @@
 {
   "version": "v2.3.5",
   "name": "NFTListing",
-  "bytecode": "04050912402e403d404d010000000102ce0102010000000102a0000201010101000fb4ce02450c7b1600ce01a000a71600ce000dabce01b0010200000007b4ce02450c7bce01b0010001010007b4ce02450c7b1600a100",
-  "codeHash": "cbb022544e83620da703f4eee7f6c9d628bc11c3dd3820f61d719df51780abf1",
+  "bytecode": "060709121b4024404e405d406d010000000102ce0102010000000102a00002010000000102ce0302010000000102ce0402010101020017b3ce02410c7ba000ce03ce040f0dce02010917011600ce011601a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a100",
+  "codeHash": "75efad551c880c1ee3041efd5f8e71790cc433a870445e2a39eb21f570385c16",
   "fieldsSig": {
     "names": [
       "tokenId",
       "tokenOwner",
-      "marketAddress",
+      "marketContractId",
+      "commissionRate",
+      "listingFee",
       "price"
     ],
     "types": [
       "ByteVec",
       "Address",
-      "Address",
+      "ByteVec",
+      "U256",
+      "U256",
       "U256"
     ],
     "isMutable": [
+      false,
+      false,
       false,
       false,
       false,
@@ -39,6 +45,30 @@
     },
     {
       "name": "getPrice",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "getCommissionRate",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "getListingFee",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,

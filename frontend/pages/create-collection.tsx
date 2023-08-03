@@ -271,8 +271,8 @@ export default function CreateCollections() {
         <div className="w-3/5 md:w-full">
           <Tabs>
             <TabList>
-              <Tab>Open Collection</Tab>
-              <Tab>Pre-designed Collection</Tab>
+              <Tab>Create Your Collection</Tab>
+              <Tab>Launch Flow</Tab>
             </TabList>
             <TabPanel>
               {collectionImage()}

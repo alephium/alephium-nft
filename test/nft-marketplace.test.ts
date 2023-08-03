@@ -3,6 +3,7 @@ import { testNodeWallet, testAddress } from '@alephium/web3-test'
 import { NFTCollectionHelper } from '../shared/nft-collection'
 import { NFTMarketplace } from '../shared/nft-marketplace'
 import { NFTListingInstance, NFTMarketPlaceInstance } from '../artifacts/ts'
+import { contractExists } from '../shared'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -55,11 +56,11 @@ describe('nft marketplace', function() {
       expect(nftListingContractState.fields.price).toEqual(price)
       expect(nftListingContractState.fields.tokenId).toEqual(tokenId)
       expect(nftListingContractState.fields.tokenOwner).toEqual(testAddress)
-      expect(nftListingContractState.fields.marketAddress).toEqual(nftMarketplaceContractAddress)
+      expect(nftListingContractState.fields.marketContractId).toEqual(nftMarketplaceContractId)
     }
 
     // Update the price
-    const newPrice = BigInt("2000000000000000000")
+    const newPrice = 2n * ONE_ALPH
     {
       await nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId)
       const nftListingContractState = await new NFTListingInstance(nftListingContractAddress).fetchState()
@@ -80,8 +81,7 @@ describe('nft marketplace', function() {
 
     // Buy the NFT
     {
-      const totalAmount = newPrice + BigInt("1000000000000000000")
-      await nftMarketplace.buyNFT(totalAmount, tokenId, nftMarketplaceContractId)
+      await nftMarketplace.buyNFT(newPrice, tokenId, nftMarketplaceContractId)
       await sleep(3000)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -96,7 +96,8 @@ describe('nft marketplace', function() {
       expect(nftPriceUpdatedEventFields[2].value).toEqual(testAddress)
       expect(nftPriceUpdatedEventFields[3].value).toEqual(testAddress)
 
-      // TODO: Verify NFTListingContract is gone
+      const listingExists = await contractExists(nftListingContractId, provider)
+      expect(listingExists).toBeFalsy()
     }
 
     // Cancel the listing

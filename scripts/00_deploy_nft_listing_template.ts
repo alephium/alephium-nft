@@ -7,16 +7,15 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
   deployer: Deployer,
   network: Network<Settings>
 ): Promise<void> => {
-  const initialFields = {
-    price: 0n,
-    tokenId: '',
-    tokenOwner: ZERO_ADDRESS,
-    marketAddress: ZERO_ADDRESS,
-    commissionRate: network.settings.commissionRate
-  }
-
   const result = await deployer.deployContract(NFTListing, {
-    initialFields: initialFields
+    initialFields: {
+      tokenId: '',
+      tokenOwner: ZERO_ADDRESS,
+      marketContractId: '',
+      commissionRate: BigInt(network.settings.commissionRate),
+      listingFee: BigInt(network.settings.listingFee),
+      price: 0n,
+    }
   })
   const contractId = result.contractInstance.contractId
   const contractAddress = result.contractInstance.address

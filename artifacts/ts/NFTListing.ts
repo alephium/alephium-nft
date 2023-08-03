@@ -32,7 +32,9 @@ export namespace NFTListingTypes {
   export type Fields = {
     tokenId: HexString;
     tokenOwner: Address;
-    marketAddress: Address;
+    marketContractId: HexString;
+    commissionRate: bigint;
+    listingFee: bigint;
     price: bigint;
   };
 
@@ -44,6 +46,14 @@ export namespace NFTListingTypes {
       result: CallContractResult<Address>;
     };
     getPrice: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    getCommissionRate: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
+    };
+    getListingFee: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -89,6 +99,22 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getPrice", params);
     },
+    getCommissionRate: async (
+      params: Omit<
+        TestContractParams<NFTListingTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getCommissionRate", params);
+    },
+    getListingFee: async (
+      params: Omit<
+        TestContractParams<NFTListingTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getListingFee", params);
+    },
     buy: async (
       params: TestContractParams<NFTListingTypes.Fields, { buyer: Address }>
     ): Promise<TestContractResult<null>> => {
@@ -115,7 +141,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "cbb022544e83620da703f4eee7f6c9d628bc11c3dd3820f61d719df51780abf1"
+    "75efad551c880c1ee3041efd5f8e71790cc433a870445e2a39eb21f570385c16"
   )
 );
 
@@ -148,6 +174,28 @@ export class NFTListingInstance extends ContractInstance {
         NFTListing,
         this,
         "getPrice",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getCommissionRate: async (
+      params?: NFTListingTypes.CallMethodParams<"getCommissionRate">
+    ): Promise<NFTListingTypes.CallMethodResult<"getCommissionRate">> => {
+      return callMethod(
+        NFTListing,
+        this,
+        "getCommissionRate",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getListingFee: async (
+      params?: NFTListingTypes.CallMethodParams<"getListingFee">
+    ): Promise<NFTListingTypes.CallMethodResult<"getListingFee">> => {
+      return callMethod(
+        NFTListing,
+        this,
+        "getListingFee",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

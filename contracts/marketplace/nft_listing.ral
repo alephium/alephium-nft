@@ -1,7 +1,9 @@
 Contract NFTListing(
     tokenId: ByteVec,
     tokenOwner: Address,
-    marketAddress: Address,
+    marketContractId: ByteVec,
+    commissionRate: U256,
+    listingFee: U256,
     mut price: U256
 ) {
 
@@ -17,24 +19,32 @@ Contract NFTListing(
         return price
     }
 
+    pub fn getCommissionRate() -> U256 {
+        return commissionRate
+    }
+
+    pub fn getListingFee() -> U256 {
+        return listingFee
+    }
+
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buy(buyer: Address) -> () {
-        checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
-
-        transferToken!(buyer, tokenOwner, ALPH, price)
+        checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
+        let priceAfterFee = NFTMarketPlace(marketContractId).checkListingPriceAfterFee(price, commissionRate, listingFee)
+        transferToken!(buyer, tokenOwner, ALPH, priceAfterFee)
         transferTokenFromSelf!(buyer, tokenId, 1)
         destroySelf!(tokenOwner)
     }
 
     @using(assetsInContract = true)
     pub fn cancel() -> () {
-        checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
         destroySelf!(tokenOwner)
     }
 
     @using(updateFields = true)
     pub fn updatePrice(newPrice: U256) -> () {
-        checkCaller!(callerAddress!() == marketAddress, ErrorCodes.MarketplaceAllowedOnly)
+        checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
         price = newPrice
     }
 }

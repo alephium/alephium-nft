@@ -22,10 +22,12 @@ export class NFTMarketplace extends DeployHelpers {
       this.signer,
       {
         initialFields: {
-          price: 1000n,
           tokenId: randomContractId(),
           tokenOwner: randomContractAddress(),
-          marketAddress: randomContractAddress()
+          marketContractId: randomContractId(),
+          commissionRate: this.defaultCommissionRate,
+          listingFee: this.defaultListingFee,
+          price: 1000n
         }
       }
     )
@@ -100,7 +102,7 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           nftMarketplace: marketPlaceContractId
         },
-        attoAlphAmount: totalPayment
+        attoAlphAmount: totalPayment,
       }
     )
   }

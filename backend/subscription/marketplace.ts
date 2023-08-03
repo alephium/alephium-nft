@@ -71,7 +71,7 @@ const eventHandler = async (event: ContractEvent): Promise<void> => {
     case 2:
       const marketplaceEvent = event as (NFTMarketPlaceTypes.NFTSoldEvent | NFTMarketPlaceTypes.NFTListingCancelledEvent)
       const tokenId = marketplaceEvent.fields.tokenId
-  
+
       // Remove NFT Listing
       const result = await NFTListing.findByIdAndDelete(tokenId)
       console.log('Deleted nft listing', result, tokenId)
@@ -99,7 +99,7 @@ async function fetchNFTListing(
       description: nft.description,
       image: nft.image,
       tokenOwner: listingState.fields.tokenOwner as string,
-      marketAddress: listingState.fields.marketAddress as string,
+      marketAddress: addressFromContractId(listingState.fields.marketContractId as string),
       listingContractId: listingContractId,
       collectionId: nft.collectionId,
       createdAt: new Date()
