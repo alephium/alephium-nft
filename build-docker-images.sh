@@ -12,8 +12,6 @@ fi
 
 set -euo pipefail xtrace
 
-VERSION=0.4.31
-
 export DOCKER_BUILDKIT=1
 
 if [[ ${NETWORKS[*]}] =~ $network ]]
@@ -24,5 +22,5 @@ else
     exit 1
 fi
 
-docker build -f ./docker/Dockerfile.frontend . -t alephium-nft-frontend:$VERSION --build-arg NEXT_PUBLIC_NETWORK=$network
-docker build -f ./docker/Dockerfile.backend . -t alephium-nft-backend:$VERSION --build-arg NEXT_PUBLIC_NETWORK=$network
+cd ./frontend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && cd ..
+cd ./backend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && cd ..

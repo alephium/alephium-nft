@@ -5,7 +5,8 @@
   "scripts": {
     "build": "npx tsc",
     "start": "PORT=3019 node dist/backend/index.js",
-    "dev": "npm run build && npm run start"
+    "dev": "npm run build && npm run start",
+    "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.backend . -t alephium-nft-backend:$npm_package_version"
   },
   "dependencies": {
     "@alephium/web3": "^0.14.6",
