@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { shortenName } from '../utils';
 import { backendUrl } from '../../configs/nft';
+import { NFTCollectionMetadata, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 
 interface NFTCollection {
   _id: string  // NFTCollection contract id
@@ -21,6 +22,22 @@ interface NFTCollection {
 }
 
 const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
+  const context = useAlephiumConnectContext()
+  const [metadata, setMetadata] = useState<NFTCollectionMetadata | undefined>()
+  useEffect(() => {
+    (async () => {
+      if (context.signerProvider
+        && context.signerProvider.nodeProvider
+        && context.signerProvider.explorerProvider
+        && context.account?.address
+      ) {
+        fetchNFTCollectionMetadata(context.signerProvider.nodeProvider, collection._id)
+          .then((metadata) => setMetadata(metadata))
+          .catch((err) => console.error(err))
+      }
+    })()
+  }, [context.signerProvider, context.account, collection])
+
   return (
     <Link href={{ pathname: '/collection-details', query: { collectionId: collection._id } }}>
       <motion.div
@@ -41,6 +58,10 @@ const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-xl">
             {collection.name.length > 14 ? shortenName(collection.name) : collection.name}
           </p>
+          {metadata !== undefined
+            ? (<p className="font-poppins dark:text-white text-nft-black-1 text-xs minlg:text-lg">Total supply {metadata.totalSupply.toString()}</p>)
+            : null
+          }
         </div>
       </motion.div>
     </Link>
