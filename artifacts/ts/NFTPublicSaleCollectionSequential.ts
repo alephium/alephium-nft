@@ -9,7 +9,7 @@ import {
   TestContractResult,
   HexString,
   ContractFactory,
-  SubscribeOptions,
+  EventSubscribeOptions,
   EventSubscription,
   CallContractParams,
   CallContractResult,
@@ -96,6 +96,7 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialInstance,
   NFTPublicSaleCollectionSequentialTypes.Fields
 > {
+  eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
@@ -223,7 +224,7 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
   }
 
   subscribeMintEvent(
-    options: SubscribeOptions<NFTPublicSaleCollectionSequentialTypes.MintEvent>,
+    options: EventSubscribeOptions<NFTPublicSaleCollectionSequentialTypes.MintEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(

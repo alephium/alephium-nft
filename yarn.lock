@@ -7,13 +7,13 @@
   resolved "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.2.0.tgz"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
-"@alephium/cli@^0.14.6":
-  version "0.14.6"
-  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.14.6.tgz#af5c308d782611d26b150e196222375b945b275b"
-  integrity sha512-WDbvxrMTbtb4KPZlLDpQQDO3bEtF9xKnZ/17z42azZT9TzO3rQ/A2xBawAA1kIOx47jZA835cugZ7BOcIifU7A==
+"@alephium/cli@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@alephium/cli/-/cli-0.15.1.tgz#f1e24255857d2a4b29f527f47de008d6374a93f4"
+  integrity sha512-Q0SbO5HLhzo3rFLk+iHBN5t/zxoGqhtUB+DRjmPEtPKaZsvo3veyZ/NBxLMP5y3YBkTbmaLsO4VMpPke1tFlQg==
   dependencies:
-    "@alephium/web3" "^0.14.6"
-    "@alephium/web3-wallet" "^0.14.6"
+    "@alephium/web3" "^0.15.1"
+    "@alephium/web3-wallet" "^0.15.1"
     commander "^9.5.0"
     cross-fetch "^3.1.5"
     crypto-js "^4.1.1"
@@ -25,20 +25,20 @@
     prettier "^2.8.7"
     yaml "^2.3.1"
 
-"@alephium/web3-test@^0.14.6":
-  version "0.14.6"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.14.6.tgz#34b8d67f300c51a355b495f1019662dc0ffe5fed"
-  integrity sha512-V1VIBbP6Gbmb8/3EmeJ98s9AGpdDBEzapg3iphkXtK0UjZQjNlvB3Urokb1BsCNl+JJcURT5vqXWKvG3ri/Iow==
+"@alephium/web3-test@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-test/-/web3-test-0.15.1.tgz#c8b5890928b28aae045c216705ee17222d2a9667"
+  integrity sha512-icCm8Jx1wFgKKnkw/WpF023vEBWrwtXAtKmrmZbm1N4p+PzIKHZkL26X94AMvWigeBXJprMwHQJjWor8BcDHtA==
   dependencies:
-    "@alephium/web3" "^0.14.6"
-    "@alephium/web3-wallet" "^0.14.6"
+    "@alephium/web3" "^0.15.1"
+    "@alephium/web3-wallet" "^0.15.1"
 
-"@alephium/web3-wallet@^0.14.6":
-  version "0.14.6"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.14.6.tgz#d9caf8ac2647adb5533cd1d3bafa56bcf98a4a0e"
-  integrity sha512-2f/Vmq3vpuXecq2M/Oil0FcFlQCrOuU2JhLfCly8Wqzdgch0RkKcYFH0ZiswXRVN5fiDEwUR7BlLeH5B1Pg9Hw==
+"@alephium/web3-wallet@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.15.1.tgz#1fbd4018271e0c61acfd68028a643e12995421cd"
+  integrity sha512-t93R1cp5ZG1IU6HkrrnIKpW/FBQSWh2TCUNzhtU/4jknhfkID4qzAm1sUtcwATEApciliCuhHSuVSJRQ2AgTCg==
   dependencies:
-    "@alephium/web3" "^0.14.6"
+    "@alephium/web3" "^0.15.1"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -47,10 +47,10 @@
     elliptic "6.5.4"
     fs-extra "10.0.1"
 
-"@alephium/web3@^0.14.6":
-  version "0.14.6"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.14.6.tgz#45f538b88d8271f749a2736d2f762f093c16982e"
-  integrity sha512-L0YyGRZUWU4IhblQgiy5h0uH65VwSiERwtseek3d4kL3rtDyW2c8t9jT62W29RzeN+t5bCXzn5Z+4gcARWqecg==
+"@alephium/web3@^0.15.1":
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.15.1.tgz#167cef3aacbe28f32898e241346b206af50b1edc"
+  integrity sha512-c2QJ8HhK1jBoHpUUO6lN0vZkcD8BHnAAwtJIPxKph6xSTp4M1s39N3fMj0iY0HqHiploly3JZDsgL9rLjxuDjQ==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
