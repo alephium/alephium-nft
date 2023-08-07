@@ -6,7 +6,8 @@
     "dev": "NODE_OPTIONS='--inspect' next dev -p 3020",
     "build": "next build",
     "start": "next start -p 3020",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.frontend . -t alephium-nft-frontend:$npm_package_version"
   },
   "dependencies": {
     "@alephium/web3": "^0.14.6",
