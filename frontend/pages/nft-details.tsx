@@ -8,12 +8,12 @@ import { defaultNodeUrl, marketplaceContractId } from '../../configs/nft';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { addressToCreatorImage, shortenAddress } from '../utils';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed } from '../../shared';
-import { shortenName } from '../utils';
+import { shortenName } from '../services/utils';
 import { NFTCollectionHelper, NFTCollection, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 import { fetchMintedNFT, NFT } from '../../shared/nft';
 

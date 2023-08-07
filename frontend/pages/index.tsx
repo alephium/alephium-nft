@@ -2,7 +2,7 @@ import Image from 'next/image';
 import images from '../assets';
 import { withTransition, CreatorCard } from '../components';
 import { prettifyAttoAlphAmount } from '@alephium/web3';
-import { addressToCreatorImage, shortenAddress } from '../utils';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import axios from "axios"
