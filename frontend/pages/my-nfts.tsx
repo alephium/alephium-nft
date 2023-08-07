@@ -2,7 +2,7 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
-import { addressToCreatorImage, shortenAddress } from '../utils';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import { fetchNFTsByAddress } from '../components/nft';

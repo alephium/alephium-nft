@@ -1,5 +1,5 @@
 import { connect, connection } from 'mongoose'
-import { mongoUrl as defaultMongoUrl } from '../../configs/nft'
+import { getMongoUrl } from '../../shared/configs'
 
 const options: any = {
   useUnifiedTopology: true,
@@ -8,7 +8,7 @@ const options: any = {
 
 export const connectToDatabase = async () => {
   if (!connection.readyState) {
-    const mongoUrl = process.env.MONGO_URL ?? defaultMongoUrl
+    const mongoUrl = getMongoUrl()
     console.log('Connecting to ', mongoUrl)
     connect(mongoUrl, options)
   }

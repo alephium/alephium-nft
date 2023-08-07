@@ -16,7 +16,7 @@ import 'react-tabs/style/react-tabs.css';
 import { convertAlphAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
 import axios from 'axios'
-import { backendUrl } from '../../configs/nft'
+import { getBackendUrl } from '../../shared/configs'
 
 const MaximumBatchMintSize: bigint = 15n
 
@@ -88,6 +88,7 @@ export default function CreateCollections() {
 
   async function createOpenCollection() {
     const collectionUri = await uploadToIPFS()
+    const backendUrl = getBackendUrl()
     if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
       const nftCollection = new NFTCollectionHelper(context.signerProvider)
       setIsCreatingCollection(true)
@@ -102,6 +103,7 @@ export default function CreateCollections() {
   }
 
   async function createPublicSaleCollectionSequential() {
+    const backendUrl = getBackendUrl()
     try {
       const { nftBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid

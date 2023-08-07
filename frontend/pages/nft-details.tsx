@@ -4,16 +4,16 @@ import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
-import { defaultNodeUrl, marketplaceContractId } from '../../configs/nft';
+import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { addressToCreatorImage, shortenAddress } from '../utils';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed } from '../../shared';
-import { shortenName } from '../utils';
+import { shortenName } from '../services/utils';
 import { NFTCollectionHelper, NFTCollection, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 import { fetchMintedNFT, NFT } from '../../shared/nft';
 
@@ -86,6 +86,7 @@ const AssetDetails = () => {
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
+  const defaultNodeUrl = getAlephiumNFTConfig().defaultNodeUrl
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
@@ -185,6 +186,7 @@ const AssetDetails = () => {
   };
 
   const cancelListing = async () => {
+    const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
     if (nftListing && context.signerProvider?.nodeProvider) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
       setIsCancellingNFTListing(true)

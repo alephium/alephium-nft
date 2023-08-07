@@ -2,14 +2,14 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, Banner } from '../components';
-import { addressToCreatorImage, shortenAddress } from '../utils';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { shortenName } from '../utils';
-import { backendUrl } from '../../configs/nft';
+import { shortenName } from '../services/utils';
+import { getBackendUrl } from '../../shared/configs'
 import { NFTCollectionMetadata, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 
 interface NFTCollection {
@@ -73,6 +73,7 @@ const MyCollections = () => {
 
   const [collections, setCollections] = useState<NFTCollection[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const backendUrl = getBackendUrl()
 
   useEffect(() => {
     (async () => {
@@ -132,7 +133,7 @@ const MyCollections = () => {
         <div className="sm:px-4 p-12 w-full ml-32 mr-32 md:ml-20 md:mr-20 sm:ml-10 sm:mr-10 mt-3">
           <div className="grid-container">
             {collections.map((collection) => (
-              <NFTCollectionCard key={collection._id} collection={collection}/>
+              <NFTCollectionCard key={collection._id} collection={collection} />
             ))}
           </div>
         </div>

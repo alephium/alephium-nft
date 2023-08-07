@@ -8,11 +8,11 @@ import cors from 'cors'
 import { subscribeMarketplaceEvents } from './subscription/marketplace'
 import { NFTSold } from './mongodb/models/nft-sold'
 import { web3 } from '@alephium/web3'
-import { defaultNodeUrl } from '../configs/nft'
+import { getAlephiumNFTConfig } from '../shared/configs'
 
 const app: Express = express()
 const port = process.env.PORT || '3019'
-const nodeUrl = process.env.NODE_URL || defaultNodeUrl
+const nodeUrl = process.env.NODE_URL || getAlephiumNFTConfig().defaultNodeUrl
 
 web3.setCurrentNodeProvider(nodeUrl)
 connectToDatabase()
@@ -89,7 +89,7 @@ app.get('/api/nft-listing-by-id/:id', async (req: Request, res: Response) => {
 app.get('/api/nft-listings-by-owner/:owner', async (req: Request, res: Response) => {
   try {
     const owner = req.params.owner
-    const listing = await NFTListing.find({'tokenOwner': owner})
+    const listing = await NFTListing.find({ 'tokenOwner': owner })
     res.json(listing)
   } catch (err) {
     console.log(err)
@@ -124,7 +124,7 @@ app.post('/api/create-collection', async (req: Request, res: Response) => {
 app.get('/api/nft-collections-by-owner/:owner', async (req: Request, res: Response) => {
   try {
     const owner = req.params.owner
-    const collections = await NFTCollection.find({'owner': owner})
+    const collections = await NFTCollection.find({ 'owner': owner })
     res.json(collections)
   } catch (err) {
     console.log(err)

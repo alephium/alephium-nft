@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { shortenAddress, shortenName } from '../utils';
+import { shortenAddress, shortenName } from '../services/utils';
 import { motion } from 'framer-motion';
 import { prettifyNumber, prettifyNumberConfig } from '@alephium/web3';
 

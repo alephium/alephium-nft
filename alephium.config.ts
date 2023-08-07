@@ -1,21 +1,9 @@
 import { Configuration } from '@alephium/cli'
-import devnetConfig from './configs/nft/devnet.json'
-import testnetConfig from './configs/nft/testnet.json'
-import mainnetConfig from './configs/nft/mainnet.json'
+import { loadSettings } from './shared/configs'
 
 export type Settings = {
-  marketplaceAdminAddress: string
   commissionRate: number // basis point. e.g. 200: 2%
   listingFee: number
-}
-
-function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): Settings {
-  const config = network === 'devnet' ? devnetConfig : network === 'testnet' ? testnetConfig : mainnetConfig
-  return {
-    marketplaceAdminAddress: config.marketplaceAdminAddress,
-    commissionRate: config.commissionRate,
-    listingFee: config.listingFee
-  }
 }
 
 const configuration: Configuration<Settings> = {

@@ -4,10 +4,10 @@ import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTP
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
-import { shortenAddress } from '../utils';
+import { shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
-import { defaultExplorerUrl, defaultNodeUrl } from '../../configs/nft';
-import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount, web3 } from '@alephium/web3';
+import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
+import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
 import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
@@ -15,7 +15,7 @@ import { InfiniteScroll } from "../components/InfiniteScroll";
 import { NFTSkeletonLoader } from '../components/NFTCard';
 import { NFT } from '../../shared/nft';
 
-const MintBatch = ({ collectionMetadata } : { collectionMetadata: NFTPublicSaleCollectionMetadata}) => {
+const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCollectionMetadata }) => {
   const context = useAlephiumConnectContext()
   const router = useRouter()
   const [isMinting, setIsMinting] = useState<boolean>(false)
@@ -105,7 +105,7 @@ export default function CollectionDetails() {
   const pageSize = 20
 
   useEffect(() => {
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
 
     if (collectionId) {
       setIsMetadataLoading(true)
@@ -124,8 +124,8 @@ export default function CollectionDetails() {
   useEffect(() => {
     if (collectionMetadata === undefined) return
 
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
-    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
+    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(getDefaultExplorerUrl())
 
     let cancelled = false
     setIsNFTsLoading(true)
@@ -168,7 +168,7 @@ export default function CollectionDetails() {
 
   const displayNFTs = (listings: (NFT | undefined)[]) => {
     return listings.map((nft, index) => {
-      return nft === undefined ? (<NFTSkeletonLoader key={index}/>) : (<NFTCard key={index} nft={nft}/>)
+      return nft === undefined ? (<NFTSkeletonLoader key={index} />) : (<NFTCard key={index} nft={nft} />)
     })
   }
 
@@ -233,7 +233,7 @@ export default function CollectionDetails() {
                         />
                       )
                     ) : collectionMetadata.collectionType === 'NFTPublicSaleCollection' ? (
-                      <MintBatch collectionMetadata={collectionMetadata}/>
+                      <MintBatch collectionMetadata={collectionMetadata} />
                     ) : null
                   }
                 </div>
@@ -241,7 +241,7 @@ export default function CollectionDetails() {
             </div>
 
             <InfiniteScroll onNextPage={onNextPage} hasMore={hasMore} isLoading={isNFTsLoading}>
-              {({bottomSentinelRef}) => {
+              {({ bottomSentinelRef }) => {
                 return <>
                   <div className="grid-container sm:px-4 p-12">
                     {displayNFTs(nfts)}

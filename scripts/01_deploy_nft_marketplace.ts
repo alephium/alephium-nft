@@ -10,7 +10,7 @@ const deployMarketplace: DeployFunction<Settings> = async (
 
   const initialFields = {
     nftListingTemplateId: nftListingTemplateResult.contractInstance.contractId,
-    admin: network.settings.marketplaceAdminAddress,
+    admin: deployer.account.address,
     listingFee: BigInt(network.settings.listingFee),
     commissionRate: BigInt(network.settings.commissionRate)
   }
