@@ -4,7 +4,7 @@ import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
-import { defaultNodeUrl, marketplaceContractId } from '../../configs/nft';
+import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
@@ -86,6 +86,7 @@ const AssetDetails = () => {
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
+  const defaultNodeUrl = getAlephiumNFTConfig().defaultNodeUrl
 
   useEffect(() => {
     const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
@@ -185,6 +186,7 @@ const AssetDetails = () => {
   };
 
   const cancelListing = async () => {
+    const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
     if (nftListing && context.signerProvider?.nodeProvider) {
       const nftMarketplace = new NFTMarketplace(context.signerProvider)
       setIsCancellingNFTListing(true)

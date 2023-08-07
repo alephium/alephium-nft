@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { NFTCard, SearchBar } from '.';
 import { InfiniteScroll } from "./InfiniteScroll";
 import { NFTSkeletonLoader } from "./NFTCard";
-import { backendUrl } from "../../configs/nft";
+import { getBackendUrl } from "../../shared/configs";
 
 export interface NFTListing {
   _id: string,
@@ -35,6 +35,7 @@ export async function fetchNFTListings(
   page?: number,
   size?: number
 ): Promise<NFTListing[]> {
+  const backendUrl = getBackendUrl()
   let url: string = `${backendUrl}/api/nft-listings?page=${page || 0}`
   if (size) {
     url = `${url}&size=${size}`
@@ -51,11 +52,13 @@ export async function fetchNFTListings(
 }
 
 export async function fetchNFTListingById(id: string): Promise<NFTListing | undefined> {
+  const backendUrl = getBackendUrl()
   const result = await axios.get(`${backendUrl}/api/nft-listing-by-id/${id}`)
   return result.data === null ? undefined : result.data
 }
 
 export async function fetchNFTListingsByOwner(owner: Address): Promise<NFTListing[]> {
+  const backendUrl = getBackendUrl()
   const result = await axios.get(`${backendUrl}/api/nft-listings-by-owner/${owner}`)
   return result.data
 }
@@ -69,6 +72,7 @@ export function ListNFTListings() {
   const [totalCount, setTotalCount] = useState<number | undefined>()
   const [page, setPage] = useState<number>(0)
   const pageSize = 20
+  const backendUrl = getBackendUrl()
 
   useEffect(() => {
     let cancelled = false
@@ -151,49 +155,49 @@ export function ListNFTListings() {
   const displayNFTListings = (listings: (NFTListing | undefined)[]) => {
     return listings.map((nft, index) => {
       if (nft === undefined) {
-        return <NFTSkeletonLoader key={index}/>
+        return <NFTSkeletonLoader key={index} />
       } else {
-        return <NFTCard key={nft._id} nft={{tokenId: nft._id, minted: true, ...nft}}/>
+        return <NFTCard key={nft._id} nft={{ tokenId: nft._id, minted: true, ...nft }} />
       }
     })
   }
 
   return (
     <div>
-    <div className="mt-10">
-      <div className="flexBetween mx-4 xs:mx-0 minlg:mx-8 sm:flex-col sm:items-start">
-        <h1 className="flex-1 font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">❇️  Hot Listings</h1>
-        <div className="flex-2 sm:w-full flex flex-row sm:flex-col">
-          <SearchBar
-            activeSelect={activeSelect}
-            setActiveSelect={onActiveSelectChange}
-            handleSearch={onHandleSearch}
-            clearSearch={onClearSearch}
-          />
-        </div>
-      </div>
-      <InfiniteScroll onNextPage={onNextPage} hasMore={hasMore} isLoading={isLoading}>
-        {({bottomSentinelRef}) => {
-          return <>
-            <div className="mt-3">
-              <div className="grid-container">
-                {displayNFTListings(nftListings)}
-              </div>
-            </div>
-            <div ref={bottomSentinelRef}></div>
-          </>
-        }}
-      </InfiniteScroll>
-      {
-        (totalCount !== undefined && totalCount === 0) ? (
-          <div className="flex justify-center sm:px-4 p-12" >
-            <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
-              No NFT Listing found
-            </h1>
+      <div className="mt-10">
+        <div className="flexBetween mx-4 xs:mx-0 minlg:mx-8 sm:flex-col sm:items-start">
+          <h1 className="flex-1 font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">❇️  Hot Listings</h1>
+          <div className="flex-2 sm:w-full flex flex-row sm:flex-col">
+            <SearchBar
+              activeSelect={activeSelect}
+              setActiveSelect={onActiveSelectChange}
+              handleSearch={onHandleSearch}
+              clearSearch={onClearSearch}
+            />
           </div>
-        ) : null
-      }
-    </div>
+        </div>
+        <InfiniteScroll onNextPage={onNextPage} hasMore={hasMore} isLoading={isLoading}>
+          {({ bottomSentinelRef }) => {
+            return <>
+              <div className="mt-3">
+                <div className="grid-container">
+                  {displayNFTListings(nftListings)}
+                </div>
+              </div>
+              <div ref={bottomSentinelRef}></div>
+            </>
+          }}
+        </InfiniteScroll>
+        {
+          (totalCount !== undefined && totalCount === 0) ? (
+            <div className="flex justify-center sm:px-4 p-12" >
+              <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
+                No NFT Listing found
+              </h1>
+            </div>
+          ) : null
+        }
+      </div>
     </div>
   )
 }

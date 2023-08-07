@@ -7,15 +7,15 @@ import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import axios from "axios"
 import { ListNFTListings } from '../components/NFTListing';
-import { backendUrl } from '../../configs/nft';
+import { getBackendUrl } from '../../shared/configs'
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
   const { theme } = useTheme();
   const [topSellers, setTopSellers] = useState<{ address: string, totalAmount: string }[]>([])
-
   const parentRef: MutableRefObject<any> = useRef(null);
   const scrollRef: MutableRefObject<any> = useRef(null);
+  const backendUrl = getBackendUrl()
 
   async function loadTopSellers() {
     const result = await axios.get(`${backendUrl}/api/top-sellers`)

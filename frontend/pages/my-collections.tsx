@@ -9,7 +9,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { shortenName } from '../services/utils';
-import { backendUrl } from '../../configs/nft';
+import { getBackendUrl } from '../../shared/configs'
 import { NFTCollectionMetadata, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 
 interface NFTCollection {
@@ -73,6 +73,7 @@ const MyCollections = () => {
 
   const [collections, setCollections] = useState<NFTCollection[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const backendUrl = getBackendUrl()
 
   useEffect(() => {
     (async () => {

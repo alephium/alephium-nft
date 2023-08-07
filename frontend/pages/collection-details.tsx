@@ -6,8 +6,8 @@ import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
-import { defaultExplorerUrl, defaultNodeUrl } from '../../configs/nft';
-import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount, web3 } from '@alephium/web3';
+import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
+import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
 import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
@@ -105,7 +105,7 @@ export default function CollectionDetails() {
   const pageSize = 20
 
   useEffect(() => {
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
 
     if (collectionId) {
       setIsMetadataLoading(true)
@@ -124,8 +124,8 @@ export default function CollectionDetails() {
   useEffect(() => {
     if (collectionMetadata === undefined) return
 
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
-    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
+    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
+    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(getDefaultExplorerUrl())
 
     let cancelled = false
     setIsNFTsLoading(true)

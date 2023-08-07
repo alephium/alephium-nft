@@ -1,4 +1,4 @@
-import { marketplaceContractAddress, pollingInterval } from '../../configs/nft/index'
+import { getAlephiumNFTConfig } from '../../shared/configs'
 import { NFTListingInstance, NFTMarketPlace, NFTMarketPlaceTypes, NFTListing as NFTListingFactory } from '../../artifacts/ts'
 import { ContractEvent, EventSubscription, SubscribeOptions, addressFromContractId, web3 } from '@alephium/web3'
 import { MaketplaceEventNextStart } from '../mongodb/models/marketplace-event-next-start'
@@ -10,8 +10,9 @@ import { NFTSold } from '../mongodb/models/nft-sold'
 let eventSubscription: EventSubscription | undefined = undefined
 
 function createSubscribeOptions(eventHandler: (event: ContractEvent) => Promise<void>): SubscribeOptions<ContractEvent> {
+  const config = getAlephiumNFTConfig()
   return {
-    pollingInterval,
+    pollingInterval: config.pollingInterval,
     messageCallback: (event: ContractEvent): Promise<void> => {
       return eventHandler(event)
     },
@@ -71,7 +72,7 @@ const eventHandler = async (event: ContractEvent): Promise<void> => {
     case 2:
       const marketplaceEvent = event as (NFTMarketPlaceTypes.NFTSoldEvent | NFTMarketPlaceTypes.NFTListingCancelledEvent)
       const tokenId = marketplaceEvent.fields.tokenId
-  
+
       // Remove NFT Listing
       const result = await NFTListing.findByIdAndDelete(tokenId)
       console.log('Deleted nft listing', result, tokenId)
@@ -120,9 +121,10 @@ async function saveNFTSold(event: NFTMarketPlaceTypes.NFTSoldEvent) {
 }
 
 export async function subscribeMarketplaceEvents() {
+  const config = getAlephiumNFTConfig()
   const nextStart = await getNextStart()
   console.log(`from event count: ${nextStart}`)
-  const marketplace = NFTMarketPlace.at(marketplaceContractAddress)
+  const marketplace = NFTMarketPlace.at(config.marketplaceContractAddress)
   const options = createSubscribeOptions(eventHandler)
   eventSubscription = marketplace.subscribeAllEvents(options as any, nextStart)
 }

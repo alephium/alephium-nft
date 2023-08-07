@@ -1,5 +1,5 @@
 import useSWR from "swr"
-import { NETWORK } from "../../configs/nft";
+import { getNetwork } from "../../shared/configs";
 import { web3, SignerProvider, Account } from "@alephium/web3"
 import { fetchNFTCollectionMetadata } from "../../shared/nft-collection";
 
@@ -35,4 +35,4 @@ export const useCollectionMetadata = (
 }
 
 export const getAccountIdentifier = (account: Account) =>
-  `${NETWORK}::${account.address}`
+  `${getNetwork()}::${account.address}`

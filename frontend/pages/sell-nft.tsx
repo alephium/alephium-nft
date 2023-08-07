@@ -5,7 +5,7 @@ import { Button, Input, Loader } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
 import { convertAlphAmountWithDecimals } from '@alephium/web3';
-import { marketplaceContractId } from '../../configs/nft'
+import { getAlephiumNFTConfig } from '../../shared/configs'
 import { useAlephiumConnectContext } from '@alephium/web3-react';
 import { useNFT } from '../components/nft';
 import { useRouter } from 'next/router';
@@ -32,6 +32,7 @@ const SellNFT = () => {
   async function sell(nft: NFT, price: number) {
     const nftMarketplace = getNFTMarketplace()
     const priceInSets = convertAlphAmountWithDecimals(price)
+    const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
     if (!!nftMarketplace && context.signerProvider?.nodeProvider && priceInSets) {
       setIsSellingNFT(true)
       const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
