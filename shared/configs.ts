@@ -1,6 +1,5 @@
 import { NetworkId } from "@alephium/web3"
 import { loadDeployments } from "../artifacts/ts/deployments"
-import { loadSettings } from '../alephium.config'
 
 export interface AlephiumNFTConfig {
   network: NetworkId,
@@ -50,6 +49,13 @@ export function getMongoUrl(): string {
 function getPollingInterval(): number {
   const network = getNetwork()
   return network === 'devnet' ? 1000 : 100000
+}
+
+export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: number } {
+  return {
+    commissionRate: 200,
+    listingFee: network === 'devnet' ? 10 : network === 'testnet' ? 1 : 1,
+  }
 }
 
 export function getAlephiumNFTConfig(): AlephiumNFTConfig {

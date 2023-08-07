@@ -1,15 +1,9 @@
 import { Configuration } from '@alephium/cli'
+import { loadSettings } from './shared/configs'
 
 export type Settings = {
   commissionRate: number // basis point. e.g. 200: 2%
   listingFee: number
-}
-
-export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): Settings {
-  return {
-    commissionRate: 200,
-    listingFee: network === 'devnet' ? 10 : network === 'testnet' ? 1 : 1,
-  }
 }
 
 const configuration: Configuration<Settings> = {
