@@ -9,7 +9,7 @@ import {
   TestContractResult,
   HexString,
   ContractFactory,
-  SubscribeOptions,
+  EventSubscribeOptions,
   EventSubscription,
   CallContractParams,
   CallContractResult,
@@ -76,6 +76,7 @@ class Factory extends ContractFactory<
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes.Fields
 > {
+  eventIndex = { Mint: 0 };
   consts = {
     ErrorCodes: { NFTNotFound: BigInt(0), TokenOwnerAllowedOnly: BigInt(1) },
   };
@@ -144,7 +145,7 @@ export class NFTOpenCollectionInstance extends ContractInstance {
   }
 
   subscribeMintEvent(
-    options: SubscribeOptions<NFTOpenCollectionTypes.MintEvent>,
+    options: EventSubscribeOptions<NFTOpenCollectionTypes.MintEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(

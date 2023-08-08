@@ -10,9 +10,9 @@
     "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.frontend . -t alephium-nft-frontend:$npm_package_version"
   },
   "dependencies": {
-    "@alephium/web3": "^0.14.6",
-    "@alephium/web3-react": "^0.14.6",
-    "@alephium/web3-wallet": "^0.14.6",
+    "@alephium/web3": "^0.16.1",
+    "@alephium/web3-react": "^0.16.1",
+    "@alephium/web3-wallet": "^0.16.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
