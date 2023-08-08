@@ -1,11 +1,11 @@
-import { NetworkId } from "@alephium/web3"
+import { NetworkId, ONE_ALPH } from "@alephium/web3"
 import { loadDeployments } from "../artifacts/ts/deployments"
 
 export interface AlephiumNFTConfig {
   network: NetworkId,
   groupIndex: number,
   commissionRate: number,
-  listingFee: number,
+  listingFee: bigint,
   marketplaceContractId: string,
   marketplaceContractAddress: string,
   marketplaceAdminAddress: string,
@@ -51,10 +51,10 @@ function getPollingInterval(): number {
   return network === 'devnet' ? 1000 : 100000
 }
 
-export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: number } {
+export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: bigint } {
   return {
     commissionRate: 200,
-    listingFee: network === 'devnet' ? 10 : network === 'testnet' ? 1 : 1,
+    listingFee: network === 'devnet' ? ONE_ALPH * 2n : network === 'testnet' ? ONE_ALPH : ONE_ALPH,
   }
 }
 

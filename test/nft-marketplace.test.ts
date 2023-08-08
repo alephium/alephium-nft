@@ -1,9 +1,11 @@
 import { web3, subContractId, binToHex, encodeU256, addressFromContractId, sleep, ONE_ALPH } from '@alephium/web3'
+import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { getSigners } from '@alephium/web3-test'
 import { NFTCollectionHelper } from '../shared/nft-collection'
 import { NFTMarketplace } from '../shared/nft-marketplace'
 import { NFTListingInstance, NFTMarketPlaceInstance } from '../artifacts/ts'
 import { contractExists } from '../shared'
+import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -11,7 +13,7 @@ describe('nft marketplace', function() {
   const provider = web3.getCurrentNodeProvider()
 
   test('Create NFT listing, update price and buy NFT through NFT marketplace', async () => {
-    const [signer1, signer2] = await getSigners(2)
+    const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
 
     const nftCollection = new NFTCollectionHelper(signer1)
     const nftMarketplace = new NFTMarketplace(signer1)
@@ -31,7 +33,7 @@ describe('nft marketplace', function() {
     )
 
     const tokenId = nftContractId
-    const price = BigInt("1000000000000000000")
+    const price = ONE_ALPH * 10n
     const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
     const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
@@ -60,7 +62,7 @@ describe('nft marketplace', function() {
     }
 
     // Update the price
-    const newPrice = 2n * ONE_ALPH
+    const newPrice = ONE_ALPH * 20n
     {
       await nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId)
       const nftListingContractState = await new NFTListingInstance(nftListingContractAddress).fetchState()
@@ -82,7 +84,10 @@ describe('nft marketplace', function() {
 
     // Buy the NFT
     {
-      await nftMarketplace.buyNFT(newPrice, tokenId, nftMarketplaceContractId)
+      const signer1BalanceBefore = await getBalance(signer1)
+      const signer2BalanceBefore = await getBalance(signer2)
+      const result = await nftMarketplace.buyNFT(newPrice, tokenId, nftMarketplaceContractId, signer2)
+      const consumedGas = BigInt(result.gasAmount) * BigInt(result.gasPrice)
       await sleep(3000)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -91,11 +96,20 @@ describe('nft marketplace', function() {
       )
       expect(nftMarketplaceContractEvents.events.length).toEqual(1)
 
-      const nftPriceUpdatedEventFields = nftMarketplaceContractEvents.events[0].fields
-      expect(BigInt(+nftPriceUpdatedEventFields[0].value)).toEqual(newPrice)
-      expect(nftPriceUpdatedEventFields[1].value).toEqual(tokenId)
-      expect(nftPriceUpdatedEventFields[2].value).toEqual(signer1.address)
-      expect(nftPriceUpdatedEventFields[3].value).toEqual(signer1.address)
+      const nftSoldEventFields = nftMarketplaceContractEvents.events[0].fields
+      expect(BigInt(+nftSoldEventFields[0].value)).toEqual(newPrice)
+      expect(nftSoldEventFields[1].value).toEqual(tokenId)
+      expect(nftSoldEventFields[2].value).toEqual(signer1.address)
+      expect(nftSoldEventFields[3].value).toEqual(signer2.address)
+
+      // Check the balance of signer1
+      const signer1BalanceAfter = await getBalance(signer1)
+      const netPrice = priceAfterFee(newPrice, NFTMarketplace.defaultCommissionRate, NFTMarketplace.defaultListingFee)
+      expect(BigInt(signer1BalanceAfter.balance)).toEqual(BigInt(signer1BalanceBefore.balance) + netPrice + ONE_ALPH) // Extra ONE_ALPH is the listing contract deposit
+
+      // Check the balance of signer2
+      const signer2BalanceAfter = await getBalance(signer2)
+      expect(BigInt(signer2BalanceAfter.balance)).toEqual(BigInt(signer2BalanceBefore.balance) - newPrice - consumedGas)
 
       const listingExists = await contractExists(nftListingContractId, provider)
       expect(listingExists).toBeFalsy()
@@ -103,7 +117,7 @@ describe('nft marketplace', function() {
 
     // Cancel the listing
     {
-      await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId)
+      await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId, signer2)
 
       const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
         nftMarketplaceContractAddress,
@@ -117,9 +131,9 @@ describe('nft marketplace', function() {
       const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
       const nftListingContractState = await new NFTListingInstance(nftListingContractAddress).fetchState()
-      expect(nftListingContractState.fields.tokenOwner).toEqual(signer1.address)
+      expect(nftListingContractState.fields.tokenOwner).toEqual(signer2.address)
 
-      await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId)
+      await nftMarketplace.cancelNFTListing(tokenId, nftMarketplaceContractId, signer2)
 
       // NFTListing doesn't exist any more
       await expect(new NFTListingInstance(nftListingContractAddress).fetchState()).rejects.toThrow(Error)
@@ -131,13 +145,13 @@ describe('nft marketplace', function() {
         nftMarketplace,
         nftMarketplaceContractId,
         signer2.address,
-        nftMarketplace.defaultListingFee
+        NFTMarketplace.defaultListingFee
       )
     }
   }, 300000)
 
   test('Update metadata in the NFT marketplace', async () => {
-    const [signer1, signer2] = await getSigners(2, undefined, 0)
+    const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftMarketplace = new NFTMarketplace(signer1)
     await nftMarketplace.buildProject()
 
@@ -239,5 +253,13 @@ describe('nft marketplace', function() {
     await nftMarketplace.withdrawFromMarketPlace(to, withdrawAmount, nftMarketplaceContractId)
     const balanceAfter = await nftMarketplace.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftMarketplaceContractAddress)
     expect(BigInt(balanceAfter.balance)).toEqual(BigInt(balanceBefore.balance) - withdrawAmount)
+  }
+
+  function getBalance(signer: PrivateKeyWallet): Promise<Balance> {
+    return signer.nodeProvider!.addresses.getAddressesAddressBalance(signer.address)
+  }
+
+  function priceAfterFee(price: bigint, commission: bigint, listingFee: bigint) {
+    return (price - (price * commission) / 10000n) - listingFee
   }
 })

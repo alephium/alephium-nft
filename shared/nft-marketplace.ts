@@ -14,8 +14,8 @@ import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
 
 export class NFTMarketplace extends DeployHelpers {
-  defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
-  defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
+  static defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
+  static defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
 
   async create(
     signer: SignerProvider = this.signer
@@ -28,8 +28,8 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: randomContractId(),
           tokenOwner: randomContractAddress(),
           marketContractId: randomContractId(),
-          commissionRate: this.defaultCommissionRate,
-          listingFee: this.defaultListingFee,
+          commissionRate: NFTMarketplace.defaultCommissionRate,
+          listingFee: NFTMarketplace.defaultListingFee,
           price: 1000n
         }
       }
@@ -42,8 +42,8 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractInstance.contractId,
           admin: adminAddress,
-          listingFee: this.defaultListingFee,
-          commissionRate: this.defaultCommissionRate
+          listingFee: NFTMarketplace.defaultListingFee,
+          commissionRate: NFTMarketplace.defaultCommissionRate
         }
       }
     )
@@ -65,7 +65,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: BigInt(price),
           nftMarketplace: marketPlaceContractId
         },
-        attoAlphAmount: this.defaultListingFee + ONE_ALPH + DUST_AMOUNT,
+        attoAlphAmount: NFTMarketplace.defaultListingFee + ONE_ALPH + DUST_AMOUNT,
         tokens: [
           {
             id: tokenId,
@@ -108,7 +108,7 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           nftMarketplace: marketPlaceContractId
         },
-        attoAlphAmount: totalPayment,
+        attoAlphAmount: BigInt(totalPayment) + DUST_AMOUNT,
       }
     )
   }

@@ -1,6 +1,6 @@
 /* pages/_app.js */
 import { AppProps } from 'next/app'
-import { AlephiumConnectProvider } from '@alephium/web3-react'
+import { AlephiumWalletProvider } from '@alephium/web3-react'
 import { getAlephiumNFTConfig } from '../../shared/configs'
 import { ThemeProvider } from 'next-themes';
 import Head from 'next/head';
@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class">
       <SnackbarProvider maxSnack={3}>
-        <AlephiumConnectProvider useTheme="retro" addressGroup={config.groupIndex} network={config.network}>
+        <AlephiumWalletProvider useTheme="retro" addressGroup={config.groupIndex} network={config.network}>
           <div className="dark:bg-nft-dark bg-white min-h-screen">
             <Head>
               <title>Alephium</title>
@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </div>
 
           <Script src="https://kit.fontawesome.com/77a74156e4.js" crossOrigin="anonymous" />
-        </AlephiumConnectProvider>
+        </AlephiumWalletProvider>
       </SnackbarProvider>
     </ThemeProvider>
   )
