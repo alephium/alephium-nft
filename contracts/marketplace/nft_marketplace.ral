@@ -118,6 +118,10 @@ Contract NFTMarketPlace(
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
 
+        let commissionRateOfListing = nftListing.getCommissionRate()
+        let listingFeeOfListing = nftListing.getListingFee()
+
+        checkListingPriceAfterFee(newPrice, commissionRateOfListing, listingFeeOfListing)
         checkCaller!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
 
         let price = nftListing.getPrice()
