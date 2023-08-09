@@ -3,7 +3,7 @@ import { PrivateKeyWallet } from '@alephium/web3-wallet'
 import { getSigners } from '@alephium/web3-test'
 import { NFTCollectionHelper } from '../shared/nft-collection'
 import { NFTMarketplace } from '../shared/nft-marketplace'
-import { NFTListingInstance, NFTMarketPlaceInstance } from '../artifacts/ts'
+import { NFTListingInstance, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
 import { contractExists } from '../shared'
 import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
 
