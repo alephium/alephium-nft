@@ -57,7 +57,7 @@ export class NFTCollectionHelper extends DeployHelpers {
       attoAlphAmount: ONE_ALPH
     })
     const groupIndex = groupOfAddress(ownerAddress)
-    const contractId = await calcContractId(this.nodeProvider, result.txId, groupIndex)
+    const contractId = await calcContractId(this.nodeProvider, result.txId, result.unsignedTx, groupIndex)
     return {
       ...result,
       contractInstance: NFTOpenCollection.at(addressFromContractId(contractId))
@@ -112,7 +112,7 @@ export class NFTCollectionHelper extends DeployHelpers {
       attoAlphAmount: ONE_ALPH
     })
     const groupIndex = groupOfAddress(ownerAddress)
-    const contractId = await calcContractId(this.nodeProvider, result.txId, groupIndex)
+    const contractId = await calcContractId(this.nodeProvider, result.txId, result.unsignedTx, groupIndex)
     return {
       ...result,
       contractInstance: NFTPublicSaleCollectionSequential.at(addressFromContractId(contractId))
@@ -202,9 +202,9 @@ export class NFTCollectionHelper extends DeployHelpers {
   }
 }
 
-async function calcContractId(nodeProvider: NodeProvider, txId: string, groupIndex: number) {
-  const txDetails = await nodeProvider.transactions.getTransactionsDetailsTxid(txId, { fromGroup: groupIndex, toGroup: groupIndex })
-  const outputIndex = txDetails.unsigned.fixedOutputs.length
+async function calcContractId(nodeProvider: NodeProvider, txId: string, unsignedTx: string, groupIndex: number) {
+  const parsedUnsignedTx = await nodeProvider.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+  const outputIndex = parsedUnsignedTx.unsignedTx.fixedOutputs.length
   const hex = txId + outputIndex.toString(16).padStart(8, '0')
   const hashHex = binToHex(blake.blake2b(hexToBinUnsafe(hex), undefined, 32))
   return hashHex.slice(0, 62) + groupIndex.toString(16).padStart(2, '0')
