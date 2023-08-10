@@ -9,8 +9,8 @@
     "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.backend . -t alephium-nft-backend:$npm_package_version"
   },
   "dependencies": {
-    "@alephium/web3": "^0.16.1",
-    "@alephium/web3-wallet": "^0.16.1",
+    "@alephium/web3": "^0.17.0",
+    "@alephium/web3-wallet": "^0.17.0",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
