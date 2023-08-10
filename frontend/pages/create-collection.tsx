@@ -1,6 +1,6 @@
 import { useCallback, useState, useMemo } from 'react'
 import { NFTCollectionHelper } from '../../shared/nft-collection'
-import { ipfsClient } from '../../shared/ipfs'
+import { ipfsClient } from '../services/ipfs'
 import { useAlephiumConnectContext } from '@alephium/web3-react'
 import { useRouter } from 'next/router'
 import { useDropzone } from 'react-dropzone';

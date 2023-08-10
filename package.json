@@ -1,6 +1,6 @@
 {
   "name": "alephium-nft",
-  "version": "0.4.34",
+  "version": "0.4.44",
   "private": true,
   "scripts": {
     "build:contracts": "npx @alephium/cli compile",
@@ -19,7 +19,6 @@
     "axios": "^0.27.2",
     "better-sqlite3": "^7.6.2",
     "bs58": "^5.0.0",
-    "ipfs-http-client": "^60.0.1",
     "ts-jest": "^28.0.2",
     "ts-node": "^10.7.0"
   },

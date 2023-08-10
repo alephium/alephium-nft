@@ -6,7 +6,7 @@ import Image from 'next/image';
 import images from '../assets';
 import { shortenAddress } from '../services/utils';
 import { useCallback, useState, useMemo } from 'react';
-import { ipfsClient } from '../../shared/ipfs';
+import { ipfsClient } from '../services/ipfs';
 import { useDropzone } from 'react-dropzone';
 import { useTheme } from 'next-themes';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
