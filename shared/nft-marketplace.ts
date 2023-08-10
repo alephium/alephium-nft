@@ -5,13 +5,15 @@ import {
   ONE_ALPH,
   DUST_AMOUNT,
   NodeProvider,
-  SignerProvider
+  SignerProvider,
+  addressFromContractId
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
 import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
+import { getAlephiumNFTConfig } from './configs'
 
 export class NFTMarketplace extends DeployHelpers {
   static defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
@@ -65,7 +67,7 @@ export class NFTMarketplace extends DeployHelpers {
           price: BigInt(price),
           nftMarketplace: marketPlaceContractId
         },
-        attoAlphAmount: NFTMarketplace.defaultListingFee + ONE_ALPH + DUST_AMOUNT,
+        attoAlphAmount: ONE_ALPH + DUST_AMOUNT,
         tokens: [
           {
             id: tokenId,

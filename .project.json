@@ -53,7 +53,7 @@
     },
     "ListNFT": {
       "sourceFile": "scripts/list_nft.ral",
-      "sourceCodeHash": "1384d814236e9ed82b096905af64bd3b627063c85c20b9828f0c419afd9c4723",
+      "sourceCodeHash": "b96140af4aac6d3e1792c86c54006ce7e804daa5241da9f20921d3a247ffe2db",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

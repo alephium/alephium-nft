@@ -75,34 +75,6 @@ export async function fetchNFTsByAddress(nodeProvider: NodeProvider, address: st
   return [...removeDuplicates, ...listedNFTs]
 }
 
-export const useCommissionRate = (
-  signerProvider?: SignerProvider
-) => {
-  const { data, error, ...rest } = useSWR(
-    signerProvider &&
-    signerProvider.nodeProvider &&
-    [
-      "commissionRate",
-    ],
-    async () => {
-      if (!signerProvider || !signerProvider.nodeProvider) {
-        return undefined;
-      }
-
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-
-      const marketplaceState = await NFTMarketPlace.at(getAlephiumNFTConfig().marketplaceContractAddress).fetchState()
-      return marketplaceState.fields.commissionRate as bigint
-    },
-    {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true
-    },
-  )
-
-  return { commissionRate: data, isLoading: !data && !error, ...rest }
-}
-
 export const useNFT = (
   tokenId: string,
   listed: boolean,
