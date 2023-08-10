@@ -2,12 +2,12 @@
 # yarn lockfile v1
 
 
-"@alephium/web3-wallet@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.16.1.tgz#e85b4b3708a1608396009d83e68aa4b465d8d367"
-  integrity sha512-GXfk5eUVzC5RQ2i1PToEw9eoxV4IUn9Olj/Dvi6X/QEZ8h+1/5duVcSj+3tHMDyWg4ZLHqY9KIHfKjrT5gSnDg==
+"@alephium/web3-wallet@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.17.0.tgz#d9c046380f7fc3cbcff7e263eb9da775df283bdb"
+  integrity sha512-/MxK2iwnkDdnv3IA5pZY2/ydwcY8keEB2dQBxa3kSaUEmmASCmNEwJmr147TTabXIXn3idsPTzA7bhX2ZbnoeA==
   dependencies:
-    "@alephium/web3" "^0.16.1"
+    "@alephium/web3" "^0.17.0"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -16,10 +16,10 @@
     elliptic "6.5.4"
     fs-extra "10.0.1"
 
-"@alephium/web3@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.16.1.tgz#390f45c78d69ccfee1ab029f539a2da02f1ecba9"
-  integrity sha512-IkFtRh3s0hsZ8wBVlMnZ+oG4vwfzU7AgWOHMlv+ZnYzTn/XcoPIV4k9RWHfSwjSNjyT7PCc665KuWsXh9sU1zw==
+"@alephium/web3@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.17.0.tgz#d241cfd0a2d35e86c0b7f41e0b60ea123766465e"
+  integrity sha512-qaMz/3dguOjXVQZYm1KY6sQcwUyaK430fqCEvzKpoWvw3K1G8dp7js9MX3zePGC99byNk1+oaUjHAVrkzv+Kyg==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"
