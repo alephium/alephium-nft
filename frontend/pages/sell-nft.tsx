@@ -6,26 +6,24 @@ import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
 import { convertAlphAmountWithDecimals } from '@alephium/web3';
 import { getAlephiumNFTConfig } from '../../shared/configs'
-import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useWallet } from '@alephium/web3-react';
 import { useNFT } from '../components/nft';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useTheme } from 'next-themes';
 import { waitTxConfirmed } from '../../shared';
 import { NFT } from '../../shared/nft';
 
 const SellNFT = () => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const [price, setPrice] = useState<number>(0);
   const router = useRouter();
-  const { theme } = useTheme();
   const { tokenId } = router.query;
-  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, context.signerProvider?.nodeProvider)
+  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
-    if (context.signerProvider) {
-      return new NFTMarketplace(context.signerProvider)
+    if (wallet?.signer) {
+      return new NFTMarketplace(wallet.signer)
     }
   }
 
@@ -33,26 +31,26 @@ const SellNFT = () => {
     const nftMarketplace = getNFTMarketplace()
     const priceInSets = convertAlphAmountWithDecimals(price)
     const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
-    if (!!nftMarketplace && context.signerProvider?.nodeProvider && priceInSets) {
+    if (!!nftMarketplace && wallet?.signer.nodeProvider && priceInSets) {
       setIsSellingNFT(true)
       const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
-      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsSellingNFT(false)
 
       router.push('/');
     } else {
       console.debug(
         "can not sell NFT",
-        context.signerProvider?.nodeProvider,
-        context.signerProvider,
-        context.account,
+        wallet?.signer.nodeProvider,
+        wallet?.signer,
+        wallet?.account,
         nftMarketplace,
         price
       )
     }
   }
 
-  if (!context.account) {
+  if (!wallet) {
     return (
       <ConnectToWalletBanner />
     );

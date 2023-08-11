@@ -3,7 +3,7 @@ import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, Banner } from '../components';
 import { addressToCreatorImage, shortenAddress } from '../services/utils';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { useWallet } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -22,21 +22,21 @@ interface NFTCollection {
 }
 
 const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const [metadata, setMetadata] = useState<NFTCollectionMetadata | undefined>()
   useEffect(() => {
     (async () => {
-      if (context.signerProvider
-        && context.signerProvider.nodeProvider
-        && context.signerProvider.explorerProvider
-        && context.account?.address
+      if (wallet?.signer
+        && wallet.signer.nodeProvider
+        && wallet.signer.explorerProvider
+        && wallet.account.address
       ) {
-        fetchNFTCollectionMetadata(context.signerProvider.nodeProvider, collection._id)
+        fetchNFTCollectionMetadata(wallet.signer.nodeProvider, collection._id)
           .then((metadata) => setMetadata(metadata))
           .catch((err) => console.error(err))
       }
     })()
-  }, [context.signerProvider, context.account, collection])
+  }, [wallet?.signer, wallet?.account, collection])
 
   return (
     <Link href={{ pathname: '/collection-details', query: { collectionId: collection._id } }}>
@@ -69,7 +69,7 @@ const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
 }
 
 const MyCollections = () => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
 
   const [collections, setCollections] = useState<NFTCollection[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -77,20 +77,20 @@ const MyCollections = () => {
 
   useEffect(() => {
     (async () => {
-      if (context.signerProvider
-        && context.signerProvider.nodeProvider
-        && context.signerProvider.explorerProvider
-        && context.account?.address
+      if (wallet?.signer
+        && wallet.signer.nodeProvider
+        && wallet.signer.explorerProvider
+        && wallet.account.address
       ) {
         setIsLoading(true)
-        const result = await axios.get(`${backendUrl}/api/nft-collections-by-owner/${context.account.address}`)
+        const result = await axios.get(`${backendUrl}/api/nft-collections-by-owner/${wallet.account.address}`)
         setCollections(result.data)
         setIsLoading(false)
       }
     })()
-  }, [context.signerProvider, context.account]);
+  }, [wallet?.signer, wallet?.account]);
 
-  if (!context.account) {
+  if (!wallet) {
     return (
       <ConnectToWalletBanner />
     );
@@ -116,12 +116,12 @@ const MyCollections = () => {
         <div className="flexCenter flex-col -mt-20 z-0">
           <div className="flexCenter w-40 h-40 sm:w-36 sm:h-36 p-1 dark:bg-nft-black-4 bg-white rounded-full">
             <Image
-              src={addressToCreatorImage(context.account.address)}
+              src={addressToCreatorImage(wallet.account.address)}
               className="rounded-full object-cover"
               objectFit="cover"
             />
           </div>
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(context.account.address)}</p>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(wallet.account.address)}</p>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useAlephiumConnectContext } from '@alephium/web3-react'
+import { useWallet } from '@alephium/web3-react'
 import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTPublicSaleCollectionMetadata } from '../../shared/nft-collection'
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import { NFTSkeletonLoader } from '../components/NFTCard';
 import { NFT } from '../../shared/nft';
 
 const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCollectionMetadata }) => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const router = useRouter()
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const [batchSize, setBatchSize] = useState(1)
@@ -40,11 +40,11 @@ const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCo
 
   const mintBatch = async () => {
     try {
-      if (context.signerProvider?.nodeProvider && context.account && collectionMetadata) {
-        const nftCollection = new NFTCollectionHelper(context.signerProvider)
+      if (wallet?.signer?.nodeProvider && wallet.account && collectionMetadata) {
+        const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsMinting(true)
         const result = await nftCollection.mintBatchSequential(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id)
-        await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+        await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
         setIsMinting(false)
         router.push('/my-nfts')
       }
@@ -93,7 +93,7 @@ const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCo
 };
 
 export default function CollectionDetails() {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const router = useRouter()
   const { collectionId } = router.query
   const [isMetadataLoading, setIsMetadataLoading] = useState<boolean>(false)
@@ -105,7 +105,7 @@ export default function CollectionDetails() {
   const pageSize = 20
 
   useEffect(() => {
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
+    const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
 
     if (collectionId) {
       setIsMetadataLoading(true)
@@ -124,8 +124,8 @@ export default function CollectionDetails() {
   useEffect(() => {
     if (collectionMetadata === undefined) return
 
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
-    const explorerProvider = context.signerProvider?.explorerProvider || new ExplorerProvider(getDefaultExplorerUrl())
+    const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
+    const explorerProvider = wallet?.signer?.explorerProvider || new ExplorerProvider(getDefaultExplorerUrl())
 
     let cancelled = false
     setIsNFTsLoading(true)
@@ -150,7 +150,7 @@ export default function CollectionDetails() {
     return () => {
       cancelled = true
     }
-  }, [page, collectionMetadata, context])
+  }, [page, collectionMetadata, wallet])
 
   if (!collectionId) return (<h1 className="px-20 py-10 text-3xl">No collection</h1>)
 
@@ -221,7 +221,7 @@ export default function CollectionDetails() {
                 <div className="flex flex-row sm:flex-col mt-10">
                   {
                     collectionMetadata.collectionType === 'NFTOpenCollection' ? (
-                      (context.account?.address != collectionMetadata.owner) ? (
+                      (wallet?.account?.address != collectionMetadata.owner) ? (
                         <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
                           Only collection owner can mint NFT
                         </p>

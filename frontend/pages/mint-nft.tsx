@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useAlephiumConnectContext } from '@alephium/web3-react'
+import { useWallet } from '@alephium/web3-react'
 import { useCollectionMetadata } from '../components/NFTCollection'
 import { Button, Input } from '../components'
 import Image from 'next/image';
@@ -15,14 +15,14 @@ import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
 
 export default function MintNFT() {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
   const router = useRouter()
   const { theme } = useTheme();
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const { collectionId } = router.query
-  const { collectionMetadata } = useCollectionMetadata(collectionId as string, context.signerProvider)
+  const { collectionMetadata } = useCollectionMetadata(collectionId as string, wallet?.signer)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {
@@ -84,19 +84,19 @@ export default function MintNFT() {
 
   async function mintNFT() {
     const uri = await uploadToIPFS()
-    if (uri && context.signerProvider?.nodeProvider && context.account && collectionMetadata) {
-      const nftCollection = new NFTCollectionHelper(context.signerProvider)
+    if (uri && wallet?.signer?.nodeProvider && wallet.account && collectionMetadata) {
+      const nftCollection = new NFTCollectionHelper(wallet.signer)
       setIsMinting(true)
       const result = await nftCollection.mintOpenNFT(collectionMetadata.id, uri)
-      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsMinting(false)
       router.push('/my-nfts')
     } else {
-      console.debug('context..', context)
+      console.debug('wallet..', wallet)
     }
   }
 
-  if (!context.account) {
+  if (!wallet) {
     return (
       <ConnectToWalletBanner />
     );
@@ -126,7 +126,7 @@ export default function MintNFT() {
                     <Image src={images.creator1} objectFit="cover" className="rounded-full" />
                   </div>
                   <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-lg font-semibold">
-                    {shortenAddress(context.account?.address)}
+                    {shortenAddress(wallet?.account.address)}
                   </p>
                 </div>
               </div>
