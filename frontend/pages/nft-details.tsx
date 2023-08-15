@@ -91,7 +91,6 @@ const AssetDetails = () => {
   useEffect(() => {
     const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(defaultNodeUrl)
     web3.setCurrentNodeProvider(nodeProvider)
-
     // disable body scroll when navbar is open
     if (paymentModal || successModal) {
       document.body.style.overflow = 'hidden';
@@ -128,7 +127,7 @@ const AssetDetails = () => {
 
     if (collectionId && tokenIndex) {
       setIsNFTLoading(true)
-      fetchPreMintNFT(collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
+      fetchPreMintNFT(nodeProvider, collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })

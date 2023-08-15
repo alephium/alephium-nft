@@ -7,33 +7,33 @@
   resolved "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.2.0.tgz"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
-"@alephium/get-extension-wallet@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.17.0.tgz#cd7130bd9da708d94de46ad0279287e66d2b148d"
-  integrity sha512-S8XEPvE1UAhwPfd/i+YfykZzM+U3HOXnwrf48a6UBZ72ORSOaFG8cEeaPsc9mhRFb3CChYUcDHj64uaY3/m67A==
+"@alephium/get-extension-wallet@^0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@alephium/get-extension-wallet/-/get-extension-wallet-0.17.1.tgz#ad08f3f240594863296234b454b3db9538690c1e"
+  integrity sha512-ZczhiaTzI0FkzI3ZG6P1/BxNxHCNHWflpvR8MLiawA5jzNvbYohAQweg3/ORcMSxh8BGbxkd2p8upu6dqaCsXA==
   dependencies:
-    "@alephium/web3" "^0.17.0"
+    "@alephium/web3" "^0.17.1"
     bowser "^2.11.0"
 
-"@alephium/walletconnect-provider@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@alephium/walletconnect-provider/-/walletconnect-provider-0.17.0.tgz#ce01bed49e1e722255ad814b64c0962a11b162c1"
-  integrity sha512-fKMwxmdGKKeo3ZlgQ/koEPmBcH6NV/NkrqG6uqunlL82UnT0szrm6OH9flvf69lO2h9AzV9Gpg2F1zdlKP2+7Q==
+"@alephium/walletconnect-provider@^0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@alephium/walletconnect-provider/-/walletconnect-provider-0.17.1.tgz#13b621b72ca20018d4fff998974f3e93fe719c6e"
+  integrity sha512-8WAmW3uIk/Xks2jeDkbXjODJHfkC0Fq9R7om8RUZHQHI/gFwl4TbwD/NlcwKXV/x2pBLvz1aY2S4a6Cm02yULg==
   dependencies:
-    "@alephium/web3" "^0.17.0"
-    "@alephium/web3-wallet" "^0.17.0"
+    "@alephium/web3" "^0.17.1"
+    "@alephium/web3-wallet" "^0.17.1"
     "@walletconnect/sign-client" "2.5.2"
     "@walletconnect/types" "2.5.2"
     "@walletconnect/utils" "2.5.2"
     eventemitter3 "^4.0.7"
 
-"@alephium/web3-react@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-react/-/web3-react-0.17.0.tgz#b90d1159e3256e87449fbab15ab226d24736ce93"
-  integrity sha512-2O0kfdA82WeahrdT6GgNA3Vxkj/agk24fCrfj1uSzlrYVMuLwBGQIKpmSwE66Cy9B4EhWQuTNkhfiSSTdowwvw==
+"@alephium/web3-react@^0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-react/-/web3-react-0.17.1.tgz#a300aa83fbeaebc71ef41fbb43d27a27846022a2"
+  integrity sha512-q7ihgkxnAyV8a6P6mqTll+4QgGQUz8FKNiKkeO3S5raBtPgdfmGTbbP4pVJDsOS1WuRSSadlGjf4D8egyQ+qNA==
   dependencies:
-    "@alephium/get-extension-wallet" "^0.17.0"
-    "@alephium/walletconnect-provider" "^0.17.0"
+    "@alephium/get-extension-wallet" "^0.17.1"
+    "@alephium/walletconnect-provider" "^0.17.1"
     "@walletconnect/qrcode-modal" "^1.8.0"
     buffer "^6.0.3"
     detect-browser "^5.3.0"
@@ -44,12 +44,12 @@
     resize-observer-polyfill "^1.5.1"
     styled-components "^5.3.9"
 
-"@alephium/web3-wallet@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.17.0.tgz#d9c046380f7fc3cbcff7e263eb9da775df283bdb"
-  integrity sha512-/MxK2iwnkDdnv3IA5pZY2/ydwcY8keEB2dQBxa3kSaUEmmASCmNEwJmr147TTabXIXn3idsPTzA7bhX2ZbnoeA==
+"@alephium/web3-wallet@^0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3-wallet/-/web3-wallet-0.17.1.tgz#f8fba94c83c2ce766ff68794d84e1853ac726a37"
+  integrity sha512-7f7k8KNnAxJkvZPK4xomXEKVlramaj7I3IQEMuht3fZu8fT28PUkbxBi+HWFQmKxzMADf1SuDRknoaLiymkeDw==
   dependencies:
-    "@alephium/web3" "^0.17.0"
+    "@alephium/web3" "^0.17.1"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "^16.18.23"
     bip32 "3.1.0"
@@ -58,10 +58,10 @@
     elliptic "6.5.4"
     fs-extra "10.0.1"
 
-"@alephium/web3@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.17.0.tgz#d241cfd0a2d35e86c0b7f41e0b60ea123766465e"
-  integrity sha512-qaMz/3dguOjXVQZYm1KY6sQcwUyaK430fqCEvzKpoWvw3K1G8dp7js9MX3zePGC99byNk1+oaUjHAVrkzv+Kyg==
+"@alephium/web3@^0.17.1":
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/@alephium/web3/-/web3-0.17.1.tgz#35925f8ac637bd58549f7ebef34d8c20459c3844"
+  integrity sha512-Bln9EYNOTS7lRff3XcHgOeYymkvQkUVq7tQYo3W1tZZ8/43xRSuftGr0JJU1SwBOhw6dAqfxYtNaTfkIH1bCog==
   dependencies:
     "@noble/secp256k1" "1.7.1"
     base-x "4.0.0"

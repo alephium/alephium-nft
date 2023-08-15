@@ -15,7 +15,6 @@ export async function fetchPreMintNFT(
   try {
     const collectionAddress = addressFromContractId(collectionId)
     const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-    console.log("nodeProvider", nodeProvider, tokenIndex)
     web3.setCurrentNodeProvider(nodeProvider)
     const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
     if (mintPrice === undefined) {
