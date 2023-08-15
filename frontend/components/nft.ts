@@ -1,42 +1,41 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NFTMarketPlace, NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
-import { getAlephiumNFTConfig } from '../../shared/configs'
-import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
+import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
 
 export async function fetchPreMintNFT(
+  nodeProvider: NodeProvider,
   collectionId: string,
   tokenIndex: bigint,
-  mintPrice?: bigint
+  mintPrice?: bigint,
 ): Promise<NFT | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
   const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
-  if (!!nodeProvider) {
-    try {
-      const collectionAddress = addressFromContractId(collectionId)
-      const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-      const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
-      if (mintPrice === undefined) {
-        mintPrice = (await collection.methods.getMintPrice()).returns
-      }
-      const metadata = (await axios.get(tokenUri)).data
-      return {
-        name: metadata.name,
-        description: metadata.description,
-        image: metadata.image,
-        tokenId: tokenId,
-        collectionId: collectionId,
-        listed: false,
-        minted: false,
-        price: mintPrice,
-        tokenIndex: Number(tokenIndex)
-      }
-    } catch (e) {
-      console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
-      return undefined
+  try {
+    const collectionAddress = addressFromContractId(collectionId)
+    const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
+    console.log("nodeProvider", nodeProvider, tokenIndex)
+    web3.setCurrentNodeProvider(nodeProvider)
+    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
+    if (mintPrice === undefined) {
+      mintPrice = (await collection.methods.getMintPrice()).returns
     }
+    const metadata = (await axios.get(tokenUri)).data
+    return {
+      name: metadata.name,
+      description: metadata.description,
+      image: metadata.image,
+      tokenId: tokenId,
+      collectionId: collectionId,
+      listed: false,
+      minted: false,
+      price: mintPrice,
+      tokenIndex: Number(tokenIndex)
+    }
+  } catch (e) {
+    console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
+    return undefined
   }
 }
 

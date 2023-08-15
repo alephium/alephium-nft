@@ -15,3 +15,10 @@ export function addressToCreatorImage(address: string): StaticImageData {
 export const shortenName = (name: string) => (
   `${name.slice(0, 14)}...`
 )
+
+export function maybeConvertIPFSUrl(url: string): string {
+  if (url.startsWith('ipfs://')) {
+    return `https://ipfs.io/ipfs/${url.slice(7)}`
+  }
+  return url
+}

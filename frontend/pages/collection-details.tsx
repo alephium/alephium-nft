@@ -4,7 +4,7 @@ import { fetchNFTByPage, fetchNFTCollectionMetadata, NFTCollectionMetadata, NFTP
 import { Button, Loader, NFTCard } from '../components'
 import Image from 'next/image';
 import images from '../assets';
-import { shortenAddress } from '../services/utils';
+import { maybeConvertIPFSUrl, shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
 import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
 import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
@@ -180,7 +180,7 @@ export default function CollectionDetails() {
             <div className="relative flex justify-center md:flex-col">
               <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
                 <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
-                  <Image src={collectionMetadata.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
+                  <Image src={maybeConvertIPFSUrl(collectionMetadata.image)} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
                 </div>
               </div>
               <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">

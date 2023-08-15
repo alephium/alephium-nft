@@ -2,7 +2,7 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, Banner } from '../components';
-import { addressToCreatorImage, shortenAddress } from '../services/utils';
+import { addressToCreatorImage, maybeConvertIPFSUrl, shortenAddress } from '../services/utils';
 import { useWallet } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -48,7 +48,7 @@ const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
         <div className="relative w-full h-52 sm:h-48 minmd:h-60 minlg:h-280 rounded-2xl overflow-hidden">
           <Image
             className="flex justify-center items-center hover:scale-110 transition-all duration-500"
-            src={collection.image}
+            src={maybeConvertIPFSUrl(collection.image)}
             layout="fill"
             objectFit="cover"
             alt={`nftCollection${collection._id}`}

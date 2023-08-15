@@ -8,7 +8,7 @@ import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { addressToCreatorImage, shortenAddress } from '../services/utils';
+import { addressToCreatorImage, maybeConvertIPFSUrl, shortenAddress } from '../services/utils';
 import { useWallet } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -42,7 +42,7 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
     <div className="flexBetweenStart my-5">
       <div className="flex-1 flexStartCenter">
         <div className="relative w-28 h-28">
-          <Image src={nft.image} layout="fill" objectFit="cover" />
+          <Image src={maybeConvertIPFSUrl(nft.image)} layout="fill" objectFit="cover" />
         </div>
         {
           nft.tokenOwner && (
@@ -209,7 +209,7 @@ const AssetDetails = () => {
     <div className="relative flex justify-center md:flex-col min-h-screen">
       <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
         <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
-          <Image src={nft.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
+          <Image src={maybeConvertIPFSUrl(nft.image)} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
         </div>
       </div>
 
@@ -345,7 +345,7 @@ const AssetDetails = () => {
           body={(
             <div className="flexCenter flex-col text-center" onClick={() => setSuccessModal(false)}>
               <div className="relative w-52 h-52">
-                <Image src={nft.image} objectFit="cover" layout="fill" />
+                <Image src={maybeConvertIPFSUrl(nft.image)} objectFit="cover" layout="fill" />
               </div>
               <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
                 You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{nft.name}</span>.
