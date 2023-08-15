@@ -39,7 +39,7 @@ export function getDefaultExplorerUrl(): string {
 }
 
 export function getBackendUrl(): string {
-  return 'https://v2.testnet.nft.alephium.org'
+  return process.env.BACKEND_URL ?? 'http://127.0.0.1:3019'
 }
 
 export function getMongoUrl(): string {
