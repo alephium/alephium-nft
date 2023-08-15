@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { maybeConvertIPFSUrl, shortenAddress, shortenName } from '../services/utils';
+import { nftImageUrl, shortenAddress, showNFTDisplayName } from '../services/utils';
 import { motion } from 'framer-motion';
 import { prettifyNumber, prettifyNumberConfig } from '@alephium/web3';
 
@@ -36,7 +36,7 @@ const NFTCard = ({ nft }: NFTCardProps) => {
         <div className="relative w-full h-52 sm:h-48 minmd:h-60 minlg:h-280 rounded-2xl overflow-hidden">
           <Image
             className="flex justify-center items-center hover:scale-110 transition-all duration-500"
-            src={maybeConvertIPFSUrl(nft.image)}
+            src={nftImageUrl(nft)}
             layout="fill"
             objectFit="cover"
             alt={`nft${nft.tokenId}`}
@@ -44,7 +44,7 @@ const NFTCard = ({ nft }: NFTCardProps) => {
         </div>
         <div className="mt-3 flex flex-col">
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-xs minlg:text-xl">
-            {nft.name ? (nft.name.length > 14 ? shortenName(nft.name) : nft.name) : nft.tokenIndex}
+            {showNFTDisplayName(nft)}
           </p>
           <div className="flexBetween mt-1 minlg:mt-3 flex-row xs:flex-col xs:items-start xs:mt-3">
             {

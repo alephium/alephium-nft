@@ -4,7 +4,7 @@ import { useCollectionMetadata } from '../components/NFTCollection'
 import { Button, Input } from '../components'
 import Image from 'next/image';
 import images from '../assets';
-import { maybeConvertIPFSUrl, shortenAddress } from '../services/utils';
+import { nftImageUrl, shortenAddress } from '../services/utils';
 import { useCallback, useState, useMemo } from 'react';
 import { ipfsClient } from '../services/ipfs';
 import { useDropzone } from 'react-dropzone';
@@ -111,7 +111,7 @@ export default function MintNFT() {
           <div className="relative flex justify-center md:flex-col min-h-screen">
             <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
               <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
-                <Image src={maybeConvertIPFSUrl(collectionMetadata.image)} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
+                <Image src={nftImageUrl(collectionMetadata)} objectFit="cover" className=" rounded-xl shadow-lg" layout="fill" />
               </div>
             </div>
             <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">

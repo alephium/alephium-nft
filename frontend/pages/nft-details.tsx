@@ -8,12 +8,11 @@ import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { addressToCreatorImage, maybeConvertIPFSUrl, shortenAddress } from '../services/utils';
+import { addressToCreatorImage, nftImageUrl, shortenAddress, showNFTDisplayName } from '../services/utils';
 import { useWallet } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed } from '../../shared';
-import { shortenName } from '../services/utils';
 import { NFTCollectionHelper, NFTCollection, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 import { fetchMintedNFT, NFT } from '../../shared/nft';
 
@@ -42,13 +41,13 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
     <div className="flexBetweenStart my-5">
       <div className="flex-1 flexStartCenter">
         <div className="relative w-28 h-28">
-          <Image src={maybeConvertIPFSUrl(nft.image)} layout="fill" objectFit="cover" />
+          <Image src={nftImageUrl(nft)} layout="fill" objectFit="cover" />
         </div>
         {
           nft.tokenOwner && (
             <div className="flexCenterStart flex-col ml-5">
               <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">{shortenAddress(nft.tokenOwner)}</p>
-              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{nft.name}</p>
+              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{showNFTDisplayName(nft)}</p>
             </div>
           )
         }
@@ -208,13 +207,13 @@ const AssetDetails = () => {
     <div className="relative flex justify-center md:flex-col min-h-screen">
       <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
         <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
-          <Image src={maybeConvertIPFSUrl(nft.image)} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
+          <Image src={nftImageUrl(nft)} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
         </div>
       </div>
 
       <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
         <div className="flex flex-row sm:flex-col">
-          <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{nft.name.length > 14 ? shortenName(nft.name) : nft.name}</h2>
+          <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{showNFTDisplayName(nft)}</h2>
         </div>
         {
           nft.collectionId && collectionMetadata && (
@@ -344,10 +343,10 @@ const AssetDetails = () => {
           body={(
             <div className="flexCenter flex-col text-center" onClick={() => setSuccessModal(false)}>
               <div className="relative w-52 h-52">
-                <Image src={maybeConvertIPFSUrl(nft.image)} objectFit="cover" layout="fill" />
+                <Image src={nftImageUrl(nft)} objectFit="cover" layout="fill" />
               </div>
               <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
-                You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{nft.name}</span>.
+                You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{showNFTDisplayName(nft)}</span>.
               </p>
             </div>
           )}
