@@ -1,6 +1,6 @@
 {
   "name": "alephium-nft",
-  "version": "0.4.44",
+  "version": "0.4.45",
   "private": true,
   "scripts": {
     "build:contracts": "npx @alephium/cli compile",

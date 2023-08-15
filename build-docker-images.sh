@@ -22,5 +22,5 @@ else
     exit 1
 fi
 
-pushd ./frontend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && popd
-pushd ./backend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && popd
+pushd `pwd`/frontend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && popd
+pushd `pwd`/backend && npm run build-docker-image -- --build-arg NEXT_PUBLIC_NETWORK=$network && popd

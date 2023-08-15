@@ -9,6 +9,7 @@ import { subscribeMarketplaceEvents } from './subscription/marketplace'
 import { NFTSold } from './mongodb/models/nft-sold'
 import { web3 } from '@alephium/web3'
 import { getAlephiumNFTConfig } from '../shared/configs'
+import { trySaveNewNFTListings } from './utils/nft-listings'
 
 const app: Express = express()
 const port = process.env.PORT || '3019'
@@ -62,6 +63,8 @@ app.get('/api/nft-listings', async (req: Request, res: Response) => {
     const page = Number(req.query.page as string)
     const size = Number(req.query.size as string)
 
+    await trySaveNewNFTListings()
+
     const idOrder = (priceOrder === 'asc' || priceOrder === 'ascending') ? -1 : 1
     const filterArgs = searchText ? { $text: { $search: searchText, $caseSensitive: false } } : {}
     const skipped = page * size
@@ -77,6 +80,8 @@ app.get('/api/nft-listings', async (req: Request, res: Response) => {
 
 app.get('/api/nft-listing-by-id/:id', async (req: Request, res: Response) => {
   try {
+    await trySaveNewNFTListings()
+
     const id = req.params.id
     const listing = await NFTListing.findById(id)
     res.json(listing)
