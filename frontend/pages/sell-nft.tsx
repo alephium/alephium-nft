@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { waitTxConfirmed } from '../../shared';
 import { NFT } from '../../shared/nft';
+import { nftImageUrl } from '../services/utils';
 
 const SellNFT = () => {
   const wallet = useWallet()
@@ -88,7 +89,7 @@ const SellNFT = () => {
         )}
         <div className="my-12 w-full flex justify-left">
           <Image
-            src={nft.image}
+            src={nftImageUrl(nft)}
             width={350}
             height={350}
             objectFit="contain"

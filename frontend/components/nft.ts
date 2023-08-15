@@ -1,7 +1,7 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
-import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { NFTPublicSaleCollectionSequential } from '../../artifacts/ts'
+import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, groupOfAddress } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
 
@@ -14,11 +14,25 @@ export async function fetchPreMintNFT(
   const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
   try {
     const collectionAddress = addressFromContractId(collectionId)
-    const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-    web3.setCurrentNodeProvider(nodeProvider)
-    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
+    const group = groupOfAddress(collectionAddress)
+    const result = await nodeProvider.contracts.postContractsMulticallContract({
+      calls: [
+        {
+          address: collectionAddress,
+          group,
+          methodIndex: NFTPublicSaleCollectionSequential.contract.getMethodIndex('getNFTUri'),
+          args: [{ type: 'U256', value: tokenIndex.toString() }]
+        },
+        {
+          address: collectionAddress,
+          group,
+          methodIndex: NFTPublicSaleCollectionSequential.contract.getMethodIndex('getMintPrice')
+        }
+      ]
+    })
+    const tokenUri = hexToString(result.results[0].returns[0].value as string)
     if (mintPrice === undefined) {
-      mintPrice = (await collection.methods.getMintPrice()).returns
+      mintPrice = BigInt(result.results[1].returns[0].value as string)
     }
     const metadata = (await axios.get(tokenUri)).data
     return {
