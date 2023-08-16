@@ -6,7 +6,6 @@ import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
 
 export async function fetchPreMintNFT(
-  nodeProvider: NodeProvider,
   collectionId: string,
   tokenIndex: bigint,
   mintPrice?: bigint,
@@ -15,7 +14,6 @@ export async function fetchPreMintNFT(
   try {
     const collectionAddress = addressFromContractId(collectionId)
     const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-    web3.setCurrentNodeProvider(nodeProvider)
     const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
     if (mintPrice === undefined) {
       mintPrice = (await collection.methods.getMintPrice()).returns
