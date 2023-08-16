@@ -7,11 +7,8 @@ RUN apk add --no-cache python3
 RUN apk add --no-cache make
 RUN apk add --no-cache build-base
 WORKDIR /
+COPY ./backend/package.json /backend/package.json
 COPY ./package.json ./yarn.lock ./
-RUN yarn install --frozen-lockfile
-
-WORKDIR /backend
-COPY ./backend/package.json ./backend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -21,7 +18,6 @@ COPY ./backend .
 COPY ./configs /configs
 COPY ./artifacts /artifacts
 COPY ./shared /shared
-COPY --from=deps /backend/node_modules ./node_modules
 COPY --from=deps /node_modules /node_modules
 RUN yarn build
 
@@ -34,12 +30,11 @@ RUN adduser -S nodejs -u 1001
 COPY --from=builder /artifacts /artifacts
 COPY --from=builder /configs /configs
 COPY --from=builder /shared /shared
-COPY --from=builder /node_modules /node_modules
+COPY --from=builder /node_modules ./node_modules
 COPY --from=builder /backend/mongodb ./mongodb
 COPY --from=builder /backend/subscription ./subscription
 COPY --from=builder /backend/index.ts ./index.ts
 COPY --from=builder --chown=nodejs:nodejs /backend/dist ./dist
-COPY --from=builder /backend/node_modules ./node_modules
 COPY --from=builder /backend/package.json ./package.json
 
 USER nodejs
