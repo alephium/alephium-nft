@@ -1,12 +1,11 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NFTPublicSaleCollectionSequential } from '../../artifacts/ts'
-import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, groupOfAddress } from "@alephium/web3"
+import { NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
+import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
 
 export async function fetchPreMintNFT(
-  nodeProvider: NodeProvider,
   collectionId: string,
   tokenIndex: bigint,
   mintPrice?: bigint,
@@ -14,25 +13,10 @@ export async function fetchPreMintNFT(
   const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
   try {
     const collectionAddress = addressFromContractId(collectionId)
-    const group = groupOfAddress(collectionAddress)
-    const result = await nodeProvider.contracts.postContractsMulticallContract({
-      calls: [
-        {
-          address: collectionAddress,
-          group,
-          methodIndex: NFTPublicSaleCollectionSequential.contract.getMethodIndex('getNFTUri'),
-          args: [{ type: 'U256', value: tokenIndex.toString() }]
-        },
-        {
-          address: collectionAddress,
-          group,
-          methodIndex: NFTPublicSaleCollectionSequential.contract.getMethodIndex('getMintPrice')
-        }
-      ]
-    })
-    const tokenUri = hexToString(result.results[0].returns[0].value as string)
+    const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
+    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
     if (mintPrice === undefined) {
-      mintPrice = BigInt(result.results[1].returns[0].value as string)
+      mintPrice = (await collection.methods.getMintPrice()).returns
     }
     const metadata = (await axios.get(tokenUri)).data
     return {

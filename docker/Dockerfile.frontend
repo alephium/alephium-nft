@@ -7,11 +7,8 @@ RUN apk add --no-cache python3
 RUN apk add --no-cache make
 RUN apk add --no-cache build-base
 WORKDIR /
+COPY ./frontend/package.json /frontend/package.json
 COPY ./package.json ./yarn.lock ./
-RUN yarn install --frozen-lockfile
-
-WORKDIR /app
-COPY ./frontend/package.json ./frontend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Rebuild the source code only when needed
@@ -21,7 +18,6 @@ COPY ./frontend .
 COPY ./configs /configs
 COPY ./artifacts /artifacts
 COPY ./shared /shared
-COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /node_modules /node_modules
 ARG NEXT_PUBLIC_NETWORK=devnet
 RUN NEXT_PUBLIC_NETWORK=${NEXT_PUBLIC_NETWORK} yarn build
@@ -36,12 +32,11 @@ RUN adduser -S nextjs -u 1001
 COPY --from=builder /artifacts /artifacts
 COPY --from=builder /configs /configs
 COPY --from=builder /shared /shared
-COPY --from=builder /node_modules /node_modules
+COPY --from=builder /node_modules ./node_modules
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/styles ./styles
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pages ./pages
 

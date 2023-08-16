@@ -126,7 +126,7 @@ const AssetDetails = () => {
 
     if (collectionId && tokenIndex) {
       setIsNFTLoading(true)
-      fetchPreMintNFT(nodeProvider, collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
+      fetchPreMintNFT(collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
