@@ -1,0 +1,22 @@
+// This is for the scenario where an artist or AI creates a set of arts
+// in advance and sell to the public for minting, users can mint the arts
+// in the collection sequentially by paying the mint price.
+Contract NFTPublicSaleCollectionSequentialWithRoyalty(
+    nftTemplateId: ByteVec,
+    collectionUri: ByteVec,
+    nftBaseUri: ByteVec,
+    collectionOwner: Address,
+    maxSupply: U256,
+    mintPrice: U256,
+    maxBatchMintSize: U256,
+    mut totalSupply: U256
+) extends NFTPublicSaleCollectionSequentialBase(nftTemplateId, collectionUri, nftBaseUri, collectionOwner, maxSupply, mintPrice, maxBatchMintSize, totalSupply)
+    implements INFTCollectionWithRoyalty {
+    pub fn royaltyAmount(tokenId: U256, salePrice: U256) -> (U256) {
+        emit Debug(`The current token is ${tokenId}, sale price is ${salePrice}`)
+        return 0
+    }
+
+    pub fn payRoyalty() -> () {
+    }
+}

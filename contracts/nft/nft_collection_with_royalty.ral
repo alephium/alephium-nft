@@ -1,0 +1,7 @@
+import "std/nft_collection_interface"
+
+@std(id = #000201)
+Interface INFTCollectionWithRoyalty extends INFTCollection {
+    pub fn royaltyAmount(tokenId: U256, salePrice: U256) -> (U256)
+    pub fn payRoyalty() -> ()
+}

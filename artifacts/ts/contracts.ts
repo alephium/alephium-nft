@@ -8,8 +8,11 @@ import {
   NFTMarketPlace,
   NFT,
   NFTOpenCollection,
+  NFTOpenCollectionWithRoyalty,
   NFTPublicSaleCollectionRandom,
+  NFTPublicSaleCollectionRandomWithRoyalty,
   NFTPublicSaleCollectionSequential,
+  NFTPublicSaleCollectionSequentialWithRoyalty,
 } from ".";
 
 let contracts: ContractFactory<any>[] | undefined = undefined;
@@ -20,8 +23,11 @@ export function getContractByCodeHash(codeHash: string): Contract {
       NFTMarketPlace,
       NFT,
       NFTOpenCollection,
+      NFTOpenCollectionWithRoyalty,
       NFTPublicSaleCollectionRandom,
+      NFTPublicSaleCollectionRandomWithRoyalty,
       NFTPublicSaleCollectionSequential,
+      NFTPublicSaleCollectionSequentialWithRoyalty,
     ];
   }
   const c = contracts.find(

@@ -1,32 +1,7 @@
-// This is for the scenario where someone to create a collection and starts
-// to mint NFTs one-by-one
 Contract NFTOpenCollection(
     nftTemplateId: ByteVec,
     collectionUri: ByteVec,
-    collectionOwner: Address, // Only owner can mint
+    collectionOwner: Address,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply) {
-    event Mint(minter: Address, index: U256)
-
-    @using(preapprovedAssets = true, updateFields = true)
-    pub fn mint(nftUri: ByteVec) -> (ByteVec) {
-        let minter = callerAddress!()
-        checkCaller!(minter == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
-        let nftIndex = totalSupply
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), nftUri, nftIndex)
-
-        let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(nftIndex),
-            nftTemplateId,
-            encodeImmutableFields,
-            encodeMutableFields,
-            1,
-            minter
-        )
-
-        totalSupply = totalSupply + 1
-
-        emit Mint(minter, nftIndex)
-        return contractId
-    }
+) extends NFTOpenCollectionBase(nftTemplateId, collectionUri, collectionOwner, totalSupply) {
 }

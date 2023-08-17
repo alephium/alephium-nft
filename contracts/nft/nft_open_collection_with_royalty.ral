@@ -1,0 +1,15 @@
+Contract NFTOpenCollectionWithRoyalty(
+    nftTemplateId: ByteVec,
+    collectionUri: ByteVec,
+    collectionOwner: Address,
+    mut totalSupply: U256
+) extends NFTOpenCollectionBase(nftTemplateId, collectionUri, collectionOwner, totalSupply)
+    implements INFTCollectionWithRoyalty {
+    pub fn royaltyAmount(tokenId: U256, salePrice: U256) -> (U256) {
+        emit Debug(`The current token is ${tokenId}, sale price is ${salePrice}`)
+        return 0
+    }
+
+    pub fn payRoyalty() -> () {
+    }
+}
