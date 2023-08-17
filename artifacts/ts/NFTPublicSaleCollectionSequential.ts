@@ -170,6 +170,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mintBatch", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
     getNFTUri: async (
       params: TestContractParams<
         NFTPublicSaleCollectionSequentialTypes.Fields,
@@ -189,14 +197,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMintPrice", params);
     },
-    withdraw: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionSequentialTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
-    },
   };
 }
 
@@ -205,7 +205,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "b4db8e4e3040308cc5a69b511f9e2bd3b823869a64f64d4051655eae234402ec"
+    "5ee60118831827b115399ce7c58f067b08c17362f29ffd5d44d7ed80198d68b5"
   )
 );
 

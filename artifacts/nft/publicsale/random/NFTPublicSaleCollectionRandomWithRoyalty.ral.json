@@ -1,8 +1,8 @@
 {
   "version": "v2.5.0",
   "name": "NFTPublicSaleCollectionRandomWithRoyalty",
-  "bytecode": "080b09124026402e4034408e409740a040b440bd40ce010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201020c020100000000000101010501402b1600ce04310e7bb41701b11600000816001406414c5048000313046413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa10005160116005f160402010000000102ce0202010000000102ce040201000101010a1600ce04310c7bce031600894402010000000102ce0502010202020008b4ce02450d7b16001601a8",
-  "codeHash": "7171f6a762b8ee574c3d5fe620f69c91d7c2c86de33848ada5a20313f2550d0c",
+  "bytecode": "090b0912402640364040409a40a340ac40bd40d140da010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce062c1367102d02010001010003b41600a90101010501402b1600ce04310e7bb41701b11600000916001406414c5048000313046413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa10005160116005f160402010000000102ce0202010000000102ce0402010202020008b4ce02450d7b16001601a801000101010a1600ce04310c7bce031600894402010000000102ce0502",
+  "codeHash": "9de255d33c45f3a16e8bfff82cace685514cda2f89d630bb032cb443a67e57f9",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
@@ -11,6 +11,7 @@
       "nftBaseUri",
       "maxSupply",
       "mintPrice",
+      "royaltyRate",
       "totalSupply",
       "__stdInterfaceId"
     ],
@@ -22,9 +23,11 @@
       "U256",
       "U256",
       "U256",
+      "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -117,9 +120,15 @@
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
+      "paramNames": [
+        "amount"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": []
     },
     {
@@ -165,6 +174,25 @@
       ]
     },
     {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
       "name": "getNFTUri",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
@@ -193,25 +221,6 @@
       "returnTypes": [
         "U256"
       ]
-    },
-    {
-      "name": "withdraw",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": true,
-      "isPublic": true,
-      "paramNames": [
-        "to",
-        "amount"
-      ],
-      "paramTypes": [
-        "Address",
-        "U256"
-      ],
-      "paramIsMutable": [
-        false,
-        false
-      ],
-      "returnTypes": []
     }
   ],
   "constants": [],

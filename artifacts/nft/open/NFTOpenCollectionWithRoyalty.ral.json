@@ -1,13 +1,14 @@
 {
   "version": "v2.5.0",
   "name": "NFTOpenCollectionWithRoyalty",
-  "bytecode": "050609124026402e4034408b010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201020c0201000000000001030106014029b417011601ce02450d7ba0001702b1160016021406414c5048000313046413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502",
-  "codeHash": "f16ade5f9e3aed308e787576b7a23905d088c42cb4dcac900a410cedfee97f22",
+  "bytecode": "06070912402640364040409740a8010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce032c1367102d02010001010003b41600a901030106014029b417011601ce02450d7ba0001702b1160016021406414c5048000313046413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202020008b4ce02450d7b16001601a8",
+  "codeHash": "44b011881d3855e781a7bfc33fc66bf745a8df182eaa91600d6f3ec3275c92c7",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
       "collectionUri",
       "collectionOwner",
+      "royaltyRate",
       "totalSupply",
       "__stdInterfaceId"
     ],
@@ -16,9 +17,11 @@
       "ByteVec",
       "Address",
       "U256",
+      "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -108,9 +111,15 @@
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
+      "paramNames": [
+        "amount"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": []
     },
     {
@@ -130,6 +139,25 @@
       "returnTypes": [
         "ByteVec"
       ]
+    },
+    {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
     }
   ],
   "constants": [],

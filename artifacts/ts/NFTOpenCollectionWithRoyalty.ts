@@ -33,6 +33,7 @@ export namespace NFTOpenCollectionWithRoyaltyTypes {
     nftTemplateId: HexString;
     collectionUri: HexString;
     collectionOwner: Address;
+    royaltyRate: bigint;
     totalSupply: bigint;
   };
 
@@ -123,9 +124,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "royaltyAmount", params);
     },
     payRoyalty: async (
-      params: Omit<
-        TestContractParams<NFTOpenCollectionWithRoyaltyTypes.Fields, never>,
-        "testArgs"
+      params: TestContractParams<
+        NFTOpenCollectionWithRoyaltyTypes.Fields,
+        { amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
@@ -138,6 +139,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTOpenCollectionWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -145,8 +154,8 @@ class Factory extends ContractFactory<
 export const NFTOpenCollectionWithRoyalty = new Factory(
   Contract.fromJson(
     NFTOpenCollectionWithRoyaltyContractJson,
-    "=14-2+5c=2-2+62=2-1=1+9=87+5160016017e0315546865=1+063757272656e7420746f6b656e20697320102c2073616c652070726963652069732000=190",
-    "34abbc510dc1b268412de4f5528f9ded176c1628d402f6cf6d017de9587622c2"
+    "",
+    "44b011881d3855e781a7bfc33fc66bf745a8df182eaa91600d6f3ec3275c92c7"
   )
 );
 

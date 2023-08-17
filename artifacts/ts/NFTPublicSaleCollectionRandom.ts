@@ -158,6 +158,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMaxSupply", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionRandomTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
     getNFTUri: async (
       params: TestContractParams<
         NFTPublicSaleCollectionRandomTypes.Fields,
@@ -174,14 +182,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMintPrice", params);
     },
-    withdraw: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionRandomTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
-    },
   };
 }
 
@@ -190,7 +190,7 @@ export const NFTPublicSaleCollectionRandom = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomContractJson,
     "",
-    "084e168b543a2c2a735e5c3ba48c3a4272584641fb62c4e83c7074df84aabcb2"
+    "7074851e77dd80518734906b7536dd0ba9efa2e22536561fdd03f3f8771ccc35"
   )
 );
 

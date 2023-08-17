@@ -37,6 +37,7 @@ export namespace NFTPublicSaleCollectionSequentialWithRoyaltyTypes {
     maxSupply: bigint;
     mintPrice: bigint;
     maxBatchMintSize: bigint;
+    royaltyRate: bigint;
     totalSupply: bigint;
   };
 
@@ -156,12 +157,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "royaltyAmount", params);
     },
     payRoyalty: async (
-      params: Omit<
-        TestContractParams<
-          NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
-          never
-        >,
-        "testArgs"
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
+        { amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
@@ -193,6 +191,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mintBatch", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
     getNFTUri: async (
       params: TestContractParams<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
@@ -212,14 +218,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMintPrice", params);
     },
-    withdraw: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
-    },
   };
 }
 
@@ -227,8 +225,8 @@ class Factory extends ContractFactory<
 export const NFTPublicSaleCollectionSequentialWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialWithRoyaltyContractJson,
-    "=14-2+5c=2-2+62=2-2+9c=2+d=1-1=2-2+44=2-2+58=2-2+61=2-2+72=87+5160016017e0315546865=1+063757272656e7420746f6b656e20697320102c2073616c652070726963652069732000=560",
-    "8a8c842828291c31cbc7a4c63a0a1a3f97be8070c3d076c07e737c767f486a88"
+    "",
+    "eb272537d9dc5af3af8fe39b7dacb03a75c54d57a15accea6d632f393156dc50"
   )
 );
 

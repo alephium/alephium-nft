@@ -5,14 +5,15 @@ Contract NFTPublicSaleCollectionRandomWithRoyalty(
     nftBaseUri: ByteVec,
     maxSupply: U256,
     mintPrice: U256,
+    royaltyRate: U256, // basis point. e.g. 2.5% == 250 basis point
     mut totalSupply: U256
 ) extends NFTPublicSaleCollectionRandomBase(nftTemplateId, collectionUri, collectionOwner, nftBaseUri, maxSupply, mintPrice, totalSupply)
     implements INFTCollectionWithRoyalty {
-    pub fn royaltyAmount(tokenId: U256, salePrice: U256) -> (U256) {
-        emit Debug(`The current token is ${tokenId}, sale price is ${salePrice}`)
-        return 0
+    pub fn royaltyAmount(@unused tokenId: U256, salePrice: U256) -> (U256) {
+        return salePrice * royaltyRate / 10000
     }
 
-    pub fn payRoyalty() -> () {
+    pub fn payRoyalty(amount: U256) -> () {
+        transferTokenToSelf!(callerAddress!(), ALPH, amount)
     }
 }

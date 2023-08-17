@@ -1,8 +1,8 @@
 {
   "version": "v2.5.0",
   "name": "NFTOpenCollection",
-  "bytecode": "050409124026407d010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b16010201030106014029b417011601ce02450d7ba0001702b1160016021406414c5048000313046413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502",
-  "codeHash": "34880ed9de1e709b511299a7fb61c4cedc74f7518e9e0de709580d49705a97e4",
+  "bytecode": "050509124026407d408e010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b16010201030106014029b417011601ce02450d7ba0001702b1160016021406414c5048000313046413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202020008b4ce02450d7b16001601a8",
+  "codeHash": "333ca3637f631d1d5aa21f8fd577d0e9c6046354f027f36754a8d241f9ffe071",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
@@ -99,6 +99,25 @@
       "returnTypes": [
         "ByteVec"
       ]
+    },
+    {
+      "name": "withdraw",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
     }
   ],
   "constants": [],

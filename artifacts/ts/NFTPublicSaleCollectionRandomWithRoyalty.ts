@@ -36,6 +36,7 @@ export namespace NFTPublicSaleCollectionRandomWithRoyaltyTypes {
     nftBaseUri: HexString;
     maxSupply: bigint;
     mintPrice: bigint;
+    royaltyRate: bigint;
     totalSupply: bigint;
   };
 
@@ -153,12 +154,9 @@ class Factory extends ContractFactory<
       return testMethod(this, "royaltyAmount", params);
     },
     payRoyalty: async (
-      params: Omit<
-        TestContractParams<
-          NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
-          never
-        >,
-        "testArgs"
+      params: TestContractParams<
+        NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
+        { amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
@@ -193,6 +191,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMaxSupply", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
     getNFTUri: async (
       params: TestContractParams<
         NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
@@ -212,14 +218,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getMintPrice", params);
     },
-    withdraw: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
-    },
   };
 }
 
@@ -227,8 +225,8 @@ class Factory extends ContractFactory<
 export const NFTPublicSaleCollectionRandomWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomWithRoyaltyContractJson,
-    "=14-2+5c=2-2+62=2-2+bc=2-2+c5=2-2+ce=2-2+e2=2+e=1-1=2+f=1-1=87+5160016017e0315546865=1+063757272656e7420746f6b656e20697320102c2073616c652070726963652069732000=324",
-    "ece6bffb83b5a51b735885e6690603d8b075f872d252136e529152d4509359a1"
+    "",
+    "9de255d33c45f3a16e8bfff82cace685514cda2f89d630bb032cb443a67e57f9"
   )
 );
 

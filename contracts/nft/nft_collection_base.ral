@@ -24,4 +24,10 @@ Abstract Contract NFTCollectionBase(
 
         return INFT(nftTokenId)
     }
+
+    @using(assetsInContract = true)
+    pub fn withdraw(to: Address, amount: U256) -> () {
+        checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
+        transferTokenFromSelf!(to, ALPH, amount)
+    }
 }

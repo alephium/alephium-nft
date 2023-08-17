@@ -15,10 +15,4 @@ Abstract Contract NFTPublicSaleCollectionBase(
     pub fn getMintPrice() -> U256 {
         return mintPrice
     }
-
-    @using(assetsInContract = true)
-    pub fn withdraw(to: Address, amount: U256) -> () {
-        checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
-        transferTokenFromSelf!(to, ALPH, amount)
-    }
 }

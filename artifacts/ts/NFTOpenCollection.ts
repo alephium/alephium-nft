@@ -118,6 +118,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTOpenCollectionTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -126,7 +134,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "34880ed9de1e709b511299a7fb61c4cedc74f7518e9e0de709580d49705a97e4"
+    "333ca3637f631d1d5aa21f8fd577d0e9c6046354f027f36754a8d241f9ffe071"
   )
 );
 
