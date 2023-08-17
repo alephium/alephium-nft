@@ -24,7 +24,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTPublicSaleCollectionSequentialContractJson } from "../nft/NFTPublicSaleCollectionSequential.ral.json";
+import { default as NFTPublicSaleCollectionSequentialContractJson } from "../nft/publicsale/sequential/NFTPublicSaleCollectionSequential.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract

@@ -24,7 +24,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTOpenCollectionContractJson } from "../nft/NFTOpenCollection.ral.json";
+import { default as NFTOpenCollectionContractJson } from "../nft/open/NFTOpenCollection.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract

@@ -24,7 +24,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTPublicSaleCollectionRandomContractJson } from "../nft/NFTPublicSaleCollectionRandom.ral.json";
+import { default as NFTPublicSaleCollectionRandomContractJson } from "../nft/publicsale/random/NFTPublicSaleCollectionRandom.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
