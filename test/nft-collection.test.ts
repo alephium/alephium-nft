@@ -1,5 +1,5 @@
-import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH, Contract, ContractFactory, ContractEvent } from '@alephium/web3'
-import { testNodeWallet } from '@alephium/web3-test'
+import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH, Contract, ContractFactory, ContractEvent, SignerProvider } from '@alephium/web3'
+import { getSigners } from '@alephium/web3-test'
 import * as utils from '../shared'
 import { NFTCollectionHelper } from '../shared/nft-collection'
 import { NFTInstance, NFTOpenCollection, NFTOpenCollectionInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionSequential, NFTPublicSaleCollectionSequentialInstance } from '../artifacts/ts'
@@ -9,13 +9,13 @@ describe('nft collection', function() {
   web3.setCurrentNodeProvider(nodeUrl, undefined, fetch)
 
   it('should test minting nft in open collection', async () => {
-    const nftCollection = await getNFTCollection()
+    const [signer] = await getSigners(1)
+    const nftCollection = await getNFTCollection(signer)
     nftCollection.buildProject(false)
 
-    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
+    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri", signer)
     const nftCollectionInstance = nftCollectionDeployTx.contractInstance
 
-    const signer = await testNodeWallet()
     const ownerAccount = await signer.getSelectedAccount()
     const nftCollectionState = await nftCollectionInstance.fetchState()
     expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
@@ -28,8 +28,9 @@ describe('nft collection', function() {
   it('should test minting nft sequentially in NFTPublicSaleCollectionRandom', async () => {
     const maxSupply = 10n
     const mintPrice = ONE_ALPH
-    const nftCollection = await getNFTCollection()
-    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice)
+    const [signer] = await getSigners(1)
+    const nftCollection = await getNFTCollection(signer)
+    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice, signer)
     const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
     const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
@@ -52,8 +53,9 @@ describe('nft collection', function() {
   it('should test minting nft non-sequentially in NFTPublicSaleCollectionRandom', async () => {
     const maxSupply = 10n
     const mintPrice = ONE_ALPH
-    const nftCollection = await getNFTCollection()
-    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice)
+    const [signer] = await getSigners(1)
+    const nftCollection = await getNFTCollection(signer)
+    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice, signer)
     const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
     const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
@@ -77,8 +79,9 @@ describe('nft collection', function() {
     const maxSupply = 10n
     const mintPrice = ONE_ALPH
     const maxBatchMintSize = 5n
-    const nftCollection = await getNFTCollection()
-    const nftCollectionInstance = await getNFTPublicSaleCollectionSequentialInstance(nftCollection, maxSupply, mintPrice, maxBatchMintSize)
+    const [signer] = await getSigners(1)
+    const nftCollection = await getNFTCollection(signer)
+    const nftCollectionInstance = await getNFTPublicSaleCollectionSequentialInstance(nftCollection, maxSupply, mintPrice, maxBatchMintSize, signer)
     const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
     const state0 = await nftCollectionInstance.fetchState()
@@ -102,8 +105,9 @@ describe('nft collection', function() {
     const maxSupply = 10n
     const mintPrice = ONE_ALPH
     const maxBatchMintSize = 5n
-    const nftCollection = await getNFTCollection()
-    const nftCollectionInstance = await getNFTPublicSaleCollectionSequentialInstance(nftCollection, maxSupply, mintPrice, maxBatchMintSize)
+    const [signer] = await getSigners(1)
+    const nftCollection = await getNFTCollection(signer)
+    const nftCollectionInstance = await getNFTPublicSaleCollectionSequentialInstance(nftCollection, maxSupply, mintPrice, maxBatchMintSize, signer)
     const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
 
     const state0 = await nftCollectionInstance.fetchState()
@@ -283,7 +287,11 @@ async function mintBatchPublicSaleNFTAndVerify(
   })
 }
 
-async function checkEvent<C extends ContractFactory<any>>(factory: C, txId: string, expected: Partial<ContractEvent>) {
+async function checkEvent<C extends ContractFactory<any>>(
+  factory: C,
+  txId: string,
+  expected: Partial<ContractEvent>
+) {
   const nodeProvider = web3.getCurrentNodeProvider()
   const result = await nodeProvider.events.getEventsTxIdTxid(txId)
   const events = result.events.filter((e) => e.eventIndex !== Contract.ContractCreatedEventIndex)
@@ -296,8 +304,7 @@ async function checkEvent<C extends ContractFactory<any>>(factory: C, txId: stri
   expect(parsedEvent.fields).toEqual(expected.fields)
 }
 
-async function getNFTCollection() {
-  const signer = await testNodeWallet()
+async function getNFTCollection(signer: SignerProvider) {
   return new NFTCollectionHelper(signer)
 }
 
@@ -306,7 +313,12 @@ function getNFTUri(tokenIndex: bigint): string {
   return `${nftBaseUri}${tokenIndex}`
 }
 
-async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollectionHelper, maxSupply: bigint, mintPrice: bigint) {
+async function getNFTPublicSaleCollectionRandomInstance(
+  nftCollection: NFTCollectionHelper,
+  maxSupply: bigint,
+  mintPrice: bigint,
+  signer: SignerProvider
+) {
   const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionRandom(
     maxSupply,
     mintPrice,
@@ -315,7 +327,6 @@ async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollec
   )
   const nftPublicSaleCollectionRandomInstance = nftCollectionDeployTx.contractInstance
 
-  const signer = await testNodeWallet()
   const ownerAccount = await signer.getSelectedAccount()
   const nftCollectionState = await nftPublicSaleCollectionRandomInstance.fetchState()
   expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
@@ -323,7 +334,13 @@ async function getNFTPublicSaleCollectionRandomInstance(nftCollection: NFTCollec
   return nftPublicSaleCollectionRandomInstance
 }
 
-async function getNFTPublicSaleCollectionSequentialInstance(nftCollection: NFTCollectionHelper, maxSupply: bigint, mintPrice: bigint, maxBatchMintSize: bigint) {
+async function getNFTPublicSaleCollectionSequentialInstance(
+  nftCollection: NFTCollectionHelper,
+  maxSupply: bigint,
+  mintPrice: bigint,
+  maxBatchMintSize: bigint,
+  signer: SignerProvider
+) {
   const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionSequential(
     maxSupply,
     mintPrice,
@@ -333,7 +350,6 @@ async function getNFTPublicSaleCollectionSequentialInstance(nftCollection: NFTCo
   )
   const nftPublicSaleCollectionSequentialInstance = nftCollectionDeployTx.contractInstance
 
-  const signer = await testNodeWallet()
   const ownerAccount = await signer.getSelectedAccount()
   const nftCollectionState = await nftPublicSaleCollectionSequentialInstance.fetchState()
   expect(nftCollectionState.fields.collectionOwner).toEqual(ownerAccount.address)
