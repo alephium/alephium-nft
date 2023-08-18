@@ -32,7 +32,8 @@ export class NFTMarketplace extends DeployHelpers {
           marketContractId: randomContractId(),
           commissionRate: NFTMarketplace.defaultCommissionRate,
           listingFee: NFTMarketplace.defaultListingFee,
-          price: 1000n
+          price: 1000n,
+          royalty: false
         }
       }
     )
@@ -65,7 +66,8 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           tokenId: tokenId,
           price: BigInt(price),
-          nftMarketplace: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId,
+          royalty: false
         },
         attoAlphAmount: ONE_ALPH + DUST_AMOUNT,
         tokens: [

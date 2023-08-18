@@ -15,6 +15,7 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
       commissionRate: BigInt(network.settings.commissionRate),
       listingFee: BigInt(network.settings.listingFee),
       price: 0n,
+      royalty: false
     }
   })
   const contractId = result.contractInstance.contractId

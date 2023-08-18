@@ -6,25 +6,22 @@ Contract NFT(
   nftIndex: U256
 ) implements INFT {
   enum ErrorCodes {
-    TokenNotPartOfCollection = 0
+    WrongCollection = 0
   }
 
   pub fn getTokenUri() -> ByteVec {
     return tokenUri
   }
 
+  // We do not need this after introducing parentId instr
+  @using(checkExternalCaller = false)
   pub fn getCollectionId() -> ByteVec {
+    let expectedTokenContract = INFTCollection(collectionId).nftByIndex(nftIndex)
+    assert!(selfContractId!() == contractId!(expectedTokenContract), ErrorCodes.WrongCollection)
     return collectionId
   }
 
   pub fn getNFTIndex() -> U256 {
     return nftIndex
-  }
-
-  // Not needed if we have parentId instr
-  @using(checkExternalCaller = false)
-  pub fn validateCollectionId() -> () {
-    let expectedTokenContract = INFTCollection(collectionId).nftByIndex(nftIndex)
-    assert!(selfContractId!() == contractId!(expectedTokenContract), ErrorCodes.TokenNotPartOfCollection)
   }
 }

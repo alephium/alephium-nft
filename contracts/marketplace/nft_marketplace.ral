@@ -84,17 +84,13 @@ Contract NFTMarketPlace(
         price: U256,
         royalty: Bool
     ) -> (Address) {
-        let nftContract = NFT(tokenId)
-        nftContract.validateCollectionId()
-        let collectionId = nftContract.getCollectionId()
-        let royaltyAmount = getRoyaltyAmount(tokenId, collectionId, price, royalty)
-
+        let royaltyAmount = getRoyaltyAmount(tokenId, NFT(tokenId).getCollectionId(), price, royalty)
         checkListingPriceAfterFee(price, commissionRate, listingFee, royaltyAmount)
 
         // Only owner can list the NFT
         let tokenOwner = callerAddress!()
 
-        let (encodeImmutableFields, encodeMutableFields) = NFTListing.encodeFields!(tokenId, tokenOwner, collectionId, selfContractId!(), commissionRate, listingFee, royalty, price)
+        let (encodeImmutableFields, encodeMutableFields) = NFTListing.encodeFields!(tokenId, tokenOwner, selfContractId!(), commissionRate, listingFee, royalty, price)
         // Create the listing contract
         let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph, tokenId: 1}(
             tokenId, nftListingTemplateId, encodeImmutableFields, encodeMutableFields

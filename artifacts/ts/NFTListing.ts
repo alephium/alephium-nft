@@ -32,7 +32,6 @@ export namespace NFTListingTypes {
   export type Fields = {
     tokenId: HexString;
     tokenOwner: Address;
-    collectionId: HexString;
     marketContractId: HexString;
     commissionRate: bigint;
     listingFee: bigint;
@@ -62,10 +61,6 @@ export namespace NFTListingTypes {
     requiresRoyalty: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<boolean>;
-    };
-    getCollectionId: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
     };
     getRoyaltyAmount: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -137,14 +132,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<boolean>> => {
       return testMethod(this, "requiresRoyalty", params);
     },
-    getCollectionId: async (
-      params: Omit<
-        TestContractParams<NFTListingTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionId", params);
-    },
     buy: async (
       params: TestContractParams<NFTListingTypes.Fields, { buyer: Address }>
     ): Promise<TestContractResult<null>> => {
@@ -179,7 +166,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "dce493d43e9aebe56c72de6ade60235d3ca8431cc1b7d91fc638fa384453ad53"
+    "0c5f443584dfec6e8a8b81cd00510a55867b6e8ee18472534b466d56891f57a4"
   )
 );
 
@@ -245,17 +232,6 @@ export class NFTListingInstance extends ContractInstance {
         NFTListing,
         this,
         "requiresRoyalty",
-        params === undefined ? {} : params,
-        getContractByCodeHash
-      );
-    },
-    getCollectionId: async (
-      params?: NFTListingTypes.CallMethodParams<"getCollectionId">
-    ): Promise<NFTListingTypes.CallMethodResult<"getCollectionId">> => {
-      return callMethod(
-        NFTListing,
-        this,
-        "getCollectionId",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

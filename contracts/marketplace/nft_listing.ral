@@ -1,7 +1,6 @@
 Contract NFTListing(
     tokenId: ByteVec,
     tokenOwner: Address,
-    collectionId: ByteVec,
     marketContractId: ByteVec,
     commissionRate: U256,
     listingFee: U256,
@@ -33,10 +32,6 @@ Contract NFTListing(
         return royalty
     }
 
-    pub fn getCollectionId() -> ByteVec {
-        return collectionId
-    }
-
     @using(preapprovedAssets = true, assetsInContract = true)
     pub fn buy(buyer: Address) -> () {
         checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
@@ -44,7 +39,7 @@ Contract NFTListing(
         let royaltyAmount = getRoyaltyAmount()
         let priceAfterFee = marketPlace.checkListingPriceAfterFee(price, commissionRate, listingFee, royaltyAmount)
         if (royaltyAmount > 0) {
-            INFTCollectionWithRoyalty(collectionId).payRoyalty(royaltyAmount)
+            INFTCollectionWithRoyalty(NFT(tokenId).getCollectionId()).payRoyalty(royaltyAmount)
         }
         transferToken!(buyer, tokenOwner, ALPH, priceAfterFee)
         transferTokenFromSelf!(buyer, tokenId, 1)
@@ -66,6 +61,6 @@ Contract NFTListing(
     @using(checkExternalCaller = false)
     pub fn getRoyaltyAmount() -> U256 {
         let marketPlace = NFTMarketPlace(marketContractId)
-        return marketPlace.getRoyaltyAmount(tokenId, collectionId, price, royalty)
+        return marketPlace.getRoyaltyAmount(tokenId, NFT(tokenId).getCollectionId(), price, royalty)
     }
 }
