@@ -1,7 +1,7 @@
 {
   "fullNodeVersion": "v2.5.0",
   "compilerOptionsUsed": {
-    "ignoreUnusedConstantsWarnings": false,
+    "ignoreUnusedConstantsWarnings": true,
     "ignoreUnusedVariablesWarnings": false,
     "ignoreUnusedFieldsWarnings": false,
     "ignoreUnusedPrivateFunctionsWarnings": false,
@@ -53,14 +53,14 @@
     },
     "INFTCollectionWithRoyalty": {
       "sourceFile": "nft/nft_collection_with_royalty.ral",
-      "sourceCodeHash": "e2302b54ced286d7e94fa85136be4bc57bf8beccd84e1b1680817da0f496eac8",
+      "sourceCodeHash": "c822de06503cb2c032f4ff167f4f102ffeab2b0c483c8542906bcfacfbddd662",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "ListNFT": {
       "sourceFile": "scripts/list_nft.ral",
-      "sourceCodeHash": "b96140af4aac6d3e1792c86c54006ce7e804daa5241da9f20921d3a247ffe2db",
+      "sourceCodeHash": "f14931f8e8b82d4f6885cf615290be45c4a3498cce3999482da8013aabc5cfe9",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -95,9 +95,9 @@
     },
     "NFT": {
       "sourceFile": "nft/nft.ral",
-      "sourceCodeHash": "4661df2d0bad5bd322f19201e11323aca6ec8e6c9b90baf8afbcd6df9e5734d6",
+      "sourceCodeHash": "6062634ca12e65e986c1b658ff8e525ae2995b3efbacc1ff166d093d3b4497a1",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
+      "codeHashDebug": "2e7fde000e880cf6807371b6e261e1fb76857a540678aad8a76975809cffe5e9",
       "warnings": []
     },
     "NFTCollectionBase": {
@@ -109,16 +109,16 @@
     },
     "NFTListing": {
       "sourceFile": "marketplace/nft_listing.ral",
-      "sourceCodeHash": "1aa5b46efca2f69d8fb9f2cb092f52a27781314dc6583530a982a3c639febc60",
+      "sourceCodeHash": "b2270c1559662501f2203b0cd925a268a721cb4afc13f2aaf02966a1fab3ab60",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "75efad551c880c1ee3041efd5f8e71790cc433a870445e2a39eb21f570385c16",
+      "codeHashDebug": "dce493d43e9aebe56c72de6ade60235d3ca8431cc1b7d91fc638fa384453ad53",
       "warnings": []
     },
     "NFTMarketPlace": {
       "sourceFile": "marketplace/nft_marketplace.ral",
-      "sourceCodeHash": "c7ce3b7da580e862fe8dd1cd25ce1d9ab8bceb64f0e709a4e7c42fcfe1b2d10e",
+      "sourceCodeHash": "536a925f29ed7227e1f8f81bceaf0735fd680b5ded4603f9fffa004b64bd7fb0",
       "bytecodeDebugPatch": "",
-      "codeHashDebug": "1d9858f16b5f5cc1783b08e1bd2b78775ab2ae64340346db1aea940d873bd439",
+      "codeHashDebug": "99336ce286b0c8306e72f8ee2b7e9c0e5e5309eaf7e992325ff3353bbd813369",
       "warnings": []
     },
     "NFTOpenCollection": {
@@ -137,7 +137,7 @@
     },
     "NFTOpenCollectionWithRoyalty": {
       "sourceFile": "nft/open/nft_open_collection_with_royalty.ral",
-      "sourceCodeHash": "027d93b38d77189774549cfccc06818a085c641a68dee836d5325ca2df16d59f",
+      "sourceCodeHash": "228a6d953b4aa2c2fa02178dbfd7baab0f231c64843b96c6157a7de2e32fe17b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "44b011881d3855e781a7bfc33fc66bf745a8df182eaa91600d6f3ec3275c92c7",
       "warnings": []
@@ -165,7 +165,7 @@
     },
     "NFTPublicSaleCollectionRandomWithRoyalty": {
       "sourceFile": "nft/publicsale/random/nft_public_sale_collection_random_with_royalty.ral",
-      "sourceCodeHash": "613bd1ad9d310ee6e57ead4a1f9963f2fa8357742548cd994ed9990a7a799058",
+      "sourceCodeHash": "b06545a60c2a033a74e96aec8dd478b28a2a69a2d993c9fbea056b3f750b5e2b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "9de255d33c45f3a16e8bfff82cace685514cda2f89d630bb032cb443a67e57f9",
       "warnings": []
@@ -186,7 +186,7 @@
     },
     "NFTPublicSaleCollectionSequentialWithRoyalty": {
       "sourceFile": "nft/publicsale/sequential/nft_public_sale_collection_sequential_with_royalty.ral",
-      "sourceCodeHash": "07bb29f26c697d803745fd313a0eeb00794b78778a36546622219e044cb7038e",
+      "sourceCodeHash": "c0562570d23ed4d20c51b67d44ff9bf31a82b79be18d90fbae8728931a1846ce",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "eb272537d9dc5af3af8fe39b7dacb03a75c54d57a15accea6d632f393156dc50",
       "warnings": []

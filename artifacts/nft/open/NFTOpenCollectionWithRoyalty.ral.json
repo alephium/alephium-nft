@@ -95,7 +95,7 @@
         "salePrice"
       ],
       "paramTypes": [
-        "U256",
+        "ByteVec",
         "U256"
       ],
       "paramIsMutable": [

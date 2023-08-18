@@ -13,7 +13,7 @@ Contract NFTPublicSaleCollectionSequentialWithRoyalty(
     mut totalSupply: U256
 ) extends NFTPublicSaleCollectionSequentialBase(nftTemplateId, collectionUri, nftBaseUri, collectionOwner, maxSupply, mintPrice, maxBatchMintSize, totalSupply)
     implements INFTCollectionWithRoyalty {
-    pub fn royaltyAmount(@unused tokenId: U256, salePrice: U256) -> (U256) {
+    pub fn royaltyAmount(@unused tokenId: ByteVec, salePrice: U256) -> (U256) {
         return salePrice * royaltyRate / 10000
     }
 

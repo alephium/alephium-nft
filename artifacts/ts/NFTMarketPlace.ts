@@ -74,7 +74,11 @@ export namespace NFTMarketPlaceTypes {
 
   export interface CallMethodTable {
     listNFT: {
-      params: CallContractParams<{ tokenId: HexString; price: bigint }>;
+      params: CallContractParams<{
+        tokenId: HexString;
+        price: bigint;
+        royalty: boolean;
+      }>;
       result: CallContractResult<Address>;
     };
     getListingFee: {
@@ -86,6 +90,16 @@ export namespace NFTMarketPlaceTypes {
         price: bigint;
         commissionRateIn: bigint;
         listingFeeIn: bigint;
+        royaltyAmount: bigint;
+      }>;
+      result: CallContractResult<bigint>;
+    };
+    getRoyaltyAmount: {
+      params: CallContractParams<{
+        tokenId: HexString;
+        collectionId: HexString;
+        price: bigint;
+        requiresRoyalty: boolean;
       }>;
       result: CallContractResult<bigint>;
     };
@@ -141,7 +155,7 @@ class Factory extends ContractFactory<
     listNFT: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { tokenId: HexString; price: bigint }
+        { tokenId: HexString; price: bigint; royalty: boolean }
       >
     ): Promise<TestContractResult<Address>> => {
       return testMethod(this, "listNFT", params);
@@ -205,10 +219,28 @@ class Factory extends ContractFactory<
     checkListingPriceAfterFee: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { price: bigint; commissionRateIn: bigint; listingFeeIn: bigint }
+        {
+          price: bigint;
+          commissionRateIn: bigint;
+          listingFeeIn: bigint;
+          royaltyAmount: bigint;
+        }
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "checkListingPriceAfterFee", params);
+    },
+    getRoyaltyAmount: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        {
+          tokenId: HexString;
+          collectionId: HexString;
+          price: bigint;
+          requiresRoyalty: boolean;
+        }
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getRoyaltyAmount", params);
     },
   };
 }
@@ -218,7 +250,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "1d9858f16b5f5cc1783b08e1bd2b78775ab2ae64340346db1aea940d873bd439"
+    "99336ce286b0c8306e72f8ee2b7e9c0e5e5309eaf7e992325ff3353bbd813369"
   )
 );
 
@@ -379,6 +411,17 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         NFTMarketPlace,
         this,
         "checkListingPriceAfterFee",
+        params,
+        getContractByCodeHash
+      );
+    },
+    getRoyaltyAmount: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"getRoyaltyAmount">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getRoyaltyAmount">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "getRoyaltyAmount",
         params,
         getContractByCodeHash
       );

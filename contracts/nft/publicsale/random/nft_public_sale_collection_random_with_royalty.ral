@@ -9,7 +9,7 @@ Contract NFTPublicSaleCollectionRandomWithRoyalty(
     mut totalSupply: U256
 ) extends NFTPublicSaleCollectionRandomBase(nftTemplateId, collectionUri, collectionOwner, nftBaseUri, maxSupply, mintPrice, totalSupply)
     implements INFTCollectionWithRoyalty {
-    pub fn royaltyAmount(@unused tokenId: U256, salePrice: U256) -> (U256) {
+    pub fn royaltyAmount(@unused tokenId: ByteVec, salePrice: U256) -> (U256) {
         return salePrice * royaltyRate / 10000
     }
 

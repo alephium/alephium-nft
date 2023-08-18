@@ -1,26 +1,32 @@
 {
   "version": "v2.5.0",
   "name": "NFTListing",
-  "bytecode": "060709121b4024404e405d406d010000000102ce0102010000000102a00002010000000102ce0302010000000102ce0402010101020017b3ce02410c7ba000ce03ce040f0dce02010917011600ce011601a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a100",
-  "codeHash": "75efad551c880c1ee3041efd5f8e71790cc433a870445e2a39eb21f570385c16",
+  "bytecode": "080a09121b4024402d403640794088409840b1010000000102ce0102010000000102a00002010000000102ce0402010000000102ce0502010000000102ce0602010000000102ce020201010104004025b3ce03410c7bce03170100091702a000ce04ce051602100d16010109170316020c334c0516020d0cce0201041600ce011603a71600ce000dabce01b0010200000007b3ce03410c7bce01b0010001010007b3ce03410c7b1600a10001000001010bce031700ce00ce02a000ce06100d1600010a02",
+  "codeHash": "dce493d43e9aebe56c72de6ade60235d3ca8431cc1b7d91fc638fa384453ad53",
   "fieldsSig": {
     "names": [
       "tokenId",
       "tokenOwner",
+      "collectionId",
       "marketContractId",
       "commissionRate",
       "listingFee",
+      "royalty",
       "price"
     ],
     "types": [
       "ByteVec",
       "Address",
       "ByteVec",
+      "ByteVec",
       "U256",
       "U256",
+      "Bool",
       "U256"
     ],
     "isMutable": [
+      false,
+      false,
       false,
       false,
       false,
@@ -80,6 +86,30 @@
       ]
     },
     {
+      "name": "requiresRoyalty",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "Bool"
+      ]
+    },
+    {
+      "name": "getCollectionId",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
       "name": "buy",
       "usePreapprovedAssets": true,
       "useAssetsInContract": true,
@@ -120,6 +150,18 @@
         false
       ],
       "returnTypes": []
+    },
+    {
+      "name": "getRoyaltyAmount",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
     }
   ],
   "constants": [],

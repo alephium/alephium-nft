@@ -66,6 +66,8 @@ export namespace NFTTypes {
 }
 
 class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
+  consts = { ErrorCodes: { TokenNotPartOfCollection: BigInt(0) } };
+
   at(address: string): NFTInstance {
     return new NFTInstance(address);
   }
@@ -86,6 +88,11 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getNFTIndex", params);
     },
+    validateCollectionId: async (
+      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "validateCollectionId", params);
+    },
   };
 }
 
@@ -94,7 +101,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925"
+    "2e7fde000e880cf6807371b6e261e1fb76857a540678aad8a76975809cffe5e9"
   )
 );
 

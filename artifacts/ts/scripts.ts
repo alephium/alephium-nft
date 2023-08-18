@@ -58,6 +58,7 @@ export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
   price: bigint;
   nftMarketplace: HexString;
+  royalty: boolean;
 }>(Script.fromJson(ListNFTScriptJson));
 export const MintBatchSequential = new ExecutableScript<{
   nftCollection: HexString;

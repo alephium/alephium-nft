@@ -1,8 +1,8 @@
 {
   "version": "v2.5.0",
   "name": "NFT",
-  "bytecode": "040309121b010000000102ce0102010000000102ce0002010000000102ce0202",
-  "codeHash": "299d7f939788bf812205d8776b49e6bc393574848cc173c92bb7798ebc518925",
+  "bytecode": "040409121b4031010000000102ce0102010000000102ce0002010000000102ce020201000001000bce020d0dce0001021700b11600410c7b",
+  "codeHash": "2e7fde000e880cf6807371b6e261e1fb76857a540678aad8a76975809cffe5e9",
   "fieldsSig": {
     "names": [
       "collectionId",
@@ -60,9 +60,32 @@
       "returnTypes": [
         "U256"
       ]
+    },
+    {
+      "name": "validateCollectionId",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
     }
   ],
   "constants": [],
-  "enums": [],
+  "enums": [
+    {
+      "name": "ErrorCodes",
+      "fields": [
+        {
+          "name": "TokenNotPartOfCollection",
+          "value": {
+            "type": "U256",
+            "value": "0"
+          }
+        }
+      ]
+    }
+  ],
   "stdInterfaceId": "0003"
 }

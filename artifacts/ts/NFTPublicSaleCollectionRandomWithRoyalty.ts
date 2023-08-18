@@ -58,7 +58,7 @@ export namespace NFTPublicSaleCollectionRandomWithRoyaltyTypes {
       result: CallContractResult<HexString>;
     };
     royaltyAmount: {
-      params: CallContractParams<{ tokenId: bigint; salePrice: bigint }>;
+      params: CallContractParams<{ tokenId: HexString; salePrice: bigint }>;
       result: CallContractResult<bigint>;
     };
     mint: {
@@ -148,7 +148,7 @@ class Factory extends ContractFactory<
     royaltyAmount: async (
       params: TestContractParams<
         NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
-        { tokenId: bigint; salePrice: bigint }
+        { tokenId: HexString; salePrice: bigint }
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "royaltyAmount", params);
