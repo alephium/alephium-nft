@@ -69,7 +69,7 @@ describe('nft public sale collection - sequential', function() {
 })
 
 async function mintNextPublicSaleSequentialNFTAndVerify(
-  nftCollection: NFTCollectionHelper,
+  nftCollectionHelper: NFTCollectionHelper,
   nftCollectionInstance: NFTPublicSaleCollectionSequentialInstance,
   mintPrice: bigint
 ) {
@@ -79,7 +79,7 @@ async function mintNextPublicSaleSequentialNFTAndVerify(
   const tokenIndex = state0.fields.totalSupply
   const nftContractId = subContractId(nftCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
 
-  const result = await nftCollection.mintNextSequential(mintPrice, nftCollectionInstance.contractId)
+  const result = await nftCollectionHelper.mintNextSequential(mintPrice, nftCollectionInstance.contractId)
 
   const state1 = await nftCollectionInstance.fetchState()
   expect(state1.fields.totalSupply).toEqual(tokenIndex + 1n)
@@ -98,7 +98,7 @@ async function mintNextPublicSaleSequentialNFTAndVerify(
   const collectionId = (await nftInstance.methods.getCollectionId()).returns
   expect(collectionId).toEqual(nftCollectionInstance.contractId)
 
-  const account = await nftCollection.signer.getSelectedAccount()
+  const account = await nftCollectionHelper.signer.getSelectedAccount()
   await checkEvent(NFTPublicSaleCollectionSequential, result.txId, {
     txId: result.txId,
     contractAddress: nftCollectionInstance.address,
@@ -109,7 +109,7 @@ async function mintNextPublicSaleSequentialNFTAndVerify(
 }
 
 async function mintBatchPublicSaleNFTAndVerify(
-  nftCollection: NFTCollectionHelper,
+  nftCollectionHelper: NFTCollectionHelper,
   nftCollectionInstance: NFTPublicSaleCollectionSequentialInstance,
   mintPrice: bigint,
   batchSize: bigint
@@ -119,7 +119,7 @@ async function mintBatchPublicSaleNFTAndVerify(
   const state0 = await nftCollectionInstance.fetchState()
   const fromIndex = state0.fields.totalSupply
 
-  const result = await nftCollection.mintBatchSequential(batchSize, mintPrice, nftCollectionInstance.contractId)
+  const result = await nftCollectionHelper.mintBatchSequential(batchSize, mintPrice, nftCollectionInstance.contractId)
 
   const state1 = await nftCollectionInstance.fetchState()
   expect(state1.fields.totalSupply).toEqual(fromIndex + batchSize)
@@ -142,7 +142,7 @@ async function mintBatchPublicSaleNFTAndVerify(
     expect(collectionId).toEqual(nftCollectionInstance.contractId)
   }
 
-  const account = await nftCollection.signer.getSelectedAccount()
+  const account = await nftCollectionHelper.signer.getSelectedAccount()
   await checkEvent(NFTPublicSaleCollectionSequential, result.txId, {
     txId: result.txId,
     contractAddress: nftCollectionInstance.address,
@@ -153,13 +153,13 @@ async function mintBatchPublicSaleNFTAndVerify(
 }
 
 async function getNFTPublicSaleCollectionSequentialInstance(
-  nftCollection: NFTCollectionHelper,
+  nftCollectionHelper: NFTCollectionHelper,
   maxSupply: bigint,
   mintPrice: bigint,
   maxBatchMintSize: bigint,
   signer: SignerProvider
 ) {
-  const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionSequential(
+  const nftCollectionDeployTx = await nftCollectionHelper.createPublicSaleCollectionSequential(
     maxSupply,
     mintPrice,
     "https://crypto-punk-uri",

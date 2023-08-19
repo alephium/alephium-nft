@@ -15,6 +15,8 @@ import {
   NFTOpenCollectionInstance,
   NFTPublicSaleCollectionSequential,
   NFTPublicSaleCollectionSequentialInstance,
+  NFTOpenCollectionWithRoyalty,
+  NFTOpenCollectionWithRoyaltyInstance,
 } from ".";
 import { default as testnetDeployments } from "../.deployments.testnet.json";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
@@ -27,6 +29,7 @@ export type Deployments = {
     NFT: DeployContractExecutionResult<NFTInstance>;
     NFTOpenCollection: DeployContractExecutionResult<NFTOpenCollectionInstance>;
     NFTPublicSaleCollectionSequential: DeployContractExecutionResult<NFTPublicSaleCollectionSequentialInstance>;
+    NFTOpenCollectionWithRoyalty?: DeployContractExecutionResult<NFTOpenCollectionWithRoyaltyInstance>;
   };
 };
 
@@ -61,6 +64,16 @@ function toDeployments(json: any): Deployments {
           .address
       ),
     },
+    NFTOpenCollectionWithRoyalty:
+      json.contracts["NFTOpenCollectionWithRoyalty"] === undefined
+        ? undefined
+        : {
+            ...json.contracts["NFTOpenCollectionWithRoyalty"],
+            contractInstance: NFTOpenCollectionWithRoyalty.at(
+              json.contracts["NFTOpenCollectionWithRoyalty"].contractInstance
+                .address
+            ),
+          },
   };
   return {
     ...json,

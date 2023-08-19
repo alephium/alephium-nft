@@ -1,5 +1,5 @@
 import { Deployer, DeployFunction } from '@alephium/cli'
-import { NFTOpenCollection, NFTPublicSaleCollectionSequential } from '../artifacts/ts'
+import { NFTOpenCollection, NFTOpenCollectionWithRoyalty, NFTPublicSaleCollectionSequential } from '../artifacts/ts'
 import { ZERO_ADDRESS } from '@alephium/web3'
 
 const deployCollectionTemplate: DeployFunction = async (deployer: Deployer): Promise<void> => {
@@ -11,8 +11,20 @@ const deployCollectionTemplate: DeployFunction = async (deployer: Deployer): Pro
       totalSupply: 0n
     }
   })
-  console.log(`NFT open collection template contract id: ${openCollection.contractInstance.contractId}`)
-  console.log(`NFT open collection template contract address: ${openCollection.contractInstance.address}`)
+  console.log(`NFT open collection without royalty template contract id: ${openCollection.contractInstance.contractId}`)
+  console.log(`NFT open collection without royalty template contract address: ${openCollection.contractInstance.address}`)
+
+  const openCollectionWithRoyalty = await deployer.deployContract(NFTOpenCollectionWithRoyalty, {
+    initialFields: {
+      nftTemplateId: '',
+      collectionUri: '',
+      collectionOwner: ZERO_ADDRESS,
+      totalSupply: 0n,
+      royaltyRate: 200n
+    }
+  })
+  console.log(`NFT open collection with royalty template contract id: ${openCollectionWithRoyalty.contractInstance.contractId}`)
+  console.log(`NFT open collection with royalty template contract address: ${openCollectionWithRoyalty.contractInstance.address}`)
 
   const publicSaleCollection = await deployer.deployContract(NFTPublicSaleCollectionSequential, {
     initialFields: {

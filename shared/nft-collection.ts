@@ -3,6 +3,8 @@ import {
   NFTOpenCollection,
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes,
+  NFTOpenCollectionWithRoyalty,
+  NFTOpenCollectionWithRoyaltyInstance,
   NFTPublicSaleCollectionRandom,
   NFTPublicSaleCollectionRandomInstance,
   NFTPublicSaleCollectionSequential,
@@ -11,6 +13,7 @@ import {
 } from '../artifacts/ts'
 import {
   CreateOpenCollection,
+  CreateOpenCollectionWithRoyalty,
   CreatePublicSaleCollectionSequential,
   MintBatchSequential,
   MintNextSequential,
@@ -48,7 +51,7 @@ export class NFTCollectionHelper extends DeployHelpers {
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
     const config = getAlephiumNFTConfig()
     const ownerAddress = (await signer.getSelectedAccount()).address
-    const result = await CreateOpenCollection.execute(signer, {
+    let result = await CreateOpenCollection.execute(signer, {
       initialFields: {
         openCollectionTemplateId: config.openCollectionTemplateId,
         nftTemplateId: config.nftTemplateId,
@@ -63,6 +66,32 @@ export class NFTCollectionHelper extends DeployHelpers {
     return {
       ...result,
       contractInstance: NFTOpenCollection.at(addressFromContractId(contractId))
+    }
+  }
+
+  async createOpenCollectionWithRoyalty(
+    collectionUri: string,
+    royaltyRate: bigint,
+    signer: SignerProvider = this.signer,
+  ): Promise<DeployContractResult<NFTOpenCollectionWithRoyaltyInstance>> {
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
+    let result = await CreateOpenCollectionWithRoyalty.execute(signer, {
+      initialFields: {
+        openCollectionWithRoyaltyTemplateId: config.openCollectionWithRoyaltyTemplateId,
+        nftTemplateId: config.nftTemplateId,
+        collectionUri: stringToHex(collectionUri),
+        collectionOwner: ownerAddress,
+        royaltyRate,
+        totalSupply: 0n
+      },
+      attoAlphAmount: ONE_ALPH
+    })
+    const groupIndex = groupOfAddress(ownerAddress)
+    const contractId = await calcContractId(this.nodeProvider, result.txId, result.unsignedTx, groupIndex)
+    return {
+      ...result,
+      contractInstance: NFTOpenCollectionWithRoyalty.at(addressFromContractId(contractId))
     }
   }
 
@@ -164,14 +193,16 @@ export class NFTCollectionHelper extends DeployHelpers {
   async mintOpenNFT(
     nftCollectionContractId: string,
     nftUri: string,
-    signer: SignerProvider = this.signer
+    signer: SignerProvider = this.signer,
+    royalty: boolean = false
   ) {
     return await MintOpenNFT.execute(
       signer,
       {
         initialFields: {
-          nftCollection: nftCollectionContractId,
-          uri: stringToHex(nftUri)
+          nftCollectionId: nftCollectionContractId,
+          uri: stringToHex(nftUri),
+          royalty
         },
         attoAlphAmount: BigInt(1.1e18)
       }

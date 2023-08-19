@@ -14,6 +14,7 @@ import {
 import { default as BuyNFTScriptJson } from "../scripts/BuyNFT.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral.json";
 import { default as CreateOpenCollectionScriptJson } from "../scripts/CreateOpenCollection.ral.json";
+import { default as CreateOpenCollectionWithRoyaltyScriptJson } from "../scripts/CreateOpenCollectionWithRoyalty.ral.json";
 import { default as CreatePublicSaleCollectionSequentialScriptJson } from "../scripts/CreatePublicSaleCollectionSequential.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/ListNFT.ral.json";
 import { default as MintBatchSequentialScriptJson } from "../scripts/MintBatchSequential.ral.json";
@@ -43,6 +44,14 @@ export const CreateOpenCollection = new ExecutableScript<{
   collectionOwner: Address;
   totalSupply: bigint;
 }>(Script.fromJson(CreateOpenCollectionScriptJson));
+export const CreateOpenCollectionWithRoyalty = new ExecutableScript<{
+  openCollectionWithRoyaltyTemplateId: HexString;
+  nftTemplateId: HexString;
+  collectionUri: HexString;
+  collectionOwner: Address;
+  royaltyRate: bigint;
+  totalSupply: bigint;
+}>(Script.fromJson(CreateOpenCollectionWithRoyaltyScriptJson));
 export const CreatePublicSaleCollectionSequential = new ExecutableScript<{
   publicSaleCollectionTemplateId: HexString;
   nftTemplateId: HexString;
@@ -70,8 +79,9 @@ export const MintNextSequential = new ExecutableScript<{
   mintPrice: bigint;
 }>(Script.fromJson(MintNextSequentialScriptJson));
 export const MintOpenNFT = new ExecutableScript<{
-  nftCollection: HexString;
+  nftCollectionId: HexString;
   uri: HexString;
+  royalty: boolean;
 }>(Script.fromJson(MintOpenNFTScriptJson));
 export const MintSpecificPublicSaleNFT = new ExecutableScript<{
   index: bigint;

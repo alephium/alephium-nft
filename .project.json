@@ -30,6 +30,13 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "CreateOpenCollectionWithRoyalty": {
+      "sourceFile": "scripts/create_open_collection_with_royalty.ral",
+      "sourceCodeHash": "2345e06af03b32ac6edb2292d3053f54408401c1953a5354b5d98d34c883d0eb",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "CreatePublicSaleCollectionSequential": {
       "sourceFile": "scripts/create_public_sale_collection_sequential.ral",
       "sourceCodeHash": "007ef83801b19fc8d54572f4cb4f422f08c0e300af8085d95f98180aae03563d",
@@ -81,7 +88,7 @@
     },
     "MintOpenNFT": {
       "sourceFile": "scripts/mint_open_nft.ral",
-      "sourceCodeHash": "34657308e7e00d73f528be8d5eaec1bfe189df4a52e6d7430516940cf9b650ae",
+      "sourceCodeHash": "dc6542ff119bd55c8a99a7e57ec0746552a249f1d7793c7e7f13094276dab606",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

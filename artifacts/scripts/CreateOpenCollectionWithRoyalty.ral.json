@@ -1,19 +1,28 @@
 {
   "version": "v2.5.0",
-  "name": "MintOpenNFT",
-  "bytecodeTemplate": "01010300000015{2}4c0ab413c40de0b6b3a7640000a2{1}0d0d{0}0105184a09b413c40de0b6b3a7640000a2{1}0d0d{0}010318",
+  "name": "CreateOpenCollectionWithRoyalty",
+  "bytecodeTemplate": "01010300020014{1}{2}{3}{4}1407414c5048000201130564{5}13016417011700b413c40de0b6b3a7640000a2{0}16001601af18",
   "fieldsSig": {
     "names": [
-      "nftCollectionId",
-      "uri",
-      "royalty"
+      "openCollectionWithRoyaltyTemplateId",
+      "nftTemplateId",
+      "collectionUri",
+      "collectionOwner",
+      "royaltyRate",
+      "totalSupply"
     ],
     "types": [
       "ByteVec",
       "ByteVec",
-      "Bool"
+      "ByteVec",
+      "Address",
+      "U256",
+      "U256"
     ],
     "isMutable": [
+      false,
+      false,
+      false,
       false,
       false,
       false
