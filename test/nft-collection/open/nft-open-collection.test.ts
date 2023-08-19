@@ -13,7 +13,7 @@ describe('nft open collection', function() {
     // Without royalty
     await testNFTMinting(false)
 
-    // With royalyt
+    // With royalty
     await testNFTMinting(true)
   }, 60000)
 })

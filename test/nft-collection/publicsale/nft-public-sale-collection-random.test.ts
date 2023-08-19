@@ -9,58 +9,42 @@ describe('nft public sale collection - random', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
   web3.setCurrentNodeProvider(nodeUrl, undefined, fetch)
 
-  it('should test minting nft sequentially in NFTPublicSaleCollectionRandom', async () => {
-    const maxSupply = 10n
-    const mintPrice = ONE_ALPH
-    const [signer] = await getSigners(1)
-    const nftCollection = await getNFTCollection(signer)
-    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice, signer)
-    const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
+  it('should test minting nft in NFTPublicSaleCollectionRandom', async () => {
+    const maxSupply = 10
+    const sequential = Array.from(Array(maxSupply).keys())
+    await testNFTMinting(sequential)
 
-    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
-    for (let i = 0n; i < maxSupply; i++) {
-      await mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, i, mintPrice)
-    }
-    const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
-    expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * maxSupply)
-
-    // Can't mint the same NFT again
-    await expect(mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, 4n, mintPrice)).rejects.toThrow(Error)
-    // Can't mint the NFT with out-of-bound index
-    await expect(mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, maxSupply, mintPrice)).rejects.toThrow(Error)
-    // Withdraw too much
-    await expect(checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
-    // Successful Withdraw
-    await checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(10e18))
-  }, 30000)
-
-  it('should test minting nft non-sequentially in NFTPublicSaleCollectionRandom', async () => {
-    const maxSupply = 10n
-    const mintPrice = ONE_ALPH
-    const [signer] = await getSigners(1)
-    const nftCollection = await getNFTCollection(signer)
-    const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice, signer)
-    const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
-
-    const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
-    await mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, 0n, mintPrice)
-    await mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, 6n, mintPrice)
-    await mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, 9n, mintPrice)
-    const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
-    expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * 3n)
-
-    // Can't mint the same NFT again
-    await expect(mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, 6n, mintPrice)).rejects.toThrow(Error)
-    // Can't mint the NFT with out-of-bound index
-    await expect(mintSpecificPublicSaleNFTAndVerify(nftCollection, nftPublicSaleCollectionInstance, maxSupply + 1n, mintPrice)).rejects.toThrow(Error)
-    // Withdraw too much
-    await expect(checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(3.1e18))).rejects.toThrow(Error)
-    // Successful Withdraw
-    await checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(3e18))
-  }, 30000)
+    const random = sequential.sort(() => Math.random() - 0.5)
+    await testNFTMinting(random)
+  }, 60000)
 })
 
-async function mintSpecificPublicSaleNFTAndVerify(
+async function testNFTMinting(tokenIndexes: number[]) {
+  const maxSupply = BigInt(tokenIndexes.length)
+  const mintPrice = ONE_ALPH
+  const [signer] = await getSigners(1)
+  const nftCollection = await getNFTCollection(signer)
+  const nftPublicSaleCollectionInstance = await getNFTPublicSaleCollectionRandomInstance(nftCollection, maxSupply, mintPrice, signer)
+  const signerAddress = (await nftCollection.signer.getSelectedAccount()).address
+
+  const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
+  for (const i of tokenIndexes) {
+    await mintAndVerify(nftCollection, nftPublicSaleCollectionInstance, BigInt(i), mintPrice)
+  }
+  const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(nftPublicSaleCollectionInstance.address)
+  expect(BigInt(balanceBefore.balance)).toEqual(BigInt(balanceAfter.balance) - mintPrice * maxSupply)
+
+  // Can't mint the same NFT again
+  await expect(mintAndVerify(nftCollection, nftPublicSaleCollectionInstance, BigInt(4), mintPrice)).rejects.toThrow(Error)
+  // Can't mint the NFT with out-of-bound index
+  await expect(mintAndVerify(nftCollection, nftPublicSaleCollectionInstance, maxSupply, mintPrice)).rejects.toThrow(Error)
+  // Withdraw too much
+  await expect(checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
+  // Successful Withdraw
+  await checkWithdraw(nftCollection, nftPublicSaleCollectionInstance.contractId, signerAddress, BigInt(10e18))
+}
+
+async function mintAndVerify(
   nftCollection: NFTCollectionHelper,
   nftPublicSaleCollectionInstance: NFTPublicSaleCollectionRandomInstance,
   tokenIndex: bigint,
