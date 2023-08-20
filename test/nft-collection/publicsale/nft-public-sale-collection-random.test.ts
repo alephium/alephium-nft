@@ -82,7 +82,7 @@ async function mintAndVerify(
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(collectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
 
-  const result = await nftCollection.mintSpecific(tokenIndex, mintPrice, collectionInstance.contractId, royalty)
+  const result = await nftCollection.publicSaleCollection.random.mint(tokenIndex, mintPrice, collectionInstance.contractId, royalty)
 
   // NFT just minted
   const nftByIndexResult = await collectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
@@ -124,7 +124,7 @@ async function getCollectionInstance(
 ): Promise<NFTPublicSaleCollectionRandomInstance | NFTPublicSaleCollectionRandomWithRoyaltyInstance> {
   let collectionInstance = undefined
   if (royalty) {
-    const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionRandomWithRoyalty(
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.random.createWithRoyalty(
       maxSupply,
       mintPrice,
       "https://crypto-punk-uri",
@@ -133,7 +133,7 @@ async function getCollectionInstance(
     )
     collectionInstance = nftCollectionDeployTx.contractInstance
   } else {
-    const nftCollectionDeployTx = await nftCollection.createPublicSaleCollectionRandom(
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.random.create(
       maxSupply,
       mintPrice,
       "https://crypto-punk-uri",

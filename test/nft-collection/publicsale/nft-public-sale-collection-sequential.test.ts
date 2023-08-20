@@ -53,9 +53,9 @@ describe('nft public sale collection - sequential', function() {
       // Mint one nft
       await mintAndVerify(nftCollectionHelper, nftCollectionInstance, mintPrice, 1n, royalty)
       // Batch size exceed the maxBatchMintSize
-      await expect(nftCollectionHelper.mintBatchSequential(maxBatchMintSize + 1n, mintPrice, nftCollectionInstance.contractId, royalty)).rejects.toThrow(Error)
+      await expect(nftCollectionHelper.publicSaleCollection.sequential.batchMint(maxBatchMintSize + 1n, mintPrice, nftCollectionInstance.contractId, royalty)).rejects.toThrow(Error)
       // Batch size exceed the number of unminted nfts
-      await expect(nftCollectionHelper.mintBatchSequential(maxSupply, mintPrice, nftCollectionInstance.contractId, royalty)).rejects.toThrow(Error)
+      await expect(nftCollectionHelper.publicSaleCollection.sequential.batchMint(maxSupply, mintPrice, nftCollectionInstance.contractId, royalty)).rejects.toThrow(Error)
       await mintAndVerify(nftCollectionHelper, nftCollectionInstance, mintPrice, maxBatchMintSize, royalty)
       await mintAndVerify(nftCollectionHelper, nftCollectionInstance, mintPrice, maxBatchMintSize - 1n, royalty)
     }
@@ -123,9 +123,9 @@ describe('nft public sale collection - sequential', function() {
 
     let result = undefined
     if (batchSize === 1n) {
-      result = await nftCollectionHelper.mintNextSequential(mintPrice, nftCollectionInstance.contractId, royalty)
+      result = await nftCollectionHelper.publicSaleCollection.sequential.mintNext(mintPrice, nftCollectionInstance.contractId, royalty)
     } else {
-      result = await nftCollectionHelper.mintBatchSequential(batchSize, mintPrice, nftCollectionInstance.contractId, royalty)
+      result = await nftCollectionHelper.publicSaleCollection.sequential.batchMint(batchSize, mintPrice, nftCollectionInstance.contractId, royalty)
     }
 
     const state1 = await nftCollectionInstance.fetchState()
@@ -170,7 +170,7 @@ describe('nft public sale collection - sequential', function() {
     let collectionInstance = undefined
 
     if (royalty) {
-      const nftCollectionDeployTx = await nftCollectionHelper.createPublicSaleCollectionSequentialWithRoyalty(
+      const nftCollectionDeployTx = await nftCollectionHelper.publicSaleCollection.sequential.createWithRoyalty(
         maxSupply,
         mintPrice,
         "https://crypto-punk-uri",
@@ -180,7 +180,7 @@ describe('nft public sale collection - sequential', function() {
       )
       collectionInstance = nftCollectionDeployTx.contractInstance
     } else {
-      const nftCollectionDeployTx = await nftCollectionHelper.createPublicSaleCollectionSequential(
+      const nftCollectionDeployTx = await nftCollectionHelper.publicSaleCollection.sequential.create(
         maxSupply,
         mintPrice,
         "https://crypto-punk-uri",

@@ -43,7 +43,7 @@ const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCo
       if (wallet?.signer?.nodeProvider && wallet.account && collectionMetadata) {
         const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsMinting(true)
-        const result = await nftCollection.mintBatchSequential(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id)
+        const result = await nftCollection.publicSaleCollection.sequential.batchMint(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id, false)
         await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
         setIsMinting(false)
         router.push('/my-nfts')

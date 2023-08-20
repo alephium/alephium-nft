@@ -22,12 +22,12 @@ describe('nft marketplace', function() {
     const nftMarketplaceDeployResult = await nftMarketplace.create()
     const nftMarketplaceContractId = nftMarketplaceDeployResult.contractInstance.contractId
     const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
-    const nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri")
+    const nftCollectionDeployTx = await nftCollection.openCollection.create("https://crypto-punk-uri")
     const nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
 
     const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
     const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
-    await nftCollection.mintOpenNFT(
+    await nftCollection.openCollection.mint(
       nftCollectionContractId,
       nftUri
     )

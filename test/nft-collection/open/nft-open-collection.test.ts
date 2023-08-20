@@ -27,9 +27,9 @@ async function testNFTMinting(royalty: boolean) {
 
   let nftCollectionDeployTx = undefined
   if (royalty) {
-    nftCollectionDeployTx = await nftCollection.createOpenCollectionWithRoyalty("https://crypto-punk-uri", royaltyRate, signer)
+    nftCollectionDeployTx = await nftCollection.openCollection.createWithRoyalty("https://crypto-punk-uri", royaltyRate, signer)
   } else {
-    nftCollectionDeployTx = await nftCollection.createOpenCollection("https://crypto-punk-uri", signer)
+    nftCollectionDeployTx = await nftCollection.openCollection.create("https://crypto-punk-uri", signer)
   }
 
   const contractInstance = nftCollectionDeployTx.contractInstance
@@ -58,7 +58,7 @@ async function mintAndVerify(
     nftOpenCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group
   )
 
-  const { txId } = await nftCollection.mintOpenNFT(
+  const { txId } = await nftCollection.openCollection.mint(
     nftOpenCollectionInstance.contractId,
     getNFTUri(tokenIndex),
     nftCollection.signer,

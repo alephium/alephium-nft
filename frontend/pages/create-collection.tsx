@@ -92,7 +92,7 @@ export default function CreateCollections() {
     if (collectionUri && wallet?.signer?.nodeProvider && wallet?.account) {
       const nftCollection = new NFTCollectionHelper(wallet.signer)
       setIsCreatingCollection(true)
-      const createCollectionTxResult = await nftCollection.createOpenCollection(collectionUri)
+      const createCollectionTxResult = await nftCollection.openCollection.create(collectionUri)
       await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
       const collectionId = createCollectionTxResult.contractInstance.contractId
       await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
@@ -126,7 +126,7 @@ export default function CreateCollections() {
       if (collectionUri && wallet?.signer?.nodeProvider && wallet.account) {
         const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsCreatingCollection(true)
-        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
+        const createCollectionTxResult = await nftCollection.publicSaleCollection.sequential.create(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
         await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
         const collectionId = createCollectionTxResult.contractInstance.contractId
         await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
