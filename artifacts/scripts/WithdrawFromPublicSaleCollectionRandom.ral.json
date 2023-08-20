@@ -1,0 +1,37 @@
+{
+  "version": "v2.5.0",
+  "name": "WithdrawFromPublicSaleCollectionRandom",
+  "bytecodeTemplate": "0101030000000f{3}4c07{0}{1}0e0c{2}01084a06{0}{1}0e0c{2}0106",
+  "fieldsSig": {
+    "names": [
+      "to",
+      "amount",
+      "nftCollectionId",
+      "royalty"
+    ],
+    "types": [
+      "Address",
+      "U256",
+      "ByteVec",
+      "Bool"
+    ],
+    "isMutable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "functions": [
+    {
+      "name": "main",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": []
+    }
+  ]
+}

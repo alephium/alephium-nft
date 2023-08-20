@@ -11,11 +11,12 @@ export async function checkWithdraw(
   nftCollection: NFTCollectionHelper,
   collectionId: string,
   to: string,
-  withdrawAmount: bigint
+  withdrawAmount: bigint,
+  royalty: boolean
 ) {
   const collectionAddress = addressFromContractId(collectionId)
   const balanceBefore = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(collectionAddress)
-  await nftCollection.withdrawFromPublicSaleCollection(to, withdrawAmount, collectionId)
+  await nftCollection.withdrawFromPublicSaleCollectionRandom(to, withdrawAmount, collectionId, royalty)
   const balanceAfter = await nftCollection.signer.nodeProvider!.addresses.getAddressesAddressBalance(collectionAddress)
   expect(BigInt(balanceAfter.balance)).toEqual(BigInt(balanceBefore.balance) - withdrawAmount)
 }

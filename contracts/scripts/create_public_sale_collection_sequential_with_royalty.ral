@@ -1,0 +1,27 @@
+TxScript CreatePublicSaleCollectionSequentialWithRoyalty(
+  publicSaleCollectionTemplateId: ByteVec,
+  nftTemplateId: ByteVec,
+  collectionUri: ByteVec,
+  nftBaseUri: ByteVec,
+  collectionOwner: Address,
+  maxSupply: U256,
+  mintPrice: U256,
+  maxBatchMintSize: U256,
+  royaltyRate: U256,
+  totalSupply: U256
+) {
+  // if the `maxBatchMintSize` exceeds 15, it may cause the gas amount to be greater than maxGasPerTx(currently 625,000)
+  assert!(maxBatchMintSize <= 15, 0)
+  let (encodedImmFields, encodedMutFields) = NFTPublicSaleCollectionSequentialWithRoyalty.encodeFields!(
+    nftTemplateId,
+    collectionUri,
+    nftBaseUri,
+    collectionOwner,
+    maxSupply,
+    mintPrice,
+    maxBatchMintSize,
+    royaltyRate,
+    totalSupply
+  )
+  copyCreateContract!{callerAddress!() -> ALPH : 1 alph}(publicSaleCollectionTemplateId, encodedImmFields, encodedMutFields)
+}

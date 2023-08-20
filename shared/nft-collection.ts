@@ -7,19 +7,24 @@ import {
   NFTOpenCollectionWithRoyaltyInstance,
   NFTPublicSaleCollectionRandom,
   NFTPublicSaleCollectionRandomInstance,
+  NFTPublicSaleCollectionRandomWithRoyalty,
+  NFTPublicSaleCollectionRandomWithRoyaltyInstance,
   NFTPublicSaleCollectionSequential,
   NFTPublicSaleCollectionSequentialInstance,
+  NFTPublicSaleCollectionSequentialWithRoyalty,
+  NFTPublicSaleCollectionSequentialWithRoyaltyInstance,
   NFTPublicSaleCollectionSequentialTypes
 } from '../artifacts/ts'
 import {
   CreateOpenCollection,
   CreateOpenCollectionWithRoyalty,
   CreatePublicSaleCollectionSequential,
+  CreatePublicSaleCollectionSequentialWithRoyalty,
   MintBatchSequential,
   MintNextSequential,
   MintOpenNFT,
-  MintSpecificPublicSaleNFT,
-  WithdrawFromPublicSaleCollection
+  MintSpecific,
+  WithdrawFromPublicSaleCollectionRandom,
 } from '../artifacts/ts/scripts'
 import {
   DeployContractResult,
@@ -122,6 +127,36 @@ export class NFTCollectionHelper extends DeployHelpers {
     return nftCollectionDeployTx
   }
 
+  // TODO: simplify
+  async createPublicSaleCollectionRandomWithRoyalty(
+    maxSupply: bigint,
+    mintPrice: bigint,
+    collectionUri: string,
+    baseUri: string,
+    royaltyRate: bigint,
+    signer: SignerProvider = this.signer
+  ): Promise<DeployContractResult<NFTPublicSaleCollectionRandomWithRoyaltyInstance>> {
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
+    const nftCollectionDeployTx = await NFTPublicSaleCollectionRandomWithRoyalty.deploy(
+      signer,
+      {
+        initialFields: {
+          nftTemplateId: config.nftTemplateId,
+          collectionUri: stringToHex(collectionUri),
+          nftBaseUri: stringToHex(baseUri),
+          collectionOwner: ownerAddress,
+          maxSupply: maxSupply,
+          mintPrice: mintPrice,
+          royaltyRate,
+          totalSupply: 0n
+        }
+      }
+    )
+
+    return nftCollectionDeployTx
+  }
+
   async createPublicSaleCollectionSequential(
     maxSupply: bigint,
     mintPrice: bigint,
@@ -151,6 +186,40 @@ export class NFTCollectionHelper extends DeployHelpers {
     return {
       ...result,
       contractInstance: NFTPublicSaleCollectionSequential.at(addressFromContractId(contractId))
+    }
+  }
+
+  async createPublicSaleCollectionSequentialWithRoyalty(
+    maxSupply: bigint,
+    mintPrice: bigint,
+    collectionUri: string,
+    baseUri: string,
+    maxBatchMintSize: bigint,
+    royaltyRate: bigint,
+    signer: SignerProvider = this.signer
+  ): Promise<DeployContractResult<NFTPublicSaleCollectionSequentialWithRoyaltyInstance>> {
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
+    const result = await CreatePublicSaleCollectionSequentialWithRoyalty.execute(signer, {
+      initialFields: {
+        publicSaleCollectionTemplateId: config.publicSaleCollectionTemplateId,
+        nftTemplateId: config.nftTemplateId,
+        collectionUri: stringToHex(collectionUri),
+        nftBaseUri: stringToHex(baseUri),
+        collectionOwner: ownerAddress,
+        maxSupply: maxSupply,
+        mintPrice: mintPrice,
+        maxBatchMintSize: maxBatchMintSize,
+        royaltyRate: royaltyRate,
+        totalSupply: 0n
+      },
+      attoAlphAmount: ONE_ALPH
+    })
+    const groupIndex = groupOfAddress(ownerAddress)
+    const contractId = await calcContractId(this.nodeProvider, result.txId, result.unsignedTx, groupIndex)
+    return {
+      ...result,
+      contractInstance: NFTPublicSaleCollectionSequentialWithRoyalty.at(addressFromContractId(contractId))
     }
   }
 
@@ -209,38 +278,42 @@ export class NFTCollectionHelper extends DeployHelpers {
     )
   }
 
-  async mintSpecificPublicSaleNFT(
+  async mintSpecific(
     index: bigint,
     mintPrice: bigint,
     nftCollectionContractId: string,
+    royalty: boolean,
     signer: SignerProvider = this.signer
   ) {
-    return await MintSpecificPublicSaleNFT.execute(
+    return await MintSpecific.execute(
       signer,
       {
         initialFields: {
           index: index,
           mintPrice: mintPrice,
-          nftCollection: nftCollectionContractId
+          nftCollectionId: nftCollectionContractId,
+          royalty
         },
         attoAlphAmount: BigInt(1.1e18) + mintPrice
       }
     )
   }
 
-  async withdrawFromPublicSaleCollection(
+  async withdrawFromPublicSaleCollectionRandom(
     to: string,
     amount: bigint,
     nftCollectionId: string,
+    royalty: boolean,
     signer: SignerProvider = this.signer
   ) {
-    return await WithdrawFromPublicSaleCollection.execute(
+    return await WithdrawFromPublicSaleCollectionRandom.execute(
       signer,
       {
         initialFields: {
           to: to,
           amount: amount,
-          nftCollection: nftCollectionId
+          nftCollectionId: nftCollectionId,
+          royalty
         }
       }
     )

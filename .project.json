@@ -44,6 +44,13 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "CreatePublicSaleCollectionSequentialWithRoyalty": {
+      "sourceFile": "scripts/create_public_sale_collection_sequential_with_royalty.ral",
+      "sourceCodeHash": "0de405465c941f616d4f3c4513bba704a7e0fd1c6a8c558cc778f3a423dc4f9b",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "INFT": {
       "sourceFile": "../node_modules/@alephium/web3/std/nft_interface.ral",
       "sourceCodeHash": "491b0726ad455d7f2df52f71e071f34c2630de3e17f1e3fb9fd5d7efd81461a0",
@@ -93,9 +100,9 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "MintSpecificPublicSaleNFT": {
-      "sourceFile": "scripts/mint_specific_public_sale_nft.ral",
-      "sourceCodeHash": "410576e3d5646cdbface29cb5455dbb4f73d5211efaa3337a9d8c5e102b63727",
+    "MintSpecific": {
+      "sourceFile": "scripts/mint_specific.ral",
+      "sourceCodeHash": "059aacb90dbc2b6ca1c00727355c41d054259d355d2095eafd5fa27feca7e916",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
@@ -233,9 +240,9 @@
       "codeHashDebug": "",
       "warnings": []
     },
-    "WithdrawFromPublicSaleCollection": {
-      "sourceFile": "scripts/withdraw_from_public_sale_collection.ral",
-      "sourceCodeHash": "4d4608cadbef112ce1e2bdd85d886f7575886dade06c7645f8a448aa5779f31a",
+    "WithdrawFromPublicSaleCollectionRandom": {
+      "sourceFile": "scripts/withdraw_from_public_sale_collection_random.ral",
+      "sourceCodeHash": "f10884867e350ba20332119d7ec1fa319f7837f032cd24c4a3cda7e2e6478ecb",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

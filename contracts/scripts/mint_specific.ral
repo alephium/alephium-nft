@@ -1,0 +1,12 @@
+TxScript MintSpecific(
+    index: U256,
+    mintPrice: U256,
+    nftCollectionId: ByteVec,
+    royalty: Bool
+) {
+    if (royalty) {
+        NFTPublicSaleCollectionRandomWithRoyalty(nftCollectionId).mint{callerAddress!() -> ALPH: 1 alph + mintPrice}(index)
+    } else {
+        NFTPublicSaleCollectionRandom(nftCollectionId).mint{callerAddress!() -> ALPH: 1 alph + mintPrice}(index)
+    }
+}

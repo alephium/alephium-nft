@@ -16,17 +16,18 @@ import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral
 import { default as CreateOpenCollectionScriptJson } from "../scripts/CreateOpenCollection.ral.json";
 import { default as CreateOpenCollectionWithRoyaltyScriptJson } from "../scripts/CreateOpenCollectionWithRoyalty.ral.json";
 import { default as CreatePublicSaleCollectionSequentialScriptJson } from "../scripts/CreatePublicSaleCollectionSequential.ral.json";
+import { default as CreatePublicSaleCollectionSequentialWithRoyaltyScriptJson } from "../scripts/CreatePublicSaleCollectionSequentialWithRoyalty.ral.json";
 import { default as ListNFTScriptJson } from "../scripts/ListNFT.ral.json";
 import { default as MintBatchSequentialScriptJson } from "../scripts/MintBatchSequential.ral.json";
 import { default as MintNextSequentialScriptJson } from "../scripts/MintNextSequential.ral.json";
 import { default as MintOpenNFTScriptJson } from "../scripts/MintOpenNFT.ral.json";
-import { default as MintSpecificPublicSaleNFTScriptJson } from "../scripts/MintSpecificPublicSaleNFT.ral.json";
+import { default as MintSpecificScriptJson } from "../scripts/MintSpecific.ral.json";
 import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.json";
 import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComissionRate.ral.json";
 import { default as UpdateListingFeeScriptJson } from "../scripts/UpdateListingFee.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
 import { default as WithdrawFromMarketPlaceScriptJson } from "../scripts/WithdrawFromMarketPlace.ral.json";
-import { default as WithdrawFromPublicSaleCollectionScriptJson } from "../scripts/WithdrawFromPublicSaleCollection.ral.json";
+import { default as WithdrawFromPublicSaleCollectionRandomScriptJson } from "../scripts/WithdrawFromPublicSaleCollectionRandom.ral.json";
 
 export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
@@ -63,6 +64,21 @@ export const CreatePublicSaleCollectionSequential = new ExecutableScript<{
   maxBatchMintSize: bigint;
   totalSupply: bigint;
 }>(Script.fromJson(CreatePublicSaleCollectionSequentialScriptJson));
+export const CreatePublicSaleCollectionSequentialWithRoyalty =
+  new ExecutableScript<{
+    publicSaleCollectionTemplateId: HexString;
+    nftTemplateId: HexString;
+    collectionUri: HexString;
+    nftBaseUri: HexString;
+    collectionOwner: Address;
+    maxSupply: bigint;
+    mintPrice: bigint;
+    maxBatchMintSize: bigint;
+    royaltyRate: bigint;
+    totalSupply: bigint;
+  }>(
+    Script.fromJson(CreatePublicSaleCollectionSequentialWithRoyaltyScriptJson)
+  );
 export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
   price: bigint;
@@ -83,11 +99,12 @@ export const MintOpenNFT = new ExecutableScript<{
   uri: HexString;
   royalty: boolean;
 }>(Script.fromJson(MintOpenNFTScriptJson));
-export const MintSpecificPublicSaleNFT = new ExecutableScript<{
+export const MintSpecific = new ExecutableScript<{
   index: bigint;
   mintPrice: bigint;
-  nftCollection: HexString;
-}>(Script.fromJson(MintSpecificPublicSaleNFTScriptJson));
+  nftCollectionId: HexString;
+  royalty: boolean;
+}>(Script.fromJson(MintSpecificScriptJson));
 export const UpdateAdmin = new ExecutableScript<{
   newAdmin: Address;
   nftMarketplace: HexString;
@@ -110,8 +127,9 @@ export const WithdrawFromMarketPlace = new ExecutableScript<{
   amount: bigint;
   nftMarketplace: HexString;
 }>(Script.fromJson(WithdrawFromMarketPlaceScriptJson));
-export const WithdrawFromPublicSaleCollection = new ExecutableScript<{
+export const WithdrawFromPublicSaleCollectionRandom = new ExecutableScript<{
   to: Address;
   amount: bigint;
-  nftCollection: HexString;
-}>(Script.fromJson(WithdrawFromPublicSaleCollectionScriptJson));
+  nftCollectionId: HexString;
+  royalty: boolean;
+}>(Script.fromJson(WithdrawFromPublicSaleCollectionRandomScriptJson));

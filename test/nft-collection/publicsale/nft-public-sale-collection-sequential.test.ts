@@ -61,9 +61,9 @@ async function testNFTMinting(
   // Can't mint NFT any more
   await expect(mintAndVerify(nftCollection, nftCollectionInstance, mintPrice, 1n)).rejects.toThrow(Error)
   // Withdraw too much
-  await expect(checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10.1e18))).rejects.toThrow(Error)
+  await expect(checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10.1e18), false)).rejects.toThrow(Error)
   // Successful Withdraw
-  await checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10e18))
+  await checkWithdraw(nftCollection, nftCollectionInstance.contractId, signerAddress, BigInt(10e18), false)
 }
 
 async function mintAndVerify(
