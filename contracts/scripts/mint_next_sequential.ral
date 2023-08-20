@@ -1,3 +1,11 @@
-TxScript MintNextSequential(nftCollection: NFTPublicSaleCollectionSequential, mintPrice: U256) {
-  nftCollection.mint{callerAddress!() -> ALPH: 1 alph + mintPrice}()
+TxScript MintNextSequential(
+    nftCollectionId: ByteVec,
+    mintPrice: U256,
+    royalty: Bool
+) {
+    if (royalty) {
+        NFTPublicSaleCollectionSequentialWithRoyalty(nftCollectionId).mint{callerAddress!() -> ALPH: 1 alph + mintPrice}()
+    } else {
+        NFTPublicSaleCollectionSequential(nftCollectionId).mint{callerAddress!() -> ALPH: 1 alph + mintPrice}()
+    }
 }

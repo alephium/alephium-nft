@@ -1,9 +1,24 @@
-import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress, addressFromTokenId, ONE_ALPH, SignerProvider } from '@alephium/web3'
+import {
+  web3,
+  subContractId,
+  addressFromContractId,
+  encodeU256,
+  binToHex,
+  groupOfAddress,
+  addressFromTokenId,
+  ONE_ALPH,
+  SignerProvider
+} from '@alephium/web3'
 import { getSigners } from '@alephium/web3-test'
 import * as utils from '../../../shared'
 import { checkEvent, checkWithdraw, getNFTCollection, getNFTUri } from '../utils'
 import { NFTCollectionHelper } from '../../../shared/nft-collection'
-import { NFTInstance, NFTPublicSaleCollectionRandom, NFTPublicSaleCollectionRandomInstance, NFTPublicSaleCollectionRandomWithRoyaltyInstance } from '../../../artifacts/ts'
+import {
+  NFTInstance,
+  NFTPublicSaleCollectionRandom,
+  NFTPublicSaleCollectionRandomInstance,
+  NFTPublicSaleCollectionRandomWithRoyaltyInstance
+} from '../../../artifacts/ts'
 
 describe('nft public sale collection - random', function() {
   const nodeUrl = 'http://127.0.0.1:22973'

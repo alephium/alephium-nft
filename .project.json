@@ -81,14 +81,14 @@
     },
     "MintBatchSequential": {
       "sourceFile": "scripts/mint_batch_sequential.ral",
-      "sourceCodeHash": "d300bfa5b990134d624406de8320d5db6a31f98db78a992fe13e042500ca0338",
+      "sourceCodeHash": "c8f2041c63ac683e5c6ae85d95a1753c6ec3b57cd193eb8e7614ac8d4ba70c86",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []
     },
     "MintNextSequential": {
       "sourceFile": "scripts/mint_next_sequential.ral",
-      "sourceCodeHash": "26f8c7f67df347d4fa6285234bb8d9fbb29f42303b8601c36c1fabb9d553e582",
+      "sourceCodeHash": "74f54a1fea71452583d897d4d354ea07c282bf4f7cdcd445b7facbd3d3b7b761",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

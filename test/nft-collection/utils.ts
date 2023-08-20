@@ -6,7 +6,6 @@ export function getNFTUri(tokenIndex: bigint): string {
   return `${nftBaseUri}${tokenIndex}`
 }
 
-
 export async function checkWithdraw(
   nftCollection: NFTCollectionHelper,
   collectionId: string,

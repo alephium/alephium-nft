@@ -202,7 +202,7 @@ export class NFTCollectionHelper extends DeployHelpers {
     const ownerAddress = (await signer.getSelectedAccount()).address
     const result = await CreatePublicSaleCollectionSequentialWithRoyalty.execute(signer, {
       initialFields: {
-        publicSaleCollectionTemplateId: config.publicSaleCollectionTemplateId,
+        publicSaleCollectionTemplateId: config.publicSaleCollectionWithRoyaltyTemplateId,
         nftTemplateId: config.nftTemplateId,
         collectionUri: stringToHex(collectionUri),
         nftBaseUri: stringToHex(baseUri),
@@ -227,15 +227,17 @@ export class NFTCollectionHelper extends DeployHelpers {
     batchSize: bigint,
     mintPrice: bigint,
     nftCollectionContractId: string,
+    royalty: boolean,
     signer: SignerProvider = this.signer
   ) {
     return await MintBatchSequential.execute(
       signer,
       {
         initialFields: {
-          nftCollection: nftCollectionContractId,
+          nftCollectionId: nftCollectionContractId,
           batchSize: batchSize,
-          mintPrice: mintPrice
+          mintPrice: mintPrice,
+          royalty
         },
         attoAlphAmount: batchSize * (ONE_ALPH + mintPrice) + (batchSize + 1n) * DUST_AMOUNT
       }
@@ -245,14 +247,16 @@ export class NFTCollectionHelper extends DeployHelpers {
   async mintNextSequential(
     mintPrice: bigint,
     nftCollectionContractId: string,
+    royalty: boolean,
     signer: SignerProvider = this.signer
   ) {
     return await MintNextSequential.execute(
       signer,
       {
         initialFields: {
-          nftCollection: nftCollectionContractId,
-          mintPrice: mintPrice
+          nftCollectionId: nftCollectionContractId,
+          mintPrice: mintPrice,
+          royalty
         },
         attoAlphAmount: ONE_ALPH + mintPrice + DUST_AMOUNT * 2n
       }

@@ -86,13 +86,15 @@ export const ListNFT = new ExecutableScript<{
   royalty: boolean;
 }>(Script.fromJson(ListNFTScriptJson));
 export const MintBatchSequential = new ExecutableScript<{
-  nftCollection: HexString;
+  nftCollectionId: HexString;
   batchSize: bigint;
   mintPrice: bigint;
+  royalty: boolean;
 }>(Script.fromJson(MintBatchSequentialScriptJson));
 export const MintNextSequential = new ExecutableScript<{
-  nftCollection: HexString;
+  nftCollectionId: HexString;
   mintPrice: bigint;
+  royalty: boolean;
 }>(Script.fromJson(MintNextSequentialScriptJson));
 export const MintOpenNFT = new ExecutableScript<{
   nftCollectionId: HexString;
