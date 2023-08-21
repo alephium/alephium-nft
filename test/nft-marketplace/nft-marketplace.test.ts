@@ -21,13 +21,27 @@ describe('nft marketplace', function() {
   web3.setCurrentNodeProvider(nodeUrl)
   const provider = web3.getCurrentNodeProvider()
 
-  test('Test NFT marketplace', async () => {
+  test('Test NFT marketplace for open collections', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftCollection = new NFTCollectionHelper(signer1)
-    const tokenId1 = await createOpenNFT(nftCollection, false)
+    // Without Royalty
+    const tokenId1 = await createNFTOpenCollection(nftCollection, false)
     await testMarketplace(tokenId1, signer1, signer2, provider)
 
-    const tokenId2 = await createOpenNFT(nftCollection, true)
+    // With Royalty
+    const tokenId2 = await createNFTOpenCollection(nftCollection, true)
+    await testMarketplace(tokenId2, signer1, signer2, provider)
+  }, 300000)
+
+  test('Test NFT marketplace for public sales random collections', async () => {
+    const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
+    const nftCollection = new NFTCollectionHelper(signer1)
+    // Without Royalty
+    const tokenId1 = await createNFTPublicSaleCollectionRandom(nftCollection, false)
+    await testMarketplace(tokenId1, signer1, signer2, provider)
+
+    // With Royalty
+    const tokenId2 = await createNFTPublicSaleCollectionRandom(nftCollection, true)
     await testMarketplace(tokenId2, signer1, signer2, provider)
   }, 300000)
 
@@ -97,7 +111,7 @@ async function testMarketplace(
   await withdrawAndVerify(nftMarketplace, signer2.address, NFTMarketplace.defaultListingFee)
 }
 
-async function createOpenNFT(
+async function createNFTOpenCollection(
   nftCollection: NFTCollectionHelper,
   royalty: boolean
 ): Promise<string> {
@@ -116,6 +130,43 @@ async function createOpenNFT(
     nftCollectionContractId,
     nftUri,
     royalty
+  )
+
+  return nftContractId
+}
+
+async function createNFTPublicSaleCollectionRandom(
+  nftCollection: NFTCollectionHelper,
+  royalty: boolean
+): Promise<string> {
+  const maxSupply = 100n
+  const mintPrice = 3n
+  let nftCollectionContractId: string
+  if (royalty) {
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.random.createWithRoyalty(
+      maxSupply,
+      mintPrice,
+      "https://crypto-punk-uri",
+      "https://cryptopunks.app/cryptopunks/details/",
+      royaltyRate
+    )
+    nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
+  } else {
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.random.create(
+      maxSupply,
+      mintPrice,
+      "https://crypto-punk-uri",
+      "https://cryptopunks.app/cryptopunks/details/"
+    )
+    nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
+  }
+
+  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
+  await nftCollection.publicSaleCollection.random.mint(
+    0n,
+    mintPrice,
+    nftCollectionContractId,
+    royalty,
   )
 
   return nftContractId
