@@ -13,7 +13,9 @@ import {
   NFTPublicSaleCollectionSequentialInstance,
   NFTPublicSaleCollectionSequentialWithRoyalty,
   NFTPublicSaleCollectionSequentialWithRoyaltyInstance,
-  NFTPublicSaleCollectionSequentialTypes
+  NFTPublicSaleCollectionSequentialTypes,
+  NFTOpenCollectionWithRoyaltyTypes,
+  NFTPublicSaleCollectionSequentialWithRoyaltyTypes
 } from '../artifacts/ts'
 import {
   CreateOpenCollection,
@@ -74,7 +76,9 @@ export interface NFTCollectionBase {
   description: string
   owner: string
   totalSupply: bigint
-  image: string
+  image: string,
+  royaltyRate?: bigint,
+  balance?: string,
   nfts: NFT[]
 }
 
@@ -88,6 +92,8 @@ export interface NFTPublicSaleCollection extends NFTCollectionBase {
   mintPrice: bigint
   maxBatchMintSize: number
   nftBaseUri: string
+  royaltyRate?: bigint
+  balance?: string
 }
 
 export type NFTOpenCollectionMetadata = Omit<NFTOpenCollection, 'nfts'>
@@ -213,6 +219,22 @@ export async function fetchNFTCollectionMetadata(
       owner: contractState.fields.collectionOwner,
       image: metadata.image
     }
+  } else if (state.codeHash === NFTOpenCollectionWithRoyalty.contract.codeHash) {
+    const contractState = NFTOpenCollectionWithRoyalty.contract.fromApiContractState(state) as NFTOpenCollectionWithRoyaltyTypes.State
+    const metadataUri = hexToString(contractState.fields.collectionUri)
+    const metadata = (await axios.get(metadataUri)).data
+    const contractBalance = await nodeProvider.addresses.getAddressesAddressBalance(collectionAddress)
+    return {
+      id: collectionId,
+      collectionType: 'NFTOpenCollection',
+      name: metadata.name,
+      description: metadata.description,
+      totalSupply: contractState.fields.totalSupply,
+      owner: contractState.fields.collectionOwner,
+      royaltyRate: contractState.fields.royaltyRate,
+      image: metadata.image,
+      balance: contractBalance.balanceHint
+    }
   } else if (state.codeHash === NFTPublicSaleCollectionSequential.contract.codeHash) {
     const contractState = NFTPublicSaleCollectionSequential.contract.fromApiContractState(state) as NFTPublicSaleCollectionSequentialTypes.State
     const metadataUri = hexToString(contractState.fields.collectionUri)
@@ -229,6 +251,26 @@ export async function fetchNFTCollectionMetadata(
       mintPrice: contractState.fields.mintPrice,
       maxBatchMintSize: Number(contractState.fields.maxBatchMintSize),
       nftBaseUri: contractState.fields.nftBaseUri
+    }
+  } else if (state.codeHash === NFTPublicSaleCollectionSequentialWithRoyalty.contract.codeHash) {
+    const contractState = NFTPublicSaleCollectionSequentialWithRoyalty.contract.fromApiContractState(state) as NFTPublicSaleCollectionSequentialWithRoyaltyTypes.State
+    const metadataUri = hexToString(contractState.fields.collectionUri)
+    const metadata = (await axios.get(metadataUri)).data
+    const contractBalance = await nodeProvider.addresses.getAddressesAddressBalance(collectionAddress)
+    return {
+      id: collectionId,
+      collectionType: 'NFTPublicSaleCollection',
+      name: metadata.name,
+      description: metadata.description,
+      totalSupply: contractState.fields.totalSupply,
+      owner: contractState.fields.collectionOwner,
+      image: metadata.image,
+      maxSupply: contractState.fields.maxSupply,
+      mintPrice: contractState.fields.mintPrice,
+      maxBatchMintSize: Number(contractState.fields.maxBatchMintSize),
+      nftBaseUri: contractState.fields.nftBaseUri,
+      royaltyRate: contractState.fields.royaltyRate,
+      balance: contractBalance.balanceHint
     }
   }
 }

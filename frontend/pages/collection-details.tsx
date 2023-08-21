@@ -43,7 +43,8 @@ const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCo
       if (wallet?.signer?.nodeProvider && wallet.account && collectionMetadata) {
         const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsMinting(true)
-        const result = await nftCollection.publicSaleCollection.sequential.batchMint(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id, false)
+        const royalty = !!collectionMetadata.royaltyRate
+        const result = await nftCollection.publicSaleCollection.sequential.batchMint(BigInt(batchSize), collectionMetadata.mintPrice!, collectionMetadata.id, royalty)
         await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
         setIsMinting(false)
         router.push('/my-nfts')
@@ -210,6 +211,17 @@ export default function CollectionDetails() {
                     </p>
                   </div>
                 </div>
+
+                {collectionMetadata.royaltyRate && (
+                  <div className="flex flex-row sm:flex-col mt-10">
+                    {
+                      <p className="font-poppins dark:text-white text-nft-black-1 font-medium mb-2">
+                        Royalty Fee: {Number(collectionMetadata.royaltyRate * 100n / 10000n).toString()}%, Total Balance: {collectionMetadata.balance}
+                      </p>
+                    }
+                  </div>
+                )}
+
                 <div className="mt-10 flex flex-wrap">
                   <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">
                     <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">

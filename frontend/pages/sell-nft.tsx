@@ -34,7 +34,9 @@ const SellNFT = () => {
     const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
     if (!!nftMarketplace && wallet?.signer.nodeProvider && priceInSets) {
       setIsSellingNFT(true)
-      const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
+      const interfaceId = await wallet.signer.nodeProvider.guessStdInterfaceId(nft.collectionId)
+      const royalty = interfaceId === '000201'
+      const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId, royalty)
       await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsSellingNFT(false)
 

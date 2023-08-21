@@ -434,7 +434,6 @@ async function withdrawAndVerify(
 async function supportRoyalty(tokenId: string, provider: NodeProvider) {
   const nftInstance = NFT.at(addressFromContractId(tokenId))
   const collectionId = (await nftInstance.methods.getCollectionId()).returns
-  console.log("collectionId", tokenId, collectionId, addressFromContractId(collectionId))
   const collectionIterfaceId = await provider.guessStdInterfaceId(collectionId)
   return collectionIterfaceId === '000201'
 }
