@@ -298,8 +298,8 @@ class OpenCollection extends DeployHelpers {
   async mint(
     nftCollectionContractId: string,
     nftUri: string,
+    royalty: boolean = false,
     signer: SignerProvider = this.signer,
-    royalty: boolean = false
   ) {
     return await MintOpenNFT.execute(
       signer,

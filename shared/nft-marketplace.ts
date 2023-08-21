@@ -16,6 +16,7 @@ import { randomContractAddress, randomContractId } from '.'
 export class NFTMarketplace extends DeployHelpers {
   static defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
   static defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
+  public contractId: string | undefined
 
   async create(
     signer: SignerProvider = this.signer
@@ -49,6 +50,7 @@ export class NFTMarketplace extends DeployHelpers {
       }
     )
 
+    this.contractId = nftMarketplaceDeployResult.contractInstance.contractId
     return nftMarketplaceDeployResult
   }
 
