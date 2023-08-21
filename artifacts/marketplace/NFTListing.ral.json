@@ -1,8 +1,8 @@
 {
   "version": "v2.5.0",
   "name": "NFTListing",
-  "bytecode": "070909121b4024402d40744083409340b0010000000102ce0102010000000102a00002010000000102ce0302010000000102ce0402010000000102ce050201010104004028b3ce02410c7bce02170100081702a000ce03ce041602100d16010109170316020c334c0816020d0c0c0dce00010101041600ce011603a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a10001000001010ece021700ce000c0dce000101a000ce05100d1600010a02",
-  "codeHash": "0c5f443584dfec6e8a8b81cd00510a55867b6e8ee18472534b466d56891f57a4",
+  "bytecode": "070b402a4043404c4055405e40674070408540b140c040d0010004050117160016012c1367102d17041600160416022a16032a330e7b160016042b16022b16032b0201000404010c16034c08160016020e0d16010103024a020c02010000000102ce0102010000000102a00002010000000102ce0302010000000102ce0402010000000102ce0502010000000109ce000c0dce000101a000ce05000102010101030017b3ce02410c7b00071701a000ce03ce041601000017021600ce011602a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a100",
+  "codeHash": "2456fae6208da884e1a556eb7d5c4c987ca5177876a06c289e53fa416123fc8d",
   "fieldsSig": {
     "names": [
       "tokenId",
@@ -34,6 +34,60 @@
   },
   "eventsSig": [],
   "functions": [
+    {
+      "name": "checkListingPriceAfterFee",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "priceIn",
+        "commissionRateIn",
+        "listingFeeIn",
+        "royaltyAmount"
+      ],
+      "paramTypes": [
+        "U256",
+        "U256",
+        "U256",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "getRoyaltyAmount",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "tokenIdIn",
+        "collectionId",
+        "priceIn",
+        "requiresRoyalty"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "ByteVec",
+        "U256",
+        "Bool"
+      ],
+      "paramIsMutable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "returnTypes": [
+        "U256"
+      ]
+    },
     {
       "name": "getTokenOwner",
       "usePreapprovedAssets": false,
@@ -95,6 +149,18 @@
       ]
     },
     {
+      "name": "royaltyAmount",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
       "name": "buy",
       "usePreapprovedAssets": true,
       "useAssetsInContract": true,
@@ -135,18 +201,6 @@
         false
       ],
       "returnTypes": []
-    },
-    {
-      "name": "getRoyaltyAmount",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "U256"
-      ]
     }
   ],
   "constants": [],
@@ -154,6 +208,13 @@
     {
       "name": "ErrorCodes",
       "fields": [
+        {
+          "name": "NFTPriceTooLow",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
         {
           "name": "MarketplaceAllowedOnly",
           "value": {

@@ -3,7 +3,7 @@ Contract NFTMarketPlace(
     mut admin: Address,
     mut listingFee: U256,
     mut commissionRate: U256   // basis point. e.g. 2.5% == 250 basis point
-) {
+) extends NFTMarketPlaceUtils() {
     event NFTListed(
       price: U256,
       tokenId: ByteVec,
@@ -47,7 +47,6 @@ Contract NFTMarketPlace(
     enum ErrorCodes {
         AdminAllowedOnly = 0
         TokenOwnerAllowedOnly = 1
-        NFTPriceTooLow = 2
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
@@ -61,10 +60,16 @@ Contract NFTMarketPlace(
         let price = nftListing.getPrice()
         let commissionRateOfListing = nftListing.getCommissionRate()
         let listingFeeOfListing = nftListing.getListingFee()
-        let royaltyAmount = nftListing.getRoyaltyAmount()
+        let royaltyAmount = nftListing.royaltyAmount()
         let priceAfterFee = checkListingPriceAfterFee(price, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
 
         nftListing.buy{buyer -> ALPH: priceAfterFee}(buyer)
+
+        if (royaltyAmount > 0) {
+            let collectionWithRoyalty = INFTCollectionWithRoyalty(NFT(tokenId).getCollectionId())
+            //Report: [API Error] - Execution error when estimating gas for tx script or contract: InvalidExternalMethodArgLength
+            collectionWithRoyalty.payRoyalty{buyer -> ALPH: royaltyAmount}(buyer, royaltyAmount)
+        }
 
         // Charge a commission for the marketplace
         if (commissionRate > 0) {
@@ -123,7 +128,7 @@ Contract NFTMarketPlace(
 
         let commissionRateOfListing = nftListing.getCommissionRate()
         let listingFeeOfListing = nftListing.getListingFee()
-        let royaltyAmount = nftListing.getRoyaltyAmount()
+        let royaltyAmount = nftListing.royaltyAmount()
 
         checkListingPriceAfterFee(newPrice, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
         checkCaller!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
@@ -166,30 +171,5 @@ Contract NFTMarketPlace(
     pub fn withdraw(to: Address, amount: U256) -> () {
         checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
         transferTokenFromSelf!(to, ALPH, amount)
-    }
-
-    pub fn checkListingPriceAfterFee(
-        price: U256,
-        commissionRateIn: U256,
-        listingFeeIn: U256,
-        royaltyAmount: U256
-    ) -> U256 {
-        let commission = (price * commissionRateIn) / 10000
-        assert!(price > commission + listingFeeIn + royaltyAmount, ErrorCodes.NFTPriceTooLow)
-        return price - commission - listingFeeIn - royaltyAmount
-    }
-
-    @using(checkExternalCaller = false)
-    pub fn getRoyaltyAmount(
-        tokenId: ByteVec,
-        collectionId: ByteVec,
-        price: U256,
-        requiresRoyalty: Bool
-    ) -> U256 {
-        if (requiresRoyalty) {
-            return INFTCollectionWithRoyalty(collectionId).royaltyAmount(tokenId, price)
-        } else {
-            return 0
-        }
     }
 }

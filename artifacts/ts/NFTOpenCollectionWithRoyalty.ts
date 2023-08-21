@@ -126,7 +126,7 @@ class Factory extends ContractFactory<
     payRoyalty: async (
       params: TestContractParams<
         NFTOpenCollectionWithRoyaltyTypes.Fields,
-        { amount: bigint }
+        { payer: Address; amount: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
@@ -155,7 +155,7 @@ export const NFTOpenCollectionWithRoyalty = new Factory(
   Contract.fromJson(
     NFTOpenCollectionWithRoyaltyContractJson,
     "",
-    "44b011881d3855e781a7bfc33fc66bf745a8df182eaa91600d6f3ec3275c92c7"
+    "3b4c08e7310992836fd02eef32c87357b566e73af9b48d66f2779fef01ef9f17"
   )
 );
 

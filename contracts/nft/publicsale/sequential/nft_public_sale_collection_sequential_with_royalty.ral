@@ -17,7 +17,8 @@ Contract NFTPublicSaleCollectionSequentialWithRoyalty(
         return salePrice * royaltyRate / 10000
     }
 
-    pub fn payRoyalty(amount: U256) -> () {
-        transferTokenToSelf!(callerAddress!(), ALPH, amount)
+    @using(assetsInContract = true, preapprovedAssets = true, checkExternalCaller = false)
+    pub fn payRoyalty(payer: Address, amount: U256) -> () {
+        transferTokenToSelf!(payer, ALPH, amount)
     }
 }

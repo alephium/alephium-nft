@@ -58,6 +58,7 @@ export class NFTMarketplace extends DeployHelpers {
     tokenId: string,
     price: Number256,
     marketPlaceContractId: string,
+    royalty: boolean = false,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
     return await ListNFT.execute(
@@ -67,7 +68,7 @@ export class NFTMarketplace extends DeployHelpers {
           tokenId: tokenId,
           price: BigInt(price),
           nftMarketplace: marketPlaceContractId,
-          royalty: false
+          royalty
         },
         attoAlphAmount: ONE_ALPH + DUST_AMOUNT,
         tokens: [

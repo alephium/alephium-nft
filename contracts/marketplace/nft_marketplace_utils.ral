@@ -1,0 +1,30 @@
+Abstract Contract NFTMarketPlaceUtils() {
+    enum ErrorCodes {
+        NFTPriceTooLow = 2
+    }
+
+    pub fn checkListingPriceAfterFee(
+        priceIn: U256,
+        commissionRateIn: U256,
+        listingFeeIn: U256,
+        royaltyAmount: U256
+    ) -> U256 {
+        let commission = (priceIn * commissionRateIn) / 10000
+        assert!(priceIn > commission + listingFeeIn + royaltyAmount, ErrorCodes.NFTPriceTooLow)
+        return priceIn - commission - listingFeeIn - royaltyAmount
+    }
+
+    @using(checkExternalCaller = false)
+    pub fn getRoyaltyAmount(
+        tokenIdIn: ByteVec,
+        collectionId: ByteVec,
+        priceIn: U256,
+        requiresRoyalty: Bool
+    ) -> U256 {
+        if (requiresRoyalty) {
+            return INFTCollectionWithRoyalty(collectionId).royaltyAmount(tokenIdIn, priceIn)
+        } else {
+            return 0
+        }
+    }
+}

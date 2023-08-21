@@ -1,7 +1,7 @@
 {
   "version": "v2.5.0",
   "name": "UpdateComissionRate",
-  "bytecodeTemplate": "01010300000005{0}0d0c{1}0106",
+  "bytecodeTemplate": "01010300000005{0}0d0c{1}0108",
   "fieldsSig": {
     "names": [
       "newCommissionRate",
