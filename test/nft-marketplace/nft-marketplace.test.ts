@@ -45,6 +45,18 @@ describe('nft marketplace', function() {
     await testMarketplace(tokenId2, signer1, signer2, provider)
   }, 300000)
 
+  test('Test NFT marketplace for public sales sequential collections', async () => {
+    const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
+    const nftCollection = new NFTCollectionHelper(signer1)
+    // Without Royalty
+    const tokenId1 = await createNFTPublicSaleCollectionSequential(nftCollection, false)
+    await testMarketplace(tokenId1, signer1, signer2, provider)
+
+    // With Royalty
+    const tokenId2 = await createNFTPublicSaleCollectionSequential(nftCollection, true)
+    await testMarketplace(tokenId2, signer1, signer2, provider)
+  }, 300000)
+
   test('Update metadata in the NFT marketplace', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftMarketplace = new NFTMarketplace(signer1)
@@ -164,6 +176,46 @@ async function createNFTPublicSaleCollectionRandom(
   const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
   await nftCollection.publicSaleCollection.random.mint(
     0n,
+    mintPrice,
+    nftCollectionContractId,
+    royalty,
+  )
+
+  return nftContractId
+}
+
+async function createNFTPublicSaleCollectionSequential(
+  nftCollection: NFTCollectionHelper,
+  royalty: boolean
+): Promise<string> {
+  const maxSupply = 100n
+  const mintPrice = 3n
+  const maxBatchMintSize = 3n
+  let nftCollectionContractId: string
+  if (royalty) {
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.sequential.createWithRoyalty(
+      maxSupply,
+      mintPrice,
+      "https://crypto-punk-uri",
+      "https://cryptopunks.app/cryptopunks/details/",
+      maxBatchMintSize,
+      royaltyRate
+    )
+    nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
+  } else {
+    const nftCollectionDeployTx = await nftCollection.publicSaleCollection.sequential.create(
+      maxSupply,
+      mintPrice,
+      "https://crypto-punk-uri",
+      "https://cryptopunks.app/cryptopunks/details/",
+      maxBatchMintSize
+    )
+    nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
+  }
+
+  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
+  await nftCollection.publicSaleCollection.sequential.batchMint(
+    1n,
     mintPrice,
     nftCollectionContractId,
     royalty,
