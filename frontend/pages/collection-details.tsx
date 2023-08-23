@@ -7,7 +7,7 @@ import images from '../assets';
 import { nftImageUrl, shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
 import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
-import { ExplorerProvider, NodeProvider, prettifyAttoAlphAmount } from '@alephium/web3';
+import { ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
 import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
@@ -54,10 +54,15 @@ const MintBatch = ({ collectionMetadata }: { collectionMetadata: NFTPublicSaleCo
     }
   }
 
+  function mintPrice(mintPrice: bigint, batchSize: number) {
+    return (mintPrice + ONE_ALPH) * BigInt(batchSize)
+  }
+
   return (
     <div className="flex flex-col">
       <div className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">Public Sale</div>
-      <div className="text-sm font-light mt-1">{prettifyAttoAlphAmount(collectionMetadata.mintPrice!)} ALPH</div>
+      <div className="text-sm font-light mt-1">Mint Price: {prettifyAttoAlphAmount(collectionMetadata.mintPrice!)} ALPH, with additional 1 ALPH as NFT contract deposit</div>
+      <div className="text-sm font-light mt-1">Total Price: {prettifyAttoAlphAmount(mintPrice(collectionMetadata.mintPrice!, batchSize))} ALPH</div>
       <div className="flex flex-row border-box ">
         <div className="flex items-center mt-2 h-10">
           <button

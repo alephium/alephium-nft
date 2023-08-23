@@ -4,7 +4,7 @@ import withTransition from '../components/withTransition';
 import { Button, Input, Loader } from '../components';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
-import { convertAlphAmountWithDecimals } from '@alephium/web3';
+import { convertAlphAmountWithDecimals, prettifyAttoAlphAmount } from '@alephium/web3';
 import { getAlephiumNFTConfig } from '../../shared/configs'
 import { useWallet } from '@alephium/web3-react';
 import { useNFT } from '../components/nft';
@@ -21,6 +21,7 @@ const SellNFT = () => {
   const { tokenId } = router.query;
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
+  const config = getAlephiumNFTConfig()
 
   function getNFTMarketplace(): NFTMarketplace | undefined {
     if (wallet?.signer) {
@@ -31,7 +32,7 @@ const SellNFT = () => {
   async function sell(nft: NFT, price: number) {
     const nftMarketplace = getNFTMarketplace()
     const priceInSets = convertAlphAmountWithDecimals(price)
-    const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
+    const marketplaceContractId = config.marketplaceContractId
     if (!!nftMarketplace && wallet?.signer.nodeProvider && priceInSets) {
       setIsSellingNFT(true)
       const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId)
@@ -65,6 +66,14 @@ const SellNFT = () => {
     );
   }
 
+  function commissionFee(price: number) {
+    return convertAlphAmountWithDecimals(price)! * BigInt(config.commissionRate) / 10000n
+  }
+
+  function profit(price: number) {
+    return convertAlphAmountWithDecimals(price)! - commissionFee(price) - config.listingFee
+  }
+
   return (
     <div className="flex justify-center sm:px-4 p-12">
       <div className="w-3/5 md:w-full">
@@ -75,6 +84,25 @@ const SellNFT = () => {
           placeholder="Asset Price"
           handleClick={(e) => setPrice(Number((e.target as HTMLInputElement).value))}
         />
+        <br />
+        {
+          price ? (
+            <table>
+              <tr>
+                <td>Listing Fee &nbsp;&nbsp;</td>
+                <td>{prettifyAttoAlphAmount(config.listingFee)} ALPH</td>
+              </tr>
+              <tr>
+                <td>Commission &nbsp;&nbsp;</td>
+                <td>{prettifyAttoAlphAmount(commissionFee(price))} ALPH</td>
+              </tr>
+              <tr>
+                <td>Profit &nbsp;&nbsp;</td>
+                <td>{prettifyAttoAlphAmount(convertAlphAmountWithDecimals(price)! - commissionFee(price) - config.listingFee)} ALPH</td>
+              </tr>
+            </table>
+          ) : null
+        }
         {isSellingNFT ? (
           <LoaderWithText text={`Sign and list NFT...`} />
         ) : (
@@ -83,7 +111,7 @@ const SellNFT = () => {
               btnName="List NFT"
               classStyles="rounded-xl"
               handleClick={() => sell(nft, price)}
-              disabled={!price || price <= 0}
+              disabled={!price || profit(price) <= 0}
             />
           </div>
         )}
