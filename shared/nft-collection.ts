@@ -40,6 +40,7 @@ import { getAlephiumNFTConfig } from './configs'
 import * as blake from 'blakejs'
 import axios from 'axios'
 import { NFT } from './nft'
+import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 
 export class NFTCollectionHelper extends DeployHelpers {
   async createOpenCollection(
@@ -284,8 +285,8 @@ async function fetchNonEnumerableNFTs(nodeProvider: NodeProvider, addresses: str
   }
   const promises = addresses.map((address, idx) => {
     const callResultIndex = idx * 2
-    const metadataUri = hexToString(callResult.results[callResultIndex].returns[0].value as string)
-    const collectionId = callResult.results[callResultIndex + 1].returns[0].value as string
+    const metadataUri = hexToString((callResult.results[callResultIndex] as CallContractSucceeded).returns[0].value as string)
+    const collectionId = (callResult.results[callResultIndex + 1] as CallContractSucceeded).returns[0].value as string
     return getNFT(address, metadataUri, collectionId)
   })
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
