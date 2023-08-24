@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import images from '../assets';
 import { withTransition, CreatorCard } from '../components';
-import { prettifyAttoAlphAmount } from '@alephium/web3';
 import { addressToCreatorImage, shortenAddress } from '../utils/address';
 import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import { useTheme } from 'next-themes';
 import axios from "axios"
 import { ListNFTListings } from '../components/NFTListing';
+import { formatAlphAmount } from '../utils';
 
 const Home = () => {
   const [hideButtons, setHideButtons] = useState(false);
@@ -63,6 +63,11 @@ const Home = () => {
     };
   });
 
+  const expandBigInt = (amount: string) => {
+    const expandedNumberStr = Number(amount).toLocaleString('fullwide', { useGrouping: false })
+    return BigInt(expandedNumberStr)
+  }
+
   return (
     <div className="flex justify-center p-12">
       <div className="w-full ml-32 mr-32 md:ml-20 md:mr-20 sm:ml-10 sm:mr-10">
@@ -80,7 +85,7 @@ const Home = () => {
                       rank={`${i + 1}`}
                       creatorImage={addressToCreatorImage(seller.address)}
                       creatorName={shortenAddress(seller.address)}
-                      creatorAlphs={prettifyAttoAlphAmount(seller.totalAmount) || ''}
+                      creatorAlphs={formatAlphAmount(expandBigInt(seller.totalAmount)) || ''}
                     />
                   ))}
                   {!hideButtons && (
