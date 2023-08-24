@@ -61,8 +61,8 @@ async function mintAndVerify(
   const { txId } = await nftCollection.openCollection.mint(
     nftOpenCollectionInstance.contractId,
     getNFTUri(tokenIndex),
-    nftCollection.signer,
-    royalty
+    royalty,
+    nftCollection.signer
   )
 
   // NFT just minted

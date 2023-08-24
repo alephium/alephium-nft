@@ -63,11 +63,10 @@ Contract NFTMarketPlace(
         let royaltyAmount = nftListing.royaltyAmount()
         let priceAfterFee = checkListingPriceAfterFee(price, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
 
-        nftListing.buy{buyer -> ALPH: priceAfterFee}(buyer)
+        nftListing.buy{buyer -> ALPH: priceAfterFee}(buyer, priceAfterFee)
 
         if (royaltyAmount > 0) {
             let collectionWithRoyalty = INFTCollectionWithRoyalty(NFT(tokenId).getCollectionId())
-            //Report: [API Error] - Execution error when estimating gas for tx script or contract: InvalidExternalMethodArgLength
             collectionWithRoyalty.payRoyalty{buyer -> ALPH: royaltyAmount}(buyer, royaltyAmount)
         }
 

@@ -38,10 +38,8 @@ Contract NFTListing(
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
-    pub fn buy(buyer: Address) -> () {
+    pub fn buy(buyer: Address, priceAfterFee: U256) -> () {
         checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
-        let royaltyAmount = royaltyAmount()
-        let priceAfterFee = checkListingPriceAfterFee(price, commissionRate, listingFee, royaltyAmount)
         transferToken!(buyer, tokenOwner, ALPH, priceAfterFee)
         transferTokenFromSelf!(buyer, tokenId, 1)
         destroySelf!(tokenOwner)

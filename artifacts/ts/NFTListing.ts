@@ -190,7 +190,10 @@ class Factory extends ContractFactory<
       return testMethod(this, "royaltyAmount", params);
     },
     buy: async (
-      params: TestContractParams<NFTListingTypes.Fields, { buyer: Address }>
+      params: TestContractParams<
+        NFTListingTypes.Fields,
+        { buyer: Address; priceAfterFee: bigint }
+      >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buy", params);
     },
@@ -215,7 +218,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "2456fae6208da884e1a556eb7d5c4c987ca5177876a06c289e53fa416123fc8d"
+    "f8382edeea992b281fef9e876efacefa0d1562ea5bca78508e5548fe5ba2de70"
   )
 );
 
