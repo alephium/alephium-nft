@@ -140,15 +140,6 @@ const AssetDetails = () => {
 
   const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === wallet?.account.address)
 
-  function getPriceBreakdowns(nftPrice: bigint) {
-    const commission = BigInt(nftPrice) * BigInt(200) / BigInt(10000)
-    const nftDeposit = ONE_ALPH
-    const gasAmount = BigInt(200000)
-    const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
-
-    return [commission, nftDeposit, gasAmount, totalAmount]
-  }
-
   const checkout = async () => {
     if (wallet?.signer.nodeProvider) {
       try {
@@ -156,10 +147,8 @@ const AssetDetails = () => {
         setIsBuyingNFT(true)
         if (nft.minted === true && nftListing) {
           const nftMarketplace = new NFTMarketplace(wallet.signer)
-          // TODO: Display the price breakdowns
-          const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
           result = await nftMarketplace.buyNFT(
-            totalAmount,
+            nftListing.price,
             nftListing._id,
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
@@ -256,6 +245,15 @@ const AssetDetails = () => {
             </p>
           </div>
         </div>
+
+        {
+          collectionMetadata?.royaltyRate ? (
+            <div className="mt-10 flex flex-col">
+              <div className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">Royalty {(collectionMetadata.royaltyRate * 100n / 10000n).toString()}%</div>
+            </div>
+          ) : null
+        }
+
         <div className="flex flex-row sm:flex-col mt-10">
           {
             (isOwner && nftListing) ? (
