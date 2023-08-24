@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.1",
   "name": "WithdrawFromPublicSaleCollectionRandom",
   "bytecodeTemplate": "0101030000000f{3}4c07{0}{1}0e0c{2}01084a06{0}{1}0e0c{2}0106",
   "fieldsSig": {

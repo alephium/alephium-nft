@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.1",
   "name": "CreatePublicSaleCollectionSequential",
   "bytecodeTemplate": "0101030002001c{7}130f320c7b{1}{2}{3}{4}{5}{6}{7}1406414c50480002130864{8}13016417011700b413c40de0b6b3a7640000a2{0}16001601af18",
   "fieldsSig": {
