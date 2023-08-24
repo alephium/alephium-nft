@@ -23,7 +23,7 @@ const royaltyRate = BigInt(200)
 async function testNFTMinting(royalty: boolean) {
   const [signer] = await getSigners(1)
   const nftCollection = await getNFTCollection(signer)
-  nftCollection.buildProject(false)
+  nftCollection.buildProject()
 
   let nftCollectionDeployTx = undefined
   if (royalty) {

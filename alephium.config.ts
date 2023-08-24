@@ -17,7 +17,7 @@ const configuration: Configuration<Settings> = {
   deploymentScriptDir: 'scripts',
   compilerOptions: {
     errorOnWarnings: true,
-    ignoreUnusedConstantsWarnings: true
+    ignoreUnusedConstantsWarnings: false
   },
 
   networks: {
