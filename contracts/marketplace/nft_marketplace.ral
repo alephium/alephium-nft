@@ -47,7 +47,7 @@ Contract NFTMarketPlace(
     enum ErrorCodes {
         AdminAllowedOnly = 0
         TokenOwnerAllowedOnly = 1
-        NFTPriceIsZero = 2
+        NFTPriceTooLow = 2
     }
 
     @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
@@ -57,37 +57,41 @@ Contract NFTMarketPlace(
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
         let buyer = callerAddress!()
-        let price = nftListing.getPrice()
         let tokenOwner = nftListing.getTokenOwner()
+        let price = nftListing.getPrice()
+        let commissionRateOfListing = nftListing.getCommissionRate()
+        let listingFeeOfListing = nftListing.getListingFee()
 
-        nftListing.buy{buyer -> ALPH: price}(buyer)
+        let priceAfterFee = checkListingPriceAfterFee(price, commissionRateOfListing, listingFeeOfListing)
+        nftListing.buy{buyer -> ALPH: priceAfterFee}(buyer)
 
         // Charge a commission for the marketplace
         if (commissionRate > 0) {
-            let commission = (price * commissionRate) / 10000
+            let commission = (price * commissionRateOfListing) / 10000
             transferToken!(buyer, selfAddress!(), ALPH, commission)
         }
+
+        // Charge the listing fee
+        transferTokenToSelf!(buyer, ALPH, listingFeeOfListing)
+
         emit NFTSold(price, tokenId, tokenOwner, buyer)
     }
 
-    @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
+    @using(preapprovedAssets = true, checkExternalCaller = false)
     pub fn listNFT(
         tokenId: ByteVec,
         price: U256
     ) -> (Address) {
-        assert!(price > 0, ErrorCodes.NFTPriceIsZero)
+        checkListingPriceAfterFee(price, commissionRate, listingFee)
 
         // Only owner can list the NFT
         let tokenOwner = callerAddress!()
 
-        let (encodeImmutableFields, encodeMutableFields) = NFTListing.encodeFields!(tokenId, tokenOwner, selfAddress!(), price)
+        let (encodeImmutableFields, encodeMutableFields) = NFTListing.encodeFields!(tokenId, tokenOwner, selfContractId!(), commissionRate, listingFee, price)
         // Create the listing contract
         let nftListingContractId = copyCreateSubContract!{tokenOwner -> ALPH: 1 alph, tokenId: 1}(
             tokenId, nftListingTemplateId, encodeImmutableFields, encodeMutableFields
         )
-
-        // Charge the listing fee
-        transferTokenToSelf!(tokenOwner, ALPH, listingFee)
 
         emit NFTListed(
             price,
@@ -114,6 +118,10 @@ Contract NFTMarketPlace(
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
 
+        let commissionRateOfListing = nftListing.getCommissionRate()
+        let listingFeeOfListing = nftListing.getListingFee()
+
+        checkListingPriceAfterFee(newPrice, commissionRateOfListing, listingFeeOfListing)
         checkCaller!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
 
         let price = nftListing.getPrice()
@@ -154,5 +162,12 @@ Contract NFTMarketPlace(
     pub fn withdraw(to: Address, amount: U256) -> () {
         checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
         transferTokenFromSelf!(to, ALPH, amount)
+    }
+
+    pub fn checkListingPriceAfterFee(price: U256, commissionRateIn: U256, listingFeeIn: U256) -> U256 {
+        let priceAfterCommission = price - (price * commissionRateIn) / 10000
+        assert!(priceAfterCommission > listingFeeIn, ErrorCodes.NFTPriceTooLow)
+
+        return priceAfterCommission - listingFeeIn
     }
 }

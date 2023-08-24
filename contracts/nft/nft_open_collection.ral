@@ -6,14 +6,17 @@ Contract NFTOpenCollection(
     collectionOwner: Address, // Only owner can mint
     mut totalSupply: U256
 ) extends NFTCollectionBase(collectionUri, totalSupply) {
+    event Mint(minter: Address, index: U256)
+
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
         checkCaller!(minter == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), nftUri, totalSupply)
+        let nftIndex = totalSupply
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), nftUri, nftIndex)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
-            toByteVec!(totalSupply),
+            toByteVec!(nftIndex),
             nftTemplateId,
             encodeImmutableFields,
             encodeMutableFields,
@@ -22,6 +25,8 @@ Contract NFTOpenCollection(
         )
 
         totalSupply = totalSupply + 1
+
+        emit Mint(minter, nftIndex)
         return contractId
     }
 }

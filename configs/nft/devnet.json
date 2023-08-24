@@ -1,9 +1,0 @@
-{
-  "groupIndex": 0,
-  "commissionRate": 200,
-  "listingFee": 10,
-  "marketplaceAdminAddress": "1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH",
-  "defaultNodeUrl": "http://127.0.0.1:22973",
-  "defaultExplorerUrl": "http://localhost:9090",
-  "mongodbUrl": "mongodb://localhost:27017/alephium-nft"
-}

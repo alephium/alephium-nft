@@ -1,9 +1,0 @@
-{
-  "groupIndex": 0,
-  "commissionRate": 200,
-  "listingFee": 1,
-  "marketplaceAdminAddress": "16VPvbF1ShQsj8TappJWtoW6gRM1AEQXYqwo5rQ7BiAy3",
-  "defaultNodeUrl": "https://wallet-v20.testnet.alephium.org",
-  "defaultExplorerUrl": "https://backend-v113.testnet.alephium.org",
-  "mongodbUrl": "MONGODB_URL_PLACEHOLDER"
-}

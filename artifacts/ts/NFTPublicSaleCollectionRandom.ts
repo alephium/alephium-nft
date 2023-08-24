@@ -9,7 +9,7 @@ import {
   TestContractResult,
   HexString,
   ContractFactory,
-  SubscribeOptions,
+  EventSubscribeOptions,
   EventSubscription,
   CallContractParams,
   CallContractResult,
@@ -40,6 +40,8 @@ export namespace NFTPublicSaleCollectionRandomTypes {
   };
 
   export type State = ContractState<Fields>;
+
+  export type MintEvent = ContractEvent<{ minter: Address; index: bigint }>;
 
   export interface CallMethodTable {
     getCollectionUri: {
@@ -93,6 +95,7 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionRandomInstance,
   NFTPublicSaleCollectionRandomTypes.Fields
 > {
+  eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
@@ -187,7 +190,7 @@ export const NFTPublicSaleCollectionRandom = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomContractJson,
     "",
-    "91c8ad7e2ce5e1ffae7c0f16f5f613876ab96e9795325d8a6f6f803c32bb9727"
+    "3895b997ff50f3c7fcbbcbdeceeebf48e0fd96a66f8343afa075aa771cae28d4"
   )
 );
 
@@ -199,6 +202,23 @@ export class NFTPublicSaleCollectionRandomInstance extends ContractInstance {
 
   async fetchState(): Promise<NFTPublicSaleCollectionRandomTypes.State> {
     return fetchContractState(NFTPublicSaleCollectionRandom, this);
+  }
+
+  async getContractEventsCurrentCount(): Promise<number> {
+    return getContractEventsCurrentCount(this.address);
+  }
+
+  subscribeMintEvent(
+    options: EventSubscribeOptions<NFTPublicSaleCollectionRandomTypes.MintEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      NFTPublicSaleCollectionRandom.contract,
+      this,
+      options,
+      "Mint",
+      fromCount
+    );
   }
 
   methods = {

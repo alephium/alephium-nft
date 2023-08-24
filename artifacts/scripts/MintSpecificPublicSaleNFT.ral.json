@@ -1,5 +1,5 @@
 {
-  "version": "v2.3.5",
+  "version": "v2.5.0",
   "name": "MintSpecificPublicSaleNFT",
   "bytecodeTemplate": "0101030000000bb413c40de0b6b3a7640000{1}2aa2{0}0d0d{2}010618",
   "fieldsSig": {

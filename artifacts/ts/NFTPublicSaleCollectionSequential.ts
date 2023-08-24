@@ -9,7 +9,7 @@ import {
   TestContractResult,
   HexString,
   ContractFactory,
-  SubscribeOptions,
+  EventSubscribeOptions,
   EventSubscription,
   CallContractParams,
   CallContractResult,
@@ -41,6 +41,12 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
   };
 
   export type State = ContractState<Fields>;
+
+  export type MintEvent = ContractEvent<{
+    minter: Address;
+    fromIndex: bigint;
+    mintSize: bigint;
+  }>;
 
   export interface CallMethodTable {
     getCollectionUri: {
@@ -90,6 +96,7 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialInstance,
   NFTPublicSaleCollectionSequentialTypes.Fields
 > {
+  eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
@@ -198,7 +205,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "38281e7c64a3595f6086618e9bb4a04da89143852eb2e646c03c5ace7ee9aa4d"
+    "0ad17171a21b266240713ad96da4baf6cd16adcc651343f4f353292728791618"
   )
 );
 
@@ -210,6 +217,23 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
 
   async fetchState(): Promise<NFTPublicSaleCollectionSequentialTypes.State> {
     return fetchContractState(NFTPublicSaleCollectionSequential, this);
+  }
+
+  async getContractEventsCurrentCount(): Promise<number> {
+    return getContractEventsCurrentCount(this.address);
+  }
+
+  subscribeMintEvent(
+    options: EventSubscribeOptions<NFTPublicSaleCollectionSequentialTypes.MintEvent>,
+    fromCount?: number
+  ): EventSubscription {
+    return subscribeContractEvent(
+      NFTPublicSaleCollectionSequential.contract,
+      this,
+      options,
+      "Mint",
+      fromCount
+    );
   }
 
   methods = {

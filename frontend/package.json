@@ -1,0 +1,53 @@
+{
+  "name": "alephium-nft-frontend",
+  "version": "0.4.52",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3020",
+    "build": "next build",
+    "start": "next start -p 3020",
+    "lint": "next lint",
+    "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.frontend . -t alephium-nft-frontend:$npm_package_version"
+  },
+  "dependencies": {
+    "@alephium/web3-react": "^0.18.1",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.0.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "daisyui": "^2.31.0",
+    "framer-motion": "^6.5.1",
+    "next": "12.1.6",
+    "next-api-validation": "^1.0.5",
+    "next-themes": "0.1.1",
+    "notistack": "^3.0.1",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "react-dropzone": "12.0.4",
+    "react-paginate": "^8.2.0",
+    "react-tabs": "^6.0.1",
+    "swr": "^1.3.0",
+    "ts-jest": "^28.0.2",
+    "ts-node": "^10.7.0",
+    "usehooks-ts": "^2.5.4",
+    "whatwg-url": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.40",
+    "@types/react": "18.0.12",
+    "@types/react-dom": "18.0.5",
+    "autoprefixer": "^10.4.7",
+    "eslint": "8.17.0",
+    "eslint-config-next": "12.1.6",
+    "jest": "^28.1.0",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.3",
+    "typescript": "4.7.3"
+  },
+  "engines": {
+    "npm": ">=8.0.0 <9.0.0",
+    "node": ">=16.0.0 <17.0.0"
+  }
+}
