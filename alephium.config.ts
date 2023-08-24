@@ -9,7 +9,7 @@ export type Settings = {
 export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: bigint } {
   return {
     commissionRate: 200,
-    listingFee: network === 'devnet' ? ONE_ALPH * 2n : network === 'testnet' ? ONE_ALPH : ONE_ALPH,
+    listingFee: network === 'devnet' ? ONE_ALPH : (ONE_ALPH / BigInt(10))
   }
 }
 

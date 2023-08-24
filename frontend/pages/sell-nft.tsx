@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { waitTxConfirmed } from '../../shared';
 import { NFT } from '../../shared/nft';
 import { nftImageUrl } from '../services/utils';
+import { useCollectionMetadata } from '../components/NFTCollection';
 
 const SellNFT = () => {
   const wallet = useWallet()
@@ -20,6 +21,7 @@ const SellNFT = () => {
   const router = useRouter();
   const { tokenId } = router.query;
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider)
+  const { collectionMetadata } = useCollectionMetadata(nft?.collectionId, wallet?.signer)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
   const config = getAlephiumNFTConfig()
 
@@ -60,7 +62,7 @@ const SellNFT = () => {
     );
   }
 
-  if (isNFTLoading || !nft) {
+  if (isNFTLoading || !nft || !collectionMetadata) {
     return (
       <div className="flexCenter" style={{ height: '51vh' }}>
         <Loader />
@@ -68,12 +70,17 @@ const SellNFT = () => {
     );
   }
 
-  function commissionFee(price: number) {
-    return convertAlphAmountWithDecimals(price)! * BigInt(config.commissionRate) / 10000n
+  function getRoyaltyAmount(price: bigint, royaltyRate: bigint) {
+    return price * royaltyRate / BigInt(10000)
+  }
+
+  function commissionFee(price: bigint) {
+    return price * BigInt(config.commissionRate) / 10000n
   }
 
   function profit(price: number) {
-    return convertAlphAmountWithDecimals(price)! - commissionFee(price) - config.listingFee
+    const priceInSets = convertAlphAmountWithDecimals(price)!
+    return priceInSets - commissionFee(priceInSets) - config.listingFee - getRoyaltyAmount(priceInSets, collectionMetadata?.royaltyRate ?? 0n)
   }
 
   return (
@@ -96,11 +103,19 @@ const SellNFT = () => {
               </tr>
               <tr>
                 <td>Commission &nbsp;&nbsp;</td>
-                <td>{prettifyAttoAlphAmount(commissionFee(price))} ALPH</td>
+                <td>{prettifyAttoAlphAmount(commissionFee(convertAlphAmountWithDecimals(price)!))} ALPH</td>
               </tr>
+              {
+                collectionMetadata?.royaltyRate ? (
+                  <tr>
+                    <td>Royalty &nbsp;&nbsp;</td>
+                    <td>{prettifyAttoAlphAmount(getRoyaltyAmount(convertAlphAmountWithDecimals(price)!, collectionMetadata.royaltyRate))} ALPH</td>
+                  </tr>
+                ) : null
+              }
               <tr>
                 <td>Profit &nbsp;&nbsp;</td>
-                <td>{prettifyAttoAlphAmount(convertAlphAmountWithDecimals(price)! - commissionFee(price) - config.listingFee)} ALPH</td>
+                <td>{prettifyAttoAlphAmount(profit(price))} ALPH</td>
               </tr>
             </table>
           ) : null
