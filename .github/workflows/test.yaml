@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: build images
         working-directory: .
-        run: ./build-docker-images.sh devnet
+        run: yarn && ./build-docker-images.sh devnet
       - name: start ALPH docker image
         working-directory: ./docker
         run: docker-compose up -d
