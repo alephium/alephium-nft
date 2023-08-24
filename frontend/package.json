@@ -1,6 +1,6 @@
 {
   "name": "alephium-nft-frontend",
-  "version": "0.4.31",
+  "version": "0.4.52",
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev -p 3020",
@@ -10,21 +10,15 @@
     "build-docker-image": "cd .. && docker build -f ./docker/Dockerfile.frontend . -t alephium-nft-frontend:$npm_package_version"
   },
   "dependencies": {
-    "@alephium/web3": "^0.14.6",
-    "@alephium/web3-react": "^0.14.6",
-    "@alephium/web3-wallet": "^0.14.6",
+    "@alephium/web3-react": "^0.18.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
-    "axios": "^0.27.2",
-    "better-sqlite3": "^7.6.2",
-    "bs58": "^5.0.0",
     "daisyui": "^2.31.0",
     "framer-motion": "^6.5.1",
-    "ipfs-http-client": "^60.0.1",
     "next": "12.1.6",
     "next-api-validation": "^1.0.5",
     "next-themes": "0.1.1",

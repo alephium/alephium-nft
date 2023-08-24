@@ -2,37 +2,37 @@ import Image from 'next/image';
 import withTransition from '../components/withTransition';
 import { ConnectToWalletBanner } from '../components/ConnectToWalletBanner';
 import { Loader, NFTCard, Banner } from '../components';
-import { addressToCreatorImage, shortenAddress } from '../utils';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { addressToCreatorImage, shortenAddress } from '../services/utils';
+import { useWallet } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import { fetchNFTsByAddress } from '../components/nft';
 import { NFT } from '../../shared/nft';
 
 const MyNFTs = () => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
 
   const [nfts, setNFTs] = useState<NFT[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
-      if (context.signerProvider
-        && context.signerProvider.nodeProvider
-        && context.signerProvider.explorerProvider
-        && context.account?.address
+      if (wallet?.signer
+        && wallet.signer.nodeProvider
+        && wallet.signer.explorerProvider
+        && wallet.account.address
       ) {
         setIsLoading(true)
         const nfts = await fetchNFTsByAddress(
-          context.signerProvider.nodeProvider,
-          context.account.address
+          wallet.signer.nodeProvider,
+          wallet.account.address
         )
         setNFTs(nfts)
         setIsLoading(false)
       }
     })()
-  }, [context.signerProvider, context.account]);
+  }, [wallet?.signer, wallet?.account]);
 
-  if (!context.account) {
+  if (!wallet) {
     return (
       <ConnectToWalletBanner />
     );
@@ -58,12 +58,12 @@ const MyNFTs = () => {
         <div className="flexCenter flex-col -mt-20 z-0">
           <div className="flexCenter w-40 h-40 sm:w-36 sm:h-36 p-1 dark:bg-nft-black-4 bg-white rounded-full">
             <Image
-              src={addressToCreatorImage(context.account.address)}
+              src={addressToCreatorImage(wallet.account.address)}
               className="rounded-full object-cover"
               objectFit="cover"
             />
           </div>
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(context.account.address)}</p>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(wallet.account.address)}</p>
         </div>
       </div>
 
@@ -77,7 +77,7 @@ const MyNFTs = () => {
             {nfts.map((nft) => (
               <NFTCard
                 key={nft.tokenId}
-                nft={{ tokenOwner: context.account?.address || '', ...nft }}
+                nft={{ tokenOwner: wallet.account.address || '', ...nft }}
               />
             ))}
           </div>

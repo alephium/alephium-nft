@@ -3,9 +3,6 @@ TxScript ListNFT(
     price: U256,
     nftMarketplace: NFTMarketPlace
 ) {
-    let listingFee = nftMarketplace.getListingFee()
     let minimalAlphInContract = 1 alph
-    let approveAmount = listingFee + minimalAlphInContract
-
-    nftMarketplace.listNFT{callerAddress!() -> ALPH: approveAmount, tokenId: 1}(tokenId, price)
+    nftMarketplace.listNFT{callerAddress!() -> ALPH: minimalAlphInContract, tokenId: 1}(tokenId, price)
 }

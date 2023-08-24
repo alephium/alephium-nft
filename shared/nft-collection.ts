@@ -33,23 +33,26 @@ import {
   encodeU256,
   isHexString,
   NodeProvider,
-  ExplorerProvider
+  ExplorerProvider,
+  SignerProvider
 } from '@alephium/web3'
-import { nftTemplateId, openCollectionTemplateId, publicSaleCollectionTemplateId } from '../configs/nft'
+import { getAlephiumNFTConfig } from './configs'
 import * as blake from 'blakejs'
 import axios from 'axios'
 import { NFT } from './nft'
+import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 
 export class NFTCollectionHelper extends DeployHelpers {
   async createOpenCollection(
-    collectionUri: string
+    collectionUri: string,
+    signer: SignerProvider = this.signer
   ): Promise<DeployContractResult<NFTOpenCollectionInstance>> {
-
-    const ownerAddress = (await this.signer.getSelectedAccount()).address
-    const result = await CreateOpenCollection.execute(this.signer, {
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
+    const result = await CreateOpenCollection.execute(signer, {
       initialFields: {
-        openCollectionTemplateId: openCollectionTemplateId,
-        nftTemplateId: nftTemplateId,
+        openCollectionTemplateId: config.openCollectionTemplateId,
+        nftTemplateId: config.nftTemplateId,
         collectionUri: stringToHex(collectionUri),
         collectionOwner: ownerAddress,
         totalSupply: 0n
@@ -68,14 +71,16 @@ export class NFTCollectionHelper extends DeployHelpers {
     maxSupply: bigint,
     mintPrice: bigint,
     collectionUri: string,
-    baseUri: string
+    baseUri: string,
+    signer: SignerProvider = this.signer
   ): Promise<DeployContractResult<NFTPublicSaleCollectionRandomInstance>> {
-    const ownerAddress = (await this.signer.getSelectedAccount()).address
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
     const nftCollectionDeployTx = await NFTPublicSaleCollectionRandom.deploy(
-      this.signer,
+      signer,
       {
         initialFields: {
-          nftTemplateId: nftTemplateId,
+          nftTemplateId: config.nftTemplateId,
           collectionUri: stringToHex(collectionUri),
           nftBaseUri: stringToHex(baseUri),
           collectionOwner: ownerAddress,
@@ -94,13 +99,15 @@ export class NFTCollectionHelper extends DeployHelpers {
     mintPrice: bigint,
     collectionUri: string,
     baseUri: string,
-    maxBatchMintSize: bigint
+    maxBatchMintSize: bigint,
+    signer: SignerProvider = this.signer
   ): Promise<DeployContractResult<NFTPublicSaleCollectionSequentialInstance>> {
-    const ownerAddress = (await this.signer.getSelectedAccount()).address
-    const result = await CreatePublicSaleCollectionSequential.execute(this.signer, {
+    const config = getAlephiumNFTConfig()
+    const ownerAddress = (await signer.getSelectedAccount()).address
+    const result = await CreatePublicSaleCollectionSequential.execute(signer, {
       initialFields: {
-        publicSaleCollectionTemplateId: publicSaleCollectionTemplateId,
-        nftTemplateId: nftTemplateId,
+        publicSaleCollectionTemplateId: config.publicSaleCollectionTemplateId,
+        nftTemplateId: config.nftTemplateId,
         collectionUri: stringToHex(collectionUri),
         nftBaseUri: stringToHex(baseUri),
         collectionOwner: ownerAddress,
@@ -122,10 +129,11 @@ export class NFTCollectionHelper extends DeployHelpers {
   async mintBatchSequential(
     batchSize: bigint,
     mintPrice: bigint,
-    nftCollectionContractId: string
+    nftCollectionContractId: string,
+    signer: SignerProvider = this.signer
   ) {
     return await MintBatchSequential.execute(
-      this.signer,
+      signer,
       {
         initialFields: {
           nftCollection: nftCollectionContractId,
@@ -137,9 +145,13 @@ export class NFTCollectionHelper extends DeployHelpers {
     )
   }
 
-  async mintNextSequential(mintPrice: bigint, nftCollectionContractId: string) {
+  async mintNextSequential(
+    mintPrice: bigint,
+    nftCollectionContractId: string,
+    signer: SignerProvider = this.signer
+  ) {
     return await MintNextSequential.execute(
-      this.signer,
+      signer,
       {
         initialFields: {
           nftCollection: nftCollectionContractId,
@@ -153,9 +165,10 @@ export class NFTCollectionHelper extends DeployHelpers {
   async mintOpenNFT(
     nftCollectionContractId: string,
     nftUri: string,
+    signer: SignerProvider = this.signer
   ) {
     return await MintOpenNFT.execute(
-      this.signer,
+      signer,
       {
         initialFields: {
           nftCollection: nftCollectionContractId,
@@ -170,9 +183,10 @@ export class NFTCollectionHelper extends DeployHelpers {
     index: bigint,
     mintPrice: bigint,
     nftCollectionContractId: string,
+    signer: SignerProvider = this.signer
   ) {
     return await MintSpecificPublicSaleNFT.execute(
-      this.signer,
+      signer,
       {
         initialFields: {
           index: index,
@@ -188,9 +202,10 @@ export class NFTCollectionHelper extends DeployHelpers {
     to: string,
     amount: bigint,
     nftCollectionId: string,
+    signer: SignerProvider = this.signer
   ) {
     return await WithdrawFromPublicSaleCollection.execute(
-      this.signer,
+      signer,
       {
         initialFields: {
           to: to,
@@ -270,8 +285,8 @@ async function fetchNonEnumerableNFTs(nodeProvider: NodeProvider, addresses: str
   }
   const promises = addresses.map((address, idx) => {
     const callResultIndex = idx * 2
-    const metadataUri = hexToString(callResult.results[callResultIndex].returns[0].value as string)
-    const collectionId = callResult.results[callResultIndex + 1].returns[0].value as string
+    const metadataUri = hexToString((callResult.results[callResultIndex] as CallContractSucceeded).returns[0].value as string)
+    const collectionId = (callResult.results[callResultIndex + 1] as CallContractSucceeded).returns[0].value as string
     return getNFT(address, metadataUri, collectionId)
   })
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
@@ -328,9 +343,9 @@ export async function fetchNFTByPage(
   const nfts = await fetchEnumerableNFTs(collectionMetadata, indexes, false)
   return nfts.map<NFT>((nft) => {
     if (nft.tokenIndex! < totalSupply) {
-      return {...nft, minted: true}
+      return { ...nft, minted: true }
     } else {
-      return {...nft, mintPrice: collectionMetadata.mintPrice }
+      return { ...nft, mintPrice: collectionMetadata.mintPrice }
     }
   })
 }

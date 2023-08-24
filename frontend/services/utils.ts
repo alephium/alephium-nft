@@ -15,3 +15,16 @@ export function addressToCreatorImage(address: string): StaticImageData {
 export const shortenName = (name: string) => (
   `${name.slice(0, 14)}...`
 )
+
+export function nftImageUrl(nft: { image: string }): string {
+  if (nft.image.startsWith('ipfs://')) {
+    return `https://ipfs.io/ipfs/${nft.image.slice(7)}`
+  }
+  return nft.image
+}
+
+export function showNFTDisplayName(nft: { name?: string, tokenIndex?: number }): string {
+  return nft.name ? (nft.name.length > 14 ?
+    shortenName(nft.name) : nft.name) :
+    (nft.tokenIndex ? nft.tokenIndex.toString() : '')
+}

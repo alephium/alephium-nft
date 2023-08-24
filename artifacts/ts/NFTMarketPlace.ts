@@ -9,7 +9,7 @@ import {
   TestContractResult,
   HexString,
   ContractFactory,
-  SubscribeOptions,
+  EventSubscribeOptions,
   EventSubscription,
   CallContractParams,
   CallContractResult,
@@ -81,6 +81,14 @@ export namespace NFTMarketPlaceTypes {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
+    checkListingPriceAfterFee: {
+      params: CallContractParams<{
+        price: bigint;
+        commissionRateIn: bigint;
+        listingFeeIn: bigint;
+      }>;
+      result: CallContractResult<bigint>;
+    };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
     CallMethodTable[T]["params"];
@@ -100,11 +108,20 @@ class Factory extends ContractFactory<
   NFTMarketPlaceInstance,
   NFTMarketPlaceTypes.Fields
 > {
+  eventIndex = {
+    NFTListed: 0,
+    NFTSold: 1,
+    NFTListingCancelled: 2,
+    NFTListingPriceUpdated: 3,
+    AdminUpdated: 4,
+    ListingFeeUpdated: 5,
+    CommissionRateUpdated: 6,
+  };
   consts = {
     ErrorCodes: {
       AdminAllowedOnly: BigInt(0),
       TokenOwnerAllowedOnly: BigInt(1),
-      NFTPriceIsZero: BigInt(2),
+      NFTPriceTooLow: BigInt(2),
     },
   };
 
@@ -185,6 +202,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "withdraw", params);
     },
+    checkListingPriceAfterFee: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { price: bigint; commissionRateIn: bigint; listingFeeIn: bigint }
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "checkListingPriceAfterFee", params);
+    },
   };
 }
 
@@ -193,7 +218,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "bfddeeaf71e7ca0e85d140792bf5318c5716813ca1f2e95c0b8584d1fcba22c8"
+    "1d9858f16b5f5cc1783b08e1bd2b78775ab2ae64340346db1aea940d873bd439"
   )
 );
 
@@ -212,7 +237,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeNFTListedEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.NFTListedEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.NFTListedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -225,7 +250,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeNFTSoldEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.NFTSoldEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.NFTSoldEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -238,7 +263,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeNFTListingCancelledEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.NFTListingCancelledEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.NFTListingCancelledEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -251,7 +276,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeNFTListingPriceUpdatedEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.NFTListingPriceUpdatedEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.NFTListingPriceUpdatedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -264,7 +289,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeAdminUpdatedEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.AdminUpdatedEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.AdminUpdatedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -277,7 +302,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeListingFeeUpdatedEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.ListingFeeUpdatedEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.ListingFeeUpdatedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -290,7 +315,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeCommissionRateUpdatedEvent(
-    options: SubscribeOptions<NFTMarketPlaceTypes.CommissionRateUpdatedEvent>,
+    options: EventSubscribeOptions<NFTMarketPlaceTypes.CommissionRateUpdatedEvent>,
     fromCount?: number
   ): EventSubscription {
     return subscribeContractEvent(
@@ -303,7 +328,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
   }
 
   subscribeAllEvents(
-    options: SubscribeOptions<
+    options: EventSubscribeOptions<
       | NFTMarketPlaceTypes.NFTListedEvent
       | NFTMarketPlaceTypes.NFTSoldEvent
       | NFTMarketPlaceTypes.NFTListingCancelledEvent
@@ -342,6 +367,19 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         this,
         "getListingFee",
         params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    checkListingPriceAfterFee: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"checkListingPriceAfterFee">
+    ): Promise<
+      NFTMarketPlaceTypes.CallMethodResult<"checkListingPriceAfterFee">
+    > => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "checkListingPriceAfterFee",
+        params,
         getContractByCodeHash
       );
     },

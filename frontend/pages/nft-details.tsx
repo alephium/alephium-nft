@@ -4,16 +4,15 @@ import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
 import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
-import { defaultNodeUrl, marketplaceContractId } from '../../configs/nft';
+import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
 import { fetchTokens } from '../components/token';
-import { addressToCreatorImage, shortenAddress } from '../utils';
-import { useAlephiumConnectContext } from '@alephium/web3-react';
+import { addressToCreatorImage, nftImageUrl, shortenAddress, showNFTDisplayName } from '../services/utils';
+import { useWallet } from '@alephium/web3-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { waitTxConfirmed } from '../../shared';
-import { shortenName } from '../utils';
 import { NFTCollectionHelper, NFTCollection, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
 import { fetchMintedNFT, NFT } from '../../shared/nft';
 
@@ -42,13 +41,13 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
     <div className="flexBetweenStart my-5">
       <div className="flex-1 flexStartCenter">
         <div className="relative w-28 h-28">
-          <Image src={nft.image} layout="fill" objectFit="cover" />
+          <Image src={nftImageUrl(nft)} layout="fill" objectFit="cover" />
         </div>
         {
           nft.tokenOwner && (
             <div className="flexCenterStart flex-col ml-5">
               <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">{shortenAddress(nft.tokenOwner)}</p>
-              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{nft.name}</p>
+              <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal">{showNFTDisplayName(nft)}</p>
             </div>
           )
         }
@@ -72,7 +71,7 @@ const PaymentBodyCmp = ({ nft }: PaymentBodyCmpProps) => (
 );
 
 const AssetDetails = () => {
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const [paymentModal, setPaymentModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
@@ -86,11 +85,11 @@ const AssetDetails = () => {
   const [collectionMetadata, setCollectionMetadata] = useState<Omit<NFTCollection, "nfts"> | undefined>(undefined);
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
+  const defaultNodeUrl = getAlephiumNFTConfig().defaultNodeUrl
 
   useEffect(() => {
-    const nodeProvider = context.signerProvider?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(defaultNodeUrl)
     web3.setCurrentNodeProvider(nodeProvider)
-
     // disable body scroll when navbar is open
     if (paymentModal || successModal) {
       document.body.style.overflow = 'hidden';
@@ -112,7 +111,7 @@ const AssetDetails = () => {
       })
 
       setIsTokensLoading(true)
-      fetchTokens(nodeProvider, context.account?.address).then((tokens) => {
+      fetchTokens(nodeProvider, wallet?.account.address).then((tokens) => {
         setTokenIds(tokens)
         setIsTokensLoading(false)
       })
@@ -133,13 +132,13 @@ const AssetDetails = () => {
       })
     }
 
-  }, [paymentModal, successModal, nft?.collectionId, context.account?.address, tokenId]);
+  }, [paymentModal, successModal, nft?.collectionId, wallet?.account.address, tokenId]);
 
   if (isNFTLoading || isTokensLoading || isNFTListingLoading || !nft || isBuyingNFT || isCancellingNFTListing) {
     return <Loader />;
   }
 
-  const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === context.account?.address)
+  const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === wallet?.account.address)
 
   function getPriceBreakdowns(nftPrice: bigint) {
     const commission = BigInt(nftPrice) * BigInt(200) / BigInt(10000)
@@ -151,12 +150,12 @@ const AssetDetails = () => {
   }
 
   const checkout = async () => {
-    if (context.signerProvider?.nodeProvider) {
+    if (wallet?.signer.nodeProvider) {
       try {
         let result
         setIsBuyingNFT(true)
         if (nft.minted === true && nftListing) {
-          const nftMarketplace = new NFTMarketplace(context.signerProvider)
+          const nftMarketplace = new NFTMarketplace(wallet.signer)
           // TODO: Display the price breakdowns
           const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
           result = await nftMarketplace.buyNFT(
@@ -165,14 +164,14 @@ const AssetDetails = () => {
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
-          const nftCollection = new NFTCollectionHelper(context.signerProvider)
+          const nftCollection = new NFTCollectionHelper(wallet.signer)
           result = await nftCollection.mintSpecificPublicSaleNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
         }
 
         setPaymentModal(false);
         setSuccessModal(true);
         if (result) {
-          await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+          await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
         }
         setIsBuyingNFT(false)
       } catch (e) {
@@ -185,19 +184,20 @@ const AssetDetails = () => {
   };
 
   const cancelListing = async () => {
-    if (nftListing && context.signerProvider?.nodeProvider) {
-      const nftMarketplace = new NFTMarketplace(context.signerProvider)
+    const marketplaceContractId = getAlephiumNFTConfig().marketplaceContractId
+    if (nftListing && wallet?.signer.nodeProvider) {
+      const nftMarketplace = new NFTMarketplace(wallet.signer)
       setIsCancellingNFTListing(true)
       const result = await nftMarketplace.cancelNFTListing(tokenId as string, marketplaceContractId)
-      await waitTxConfirmed(context.signerProvider.nodeProvider, result.txId)
+      await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsCancellingNFTListing(false)
       router.push('/my-nfts')
     } else {
       console.debug(
         "can not cancel NFT listing",
-        context.signerProvider?.nodeProvider,
-        context.signerProvider,
-        context.account,
+        wallet?.signer.nodeProvider,
+        wallet?.signer,
+        wallet?.account,
         nftListing
       )
     }
@@ -207,13 +207,13 @@ const AssetDetails = () => {
     <div className="relative flex justify-center md:flex-col min-h-screen">
       <div className="relative flex-1 flexTop sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
         <div className="relative sm:w-full sm:h-300 w-3/4 h-557 mx-auto">
-          <Image src={nft.image} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
+          <Image src={nftImageUrl(nft)} objectFit="cover" className="rounded-xl shadow-lg" layout="fill" />
         </div>
       </div>
 
       <div className="flex-1 justify-start sm:px-4 p-12 sm:pb-4">
         <div className="flex flex-row sm:flex-col">
-          <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{nft.name.length > 14 ? shortenName(nft.name) : nft.name}</h2>
+          <h2 className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl minlg:text-3xl">{showNFTDisplayName(nft)}</h2>
         </div>
         {
           nft.collectionId && collectionMetadata && (
@@ -276,7 +276,7 @@ const AssetDetails = () => {
             ) : null
           }
           {
-            (!isOwner && !!context.account && nftListing) ? (
+            (!isOwner && !!wallet?.account && nftListing) ? (
               <Button
                 btnName={`Buy for ${prettifyAttoAlphAmount(nftListing.price)} ALPH`}
                 classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
@@ -285,14 +285,14 @@ const AssetDetails = () => {
             ) : null
           }
           {
-            (context.account && nft.price && nft.minted === false) ? (
+            (wallet?.account && nft.price && nft.minted === false) ? (
               <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
                 Not minted yet
               </p>
             ) : null
           }
           {
-            (!context.account) ? (
+            (!wallet?.account) ? (
               <p className="font-poppins dark:text-white text-nft-black-1 font-normal text-base border border-gray p-2">
                 To transact, please connect to wallet
               </p>
@@ -343,10 +343,10 @@ const AssetDetails = () => {
           body={(
             <div className="flexCenter flex-col text-center" onClick={() => setSuccessModal(false)}>
               <div className="relative w-52 h-52">
-                <Image src={nft.image} objectFit="cover" layout="fill" />
+                <Image src={nftImageUrl(nft)} objectFit="cover" layout="fill" />
               </div>
               <p className="font-poppins dark:text-white text-nft-black-1 text-sm minlg:text-xl font-normal mt-10">
-                You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{nft.name}</span>.
+                You successfully {nft.minted ? "purchased" : "minted"} <span className="font-semibold">{showNFTDisplayName(nft)}</span>.
               </p>
             </div>
           )}

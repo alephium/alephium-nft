@@ -1,7 +1,7 @@
 import { useCallback, useState, useMemo } from 'react'
 import { NFTCollectionHelper } from '../../shared/nft-collection'
-import { ipfsClient } from '../../shared/ipfs'
-import { useAlephiumConnectContext } from '@alephium/web3-react'
+import { ipfsClient } from '../services/ipfs'
+import { useWallet } from '@alephium/web3-react'
 import { useRouter } from 'next/router'
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
@@ -16,14 +16,14 @@ import 'react-tabs/style/react-tabs.css';
 import { convertAlphAmountWithDecimals } from '@alephium/web3'
 import { useSnackbar } from 'notistack'
 import axios from 'axios'
-import { backendUrl } from '../../configs/nft'
+import { getBackendUrl } from '../../shared/configs'
 
 const MaximumBatchMintSize: bigint = 15n
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
   const [formInput, updateFormInput] = useState({ name: '', description: '', nftBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
-  const context = useAlephiumConnectContext()
+  const wallet = useWallet()
   const router = useRouter()
   const { theme } = useTheme();
   const [isCreatingCollection, setIsCreatingCollection] = useState<boolean>(false)
@@ -88,20 +88,22 @@ export default function CreateCollections() {
 
   async function createOpenCollection() {
     const collectionUri = await uploadToIPFS()
-    if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
-      const nftCollection = new NFTCollectionHelper(context.signerProvider)
+    const backendUrl = getBackendUrl()
+    if (collectionUri && wallet?.signer?.nodeProvider && wallet?.account) {
+      const nftCollection = new NFTCollectionHelper(wallet.signer)
       setIsCreatingCollection(true)
       const createCollectionTxResult = await nftCollection.createOpenCollection(collectionUri)
-      await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
+      await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
       const collectionId = createCollectionTxResult.contractInstance.contractId
       await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
       router.push(`/collection-details?collectionId=${collectionId}`)
     } else {
-      console.debug('context..', context)
+      console.debug('wallet..', wallet)
     }
   }
 
   async function createPublicSaleCollectionSequential() {
+    const backendUrl = getBackendUrl()
     try {
       const { nftBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid
@@ -121,16 +123,16 @@ export default function CreateCollections() {
         throw new Error(`Max batch mint size cannot be greater than ${MaximumBatchMintSize}`)
       }
       const collectionUri = await uploadToIPFS()
-      if (collectionUri && context.signerProvider?.nodeProvider && context.account) {
-        const nftCollection = new NFTCollectionHelper(context.signerProvider)
+      if (collectionUri && wallet?.signer?.nodeProvider && wallet.account) {
+        const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsCreatingCollection(true)
         const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
-        await waitTxConfirmed(context.signerProvider.nodeProvider, createCollectionTxResult.txId)
+        await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
         const collectionId = createCollectionTxResult.contractInstance.contractId
         await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
         router.push(`/collection-details?collectionId=${collectionId}`)
       } else {
-        console.debug('context..', context)
+        console.debug('wallet..', wallet)
       }
     } catch (error) {
       enqueueSnackbar(`${error}`, { variant: 'error', persist: false })
@@ -259,7 +261,7 @@ export default function CreateCollections() {
     )
   }
 
-  if (!context.account) {
+  if (!wallet) {
     return (
       <ConnectToWalletBanner />
     );
@@ -271,8 +273,8 @@ export default function CreateCollections() {
         <div className="w-3/5 md:w-full">
           <Tabs>
             <TabList>
-              <Tab>Open Collection</Tab>
-              <Tab>Pre-designed Collection</Tab>
+              <Tab>Create Your Collection</Tab>
+              <Tab>Launch Flow</Tab>
             </TabList>
             <TabPanel>
               {collectionImage()}

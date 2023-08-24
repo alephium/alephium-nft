@@ -1,42 +1,38 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NFTMarketPlaceInstance, NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
-import { marketplaceContractId } from '../../configs/nft'
-import { web3, hexToString, SignerProvider, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
+import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
 
 export async function fetchPreMintNFT(
   collectionId: string,
   tokenIndex: bigint,
-  mintPrice?: bigint
+  mintPrice?: bigint,
 ): Promise<NFT | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
   const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
-  if (!!nodeProvider) {
-    try {
-      const collectionAddress = addressFromContractId(collectionId)
-      const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
-      const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
-      if (mintPrice === undefined) {
-        mintPrice = (await collection.methods.getMintPrice()).returns
-      }
-      const metadata = (await axios.get(tokenUri)).data
-      return {
-        name: metadata.name,
-        description: metadata.description,
-        image: metadata.image,
-        tokenId: tokenId,
-        collectionId: collectionId,
-        listed: false,
-        minted: false,
-        price: mintPrice,
-        tokenIndex: Number(tokenIndex)
-      }
-    } catch (e) {
-      console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
-      return undefined
+  try {
+    const collectionAddress = addressFromContractId(collectionId)
+    const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
+    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
+    if (mintPrice === undefined) {
+      mintPrice = (await collection.methods.getMintPrice()).returns
     }
+    const metadata = (await axios.get(tokenUri)).data
+    return {
+      name: metadata.name,
+      description: metadata.description,
+      image: metadata.image,
+      tokenId: tokenId,
+      collectionId: collectionId,
+      listed: false,
+      minted: false,
+      price: mintPrice,
+      tokenIndex: Number(tokenIndex)
+    }
+  } catch (e) {
+    console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
+    return undefined
   }
 }
 
@@ -73,34 +69,6 @@ export async function fetchNFTsByAddress(nodeProvider: NodeProvider, address: st
   const isListed = (nftTokenId: string) => listedNFTs.find((nft) => nft.tokenId === nftTokenId) !== undefined
   const removeDuplicates = nftsFromUTXOs.filter((nft) => !isListed(nft.tokenId))
   return [...removeDuplicates, ...listedNFTs]
-}
-
-export const useCommissionRate = (
-  signerProvider?: SignerProvider
-) => {
-  const { data, error, ...rest } = useSWR(
-    signerProvider &&
-    signerProvider.nodeProvider &&
-    [
-      "commissionRate",
-    ],
-    async () => {
-      if (!signerProvider || !signerProvider.nodeProvider) {
-        return undefined;
-      }
-
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-
-      const marketplaceState = await new NFTMarketPlaceInstance(addressFromContractId(marketplaceContractId)).fetchState()
-      return marketplaceState.fields.commissionRate as bigint
-    },
-    {
-      refreshInterval: 60e3 /* 1 minute */,
-      suspense: true
-    },
-  )
-
-  return { commissionRate: data, isLoading: !data && !error, ...rest }
 }
 
 export const useNFT = (

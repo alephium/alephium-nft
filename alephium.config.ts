@@ -1,20 +1,15 @@
 import { Configuration } from '@alephium/cli'
-import devnetConfig from './configs/nft/devnet.json'
-import testnetConfig from './configs/nft/testnet.json'
-import mainnetConfig from './configs/nft/mainnet.json'
+import { ONE_ALPH } from '@alephium/web3'
 
 export type Settings = {
-  marketplaceAdminAddress: string
   commissionRate: number // basis point. e.g. 200: 2%
   listingFee: number
 }
 
-function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): Settings {
-  const config = network === 'devnet' ? devnetConfig : network === 'testnet' ? testnetConfig : mainnetConfig
+export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: bigint } {
   return {
-    marketplaceAdminAddress: config.marketplaceAdminAddress,
-    commissionRate: config.commissionRate,
-    listingFee: config.listingFee
+    commissionRate: 200,
+    listingFee: network === 'devnet' ? ONE_ALPH * 2n : network === 'testnet' ? ONE_ALPH : ONE_ALPH,
   }
 }
 

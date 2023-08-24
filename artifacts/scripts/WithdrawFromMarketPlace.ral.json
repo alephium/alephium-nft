@@ -1,5 +1,5 @@
 {
-  "version": "v2.3.5",
+  "version": "v2.5.0",
   "name": "WithdrawFromMarketPlace",
   "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0108",
   "fieldsSig": {
