@@ -57,7 +57,7 @@ services:
 
   explorer-backend:
     container_name: alephium_explorer_backend
-    image: alephium/explorer-backend:v1.13.4
+    image: alephium/explorer-backend:v1.15.1
     depends_on:
       postgres:
         condition: service_healthy
