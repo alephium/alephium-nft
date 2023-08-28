@@ -205,7 +205,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "5ee60118831827b115399ce7c58f067b08c17362f29ffd5d44d7ed80198d68b5"
+    "53ba8d897250f9e9e03ca71a10d5694d93a031e0a9df49ee8060d8654c8f89a3"
   )
 );
 

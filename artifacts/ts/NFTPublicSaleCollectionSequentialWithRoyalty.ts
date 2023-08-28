@@ -226,7 +226,7 @@ export const NFTPublicSaleCollectionSequentialWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialWithRoyaltyContractJson,
     "",
-    "9aa33812192edd3f903b92df13b6dc5115bd4ffcb848d38c6ed545b88b6a48b5"
+    "bac31fdd879d9dd9777fac2365fe8c07e99f71dadf746a5142fb069d154175a7"
   )
 );
 

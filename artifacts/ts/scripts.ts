@@ -32,6 +32,7 @@ import { default as WithdrawFromPublicSaleCollectionRandomScriptJson } from "../
 export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
   tokenId: HexString;
+  collectionId: HexString;
   nftMarketplace: HexString;
 }>(Script.fromJson(BuyNFTScriptJson));
 export const CancelListing = new ExecutableScript<{
@@ -81,6 +82,7 @@ export const CreatePublicSaleCollectionSequentialWithRoyalty =
   );
 export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
+  collectionId: HexString;
   price: bigint;
   nftMarketplace: HexString;
   royalty: boolean;
@@ -122,6 +124,7 @@ export const UpdateListingFee = new ExecutableScript<{
 export const UpdateNFTPrice = new ExecutableScript<{
   price: bigint;
   tokenId: HexString;
+  collectionId: HexString;
   nftMarketplace: HexString;
 }>(Script.fromJson(UpdateNFTPriceScriptJson));
 export const WithdrawFromMarketPlace = new ExecutableScript<{

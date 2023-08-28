@@ -226,7 +226,7 @@ export const NFTPublicSaleCollectionRandomWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomWithRoyaltyContractJson,
     "",
-    "50df8ca765d1002b77e3b419aca80bc666e6af46a4ccb4da0e0acab1c4903a93"
+    "107172e36644792403390480a2aad84b0addd2114e0a4de520910d174dd71021"
   )
 );
 

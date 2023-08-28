@@ -51,7 +51,8 @@ Contract NFTMarketPlace(
 
     @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
     pub fn buyNFT(
-        tokenId: ByteVec
+        tokenId: ByteVec,
+        collectionId: ByteVec  // Do not need this after parentId instr is introduced
     ) -> () {
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
@@ -60,13 +61,13 @@ Contract NFTMarketPlace(
         let price = nftListing.getPrice()
         let commissionRateOfListing = nftListing.getCommissionRate()
         let listingFeeOfListing = nftListing.getListingFee()
-        let royaltyAmount = nftListing.royaltyAmount()
-        let priceAfterFee = checkListingPriceAfterFee(price, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
+        let royaltyAmount = nftListing.royaltyAmount(collectionId)
+        let priceAfterFee = getPriceAfterFee(price, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
 
         nftListing.buy{buyer -> ALPH: priceAfterFee}(buyer, priceAfterFee)
 
         if (royaltyAmount > 0) {
-            let collectionWithRoyalty = INFTCollectionWithRoyalty(NFT(tokenId).getCollectionId())
+            let collectionWithRoyalty = INFTCollectionWithRoyalty(collectionId)
             collectionWithRoyalty.payRoyalty{buyer -> ALPH: royaltyAmount}(buyer, royaltyAmount)
         }
 
@@ -85,11 +86,12 @@ Contract NFTMarketPlace(
     @using(preapprovedAssets = true, checkExternalCaller = false)
     pub fn listNFT(
         tokenId: ByteVec,
+        collectionId: ByteVec,   // Do not need this after parentId instr is introduced
         price: U256,
         royalty: Bool
     ) -> (Address) {
-        let royaltyAmount = getRoyaltyAmount(tokenId, NFT(tokenId).getCollectionId(), price, royalty)
-        checkListingPriceAfterFee(price, commissionRate, listingFee, royaltyAmount)
+        let royaltyAmount = getRoyaltyAmount(tokenId, collectionId, price, royalty)
+        getPriceAfterFee(price, commissionRate, listingFee, royaltyAmount)
 
         // Only owner can list the NFT
         let tokenOwner = callerAddress!()
@@ -121,15 +123,19 @@ Contract NFTMarketPlace(
         emit NFTListingCancelled(tokenId, tokenOwner)
     }
 
-    pub fn updateNFTPrice(tokenId: ByteVec, newPrice: U256) -> () {
+    pub fn updateNFTPrice(
+        tokenId: ByteVec, 
+        collectionId: ByteVec, 
+        newPrice: U256
+    ) -> () {
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
 
         let commissionRateOfListing = nftListing.getCommissionRate()
         let listingFeeOfListing = nftListing.getListingFee()
-        let royaltyAmount = nftListing.royaltyAmount()
+        let royaltyAmount = nftListing.royaltyAmount(collectionId)
 
-        checkListingPriceAfterFee(newPrice, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
+        getPriceAfterFee(newPrice, commissionRateOfListing, listingFeeOfListing, royaltyAmount)
         checkCaller!(callerAddress!() == nftListing.getTokenOwner(), ErrorCodes.TokenOwnerAllowedOnly)
 
         let price = nftListing.getPrice()

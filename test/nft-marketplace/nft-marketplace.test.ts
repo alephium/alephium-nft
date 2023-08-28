@@ -25,36 +25,36 @@ describe('nft marketplace', function() {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftCollection = new NFTCollectionHelper(signer1)
     // Without Royalty
-    const tokenId1 = await createNFTOpenCollection(nftCollection, false)
-    await testMarketplace(tokenId1, signer1, signer2, provider)
+    const [tokenId1, collectionId1] = await createNFTOpenCollection(nftCollection, false)
+    await testMarketplace(tokenId1, collectionId1, signer1, signer2, provider)
 
     // With Royalty
-    const tokenId2 = await createNFTOpenCollection(nftCollection, true)
-    await testMarketplace(tokenId2, signer1, signer2, provider)
+    const [tokenId2, collectionId2] = await createNFTOpenCollection(nftCollection, true)
+    await testMarketplace(tokenId2, collectionId2, signer1, signer2, provider)
   }, 300000)
 
   test('Test NFT marketplace for public sales random collections', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftCollection = new NFTCollectionHelper(signer1)
     // Without Royalty
-    const tokenId1 = await createNFTPublicSaleCollectionRandom(nftCollection, false)
-    await testMarketplace(tokenId1, signer1, signer2, provider)
+    const [tokenId1, collectionId1] = await createNFTPublicSaleCollectionRandom(nftCollection, false)
+    await testMarketplace(tokenId1, collectionId1, signer1, signer2, provider)
 
     // With Royalty
-    const tokenId2 = await createNFTPublicSaleCollectionRandom(nftCollection, true)
-    await testMarketplace(tokenId2, signer1, signer2, provider)
+    const [tokenId2, collectionId2] = await createNFTPublicSaleCollectionRandom(nftCollection, true)
+    await testMarketplace(tokenId2, collectionId2, signer1, signer2, provider)
   }, 300000)
 
   test('Test NFT marketplace for public sales sequential collections', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftCollection = new NFTCollectionHelper(signer1)
     // Without Royalty
-    const tokenId1 = await createNFTPublicSaleCollectionSequential(nftCollection, false)
-    await testMarketplace(tokenId1, signer1, signer2, provider)
+    const [tokenId1, collectionId1] = await createNFTPublicSaleCollectionSequential(nftCollection, false)
+    await testMarketplace(tokenId1, collectionId1, signer1, signer2, provider)
 
     // With Royalty
-    const tokenId2 = await createNFTPublicSaleCollectionSequential(nftCollection, true)
-    await testMarketplace(tokenId2, signer1, signer2, provider)
+    const [tokenId2, collectionId2] = await createNFTPublicSaleCollectionSequential(nftCollection, true)
+    await testMarketplace(tokenId2, collectionId2, signer1, signer2, provider)
   }, 300000)
 
   test('Update metadata in the NFT marketplace', async () => {
@@ -106,6 +106,7 @@ const royaltyRate: bigint = 200n
 
 async function testMarketplace(
   tokenId: string,
+  collectionId: string,
   signer1: PrivateKeyWallet,
   signer2: PrivateKeyWallet,
   provider: NodeProvider
@@ -116,17 +117,17 @@ async function testMarketplace(
 
   const price = ONE_ALPH * 10n
   const newPrice = ONE_ALPH * 20n
-  await listNFTAndVerify(nftMarketplace, tokenId, price, signer1, provider)
-  await updateListingPriceAndVerify(nftMarketplace, tokenId, price, newPrice, signer2, provider)
-  await buyNFTAndVerify(nftMarketplace, tokenId, newPrice, signer1, signer2, provider)
-  await cancelListingAndVerify(nftMarketplace, tokenId, newPrice, signer2, provider)
+  await listNFTAndVerify(nftMarketplace, tokenId, collectionId, price, signer1, provider)
+  await updateListingPriceAndVerify(nftMarketplace, tokenId, collectionId, price, newPrice, signer2, provider)
+  await buyNFTAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer1, signer2, provider)
+  await cancelListingAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer2, provider)
   await withdrawAndVerify(nftMarketplace, signer2.address, NFTMarketplace.defaultListingFee)
 }
 
 async function createNFTOpenCollection(
   nftCollection: NFTCollectionHelper,
   royalty: boolean
-): Promise<string> {
+): Promise<[string, string]> {
   let nftCollectionContractId: string
   if (royalty) {
     const nftCollectionDeployTx = await nftCollection.openCollection.createWithRoyalty("https://crypto-punk-uri", royaltyRate)
@@ -144,13 +145,13 @@ async function createNFTOpenCollection(
     royalty
   )
 
-  return nftContractId
+  return [nftContractId, nftCollectionContractId]
 }
 
 async function createNFTPublicSaleCollectionRandom(
   nftCollection: NFTCollectionHelper,
   royalty: boolean
-): Promise<string> {
+): Promise<[string, string]> {
   const maxSupply = 100n
   const mintPrice = 3n
   let nftCollectionContractId: string
@@ -181,13 +182,13 @@ async function createNFTPublicSaleCollectionRandom(
     royalty,
   )
 
-  return nftContractId
+  return [nftContractId, nftCollectionContractId]
 }
 
 async function createNFTPublicSaleCollectionSequential(
   nftCollection: NFTCollectionHelper,
   royalty: boolean
-): Promise<string> {
+): Promise<[string, string]> {
   const maxSupply = 100n
   const mintPrice = 3n
   const maxBatchMintSize = 3n
@@ -221,24 +222,25 @@ async function createNFTPublicSaleCollectionSequential(
     royalty,
   )
 
-  return nftContractId
+  return [nftContractId, nftCollectionContractId]
 }
 
 async function listNFTAndVerify(
   nftMarketplace: NFTMarketplace,
   tokenId: string,
+  collectionId: string,
   price: bigint,
   signer: PrivateKeyWallet,
   provider: NodeProvider
 ) {
-  const royalty = await supportRoyalty(tokenId, provider)
+  const royalty = await supportRoyalty(tokenId, collectionId, provider)
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
   const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
   const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
 
-  await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId, royalty)
+  await nftMarketplace.listNFT(tokenId, collectionId, price, nftMarketplaceContractId, royalty)
   await sleep(3000)
 
   const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -263,6 +265,7 @@ async function listNFTAndVerify(
 async function updateListingPriceAndVerify(
   nftMarketplace: NFTMarketplace,
   tokenId: string,
+  collectionId: string,
   oldPrice: bigint,
   newPrice: bigint,
   wrongSigner: PrivateKeyWallet,
@@ -270,7 +273,7 @@ async function updateListingPriceAndVerify(
 ) {
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
-  await nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId)
+  await nftMarketplace.updateNFTPrice(newPrice, tokenId, collectionId, nftMarketplaceContractId)
   const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
   const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
@@ -288,18 +291,19 @@ async function updateListingPriceAndVerify(
   expect(BigInt(+nftPriceUpdatedEventFields[1].value)).toEqual(oldPrice)
   expect(BigInt(+nftPriceUpdatedEventFields[2].value)).toEqual(newPrice)
 
-  await expect(nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId, wrongSigner)).rejects.toThrow(Error)
+  await expect(nftMarketplace.updateNFTPrice(newPrice, tokenId, collectionId, nftMarketplaceContractId, wrongSigner)).rejects.toThrow(Error)
 }
 
 async function buyNFTAndVerify(
   nftMarketplace: NFTMarketplace,
   tokenId: string,
+  collectionId: string,
   price: bigint,
   signer1: PrivateKeyWallet,
   signer2: PrivateKeyWallet,
   provider: NodeProvider
 ) {
-  const royalty = await supportRoyalty(tokenId, provider)
+  const royalty = await supportRoyalty(tokenId, collectionId, provider)
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
   const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
@@ -307,7 +311,7 @@ async function buyNFTAndVerify(
   const signer1BalanceBefore = await getBalance(signer1)
   const signer2BalanceBefore = await getBalance(signer2)
 
-  const result = await nftMarketplace.buyNFT(price, tokenId, nftMarketplaceContractId, signer2)
+  const result = await nftMarketplace.buyNFT(price, tokenId, collectionId, nftMarketplaceContractId, signer2)
   const consumedGas = BigInt(result.gasAmount) * BigInt(result.gasPrice)
   await sleep(3000)
 
@@ -340,15 +344,16 @@ async function buyNFTAndVerify(
 async function cancelListingAndVerify(
   nftMarketplace: NFTMarketplace,
   tokenId: string,
+  collectionId: string,
   price: bigint,
   signer: PrivateKeyWallet,
   provider: NodeProvider
 ) {
-  const royalty = await supportRoyalty(tokenId, provider)
+  const royalty = await supportRoyalty(tokenId, collectionId, provider)
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
 
-  await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId, royalty, signer)
+  await nftMarketplace.listNFT(tokenId, collectionId, price, nftMarketplaceContractId, royalty, signer)
 
   const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
     nftMarketplaceContractAddress,
@@ -431,9 +436,8 @@ async function withdrawAndVerify(
   expect(BigInt(balanceAfter.balance)).toEqual(BigInt(balanceBefore.balance) - withdrawAmount)
 }
 
-async function supportRoyalty(tokenId: string, provider: NodeProvider) {
+async function supportRoyalty(tokenId: string, collectionId: string, provider: NodeProvider) {
   const nftInstance = NFT.at(addressFromContractId(tokenId))
-  const collectionId = (await nftInstance.methods.getCollectionId()).returns
   const collectionIterfaceId = await provider.guessStdInterfaceId(collectionId)
   return collectionIterfaceId === '000201'
 }

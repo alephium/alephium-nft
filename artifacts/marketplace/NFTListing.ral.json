@@ -1,8 +1,8 @@
 {
-  "version": "v2.5.1",
+  "version": "v2.5.2",
   "name": "NFTListing",
-  "bytecode": "070b402a4043404c4055405e40674070408540a140b040c0010004050117160016012c1367102d17041600160416022a16032a330e7b160016042b16022b16032b0201000404010c16034c08160016020e0d16010103024a020c02010000000102ce0102010000000102a00002010000000102ce0302010000000102ce0402010000000102ce0502010000000109ce000c0dce000101a000ce0500010201010202000fb3ce02410c7b1600ce011601a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a100",
-  "codeHash": "f8382edeea992b281fef9e876efacefa0d1562ea5bca78508e5548fe5ba2de70",
+  "bytecode": "070b402a4043404c4055405e406740704081409d40ac40bc010004050117160016012c1367102d17041600160416022a16032a330e7b160016042b16022b16032b0201000404010c16034c08160016020e0d16010103024a020c02010000000102ce0102010000050102a00002010000000102ce0302010000000102ce0402010000000102ce0502010001010106ce001600a000ce0500010201010202000fb3ce02410c7b1600ce011601a71600ce000dabce01b0010200000007b3ce02410c7bce01b0010001010007b3ce02410c7b1600a100",
+  "codeHash": "bc57dddb682d80b4983aae69bb5a5200e5aabfe436a59bfeee3ebf3308417cd3",
   "fieldsSig": {
     "names": [
       "tokenId",
@@ -35,7 +35,7 @@
   "eventsSig": [],
   "functions": [
     {
-      "name": "checkListingPriceAfterFee",
+      "name": "getPriceAfterFee",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
@@ -153,9 +153,15 @@
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
+      "paramNames": [
+        "collectionId"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
       "returnTypes": [
         "U256"
       ]

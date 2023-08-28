@@ -30,7 +30,6 @@ import { getContractByCodeHash } from "./contracts";
 // Custom types for the contract
 export namespace NFTTypes {
   export type Fields = {
-    collectionId: HexString;
     tokenUri: HexString;
     nftIndex: bigint;
   };
@@ -39,10 +38,6 @@ export namespace NFTTypes {
 
   export interface CallMethodTable {
     getTokenUri: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<HexString>;
-    };
-    getCollectionId: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
     };
@@ -66,8 +61,6 @@ export namespace NFTTypes {
 }
 
 class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
-  consts = { ErrorCodes: { WrongCollection: BigInt(0) } };
-
   at(address: string): NFTInstance {
     return new NFTInstance(address);
   }
@@ -77,11 +70,6 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
       params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
-    },
-    getCollectionId: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionId", params);
     },
     getNFTIndex: async (
       params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
@@ -96,7 +84,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "b8e82cf387eec8d85c0b905dfc970c39c5d68152d65e4727d075ef96f1dd8096"
+    "774b9128f080be0e5952423b9582ffe20a002b282059fd02b395eadd10e637b7"
   )
 );
 
@@ -118,17 +106,6 @@ export class NFTInstance extends ContractInstance {
         NFT,
         this,
         "getTokenUri",
-        params === undefined ? {} : params,
-        getContractByCodeHash
-      );
-    },
-    getCollectionId: async (
-      params?: NFTTypes.CallMethodParams<"getCollectionId">
-    ): Promise<NFTTypes.CallMethodResult<"getCollectionId">> => {
-      return callMethod(
-        NFT,
-        this,
-        "getCollectionId",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

@@ -1,23 +1,20 @@
 {
-  "version": "v2.5.1",
+  "version": "v2.5.2",
   "name": "NFT",
-  "bytecode": "0403094022402b010000000102ce010201000001010dce020d0dce0001021700b11600410c7bce0002010000000102ce0202",
-  "codeHash": "b8e82cf387eec8d85c0b905dfc970c39c5d68152d65e4727d075ef96f1dd8096",
+  "bytecode": "03020912010000000102ce0002010000000102ce0102",
+  "codeHash": "774b9128f080be0e5952423b9582ffe20a002b282059fd02b395eadd10e637b7",
   "fieldsSig": {
     "names": [
-      "collectionId",
       "tokenUri",
       "nftIndex",
       "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
-      "ByteVec",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
-      false,
       false,
       false,
       false
@@ -27,18 +24,6 @@
   "functions": [
     {
       "name": "getTokenUri",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "getCollectionId",
       "usePreapprovedAssets": false,
       "useAssetsInContract": false,
       "isPublic": true,
@@ -63,19 +48,6 @@
     }
   ],
   "constants": [],
-  "enums": [
-    {
-      "name": "ErrorCodes",
-      "fields": [
-        {
-          "name": "WrongCollection",
-          "value": {
-            "type": "U256",
-            "value": "0"
-          }
-        }
-      ]
-    }
-  ],
+  "enums": [],
   "stdInterfaceId": "0003"
 }

@@ -1,24 +1,11 @@
 import "std/nft_interface"
 
 Contract NFT(
-  collectionId: ByteVec,
   tokenUri: ByteVec,
   nftIndex: U256
 ) implements INFT {
-  enum ErrorCodes {
-    WrongCollection = 0
-  }
-
   pub fn getTokenUri() -> ByteVec {
     return tokenUri
-  }
-
-  // We do not need this after introducing parentId instr
-  @using(checkExternalCaller = false)
-  pub fn getCollectionId() -> ByteVec {
-    let expectedTokenContract = INFTCollection(collectionId).nftByIndex(nftIndex)
-    assert!(selfContractId!() == contractId!(expectedTokenContract), ErrorCodes.WrongCollection)
-    return collectionId
   }
 
   pub fn getNFTIndex() -> U256 {

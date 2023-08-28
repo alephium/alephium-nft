@@ -3,7 +3,7 @@ Abstract Contract NFTMarketPlaceUtils() {
         NFTPriceTooLow = 2
     }
 
-    pub fn checkListingPriceAfterFee(
+    pub fn getPriceAfterFee(
         priceIn: U256,
         commissionRateIn: U256,
         listingFeeIn: U256,

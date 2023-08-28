@@ -13,7 +13,7 @@ Abstract Contract NFTOpenCollectionBase(
         let minter = callerAddress!()
         checkCaller!(minter == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
         let nftIndex = totalSupply
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), nftUri, nftIndex)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(nftUri, nftIndex)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(nftIndex),

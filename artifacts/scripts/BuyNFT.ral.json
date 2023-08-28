@@ -1,19 +1,22 @@
 {
-  "version": "v2.5.1",
+  "version": "v2.5.2",
   "name": "BuyNFT",
-  "bytecodeTemplate": "01010300000008b4{0}a2{1}0d0c{2}0102",
+  "bytecodeTemplate": "01010300000009b4{0}a2{1}{2}0e0c{3}0102",
   "fieldsSig": {
     "names": [
       "totalPayment",
       "tokenId",
+      "collectionId",
       "nftMarketplace"
     ],
     "types": [
       "U256",
       "ByteVec",
+      "ByteVec",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false
