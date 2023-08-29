@@ -1,4 +1,4 @@
-import { NodeProvider, addressFromTokenId, groupOfAddress, hexToString } from "@alephium/web3"
+import { ExplorerProvider, NodeProvider, addressFromTokenId, groupOfAddress, hexToString } from "@alephium/web3"
 import axios from "axios"
 import { NFT, NFTTypes } from "../artifacts/ts"
 
@@ -14,16 +14,23 @@ export interface NFT {
   tokenIndex?: number
 }
 
-export async function fetchMintedNFTMetadata(nodeProvider: NodeProvider, tokenId: string): Promise<{ collectionId: string, tokenUri: string } | undefined> {
+export async function fetchMintedNFTMetadata(
+  nodeProvider: NodeProvider,
+  explorerProvider: ExplorerProvider,
+  tokenId: string
+): Promise<{ collectionId: string, tokenUri: string } | undefined> {
   const tokenAddress = addressFromTokenId(tokenId)
   try {
-    const nftState = await nodeProvider.contracts.getContractsAddressState(tokenAddress, { group: groupOfAddress(tokenAddress) })
-    if (nftState.codeHash === NFT.contract.codeHash) {
-      const contractState = NFT.contract.fromApiContractState(nftState) as NFTTypes.State
-      return {
-        tokenUri: hexToString(contractState.fields.tokenUri),
-        collectionId: contractState.fields.collectionId
-      }
+    const tokenType = await nodeProvider.guessStdTokenType(tokenId)
+    if (tokenType !== 'non-fungible') return undefined
+    const { parent } = await explorerProvider.contracts.getContractsContractParent(tokenAddress)
+    if (!parent) return undefined
+
+    const nftInstance = NFT.at(tokenAddress)
+    const tokenUri = (await nftInstance.methods.getTokenUri()).returns
+    return {
+      tokenUri: hexToString(tokenUri),
+      collectionId: parent
     }
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
@@ -56,10 +63,11 @@ export async function fetchMintedNFTByMetadata(
 
 export async function fetchMintedNFT(
   nodeProvider: NodeProvider,
+  explorerProvider: ExplorerProvider,
   tokenId: string,
   listed: boolean
 ): Promise<NFT | undefined> {
-  const nftMetadata = await fetchMintedNFTMetadata(nodeProvider, tokenId)
+  const nftMetadata = await fetchMintedNFTMetadata(nodeProvider, explorerProvider, tokenId)
   if (nftMetadata === undefined) return undefined
   return await fetchMintedNFTByMetadata(tokenId, nftMetadata, listed)
 }

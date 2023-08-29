@@ -24,6 +24,7 @@ const MyNFTs = () => {
         setIsLoading(true)
         const nfts = await fetchNFTsByAddress(
           wallet.signer.nodeProvider,
+          wallet.signer.explorerProvider,
           wallet.account.address
         )
         setNFTs(nfts)

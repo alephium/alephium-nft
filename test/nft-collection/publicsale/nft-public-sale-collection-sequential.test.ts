@@ -14,6 +14,7 @@ import * as utils from '../../../shared'
 import { checkEvent, checkWithdraw, getNFTCollection, getNFTUri } from '../utils'
 import { NFTCollectionHelper } from '../../../shared/nft-collection'
 import {
+  NFT,
   NFTInstance,
   NFTPublicSaleCollectionSequential,
   NFTPublicSaleCollectionSequentialInstance,
@@ -139,7 +140,7 @@ describe('nft public sale collection - sequential', function() {
       const nftByIndexResult = await nftCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
       expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-      const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
+      const nftContractState = await NFT.at(addressFromContractId(nftContractId)).fetchState()
       expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
       const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
       const tokenUri = (await nftInstance.methods.getTokenUri()).returns

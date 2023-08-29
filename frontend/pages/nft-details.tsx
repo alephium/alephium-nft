@@ -3,7 +3,7 @@ import Link from 'next/link';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
-import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
+import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider, ExplorerProvider } from '@alephium/web3'
 import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
@@ -86,10 +86,14 @@ const AssetDetails = () => {
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
   const defaultNodeUrl = getAlephiumNFTConfig().defaultNodeUrl
+  const defaultExplorerUrl = getAlephiumNFTConfig().defaultExplorerUrl
 
   useEffect(() => {
     const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const explorerProvider = wallet?.signer?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
     web3.setCurrentNodeProvider(nodeProvider)
+    web3.setCurrentExplorerProvider(explorerProvider)
+
     // disable body scroll when navbar is open
     if (paymentModal || successModal) {
       document.body.style.overflow = 'hidden';
@@ -105,7 +109,7 @@ const AssetDetails = () => {
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchMintedNFT(nodeProvider, tokenId as string, false).then((nft) => {
+      fetchMintedNFT(nodeProvider, explorerProvider, tokenId as string, false).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
@@ -150,6 +154,7 @@ const AssetDetails = () => {
           result = await nftMarketplace.buyNFT(
             nftListing.price,
             nftListing._id,
+            nftListing.collectionId,
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {

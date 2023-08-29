@@ -20,7 +20,7 @@ const SellNFT = () => {
   const [price, setPrice] = useState<number>(0);
   const router = useRouter();
   const { tokenId } = router.query;
-  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider)
+  const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider, wallet?.signer.explorerProvider)
   const { collectionMetadata } = useCollectionMetadata(nft?.collectionId, wallet?.signer)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
   const config = getAlephiumNFTConfig()
@@ -39,7 +39,7 @@ const SellNFT = () => {
       setIsSellingNFT(true)
       const interfaceId = await wallet.signer.nodeProvider.guessStdInterfaceId(nft.collectionId)
       const royalty = interfaceId === '000201'
-      const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId, royalty)
+      const result = await nftMarketplace.listNFT(nft.tokenId, nft.collectionId, priceInSets, marketplaceContractId, royalty)
       await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsSellingNFT(false)
 

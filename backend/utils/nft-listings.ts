@@ -1,4 +1,4 @@
-import { ContractEvent, addressFromContractId, web3, NodeProvider, decodeEvent } from "@alephium/web3"
+import { ContractEvent, addressFromContractId, web3, NodeProvider, decodeEvent, ExplorerProvider } from "@alephium/web3"
 import { MaketplaceEvent } from "../mongodb/models/marketplace-event"
 import { MaketplaceEventNextStart } from "../mongodb/models/marketplace-event-next-start"
 import { NFTListing } from "../mongodb/models/nft-listing"
@@ -114,9 +114,11 @@ async function fetchNFTListing(
   const tokenId = nftListedEvent.fields.tokenId
   const listingContractId = nftListedEvent.fields.listingContractId
   const listingState = await new NFTListingInstance(addressFromContractId(listingContractId)).fetchState()
+  const defaultExplorerUrl = getAlephiumNFTConfig().defaultExplorerUrl
+  const explorerProvider = web3.getCurrentExplorerProvider() || new ExplorerProvider(defaultExplorerUrl)
 
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-    const nft = await fetchMintedNFT(web3.getCurrentNodeProvider(), tokenId, true)
+    const nft = await fetchMintedNFT(web3.getCurrentNodeProvider(), explorerProvider, tokenId, true)
     if (nft === undefined) return undefined
     return {
       _id: tokenId,
