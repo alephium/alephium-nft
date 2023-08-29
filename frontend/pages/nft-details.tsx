@@ -3,7 +3,14 @@ import Link from 'next/link';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
-import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider, ExplorerProvider } from '@alephium/web3'
+import {
+  prettifyAttoAlphAmount,
+  binToHex,
+  contractIdFromAddress,
+  web3,
+  NodeProvider,
+  ExplorerProvider
+} from '@alephium/web3'
 import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
@@ -102,14 +109,14 @@ const AssetDetails = () => {
     }
 
     if (nft?.collectionId) {
-      fetchNFTCollectionMetadata(nodeProvider, nft.collectionId).then((metadata) => {
+      fetchNFTCollectionMetadata(nft.collectionId).then((metadata) => {
         setCollectionMetadata(metadata)
       })
     }
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchMintedNFT(nodeProvider, explorerProvider, tokenId as string, false).then((nft) => {
+      fetchMintedNFT(tokenId as string, false).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })

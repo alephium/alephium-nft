@@ -7,6 +7,7 @@ import { useWallet } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import { fetchNFTsByAddress } from '../components/nft';
 import { NFT } from '../../shared/nft';
+import { web3 } from "@alephium/web3"
 
 const MyNFTs = () => {
   const wallet = useWallet()
@@ -22,11 +23,9 @@ const MyNFTs = () => {
         && wallet.account.address
       ) {
         setIsLoading(true)
-        const nfts = await fetchNFTsByAddress(
-          wallet.signer.nodeProvider,
-          wallet.signer.explorerProvider,
-          wallet.account.address
-        )
+        web3.setCurrentNodeProvider(wallet.signer.nodeProvider)
+        web3.setCurrentExplorerProvider(wallet.signer.explorerProvider)
+        const nfts = await fetchNFTsByAddress(wallet.account.address)
         setNFTs(nfts)
         setIsLoading(false)
       }

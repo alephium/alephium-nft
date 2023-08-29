@@ -41,18 +41,15 @@ async function fetchListedNFTs(address: string): Promise<NFT[]> {
   return listings.map((listing) => ({ tokenId: listing._id, listed: true, minted: true, ...listing }))
 }
 
-async function fetchNFTsFromUTXOs(
-  nodeProvider: NodeProvider,
-  explorerProvider: ExplorerProvider,
-  address: string
-): Promise<NFT[]> {
+async function fetchNFTsFromUTXOs(address: string): Promise<NFT[]> {
+  const nodeProvider = web3.getCurrentNodeProvider()
   const balances = await nodeProvider.addresses.getAddressesAddressBalance(address, { mempool: false })
   const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
   const tokenIds = tokenBalances
     .filter((token) => +token.amount == 1)
     .map((token) => token.id)
 
-  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(nodeProvider, explorerProvider, tokenId))
+  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(tokenId))
   const nftMetadatas = await Promise.all(nftMetadataPromises)
   const nftPromises = tokenIds.map((tokenId, index) => {
     const metadata = nftMetadatas[index]
@@ -62,13 +59,8 @@ async function fetchNFTsFromUTXOs(
   return (await Promise.all(nftPromises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
-export async function fetchNFTsByAddress(
-  nodeProvider: NodeProvider,
-  explorerProvider: ExplorerProvider,
-  address: string
-): Promise<NFT[]> {
-  web3.setCurrentNodeProvider(nodeProvider)
-  const nftsFromUTXOs = await fetchNFTsFromUTXOs(nodeProvider, explorerProvider, address)
+export async function fetchNFTsByAddress(address: string): Promise<NFT[]> {
+  const nftsFromUTXOs = await fetchNFTsFromUTXOs(address)
   const listedNFTs = await fetchListedNFTs(address)
 
   const isListed = (nftTokenId: string) => listedNFTs.find((nft) => nft.tokenId === nftTokenId) !== undefined
@@ -95,8 +87,9 @@ export const useNFT = (
       }
 
       web3.setCurrentNodeProvider(nodeProvider)
+      web3.setCurrentExplorerProvider(explorerProvider)
 
-      return await fetchMintedNFT(nodeProvider, explorerProvider, tokenId, listed)
+      return await fetchMintedNFT(tokenId, listed)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,

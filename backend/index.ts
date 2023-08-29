@@ -105,7 +105,7 @@ app.get('/api/nft-listings-by-owner/:owner', async (req: Request, res: Response)
 app.post('/api/create-collection', async (req: Request, res: Response) => {
   try {
     const payload = req.body
-    const collectionMetadata = await checkAndGetCollectionMetadata(web3.getCurrentNodeProvider(), payload.collectionId)
+    const collectionMetadata = await checkAndGetCollectionMetadata(payload.collectionId as string)
     const exists = await NFTCollection.exists({ '_id': collectionMetadata.id })
     if (!exists) {
       const nftCollection = new NFTCollection({

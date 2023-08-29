@@ -1,6 +1,14 @@
-import { ExplorerProvider, NodeProvider, addressFromContractId, addressFromTokenId, groupOfAddress, hexToString } from "@alephium/web3"
+import {
+  web3,
+  ExplorerProvider,
+  NodeProvider,
+  addressFromTokenId,
+  binToHex,
+  contractIdFromAddress,
+  hexToString
+} from "@alephium/web3"
 import axios from "axios"
-import { NFT, NFTTypes } from "../artifacts/ts"
+import { NFT } from "../artifacts/ts"
 
 export interface NFT {
   name: string,
@@ -15,12 +23,14 @@ export interface NFT {
 }
 
 export async function fetchMintedNFTMetadata(
-  nodeProvider: NodeProvider,
-  explorerProvider: ExplorerProvider,
   tokenId: string
 ): Promise<{ collectionId: string, tokenUri: string } | undefined> {
-  const tokenAddress = addressFromTokenId(tokenId)
+  const nodeProvider = web3.getCurrentNodeProvider()
+  const explorerProvider = web3.getCurrentExplorerProvider()
+  if (!explorerProvider) return undefined
+
   try {
+    const tokenAddress = addressFromTokenId(tokenId)
     const tokenType = await nodeProvider.guessStdTokenType(tokenId)
     if (tokenType !== 'non-fungible') return undefined
     const { parent } = await explorerProvider.contracts.getContractsContractParent(tokenAddress)
@@ -30,7 +40,7 @@ export async function fetchMintedNFTMetadata(
     const tokenUri = (await nftInstance.methods.getTokenUri()).returns
     return {
       tokenUri: hexToString(tokenUri),
-      collectionId: addressFromContractId(parent)
+      collectionId: binToHex(contractIdFromAddress(parent))
     }
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
@@ -62,12 +72,10 @@ export async function fetchMintedNFTByMetadata(
 }
 
 export async function fetchMintedNFT(
-  nodeProvider: NodeProvider,
-  explorerProvider: ExplorerProvider,
   tokenId: string,
   listed: boolean
 ): Promise<NFT | undefined> {
-  const nftMetadata = await fetchMintedNFTMetadata(nodeProvider, explorerProvider, tokenId)
+  const nftMetadata = await fetchMintedNFTMetadata(tokenId)
   if (nftMetadata === undefined) return undefined
   return await fetchMintedNFTByMetadata(tokenId, nftMetadata, listed)
 }

@@ -114,11 +114,9 @@ async function fetchNFTListing(
   const tokenId = nftListedEvent.fields.tokenId
   const listingContractId = nftListedEvent.fields.listingContractId
   const listingState = await new NFTListingInstance(addressFromContractId(listingContractId)).fetchState()
-  const defaultExplorerUrl = getAlephiumNFTConfig().defaultExplorerUrl
-  const explorerProvider = web3.getCurrentExplorerProvider() || new ExplorerProvider(defaultExplorerUrl)
 
   if (listingState && listingState.codeHash === NFTListingFactory.contract.codeHash) {
-    const nft = await fetchMintedNFT(web3.getCurrentNodeProvider(), explorerProvider, tokenId, true)
+    const nft = await fetchMintedNFT(tokenId, true)
     if (nft === undefined) return undefined
     return {
       _id: tokenId,

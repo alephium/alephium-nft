@@ -29,6 +29,7 @@ import {
   WithdrawFromPublicSaleCollectionRandom,
 } from '../artifacts/ts/scripts'
 import {
+  web3,
   DeployContractResult,
   DUST_AMOUNT,
   ONE_ALPH,
@@ -202,9 +203,9 @@ export async function fetchNFTByPage(
 
 // TODO: Improve using multi-call, but it doesn't seem to work for NFTPublicSaleCollection?
 export async function fetchNFTCollectionMetadata(
-  nodeProvider: NodeProvider,
   collectionId: string
 ): Promise<NFTCollectionMetadata | undefined> {
+  const nodeProvider = web3.getCurrentNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
   if (state.codeHash === NFTOpenCollection.contract.codeHash) {
@@ -276,11 +277,11 @@ export async function fetchNFTCollectionMetadata(
   }
 }
 
-export async function checkAndGetCollectionMetadata(nodeProvider: NodeProvider, collectionId: string): Promise<NFTCollectionMetadata> {
+export async function checkAndGetCollectionMetadata(collectionId: string): Promise<NFTCollectionMetadata> {
   if (!isHexString(collectionId) || collectionId.length !== 64) {
     throw new Error('Invalid nft collection id')
   }
-  const metadata = await fetchNFTCollectionMetadata(nodeProvider, collectionId)
+  const metadata = await fetchNFTCollectionMetadata(collectionId)
   if (metadata === undefined) {
     throw new Error('Unknown nft collection type')
   }

@@ -7,7 +7,7 @@ import images from '../assets';
 import { nftImageUrl, shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
 import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
-import { ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount } from '@alephium/web3';
+import { web3, ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
 import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
@@ -115,7 +115,8 @@ export default function CollectionDetails() {
 
     if (collectionId) {
       setIsMetadataLoading(true)
-      fetchNFTCollectionMetadata(nodeProvider, collectionId as string)
+      web3.setCurrentNodeProvider(nodeProvider)
+      fetchNFTCollectionMetadata(collectionId as string)
         .then((result) => {
           setIsMetadataLoading(false)
           setCollectionMetadata(result)

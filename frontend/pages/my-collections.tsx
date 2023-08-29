@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { shortenName } from '../services/utils';
 import { getBackendUrl } from '../../shared/configs'
 import { NFTCollectionMetadata, fetchNFTCollectionMetadata } from '../../shared/nft-collection';
+import { web3 } from '@alephium/web3';
 
 interface NFTCollection {
   _id: string  // NFTCollection contract id
@@ -31,7 +32,8 @@ const NFTCollectionCard = ({ collection }: { collection: NFTCollection }) => {
         && wallet.signer.explorerProvider
         && wallet.account.address
       ) {
-        fetchNFTCollectionMetadata(wallet.signer.nodeProvider, collection._id)
+        web3.setCurrentNodeProvider(wallet.signer.nodeProvider)
+        fetchNFTCollectionMetadata(collection._id)
           .then((metadata) => setMetadata(metadata))
           .catch((err) => console.error(err))
       }
