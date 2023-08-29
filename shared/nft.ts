@@ -1,4 +1,4 @@
-import { ExplorerProvider, NodeProvider, addressFromTokenId, groupOfAddress, hexToString } from "@alephium/web3"
+import { ExplorerProvider, NodeProvider, addressFromContractId, addressFromTokenId, groupOfAddress, hexToString } from "@alephium/web3"
 import axios from "axios"
 import { NFT, NFTTypes } from "../artifacts/ts"
 
@@ -30,7 +30,7 @@ export async function fetchMintedNFTMetadata(
     const tokenUri = (await nftInstance.methods.getTokenUri()).returns
     return {
       tokenUri: hexToString(tokenUri),
-      collectionId: parent
+      collectionId: addressFromContractId(parent)
     }
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
