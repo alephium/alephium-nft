@@ -52,6 +52,7 @@ import * as blake from 'blakejs'
 import axios from 'axios'
 import { NFT } from './nft'
 import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
+import { getNodeProvider } from '.'
 
 export class NFTCollectionHelper extends DeployHelpers {
   public openCollection: OpenCollection
@@ -205,7 +206,7 @@ export async function fetchNFTByPage(
 export async function fetchNFTCollectionMetadata(
   collectionId: string
 ): Promise<NFTCollectionMetadata | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
+  const nodeProvider = getNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
   const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
   if (state.codeHash === NFTOpenCollection.contract.codeHash) {

@@ -13,13 +13,13 @@ import { getSigners } from '@alephium/web3-test'
 import { NFTCollectionHelper } from '../../shared/nft-collection'
 import { NFTMarketplace } from '../../shared/nft-marketplace'
 import { NFT, NFTListingInstance, NFTMarketPlaceInstance } from '../../artifacts/ts'
-import { contractExists } from '../../shared'
+import { contractExists, getNodeProvider } from '../../shared'
 import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
   web3.setCurrentNodeProvider(nodeUrl)
-  const provider = web3.getCurrentNodeProvider()
+  const provider = getNodeProvider()
 
   test('Test NFT marketplace for open collections', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)

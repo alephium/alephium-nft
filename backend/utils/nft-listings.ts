@@ -1,4 +1,4 @@
-import { ContractEvent, addressFromContractId, web3, NodeProvider, decodeEvent, ExplorerProvider } from "@alephium/web3"
+import { ContractEvent, addressFromContractId, decodeEvent } from "@alephium/web3"
 import { MaketplaceEvent } from "../mongodb/models/marketplace-event"
 import { MaketplaceEventNextStart } from "../mongodb/models/marketplace-event-next-start"
 import { NFTListing } from "../mongodb/models/nft-listing"
@@ -6,12 +6,10 @@ import { NFTListingInstance, NFTMarketPlaceTypes, NFTListing as NFTListingFactor
 import { NFTSold } from "../mongodb/models/nft-sold"
 import { fetchMintedNFT } from "../../shared/nft"
 import { getAlephiumNFTConfig } from "../../shared/configs"
-
-const nodeUrl = process.env.NODE_URL || getAlephiumNFTConfig().defaultNodeUrl
+import { getNodeProvider } from "../../shared"
 
 export async function trySaveNewNFTListings() {
-  const nodeProvider = new NodeProvider(nodeUrl)
-  web3.setCurrentNodeProvider(nodeProvider)
+  const nodeProvider = getNodeProvider()
 
   const nextStartResult = await MaketplaceEventNextStart.findOne()
   let nextStart = nextStartResult && nextStartResult.nextStart || 0

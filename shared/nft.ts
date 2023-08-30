@@ -8,6 +8,7 @@ import {
   hexToString
 } from "@alephium/web3"
 import axios from "axios"
+import { getExplorerProvider, getNodeProvider } from "."
 import { NFT } from "../artifacts/ts"
 
 export interface NFT {
@@ -25,8 +26,8 @@ export interface NFT {
 export async function fetchMintedNFTMetadata(
   tokenId: string
 ): Promise<{ collectionId: string, tokenUri: string } | undefined> {
-  const nodeProvider = web3.getCurrentNodeProvider()
-  const explorerProvider = web3.getCurrentExplorerProvider()
+  const nodeProvider = getNodeProvider()
+  const explorerProvider = getExplorerProvider()
   if (!explorerProvider) return undefined
 
   try {

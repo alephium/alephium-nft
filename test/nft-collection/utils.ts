@@ -1,4 +1,5 @@
 import { web3, addressFromContractId, SignerProvider, Contract, ContractFactory, ContractEvent } from "@alephium/web3"
+import { getNodeProvider } from "../../shared"
 import { NFTCollectionHelper } from "../../shared/nft-collection"
 
 export const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
@@ -31,7 +32,7 @@ export async function checkEvent<C extends ContractFactory<any>>(
   txId: string,
   expected: Partial<ContractEvent>
 ) {
-  const nodeProvider = web3.getCurrentNodeProvider()
+  const nodeProvider = getNodeProvider()
   const result = await nodeProvider.events.getEventsTxIdTxid(txId)
   const events = result.events.filter((e) => e.eventIndex !== Contract.ContractCreatedEventIndex)
   expect(events.length).toEqual(1)

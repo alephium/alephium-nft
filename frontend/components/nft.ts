@@ -4,6 +4,7 @@ import { NFTPublicSaleCollectionSequential } from '../../artifacts/ts'
 import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, ExplorerProvider } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
+import { getNodeProvider } from "../../shared"
 
 export async function fetchPreMintNFT(
   collectionId: string,
@@ -42,7 +43,7 @@ async function fetchListedNFTs(address: string): Promise<NFT[]> {
 }
 
 async function fetchNFTsFromUTXOs(address: string): Promise<NFT[]> {
-  const nodeProvider = web3.getCurrentNodeProvider()
+  const nodeProvider = getNodeProvider()
   const balances = await nodeProvider.addresses.getAddressesAddressBalance(address, { mempool: false })
   const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
   const tokenIds = tokenBalances
