@@ -3,7 +3,6 @@ Contract NFTListing(
     tokenOwner: Address,
     marketContractId: ByteVec,
     commissionRate: U256,
-    listingFee: U256,
     royalty: Bool,
     mut price: U256
 ) extends NFTMarketPlaceUtils() {
@@ -22,10 +21,6 @@ Contract NFTListing(
 
     pub fn getCommissionRate() -> U256 {
         return commissionRate
-    }
-
-    pub fn getListingFee() -> U256 {
-        return listingFee
     }
 
     pub fn requiresRoyalty() -> Bool {

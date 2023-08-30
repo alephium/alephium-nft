@@ -207,7 +207,7 @@ export default function CreateCollections() {
       <Input
         inputType=""
         title="Royalty Rate (Optional)"
-        placeholder="Royalty Rate, e.g. 5%"
+        placeholder="Percentage, e.g. 5%"
         handleClick={(e) => {
           const value = (e.target as HTMLInputElement).value
           if (royltyRateRegex.test(value) || value === '') {

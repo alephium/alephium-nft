@@ -6,12 +6,11 @@ Abstract Contract NFTMarketPlaceUtils() {
     pub fn getPriceAfterFee(
         priceIn: U256,
         commissionRateIn: U256,
-        listingFeeIn: U256,
         royaltyAmount: U256
     ) -> U256 {
         let commission = (priceIn * commissionRateIn) / 10000
-        assert!(priceIn > commission + listingFeeIn + royaltyAmount, ErrorCodes.NFTPriceTooLow)
-        return priceIn - commission - listingFeeIn - royaltyAmount
+        assert!(priceIn > commission + royaltyAmount, ErrorCodes.NFTPriceTooLow)
+        return priceIn - commission - royaltyAmount
     }
 
     @using(checkExternalCaller = false)

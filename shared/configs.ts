@@ -5,7 +5,6 @@ export interface AlephiumNFTConfig {
   network: NetworkId,
   groupIndex: number,
   commissionRate: number,
-  listingFee: bigint,
   marketplaceContractId: string,
   marketplaceContractAddress: string,
   marketplaceAdminAddress: string,
@@ -53,10 +52,9 @@ function getPollingInterval(): number {
   return network === 'devnet' ? 1000 : 100000
 }
 
-export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: bigint } {
+export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number } {
   return {
-    commissionRate: 200,
-    listingFee: network === 'devnet' ? ONE_ALPH * 2n : network === 'testnet' ? ONE_ALPH : ONE_ALPH,
+    commissionRate: 200
   }
 }
 
@@ -72,7 +70,6 @@ export function getAlephiumNFTConfig(): AlephiumNFTConfig {
     network,
     groupIndex,
     commissionRate: deploymentConfig.commissionRate,
-    listingFee: deploymentConfig.listingFee,
     marketplaceAdminAddress,
     marketplaceContractId: marketPlace.contractId,
     marketplaceContractAddress: marketPlace.address,

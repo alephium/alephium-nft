@@ -1,15 +1,12 @@
 import { Configuration } from '@alephium/cli'
-import { ONE_ALPH } from '@alephium/web3'
 
 export type Settings = {
   commissionRate: number // basis point. e.g. 200: 2%
-  listingFee: number
 }
 
-export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number, listingFee: bigint } {
+export function loadSettings(network: 'devnet' | 'testnet' | 'mainnet'): { commissionRate: number } {
   return {
     commissionRate: 200,
-    listingFee: network === 'devnet' ? ONE_ALPH : (ONE_ALPH / BigInt(10))
   }
 }
 

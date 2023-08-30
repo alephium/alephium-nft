@@ -34,7 +34,6 @@ export namespace NFTListingTypes {
     tokenOwner: Address;
     marketContractId: HexString;
     commissionRate: bigint;
-    listingFee: bigint;
     royalty: boolean;
     price: bigint;
   };
@@ -46,7 +45,6 @@ export namespace NFTListingTypes {
       params: CallContractParams<{
         priceIn: bigint;
         commissionRateIn: bigint;
-        listingFeeIn: bigint;
         royaltyAmount: bigint;
       }>;
       result: CallContractResult<bigint>;
@@ -69,10 +67,6 @@ export namespace NFTListingTypes {
       result: CallContractResult<bigint>;
     };
     getCommissionRate: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<bigint>;
-    };
-    getListingFee: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<bigint>;
     };
@@ -118,12 +112,7 @@ class Factory extends ContractFactory<
     getPriceAfterFee: async (
       params: TestContractParams<
         NFTListingTypes.Fields,
-        {
-          priceIn: bigint;
-          commissionRateIn: bigint;
-          listingFeeIn: bigint;
-          royaltyAmount: bigint;
-        }
+        { priceIn: bigint; commissionRateIn: bigint; royaltyAmount: bigint }
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getPriceAfterFee", params);
@@ -164,14 +153,6 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getCommissionRate", params);
-    },
-    getListingFee: async (
-      params: Omit<
-        TestContractParams<NFTListingTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getListingFee", params);
     },
     requiresRoyalty: async (
       params: Omit<
@@ -218,7 +199,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "bc57dddb682d80b4983aae69bb5a5200e5aabfe436a59bfeee3ebf3308417cd3"
+    "e6f2fe34e8987fd089658ff8e72a6e4d6594630342fbda59e9b70de6d4c28c54"
   )
 );
 
@@ -284,17 +265,6 @@ export class NFTListingInstance extends ContractInstance {
         NFTListing,
         this,
         "getCommissionRate",
-        params === undefined ? {} : params,
-        getContractByCodeHash
-      );
-    },
-    getListingFee: async (
-      params?: NFTListingTypes.CallMethodParams<"getListingFee">
-    ): Promise<NFTListingTypes.CallMethodResult<"getListingFee">> => {
-      return callMethod(
-        NFTListing,
-        this,
-        "getListingFee",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

@@ -1,7 +1,7 @@
 {
   "version": "v2.5.2",
   "name": "WithdrawFromMarketPlace",
-  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}010a",
+  "bytecodeTemplate": "01010300000006{0}{1}0e0c{2}0108",
   "fieldsSig": {
     "names": [
       "to",

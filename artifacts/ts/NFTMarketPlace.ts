@@ -32,7 +32,6 @@ export namespace NFTMarketPlaceTypes {
   export type Fields = {
     nftListingTemplateId: HexString;
     admin: Address;
-    listingFee: bigint;
     commissionRate: bigint;
   };
 
@@ -63,10 +62,6 @@ export namespace NFTMarketPlaceTypes {
     previous: Address;
     new: Address;
   }>;
-  export type ListingFeeUpdatedEvent = ContractEvent<{
-    previous: bigint;
-    new: bigint;
-  }>;
   export type CommissionRateUpdatedEvent = ContractEvent<{
     previous: bigint;
     new: bigint;
@@ -77,7 +72,6 @@ export namespace NFTMarketPlaceTypes {
       params: CallContractParams<{
         priceIn: bigint;
         commissionRateIn: bigint;
-        listingFeeIn: bigint;
         royaltyAmount: bigint;
       }>;
       result: CallContractResult<bigint>;
@@ -99,10 +93,6 @@ export namespace NFTMarketPlaceTypes {
         royalty: boolean;
       }>;
       result: CallContractResult<Address>;
-    };
-    getListingFee: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<bigint>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -129,8 +119,7 @@ class Factory extends ContractFactory<
     NFTListingCancelled: 2,
     NFTListingPriceUpdated: 3,
     AdminUpdated: 4,
-    ListingFeeUpdated: 5,
-    CommissionRateUpdated: 6,
+    CommissionRateUpdated: 5,
   };
   consts = {
     ErrorCodes: {
@@ -148,12 +137,7 @@ class Factory extends ContractFactory<
     getPriceAfterFee: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        {
-          priceIn: bigint;
-          commissionRateIn: bigint;
-          listingFeeIn: bigint;
-          royaltyAmount: bigint;
-        }
+        { priceIn: bigint; commissionRateIn: bigint; royaltyAmount: bigint }
       >
     ): Promise<TestContractResult<bigint>> => {
       return testMethod(this, "getPriceAfterFee", params);
@@ -216,14 +200,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "updateAdmin", params);
     },
-    updateListingFee: async (
-      params: TestContractParams<
-        NFTMarketPlaceTypes.Fields,
-        { newListingFee: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "updateListingFee", params);
-    },
     updateCommissionRate: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
@@ -231,14 +207,6 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "updateCommissionRate", params);
-    },
-    getListingFee: async (
-      params: Omit<
-        TestContractParams<NFTMarketPlaceTypes.Fields, never>,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getListingFee", params);
     },
     withdraw: async (
       params: TestContractParams<
@@ -256,7 +224,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "c4b696be7497dea2331d40811b7091f411fd5a42789bc5891711058b2d140ec4"
+    "4cdedee37f8cb9ea04e581d783b7fa19a9c3eca5b7cffa1df1af8ec8f0820f9e"
   )
 );
 
@@ -339,19 +307,6 @@ export class NFTMarketPlaceInstance extends ContractInstance {
     );
   }
 
-  subscribeListingFeeUpdatedEvent(
-    options: EventSubscribeOptions<NFTMarketPlaceTypes.ListingFeeUpdatedEvent>,
-    fromCount?: number
-  ): EventSubscription {
-    return subscribeContractEvent(
-      NFTMarketPlace.contract,
-      this,
-      options,
-      "ListingFeeUpdated",
-      fromCount
-    );
-  }
-
   subscribeCommissionRateUpdatedEvent(
     options: EventSubscribeOptions<NFTMarketPlaceTypes.CommissionRateUpdatedEvent>,
     fromCount?: number
@@ -372,7 +327,6 @@ export class NFTMarketPlaceInstance extends ContractInstance {
       | NFTMarketPlaceTypes.NFTListingCancelledEvent
       | NFTMarketPlaceTypes.NFTListingPriceUpdatedEvent
       | NFTMarketPlaceTypes.AdminUpdatedEvent
-      | NFTMarketPlaceTypes.ListingFeeUpdatedEvent
       | NFTMarketPlaceTypes.CommissionRateUpdatedEvent
     >,
     fromCount?: number
@@ -416,17 +370,6 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         this,
         "listNFT",
         params,
-        getContractByCodeHash
-      );
-    },
-    getListingFee: async (
-      params?: NFTMarketPlaceTypes.CallMethodParams<"getListingFee">
-    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getListingFee">> => {
-      return callMethod(
-        NFTMarketPlace,
-        this,
-        "getListingFee",
-        params === undefined ? {} : params,
         getContractByCodeHash
       );
     },

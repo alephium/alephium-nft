@@ -13,7 +13,6 @@ const deployNFTListingTemplate: DeployFunction<Settings> = async (
       tokenOwner: ZERO_ADDRESS,
       marketContractId: '',
       commissionRate: BigInt(network.settings.commissionRate),
-      listingFee: BigInt(network.settings.listingFee),
       price: 0n,
       royalty: false
     }

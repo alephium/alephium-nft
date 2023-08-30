@@ -24,7 +24,6 @@ import { default as MintOpenNFTScriptJson } from "../scripts/MintOpenNFT.ral.jso
 import { default as MintSpecificScriptJson } from "../scripts/MintSpecific.ral.json";
 import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.json";
 import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComissionRate.ral.json";
-import { default as UpdateListingFeeScriptJson } from "../scripts/UpdateListingFee.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
 import { default as WithdrawFromMarketPlaceScriptJson } from "../scripts/WithdrawFromMarketPlace.ral.json";
 import { default as WithdrawFromPublicSaleCollectionRandomScriptJson } from "../scripts/WithdrawFromPublicSaleCollectionRandom.ral.json";
@@ -117,10 +116,6 @@ export const UpdateComissionRate = new ExecutableScript<{
   newCommissionRate: bigint;
   nftMarketplace: HexString;
 }>(Script.fromJson(UpdateComissionRateScriptJson));
-export const UpdateListingFee = new ExecutableScript<{
-  price: bigint;
-  nftMarketplace: HexString;
-}>(Script.fromJson(UpdateListingFeeScriptJson));
 export const UpdateNFTPrice = new ExecutableScript<{
   price: bigint;
   tokenId: HexString;

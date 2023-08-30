@@ -80,7 +80,7 @@ const SellNFT = () => {
 
   function profit(price: number) {
     const priceInSets = convertAlphAmountWithDecimals(price)!
-    return priceInSets - commissionFee(priceInSets) - config.listingFee - getRoyaltyAmount(priceInSets, collectionMetadata?.royaltyRate ?? 0n)
+    return priceInSets - commissionFee(priceInSets) - getRoyaltyAmount(priceInSets, collectionMetadata?.royaltyRate ?? 0n)
   }
 
   return (
@@ -97,10 +97,6 @@ const SellNFT = () => {
         {
           price ? (
             <table>
-              <tr>
-                <td>Listing Fee &nbsp;&nbsp;</td>
-                <td>{prettifyAttoAlphAmount(config.listingFee)} ALPH</td>
-              </tr>
               <tr>
                 <td>Commission &nbsp;&nbsp;</td>
                 <td>{prettifyAttoAlphAmount(commissionFee(convertAlphAmountWithDecimals(price)!))} ALPH</td>

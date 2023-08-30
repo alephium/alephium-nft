@@ -65,12 +65,6 @@ describe('nft marketplace', function() {
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractId = nftMarketplaceDeployTx.contractInstance.contractId
 
-    // Update listing price
-    await checkListingFee(
-      nftMarketplace,
-      nftMarketplaceContractId
-    )(ONE_ALPH / 10n, ONE_ALPH / 5n, ONE_ALPH / 5n)
-
     // Update Commission Rate
     await checkCommissionRate(
       nftMarketplace,
@@ -84,10 +78,6 @@ describe('nft marketplace', function() {
     )(signer1.address, signer2.address, signer2.address)
 
     // Update with the wrong admin will fail
-    await expect(
-      nftMarketplace.updateListingFee(BigInt(10), nftMarketplaceContractId)
-    ).rejects.toThrow(Error)
-
     await expect(
       nftMarketplace.updateCommissionRate(BigInt(200), nftMarketplaceContractId)
     ).rejects.toThrow(Error)
@@ -121,7 +111,7 @@ async function testMarketplace(
   await updateListingPriceAndVerify(nftMarketplace, tokenId, collectionId, price, newPrice, signer2, provider)
   await buyNFTAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer1, signer2, provider)
   await cancelListingAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer2, provider)
-  await withdrawAndVerify(nftMarketplace, signer2.address, NFTMarketplace.defaultListingFee)
+  await withdrawAndVerify(nftMarketplace, signer2.address, NFTMarketplace.defaultCommissionRate * price / 10000n)
 }
 
 async function createNFTOpenCollection(
@@ -330,7 +320,7 @@ async function buyNFTAndVerify(
   // Check the balance of signer1
   const signer1BalanceAfter = await getBalance(signer1)
   const royaltyAmount = getRoyaltyAmount(royalty, price)
-  const netPrice = priceAfterFee(price, NFTMarketplace.defaultCommissionRate, NFTMarketplace.defaultListingFee, royaltyAmount)
+  const netPrice = priceAfterFee(price, NFTMarketplace.defaultCommissionRate, royaltyAmount)
   expect(BigInt(signer1BalanceAfter.balance)).toEqual(BigInt(signer1BalanceBefore.balance) + netPrice + ONE_ALPH) // Extra ONE_ALPH is the listing contract deposit
 
   // Check the balance of signer2
@@ -373,22 +363,6 @@ async function cancelListingAndVerify(
 
   // NFTListing doesn't exist any more
   await expect(new NFTListingInstance(nftListingContractAddress).fetchState()).rejects.toThrow(Error)
-}
-
-function checkListingFee(
-  nftMarketplace: NFTMarketplace,
-  nftMarketplaceContractId: string,
-) {
-  const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
-  return async (previousValue: bigint, updateValue: bigint, updatedValue: bigint) => {
-    const stateBefore = await new NFTMarketPlaceInstance(nftMarketplaceContractAddress).fetchState()
-    expect(stateBefore.fields.listingFee).toEqual(previousValue)
-
-    await nftMarketplace.updateListingFee(updateValue, nftMarketplaceContractId)
-
-    const stateAfter = await new NFTMarketPlaceInstance(nftMarketplaceContractAddress).fetchState()
-    expect(stateAfter.fields.listingFee).toEqual(updatedValue)
-  }
 }
 
 function checkCommissionRate(
@@ -446,8 +420,8 @@ function getBalance(signer: PrivateKeyWallet): Promise<Balance> {
   return signer.nodeProvider!.addresses.getAddressesAddressBalance(signer.address)
 }
 
-function priceAfterFee(price: bigint, commission: bigint, listingFee: bigint, royaltyAmount: bigint) {
-  return (price - (price * commission) / 10000n) - listingFee - royaltyAmount
+function priceAfterFee(price: bigint, commission: bigint, royaltyAmount: bigint) {
+  return (price - (price * commission) / 10000n) - royaltyAmount
 }
 
 function getRoyaltyAmount(royalty: boolean, price: bigint): bigint {

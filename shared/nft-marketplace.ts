@@ -9,12 +9,11 @@ import {
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
-import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
+import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
 
 export class NFTMarketplace extends DeployHelpers {
-  static defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
   static defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
   public contractId: string | undefined
 
@@ -30,7 +29,6 @@ export class NFTMarketplace extends DeployHelpers {
           tokenOwner: randomContractAddress(),
           marketContractId: randomContractId(),
           commissionRate: NFTMarketplace.defaultCommissionRate,
-          listingFee: NFTMarketplace.defaultListingFee,
           price: 1000n,
           royalty: false
         }
@@ -44,7 +42,6 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractInstance.contractId,
           admin: adminAddress,
-          listingFee: NFTMarketplace.defaultListingFee,
           commissionRate: NFTMarketplace.defaultCommissionRate
         }
       }
@@ -134,22 +131,6 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
-          nftMarketplace: marketPlaceContractId
-        }
-      }
-    )
-  }
-
-  async updateListingFee(
-    price: Number256,
-    marketPlaceContractId: string,
-    signer: SignerProvider = this.signer
-  ): Promise<ExecuteScriptResult> {
-    return await UpdateListingFee.execute(
-      signer,
-      {
-        initialFields: {
-          price: BigInt(price),
           nftMarketplace: marketPlaceContractId
         }
       }
