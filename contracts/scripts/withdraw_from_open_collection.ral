@@ -1,0 +1,12 @@
+TxScript WithdrawFromOpenCollection(
+    to: Address,
+    amount: U256,
+    nftCollectionId: ByteVec,
+    royalty: Bool
+) {
+    if (royalty) {
+        NFTOpenCollectionWithRoyalty(nftCollectionId).withdraw(to, amount)
+    } else {
+        NFTOpenCollection(nftCollectionId).withdraw(to, amount)
+    }
+}

@@ -26,7 +26,9 @@ import { default as UpdateAdminScriptJson } from "../scripts/UpdateAdmin.ral.jso
 import { default as UpdateComissionRateScriptJson } from "../scripts/UpdateComissionRate.ral.json";
 import { default as UpdateNFTPriceScriptJson } from "../scripts/UpdateNFTPrice.ral.json";
 import { default as WithdrawFromMarketPlaceScriptJson } from "../scripts/WithdrawFromMarketPlace.ral.json";
+import { default as WithdrawFromOpenCollectionScriptJson } from "../scripts/WithdrawFromOpenCollection.ral.json";
 import { default as WithdrawFromPublicSaleCollectionRandomScriptJson } from "../scripts/WithdrawFromPublicSaleCollectionRandom.ral.json";
+import { default as WithdrawFromPublicSaleCollectionSequentialScriptJson } from "../scripts/WithdrawFromPublicSaleCollectionSequential.ral.json";
 
 export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
@@ -127,9 +129,21 @@ export const WithdrawFromMarketPlace = new ExecutableScript<{
   amount: bigint;
   nftMarketplace: HexString;
 }>(Script.fromJson(WithdrawFromMarketPlaceScriptJson));
+export const WithdrawFromOpenCollection = new ExecutableScript<{
+  to: Address;
+  amount: bigint;
+  nftCollectionId: HexString;
+  royalty: boolean;
+}>(Script.fromJson(WithdrawFromOpenCollectionScriptJson));
 export const WithdrawFromPublicSaleCollectionRandom = new ExecutableScript<{
   to: Address;
   amount: bigint;
   nftCollectionId: HexString;
   royalty: boolean;
 }>(Script.fromJson(WithdrawFromPublicSaleCollectionRandomScriptJson));
+export const WithdrawFromPublicSaleCollectionSequential = new ExecutableScript<{
+  to: Address;
+  amount: bigint;
+  nftCollectionId: HexString;
+  royalty: boolean;
+}>(Script.fromJson(WithdrawFromPublicSaleCollectionSequentialScriptJson));

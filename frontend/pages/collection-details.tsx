@@ -7,7 +7,7 @@ import images from '../assets';
 import { nftImageUrl, shortenAddress } from '../services/utils';
 import { useEffect, useState } from 'react';
 import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
-import { web3, ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount } from '@alephium/web3';
+import { web3, ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount, ExecuteScriptResult } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
 import { waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
@@ -106,6 +106,7 @@ export default function CollectionDetails() {
   const [collectionMetadata, setCollectionMetadata] = useState<NFTCollectionMetadata | undefined>()
   const [nfts, setNFTs] = useState<(NFT | undefined)[]>([])
   const [isNFTsLoading, setIsNFTsLoading] = useState<boolean>(false)
+  const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(false)
   const [page, setPage] = useState<number>(0)
   const pageSize = 20
@@ -113,7 +114,7 @@ export default function CollectionDetails() {
   useEffect(() => {
     const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
 
-    if (collectionId) {
+    if (collectionId && !isWithdrawing) {
       setIsMetadataLoading(true)
       web3.setCurrentNodeProvider(nodeProvider)
       fetchNFTCollectionMetadata(collectionId as string)
@@ -126,7 +127,7 @@ export default function CollectionDetails() {
           console.error(`failed to loading collection metadata, collection id: ${collectionId}, error: ${error}`)
         })
     }
-  }, [collectionId])
+  }, [collectionId, isWithdrawing])
 
   useEffect(() => {
     if (collectionMetadata === undefined) return
@@ -179,6 +180,43 @@ export default function CollectionDetails() {
     })
   }
 
+  const collectionBalance = (): string | undefined => {
+    return collectionMetadata?.balance && prettifyAttoAlphAmount(collectionMetadata.balance)
+  }
+
+  const withdraw = async () => {
+    try {
+      if (wallet?.signer?.nodeProvider && wallet.account && collectionMetadata?.balance) {
+        const amount = BigInt(collectionMetadata.balance) - ONE_ALPH
+        const nftCollection = new NFTCollectionHelper(wallet.signer)
+        let result: ExecuteScriptResult
+        setIsWithdrawing(true)
+        if (collectionMetadata.collectionType === 'NFTOpenCollection') {
+          result = await nftCollection.openCollection.withdraw(
+            collectionMetadata.owner,
+            amount,
+            collectionMetadata.id,
+            !!collectionMetadata.royaltyRate,
+            wallet.signer
+          )
+        } else {
+          result = await nftCollection.publicSaleCollection.sequential.withdraw(
+            collectionMetadata.owner,
+            amount,
+            collectionMetadata.id,
+            !!collectionMetadata.royaltyRate,
+            wallet.signer
+          )
+        }
+        await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
+        setIsWithdrawing(false)
+      }
+    } catch (error) {
+      setIsWithdrawing(false)
+      console.error(`failed to withdraw, error: ${error}`)
+    }
+  }
+
   return (
     <>
       {
@@ -220,15 +258,33 @@ export default function CollectionDetails() {
 
                 {
                   collectionMetadata.royaltyRate ? (
-                    <div className="flex flex-row sm:flex-col mt-10">
+                    <div className="flex flex-row sm:flex-col mt-10 dark:border-nft-black-1 border-b">
                       {
-                        <p className="font-poppins dark:text-white text-nft-black-1 font-medium mb-2">
-                          Royalty Fee: {Number(collectionMetadata.royaltyRate * 100n / 10000n).toString()}%, Total Balance: {collectionMetadata.balance}
+                        <p className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">
+                          Royalty Fee: {Number(collectionMetadata.royaltyRate * 100n / 10000n).toString()}%, Total Balance: {collectionBalance()} ALPH
                         </p>
                       }
                     </div>
                   ) : null
                 }
+
+                <div className="flex flex-row sm:flex-col mt-10">
+                  {
+                    (wallet?.account?.address === collectionMetadata.owner && !isWithdrawing) ? (
+                      <Button
+                        btnName={"Withdraw"}
+                        classStyles="mr-5 sm:mr-0 sm:mb-5 rounded-xl"
+                        handleClick={withdraw}
+                        disabled={!(!!collectionMetadata?.balance && BigInt(collectionMetadata.balance) > ONE_ALPH)}
+                      />
+                    ) : null
+                  }
+                  {
+                    (wallet?.account?.address === collectionMetadata.owner && !!isWithdrawing) ? (
+                      <LoaderWithText text={`Withdrawing...`} />
+                    ) : null
+                  }
+                </div>
 
                 <div className="mt-10 flex flex-wrap">
                   <div className="w-full border-b dark:border-nft-black-1 border-nft-gray-1 flex flex-row">

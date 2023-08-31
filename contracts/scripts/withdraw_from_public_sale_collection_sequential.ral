@@ -1,0 +1,12 @@
+TxScript WithdrawFromPublicSaleCollectionSequential(
+    to: Address,
+    amount: U256,
+    nftCollectionId: ByteVec,
+    royalty: Bool
+) {
+    if (royalty) {
+        NFTPublicSaleCollectionSequentialWithRoyalty(nftCollectionId).withdraw(to, amount)
+    } else {
+        NFTPublicSaleCollectionSequential(nftCollectionId).withdraw(to, amount)
+    }
+}

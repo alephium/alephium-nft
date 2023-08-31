@@ -72,6 +72,13 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "INFTWithdrawableCollection": {
+      "sourceFile": "nft/nft_collection_with_withdraw_interface.ral",
+      "sourceCodeHash": "0ed3336b045fda434f09be6b953f2055d438f7ae2d80baa66338005b1d6457a9",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "ListNFT": {
       "sourceFile": "scripts/list_nft.ral",
       "sourceCodeHash": "84ea4d7477fc6d932908094a8efed8ccf3c545c34bee6d8cd261970c409e9018",
@@ -240,9 +247,23 @@
       "codeHashDebug": "",
       "warnings": []
     },
+    "WithdrawFromOpenCollection": {
+      "sourceFile": "scripts/withdraw_from_open_collection.ral",
+      "sourceCodeHash": "2ccfd44a5f00f5739cae8fa7ca505bf4716a610bb163cbf4a1a71794594c2d8c",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
     "WithdrawFromPublicSaleCollectionRandom": {
       "sourceFile": "scripts/withdraw_from_public_sale_collection_random.ral",
       "sourceCodeHash": "f10884867e350ba20332119d7ec1fa319f7837f032cd24c4a3cda7e2e6478ecb",
+      "bytecodeDebugPatch": "",
+      "codeHashDebug": "",
+      "warnings": []
+    },
+    "WithdrawFromPublicSaleCollectionSequential": {
+      "sourceFile": "scripts/withdraw_from_public_sale_collection_sequential.ral",
+      "sourceCodeHash": "18d8c0d81cf0abd55625644d620f671cee3a9e33a72730754bf4eb1c9c58000b",
       "bytecodeDebugPatch": "",
       "codeHashDebug": "",
       "warnings": []

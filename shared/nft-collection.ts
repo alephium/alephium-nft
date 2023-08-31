@@ -27,6 +27,8 @@ import {
   MintOpenNFT,
   MintSpecific,
   WithdrawFromPublicSaleCollectionRandom,
+  WithdrawFromPublicSaleCollectionSequential,
+  WithdrawFromOpenCollection,
 } from '../artifacts/ts/scripts'
 import {
   web3,
@@ -236,7 +238,7 @@ export async function fetchNFTCollectionMetadata(
       owner: contractState.fields.collectionOwner,
       royaltyRate: contractState.fields.royaltyRate,
       image: metadata.image,
-      balance: contractBalance.balanceHint
+      balance: contractBalance.balance
     }
   } else if (state.codeHash === NFTPublicSaleCollectionSequential.contract.codeHash) {
     const contractState = NFTPublicSaleCollectionSequential.contract.fromApiContractState(state) as NFTPublicSaleCollectionSequentialTypes.State
@@ -273,7 +275,7 @@ export async function fetchNFTCollectionMetadata(
       maxBatchMintSize: Number(contractState.fields.maxBatchMintSize),
       nftBaseUri: contractState.fields.nftBaseUri,
       royaltyRate: contractState.fields.royaltyRate,
-      balance: contractBalance.balanceHint
+      balance: contractBalance.balance
     }
   }
 }
@@ -355,6 +357,26 @@ class OpenCollection extends DeployHelpers {
           royalty
         },
         attoAlphAmount: BigInt(1.1e18)
+      }
+    )
+  }
+
+  async withdraw(
+    to: string,
+    amount: bigint,
+    nftCollectionId: string,
+    royalty: boolean,
+    signer: SignerProvider = this.signer
+  ) {
+    return await WithdrawFromOpenCollection.execute(
+      signer,
+      {
+        initialFields: {
+          to: to,
+          amount: amount,
+          nftCollectionId: nftCollectionId,
+          royalty
+        }
       }
     )
   }
@@ -575,6 +597,26 @@ class PublicSaleCollectionSequential extends DeployHelpers {
           royalty
         },
         attoAlphAmount: ONE_ALPH + mintPrice + DUST_AMOUNT * 2n
+      }
+    )
+  }
+
+  async withdraw(
+    to: string,
+    amount: bigint,
+    nftCollectionId: string,
+    royalty: boolean,
+    signer: SignerProvider = this.signer
+  ) {
+    return await WithdrawFromPublicSaleCollectionSequential.execute(
+      signer,
+      {
+        initialFields: {
+          to: to,
+          amount: amount,
+          nftCollectionId: nftCollectionId,
+          royalty
+        }
       }
     )
   }
