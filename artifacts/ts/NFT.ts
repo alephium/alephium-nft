@@ -61,6 +61,10 @@ export namespace NFTTypes {
 }
 
 class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTTypes.Fields;
+  }
+
   at(address: string): NFTInstance {
     return new NFTInstance(address);
   }

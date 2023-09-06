@@ -6,7 +6,7 @@ Abstract Contract NFTCollectionBase(
 ) implements INFTCollection {
     enum ErrorCodes {
         NFTNotFound = 0
-        TokenOwnerAllowedOnly = 1
+        CollectionOwnerAllowedOnly = 1
     }
 
     pub fn getCollectionUri() -> ByteVec {
@@ -27,7 +27,7 @@ Abstract Contract NFTCollectionBase(
 
     @using(assetsInContract = true)
     pub fn withdraw(to: Address, amount: U256) -> () {
-        checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
+        checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.CollectionOwnerAllowedOnly)
         transferTokenFromSelf!(to, ALPH, amount)
     }
 }

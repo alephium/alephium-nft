@@ -23,4 +23,9 @@ Contract NFTPublicSaleCollectionSequentialWithRoyalty(
     pub fn payRoyalty(payer: Address, amount: U256) -> () {
         transferTokenToSelf!(payer, ALPH, amount)
     }
+
+    @using(checkExternalCaller = false)
+    pub fn withdrawRoyalty(to: Address, amount: U256) -> () {
+        withdraw(to, amount)
+    }
 }

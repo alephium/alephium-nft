@@ -100,13 +100,17 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionRandomWithRoyaltyInstance,
   NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
       IncorrectTokenIndex: BigInt(2),
       NFTNotFound: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
+      CollectionOwnerAllowedOnly: BigInt(1),
     },
   };
 
@@ -160,6 +164,14 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
+    },
+    withdrawRoyalty: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionRandomWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdrawRoyalty", params);
     },
     mint: async (
       params: TestContractParams<
@@ -226,7 +238,7 @@ export const NFTPublicSaleCollectionRandomWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionRandomWithRoyaltyContractJson,
     "",
-    "107172e36644792403390480a2aad84b0addd2114e0a4de520910d174dd71021"
+    "a5a8b32d5931441ac0641b7dc1f9fd0aef348d8845a6f077e01f5ddba917a312"
   )
 );
 

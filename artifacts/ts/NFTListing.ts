@@ -97,6 +97,10 @@ class Factory extends ContractFactory<
   NFTListingInstance,
   NFTListingTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTListingTypes.Fields;
+  }
+
   consts = {
     ErrorCodes: {
       NFTPriceTooLow: BigInt(2),

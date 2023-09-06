@@ -101,6 +101,10 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialWithRoyaltyInstance,
   NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
@@ -109,7 +113,7 @@ class Factory extends ContractFactory<
       InvalidMintBatchSize: BigInt(3),
       InsufficientNumOfUnminted: BigInt(4),
       NFTNotFound: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
+      CollectionOwnerAllowedOnly: BigInt(1),
     },
   };
 
@@ -163,6 +167,14 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
+    },
+    withdrawRoyalty: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdrawRoyalty", params);
     },
     mint_: async (
       params: TestContractParams<
@@ -226,7 +238,7 @@ export const NFTPublicSaleCollectionSequentialWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialWithRoyaltyContractJson,
     "",
-    "bac31fdd879d9dd9777fac2365fe8c07e99f71dadf746a5142fb069d154175a7"
+    "760e23ee0957736f8830e18198b811aede40809a9b5dab8b2c9c2014d54967eb"
   )
 );
 

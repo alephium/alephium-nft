@@ -76,9 +76,16 @@ class Factory extends ContractFactory<
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTOpenCollectionTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
-    ErrorCodes: { NFTNotFound: BigInt(0), TokenOwnerAllowedOnly: BigInt(1) },
+    ErrorCodes: {
+      NFTNotFound: BigInt(0),
+      CollectionOwnerAllowedOnly: BigInt(1),
+    },
   };
 
   at(address: string): NFTOpenCollectionInstance {

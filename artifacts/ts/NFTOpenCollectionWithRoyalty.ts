@@ -81,9 +81,16 @@ class Factory extends ContractFactory<
   NFTOpenCollectionWithRoyaltyInstance,
   NFTOpenCollectionWithRoyaltyTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTOpenCollectionWithRoyaltyTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
-    ErrorCodes: { NFTNotFound: BigInt(0), TokenOwnerAllowedOnly: BigInt(1) },
+    ErrorCodes: {
+      NFTNotFound: BigInt(0),
+      CollectionOwnerAllowedOnly: BigInt(1),
+    },
   };
 
   at(address: string): NFTOpenCollectionWithRoyaltyInstance {
@@ -131,6 +138,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "payRoyalty", params);
     },
+    withdrawRoyalty: async (
+      params: TestContractParams<
+        NFTOpenCollectionWithRoyaltyTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdrawRoyalty", params);
+    },
     mint: async (
       params: TestContractParams<
         NFTOpenCollectionWithRoyaltyTypes.Fields,
@@ -155,7 +170,7 @@ export const NFTOpenCollectionWithRoyalty = new Factory(
   Contract.fromJson(
     NFTOpenCollectionWithRoyaltyContractJson,
     "",
-    "3a420b08669ba6fac6eea9ec19a2d8bfdade8b92a7b21b2d9a92733e9567e8f0"
+    "7151d9fd8004269b7582a845020f801b17ad2972519eedfadaf529359d313efd"
   )
 );
 

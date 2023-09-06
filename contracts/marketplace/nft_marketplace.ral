@@ -114,8 +114,8 @@ Contract NFTMarketPlace(
     }
 
     pub fn updateNFTPrice(
-        tokenId: ByteVec, 
-        collectionId: ByteVec, 
+        tokenId: ByteVec,
+        collectionId: ByteVec,
         newPrice: U256
     ) -> () {
         let nftListingContractId = subContractId!(tokenId)

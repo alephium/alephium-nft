@@ -95,13 +95,17 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionRandomInstance,
   NFTPublicSaleCollectionRandomTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionRandomTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
       IncorrectTokenIndex: BigInt(2),
       NFTNotFound: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
+      CollectionOwnerAllowedOnly: BigInt(1),
     },
   };
 

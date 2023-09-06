@@ -133,7 +133,7 @@
           }
         },
         {
-          "name": "TokenOwnerAllowedOnly",
+          "name": "CollectionOwnerAllowedOnly",
           "value": {
             "type": "U256",
             "value": "1"

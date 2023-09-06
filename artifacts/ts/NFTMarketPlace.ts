@@ -113,6 +113,10 @@ class Factory extends ContractFactory<
   NFTMarketPlaceInstance,
   NFTMarketPlaceTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTMarketPlaceTypes.Fields;
+  }
+
   eventIndex = {
     NFTListed: 0,
     NFTSold: 1,

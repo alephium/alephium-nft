@@ -11,7 +11,7 @@ Abstract Contract NFTOpenCollectionBase(
     @using(preapprovedAssets = true, updateFields = true)
     pub fn mint(nftUri: ByteVec) -> (ByteVec) {
         let minter = callerAddress!()
-        checkCaller!(minter == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
+        checkCaller!(minter == collectionOwner, ErrorCodes.CollectionOwnerAllowedOnly)
         let nftIndex = totalSupply
         let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(nftUri, nftIndex)
 

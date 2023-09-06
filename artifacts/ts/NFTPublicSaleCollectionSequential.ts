@@ -96,6 +96,10 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialInstance,
   NFTPublicSaleCollectionSequentialTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionSequentialTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
@@ -104,7 +108,7 @@ class Factory extends ContractFactory<
       InvalidMintBatchSize: BigInt(3),
       InsufficientNumOfUnminted: BigInt(4),
       NFTNotFound: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
+      CollectionOwnerAllowedOnly: BigInt(1),
     },
   };
 

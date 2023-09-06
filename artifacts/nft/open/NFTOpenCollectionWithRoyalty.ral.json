@@ -1,8 +1,8 @@
 {
   "version": "v2.5.2",
   "name": "NFTOpenCollectionWithRoyalty",
-  "bytecode": "06070912402640364041409740a8010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce032c1367102d0201010202000316001601a901030106014028b417011601ce02450d7ba0001702160016021406414c5048000313036413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202020008b4ce02450d7b16001601a8",
-  "codeHash": "3a420b08669ba6fac6eea9ec19a2d8bfdade8b92a7b21b2d9a92733e9567e8f0",
+  "bytecode": "06080912402640364041404d40a340b4010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce032c1367102d0201010202000316001601a901000202000316001601000701030106014028b417011601ce02450d7ba0001702160016021406414c5048000313036413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202040008b4ce02450d7b16001601a8",
+  "codeHash": "7151d9fd8004269b7582a845020f801b17ad2972519eedfadaf529359d313efd",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
@@ -126,6 +126,25 @@
       "returnTypes": []
     },
     {
+      "name": "withdrawRoyalty",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
       "name": "mint",
       "usePreapprovedAssets": true,
       "useAssetsInContract": false,
@@ -176,7 +195,7 @@
           }
         },
         {
-          "name": "TokenOwnerAllowedOnly",
+          "name": "CollectionOwnerAllowedOnly",
           "value": {
             "type": "U256",
             "value": "1"
