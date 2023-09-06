@@ -1,7 +1,7 @@
 // This is for the scenario where an artist or AI creates a set of arts
 // in advance and sell to the public for minting, users can mint any of
 // the arts in the collection by paying the mint price.
-Contract NFTPublicSaleCollectionRandom(
+Abstract Contract NFTPublicSaleCollectionRandomBase(
     nftTemplateId: ByteVec,
     collectionUri: ByteVec,
     collectionOwner: Address,
@@ -9,7 +9,7 @@ Contract NFTPublicSaleCollectionRandom(
     maxSupply: U256,
     mintPrice: U256,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollection(nftBaseUri, maxSupply, mintPrice) {
+) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollectionBase(nftBaseUri, maxSupply, mintPrice) {
     event Mint(minter: Address, index: U256)
 
     enum ErrorCodes {
@@ -21,7 +21,7 @@ Contract NFTPublicSaleCollectionRandom(
         assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(selfContractId!(), getNFTUri(index), index)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(getNFTUri(index), index)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),
@@ -46,11 +46,5 @@ Contract NFTPublicSaleCollectionRandom(
 
     pub fn getMaxSupply() -> U256 {
         return maxSupply
-    }
-
-    @using(assetsInContract = true)
-    pub fn withdraw(to: Address, amount: U256) -> () {
-        checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.TokenOwnerAllowedOnly)
-        transferTokenFromSelf!(to, ALPH, amount)
     }
 }

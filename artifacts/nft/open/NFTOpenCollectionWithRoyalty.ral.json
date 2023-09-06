@@ -1,35 +1,26 @@
 {
-  "version": "v2.5.0",
-  "name": "NFTPublicSaleCollectionSequential",
-  "bytecode": "0909091240264037404b4054408e40cc4136010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b160102010202020008b4ce03450d7b16001601a801000101010a1600ce04310c7bce021600894402010000000102ce0502000302040117b11601000416011406414c5048000313046413006417031702160013c40de0b6b3a7640000a2160140ce00160216030d1600c9020101000c011ea000ce04310e7bb41700a0001701160013c40de0b6b3a7640000a216001601000617021600ce05a9a0000d2aa10005160016010d60160202010101050140381600ce06320f7b1600ce04a0002b32107bb41701a0001702140017030c170416041600314c101603160113c40de0b6b3a7640000a21601160216042a000644170316040d2a17044a2c1601ce0516002ca9a00016002aa1000516011602160060160302",
-  "codeHash": "0ad17171a21b266240713ad96da4baf6cd16adcc651343f4f353292728791618",
+  "version": "v2.5.2",
+  "name": "NFTOpenCollectionWithRoyalty",
+  "bytecode": "06080912402640364041404d40a340b4010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce032c1367102d0201010202000316001601a901000202000316001601000701030106014028b417011601ce02450d7ba0001702160016021406414c5048000313036413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202040008b4ce02450d7b16001601a8",
+  "codeHash": "7151d9fd8004269b7582a845020f801b17ad2972519eedfadaf529359d313efd",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
       "collectionUri",
-      "nftBaseUri",
       "collectionOwner",
-      "maxSupply",
-      "mintPrice",
-      "maxBatchMintSize",
+      "royaltyRate",
       "totalSupply",
       "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
       "ByteVec",
-      "ByteVec",
       "Address",
-      "U256",
-      "U256",
       "U256",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
-      false,
-      false,
-      false,
       false,
       false,
       false,
@@ -43,12 +34,10 @@
       "name": "Mint",
       "fieldNames": [
         "minter",
-        "fromIndex",
-        "mintSize"
+        "index"
       ],
       "fieldTypes": [
         "Address",
-        "U256",
         "U256"
       ]
     }
@@ -97,6 +86,83 @@
       ]
     },
     {
+      "name": "royaltyAmount",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "tokenId",
+        "salePrice"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "U256"
+      ]
+    },
+    {
+      "name": "payRoyalty",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "payer",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "withdrawRoyalty",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "to",
+        "amount"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
+    },
+    {
+      "name": "mint",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "nftUri"
+      ],
+      "paramTypes": [
+        "ByteVec"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
       "name": "withdraw",
       "usePreapprovedAssets": false,
       "useAssetsInContract": true,
@@ -114,103 +180,10 @@
         false
       ],
       "returnTypes": []
-    },
-    {
-      "name": "getNFTUri",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [
-        "index"
-      ],
-      "paramTypes": [
-        "U256"
-      ],
-      "paramIsMutable": [
-        false
-      ],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "getMintPrice",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "U256"
-      ]
-    },
-    {
-      "name": "mint_",
-      "usePreapprovedAssets": true,
-      "useAssetsInContract": false,
-      "isPublic": false,
-      "paramNames": [
-        "minter",
-        "index"
-      ],
-      "paramTypes": [
-        "Address",
-        "U256"
-      ],
-      "paramIsMutable": [
-        false,
-        false
-      ],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "mint",
-      "usePreapprovedAssets": true,
-      "useAssetsInContract": true,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "mintBatch",
-      "usePreapprovedAssets": true,
-      "useAssetsInContract": true,
-      "isPublic": true,
-      "paramNames": [
-        "size"
-      ],
-      "paramTypes": [
-        "U256"
-      ],
-      "paramIsMutable": [
-        false
-      ],
-      "returnTypes": [
-        "ByteVec"
-      ]
     }
   ],
   "constants": [],
   "enums": [
-    {
-      "name": "PublicSaleErrorCodes",
-      "fields": [
-        {
-          "name": "IncorrectTokenIndex",
-          "value": {
-            "type": "U256",
-            "value": "0"
-          }
-        }
-      ]
-    },
     {
       "name": "ErrorCodes",
       "fields": [
@@ -222,35 +195,14 @@
           }
         },
         {
-          "name": "TokenOwnerAllowedOnly",
+          "name": "CollectionOwnerAllowedOnly",
           "value": {
             "type": "U256",
             "value": "1"
-          }
-        },
-        {
-          "name": "IncorrectTokenIndex",
-          "value": {
-            "type": "U256",
-            "value": "2"
-          }
-        },
-        {
-          "name": "InvalidMintBatchSize",
-          "value": {
-            "type": "U256",
-            "value": "3"
-          }
-        },
-        {
-          "name": "InsufficientNumOfUnminted",
-          "value": {
-            "type": "U256",
-            "value": "4"
           }
         }
       ]
     }
   ],
-  "stdInterfaceId": "0002"
+  "stdInterfaceId": "000201"
 }

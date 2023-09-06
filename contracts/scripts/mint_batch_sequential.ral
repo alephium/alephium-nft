@@ -1,4 +1,14 @@
-TxScript MintBatchSequential(nftCollection: NFTPublicSaleCollectionSequential, batchSize: U256, mintPrice: U256) {
+TxScript MintBatchSequential(
+    nftCollectionId: ByteVec,
+    batchSize: U256,
+    mintPrice: U256,
+    royalty: Bool
+) {
   let alphAmount = batchSize * (1 alph + mintPrice)
-  nftCollection.mintBatch{callerAddress!() -> ALPH: alphAmount}(batchSize)
+
+  if (royalty) {
+      NFTPublicSaleCollectionSequentialWithRoyalty(nftCollectionId).mintBatch{callerAddress!() -> ALPH: alphAmount}(batchSize)
+  } else {
+      NFTPublicSaleCollectionSequential(nftCollectionId).mintBatch{callerAddress!() -> ALPH: alphAmount}(batchSize)
+  }
 }

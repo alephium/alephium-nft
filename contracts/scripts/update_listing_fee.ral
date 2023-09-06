@@ -1,6 +1,0 @@
-TxScript UpdateListingFee(
-    price: U256,
-    nftMarketplace: NFTMarketPlace
-) {
-    nftMarketplace.updateListingFee(price)
-}

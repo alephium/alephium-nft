@@ -24,7 +24,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTPublicSaleCollectionSequentialContractJson } from "../nft/NFTPublicSaleCollectionSequential.ral.json";
+import { default as NFTPublicSaleCollectionSequentialContractJson } from "../nft/publicsale/sequential/NFTPublicSaleCollectionSequential.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
@@ -61,14 +61,6 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
       params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
     };
-    getNFTUri: {
-      params: CallContractParams<{ index: bigint }>;
-      result: CallContractResult<HexString>;
-    };
-    getMintPrice: {
-      params: Omit<CallContractParams<{}>, "args">;
-      result: CallContractResult<bigint>;
-    };
     mint: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
@@ -76,6 +68,14 @@ export namespace NFTPublicSaleCollectionSequentialTypes {
     mintBatch: {
       params: CallContractParams<{ size: bigint }>;
       result: CallContractResult<HexString>;
+    };
+    getNFTUri: {
+      params: CallContractParams<{ index: bigint }>;
+      result: CallContractResult<HexString>;
+    };
+    getMintPrice: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<bigint>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -96,15 +96,19 @@ class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialInstance,
   NFTPublicSaleCollectionSequentialTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionSequentialTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
     PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
     ErrorCodes: {
-      NFTNotFound: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
       IncorrectTokenIndex: BigInt(2),
       InvalidMintBatchSize: BigInt(3),
       InsufficientNumOfUnminted: BigInt(4),
+      NFTNotFound: BigInt(0),
+      CollectionOwnerAllowedOnly: BigInt(1),
     },
   };
 
@@ -143,33 +147,6 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "nftByIndex", params);
     },
-    withdraw: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionSequentialTypes.Fields,
-        { to: Address; amount: bigint }
-      >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
-    },
-    getNFTUri: async (
-      params: TestContractParams<
-        NFTPublicSaleCollectionSequentialTypes.Fields,
-        { index: bigint }
-      >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getNFTUri", params);
-    },
-    getMintPrice: async (
-      params: Omit<
-        TestContractParams<
-          NFTPublicSaleCollectionSequentialTypes.Fields,
-          never
-        >,
-        "testArgs"
-      >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getMintPrice", params);
-    },
     mint_: async (
       params: TestContractParams<
         NFTPublicSaleCollectionSequentialTypes.Fields,
@@ -197,6 +174,33 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mintBatch", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
+    getNFTUri: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialTypes.Fields,
+        { index: bigint }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getNFTUri", params);
+    },
+    getMintPrice: async (
+      params: Omit<
+        TestContractParams<
+          NFTPublicSaleCollectionSequentialTypes.Fields,
+          never
+        >,
+        "testArgs"
+      >
+    ): Promise<TestContractResult<bigint>> => {
+      return testMethod(this, "getMintPrice", params);
+    },
   };
 }
 
@@ -205,7 +209,7 @@ export const NFTPublicSaleCollectionSequential = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialContractJson,
     "",
-    "0ad17171a21b266240713ad96da4baf6cd16adcc651343f4f353292728791618"
+    "53ba8d897250f9e9e03ca71a10d5694d93a031e0a9df49ee8060d8654c8f89a3"
   )
 );
 
@@ -276,32 +280,6 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
         getContractByCodeHash
       );
     },
-    getNFTUri: async (
-      params: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"getNFTUri">
-    ): Promise<
-      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"getNFTUri">
-    > => {
-      return callMethod(
-        NFTPublicSaleCollectionSequential,
-        this,
-        "getNFTUri",
-        params,
-        getContractByCodeHash
-      );
-    },
-    getMintPrice: async (
-      params?: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"getMintPrice">
-    ): Promise<
-      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"getMintPrice">
-    > => {
-      return callMethod(
-        NFTPublicSaleCollectionSequential,
-        this,
-        "getMintPrice",
-        params === undefined ? {} : params,
-        getContractByCodeHash
-      );
-    },
     mint: async (
       params?: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"mint">
     ): Promise<
@@ -325,6 +303,32 @@ export class NFTPublicSaleCollectionSequentialInstance extends ContractInstance 
         this,
         "mintBatch",
         params,
+        getContractByCodeHash
+      );
+    },
+    getNFTUri: async (
+      params: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"getNFTUri">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"getNFTUri">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequential,
+        this,
+        "getNFTUri",
+        params,
+        getContractByCodeHash
+      );
+    },
+    getMintPrice: async (
+      params?: NFTPublicSaleCollectionSequentialTypes.CallMethodParams<"getMintPrice">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialTypes.CallMethodResult<"getMintPrice">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequential,
+        this,
+        "getMintPrice",
+        params === undefined ? {} : params,
         getContractByCodeHash
       );
     },

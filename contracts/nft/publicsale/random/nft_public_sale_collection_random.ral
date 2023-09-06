@@ -1,0 +1,10 @@
+Contract NFTPublicSaleCollectionRandom(
+    nftTemplateId: ByteVec,
+    collectionUri: ByteVec,
+    collectionOwner: Address,
+    nftBaseUri: ByteVec,
+    maxSupply: U256,
+    mintPrice: U256,
+    mut totalSupply: U256
+) extends NFTPublicSaleCollectionRandomBase(nftTemplateId, collectionUri, collectionOwner, nftBaseUri, maxSupply, mintPrice, totalSupply) {
+}

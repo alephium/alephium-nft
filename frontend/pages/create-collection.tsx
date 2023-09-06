@@ -22,7 +22,7 @@ const MaximumBatchMintSize: bigint = 15n
 
 export default function CreateCollections() {
   const [fileUrl, setFileUrl] = useState<string | undefined>(undefined)
-  const [formInput, updateFormInput] = useState({ name: '', description: '', nftBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '' })
+  const [formInput, updateFormInput] = useState({ name: '', description: '', nftBaseUri: '', maxSupply: '', mintPrice: '', maxBatchMintSize: '', royaltyRate: '' })
   const wallet = useWallet()
   const router = useRouter()
   const { theme } = useTheme();
@@ -89,10 +89,17 @@ export default function CreateCollections() {
   async function createOpenCollection() {
     const collectionUri = await uploadToIPFS()
     const backendUrl = getBackendUrl()
+    const { royaltyRate } = formInput
     if (collectionUri && wallet?.signer?.nodeProvider && wallet?.account) {
       const nftCollection = new NFTCollectionHelper(wallet.signer)
       setIsCreatingCollection(true)
-      const createCollectionTxResult = await nftCollection.createOpenCollection(collectionUri)
+      let createCollectionTxResult
+      if (!royaltyRate) {
+        createCollectionTxResult = await nftCollection.openCollection.create(collectionUri)
+      } else {
+        createCollectionTxResult = await nftCollection.openCollection.createWithRoyalty(collectionUri, BigInt(Number(royaltyRate) * 100))
+      }
+
       await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
       const collectionId = createCollectionTxResult.contractInstance.contractId
       await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
@@ -104,6 +111,7 @@ export default function CreateCollections() {
 
   async function createPublicSaleCollectionSequential() {
     const backendUrl = getBackendUrl()
+    const { royaltyRate } = formInput
     try {
       const { nftBaseUri, maxSupply: maxSupplyStr, mintPrice: mintPriceStr, maxBatchMintSize: maxBatchMintSizeStr } = formInput
       // Verify that this URL is correct, metadata is valid
@@ -126,7 +134,14 @@ export default function CreateCollections() {
       if (collectionUri && wallet?.signer?.nodeProvider && wallet.account) {
         const nftCollection = new NFTCollectionHelper(wallet.signer)
         setIsCreatingCollection(true)
-        const createCollectionTxResult = await nftCollection.createPublicSaleCollectionSequential(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
+
+        let createCollectionTxResult
+        if (!royaltyRate) {
+          createCollectionTxResult = await nftCollection.publicSaleCollection.sequential.create(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize)
+        } else {
+          createCollectionTxResult = await nftCollection.publicSaleCollection.sequential.createWithRoyalty(maxSupply, mintPrice, collectionUri, nftBaseUri, maxBatchMintSize, BigInt(Number(royaltyRate) * 100))
+        }
+
         await waitTxConfirmed(wallet.signer.nodeProvider, createCollectionTxResult.txId)
         const collectionId = createCollectionTxResult.contractInstance.contractId
         await axios.post(`${backendUrl}/api/create-collection`, { collectionId: collectionId })
@@ -182,6 +197,26 @@ export default function CreateCollections() {
         title="Name"
         placeholder="NFT Collection Name"
         handleClick={(e) => updateFormInput({ ...formInput, name: (e.target as HTMLInputElement).value })}
+      />
+    )
+  }
+
+  function collectionRoyaltyRate() {
+    const royltyRateRegex = /^(?:\d+\.?\d{0,2}|\.\d{1,2})$/;
+    return (
+      <Input
+        inputType=""
+        title="Royalty Rate (Optional)"
+        placeholder="Percentage, e.g. 5%"
+        handleClick={(e) => {
+          const value = (e.target as HTMLInputElement).value
+          if (royltyRateRegex.test(value) || value === '') {
+            if (Number(value) >= 0 && Number(value) < 100 || value === '') {
+              updateFormInput({ ...formInput, royaltyRate: (e.target as HTMLInputElement).value })
+            }
+          }
+        }}
+        value={formInput.royaltyRate}
       />
     )
   }
@@ -280,16 +315,18 @@ export default function CreateCollections() {
               {collectionImage()}
               {collectionName()}
               {collectionDescription()}
+              {collectionRoyaltyRate()}
               {createCollectionButton(() => createOpenCollection(), 'NFTOpenCollection')}
             </TabPanel>
             <TabPanel>
               {collectionImage()}
+              {collectionName()}
+              {collectionDescription()}
+              {collectionRoyaltyRate()}
               {collectionMaxSupply()}
               {collectionMaxBatchMintSize()}
               {collectionMintPrice()}
               {collectionNFTBaseURI()}
-              {collectionName()}
-              {collectionDescription()}
               {createCollectionButton(() => createPublicSaleCollectionSequential(), 'NFTPublicSaleCollection')}
             </TabPanel>
           </Tabs>

@@ -1,8 +1,10 @@
 TxScript ListNFT(
     tokenId: ByteVec,
+    collectionId: ByteVec,
     price: U256,
-    nftMarketplace: NFTMarketPlace
+    nftMarketplace: NFTMarketPlace,
+    royalty: Bool
 ) {
     let minimalAlphInContract = 1 alph
-    nftMarketplace.listNFT{callerAddress!() -> ALPH: minimalAlphInContract, tokenId: 1}(tokenId, price)
+    nftMarketplace.listNFT{callerAddress!() -> ALPH: minimalAlphInContract, tokenId: 1}(tokenId, collectionId, price, royalty)
 }

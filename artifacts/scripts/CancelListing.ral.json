@@ -1,7 +1,7 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.2",
   "name": "CancelListing",
-  "bytecodeTemplate": "01010300000005{0}0d0c{1}0102",
+  "bytecodeTemplate": "01010300000005{0}0d0c{1}0104",
   "fieldsSig": {
     "names": [
       "tokenId",

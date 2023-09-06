@@ -1,7 +1,8 @@
-import { hexToString } from '@alephium/web3'
+import { web3, hexToString, ExplorerProvider } from '@alephium/web3'
 import { addressFromContractId, binToHex, contractIdFromAddress, NodeProvider, node } from '@alephium/web3'
 import * as base58 from 'bs58'
 import { randomBytes } from 'crypto'
+import { getAlephiumNFTConfig } from './configs'
 
 export function checkHexString(value: any, expected: string) {
   expect(hexToString(value)).toEqual(expected)
@@ -23,6 +24,16 @@ export function randomContractAddress(): string {
 
 function isConfirmed(txStatus: node.TxStatus): txStatus is node.Confirmed {
   return txStatus.type === 'Confirmed'
+}
+
+export function getNodeProvider(): NodeProvider {
+  const nodeUrl = process.env.NODE_URL || getAlephiumNFTConfig().defaultNodeUrl
+  return web3.getCurrentNodeProvider() ?? new NodeProvider(nodeUrl)
+}
+
+export function getExplorerProvider(): ExplorerProvider {
+  const explorerUrl = process.env.EXPLORER_URL || getAlephiumNFTConfig().defaultExplorerUrl
+  return web3.getCurrentExplorerProvider() ?? new ExplorerProvider(explorerUrl)
 }
 
 export async function waitTxConfirmed(

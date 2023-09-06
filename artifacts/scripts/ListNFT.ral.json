@@ -1,19 +1,25 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.2",
   "name": "ListNFT",
-  "bytecodeTemplate": "0101030001001013c40de0b6b3a76400001700b47a1600a2{0}0da3{0}{1}0e0d{2}010118",
+  "bytecodeTemplate": "0101030001001213c40de0b6b3a76400001700b47a1600a2{0}0da3{0}{1}{2}{4}100d{3}010318",
   "fieldsSig": {
     "names": [
       "tokenId",
+      "collectionId",
       "price",
-      "nftMarketplace"
+      "nftMarketplace",
+      "royalty"
     ],
     "types": [
       "ByteVec",
+      "ByteVec",
       "U256",
-      "ByteVec"
+      "ByteVec",
+      "Bool"
     ],
     "isMutable": [
+      false,
+      false,
       false,
       false,
       false

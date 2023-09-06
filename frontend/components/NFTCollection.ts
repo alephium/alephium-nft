@@ -23,7 +23,7 @@ export const useCollectionMetadata = (
       web3.setCurrentNodeProvider(signerProvider.nodeProvider)
       web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
 
-      return await fetchNFTCollectionMetadata(signerProvider.nodeProvider, collectionId as string)
+      return await fetchNFTCollectionMetadata(collectionId as string)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,

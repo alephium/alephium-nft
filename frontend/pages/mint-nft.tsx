@@ -87,7 +87,8 @@ export default function MintNFT() {
     if (uri && wallet?.signer?.nodeProvider && wallet.account && collectionMetadata) {
       const nftCollection = new NFTCollectionHelper(wallet.signer)
       setIsMinting(true)
-      const result = await nftCollection.mintOpenNFT(collectionMetadata.id, uri)
+      const royalty = !!collectionMetadata.royaltyRate
+      const result = await nftCollection.openCollection.mint(collectionMetadata.id, uri, royalty)
       await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsMinting(false)
       router.push('/my-nfts')

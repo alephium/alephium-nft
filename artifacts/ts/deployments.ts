@@ -15,6 +15,10 @@ import {
   NFTOpenCollectionInstance,
   NFTPublicSaleCollectionSequential,
   NFTPublicSaleCollectionSequentialInstance,
+  NFTOpenCollectionWithRoyalty,
+  NFTOpenCollectionWithRoyaltyInstance,
+  NFTPublicSaleCollectionSequentialWithRoyalty,
+  NFTPublicSaleCollectionSequentialWithRoyaltyInstance,
 } from ".";
 import { default as testnetDeployments } from "../.deployments.testnet.json";
 import { default as devnetDeployments } from "../.deployments.devnet.json";
@@ -27,6 +31,8 @@ export type Deployments = {
     NFT: DeployContractExecutionResult<NFTInstance>;
     NFTOpenCollection: DeployContractExecutionResult<NFTOpenCollectionInstance>;
     NFTPublicSaleCollectionSequential: DeployContractExecutionResult<NFTPublicSaleCollectionSequentialInstance>;
+    NFTOpenCollectionWithRoyalty?: DeployContractExecutionResult<NFTOpenCollectionWithRoyaltyInstance>;
+    NFTPublicSaleCollectionSequentialWithRoyalty?: DeployContractExecutionResult<NFTPublicSaleCollectionSequentialWithRoyaltyInstance>;
   };
 };
 
@@ -61,6 +67,27 @@ function toDeployments(json: any): Deployments {
           .address
       ),
     },
+    NFTOpenCollectionWithRoyalty:
+      json.contracts["NFTOpenCollectionWithRoyalty"] === undefined
+        ? undefined
+        : {
+            ...json.contracts["NFTOpenCollectionWithRoyalty"],
+            contractInstance: NFTOpenCollectionWithRoyalty.at(
+              json.contracts["NFTOpenCollectionWithRoyalty"].contractInstance
+                .address
+            ),
+          },
+    NFTPublicSaleCollectionSequentialWithRoyalty:
+      json.contracts["NFTPublicSaleCollectionSequentialWithRoyalty"] ===
+      undefined
+        ? undefined
+        : {
+            ...json.contracts["NFTPublicSaleCollectionSequentialWithRoyalty"],
+            contractInstance: NFTPublicSaleCollectionSequentialWithRoyalty.at(
+              json.contracts["NFTPublicSaleCollectionSequentialWithRoyalty"]
+                .contractInstance.address
+            ),
+          },
   };
   return {
     ...json,

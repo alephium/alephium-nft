@@ -3,7 +3,14 @@ import Link from 'next/link';
 import withTransition from '../components/withTransition';
 import { Button, Loader, Modal } from '../components';
 import { NFTMarketplace } from '../../shared/nft-marketplace';
-import { ONE_ALPH, prettifyAttoAlphAmount, binToHex, contractIdFromAddress, web3, NodeProvider } from '@alephium/web3'
+import {
+  prettifyAttoAlphAmount,
+  binToHex,
+  contractIdFromAddress,
+  web3,
+  NodeProvider,
+  ExplorerProvider
+} from '@alephium/web3'
 import { getAlephiumNFTConfig } from '../../shared/configs';
 import { fetchPreMintNFT } from '../components/nft';
 import { fetchNFTListingById, NFTListing } from '../components/NFTListing';
@@ -86,10 +93,14 @@ const AssetDetails = () => {
   const [isBuyingNFT, setIsBuyingNFT] = useState(false);
   const [isCancellingNFTListing, setIsCancellingNFTListing] = useState(false);
   const defaultNodeUrl = getAlephiumNFTConfig().defaultNodeUrl
+  const defaultExplorerUrl = getAlephiumNFTConfig().defaultExplorerUrl
 
   useEffect(() => {
     const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(defaultNodeUrl)
+    const explorerProvider = wallet?.signer?.explorerProvider || new ExplorerProvider(defaultExplorerUrl)
     web3.setCurrentNodeProvider(nodeProvider)
+    web3.setCurrentExplorerProvider(explorerProvider)
+
     // disable body scroll when navbar is open
     if (paymentModal || successModal) {
       document.body.style.overflow = 'hidden';
@@ -98,14 +109,14 @@ const AssetDetails = () => {
     }
 
     if (nft?.collectionId) {
-      fetchNFTCollectionMetadata(nodeProvider, nft.collectionId).then((metadata) => {
+      fetchNFTCollectionMetadata(nft.collectionId).then((metadata) => {
         setCollectionMetadata(metadata)
       })
     }
 
     if (tokenId) {
       setIsNFTLoading(true)
-      fetchMintedNFT(nodeProvider, tokenId as string, false).then((nft) => {
+      fetchMintedNFT(tokenId as string, false).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
@@ -140,15 +151,6 @@ const AssetDetails = () => {
 
   const isOwner = tokenIds.includes(nft.tokenId) || (nftListing && nftListing.tokenOwner === wallet?.account.address)
 
-  function getPriceBreakdowns(nftPrice: bigint) {
-    const commission = BigInt(nftPrice) * BigInt(200) / BigInt(10000)
-    const nftDeposit = ONE_ALPH
-    const gasAmount = BigInt(200000)
-    const totalAmount = BigInt(nftPrice) + commission + nftDeposit + gasAmount
-
-    return [commission, nftDeposit, gasAmount, totalAmount]
-  }
-
   const checkout = async () => {
     if (wallet?.signer.nodeProvider) {
       try {
@@ -156,16 +158,15 @@ const AssetDetails = () => {
         setIsBuyingNFT(true)
         if (nft.minted === true && nftListing) {
           const nftMarketplace = new NFTMarketplace(wallet.signer)
-          // TODO: Display the price breakdowns
-          const [commission, nftDeposit, gasAmount, totalAmount] = getPriceBreakdowns(nftListing.price)
           result = await nftMarketplace.buyNFT(
-            totalAmount,
+            nftListing.price,
             nftListing._id,
+            nftListing.collectionId,
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
           const nftCollection = new NFTCollectionHelper(wallet.signer)
-          result = await nftCollection.mintSpecificPublicSaleNFT(BigInt(tokenIndex as string), nft.price, collectionId as string)
+          result = await nftCollection.publicSaleCollection.random.mint(BigInt(tokenIndex as string), nft.price, collectionId as string, false)
         }
 
         setPaymentModal(false);
@@ -256,6 +257,15 @@ const AssetDetails = () => {
             </p>
           </div>
         </div>
+
+        {
+          collectionMetadata?.royaltyRate ? (
+            <div className="mt-10 flex flex-col">
+              <div className="font-poppins dark:text-white text-nft-black-1 font-medium text-base mb-2">Royalty {(collectionMetadata.royaltyRate * 100n / 10000n).toString()}%</div>
+            </div>
+          ) : null
+        }
+
         <div className="flex flex-row sm:flex-col mt-10">
           {
             (isOwner && nftListing) ? (

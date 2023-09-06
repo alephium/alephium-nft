@@ -1,19 +1,22 @@
 {
-  "version": "v2.5.0",
+  "version": "v2.5.2",
   "name": "MintBatchSequential",
-  "bytecodeTemplate": "0101030001000f{1}13c40de0b6b3a7640000{2}2a2c1700b41600a2{1}0d0d{0}010818",
+  "bytecodeTemplate": "0101030001001b{1}13c40de0b6b3a7640000{2}2a2c1700{3}4c0ab41600a2{1}0d0d{0}0108184a09b41600a2{1}0d0d{0}010518",
   "fieldsSig": {
     "names": [
-      "nftCollection",
+      "nftCollectionId",
       "batchSize",
-      "mintPrice"
+      "mintPrice",
+      "royalty"
     ],
     "types": [
       "ByteVec",
       "U256",
-      "U256"
+      "U256",
+      "Bool"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false

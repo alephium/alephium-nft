@@ -1,0 +1,5 @@
+import "std/nft_collection_interface"
+
+Interface INFTWithdrawableCollection extends INFTCollection {
+  pub fn withdraw(to: Address, amount: U256) -> ()
+}

@@ -1,9 +1,10 @@
 import axios from "axios"
 import useSWR from "swr"
-import { NFTPublicSaleCollectionSequentialInstance } from '../../artifacts/ts'
-import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256 } from "@alephium/web3"
+import { NFTPublicSaleCollectionSequential } from '../../artifacts/ts'
+import { web3, hexToString, addressFromContractId, NodeProvider, subContractId, binToHex, encodeU256, ExplorerProvider } from "@alephium/web3"
 import { fetchNFTListingsByOwner } from "./NFTListing"
 import { fetchMintedNFT, fetchMintedNFTByMetadata, fetchMintedNFTMetadata, NFT } from "../../shared/nft"
+import { getNodeProvider } from "../../shared"
 
 export async function fetchPreMintNFT(
   collectionId: string,
@@ -13,7 +14,7 @@ export async function fetchPreMintNFT(
   const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
   try {
     const collectionAddress = addressFromContractId(collectionId)
-    const collection = new NFTPublicSaleCollectionSequentialInstance(collectionAddress)
+    const collection = NFTPublicSaleCollectionSequential.at(collectionAddress)
     const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
     if (mintPrice === undefined) {
       mintPrice = (await collection.methods.getMintPrice()).returns
@@ -41,17 +42,15 @@ async function fetchListedNFTs(address: string): Promise<NFT[]> {
   return listings.map((listing) => ({ tokenId: listing._id, listed: true, minted: true, ...listing }))
 }
 
-async function fetchNFTsFromUTXOs(
-  nodeProvider: NodeProvider,
-  address: string
-): Promise<NFT[]> {
+async function fetchNFTsFromUTXOs(address: string): Promise<NFT[]> {
+  const nodeProvider = getNodeProvider()
   const balances = await nodeProvider.addresses.getAddressesAddressBalance(address, { mempool: false })
   const tokenBalances = balances.tokenBalances !== undefined ? balances.tokenBalances : []
   const tokenIds = tokenBalances
     .filter((token) => +token.amount == 1)
     .map((token) => token.id)
 
-  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(nodeProvider, tokenId))
+  const nftMetadataPromises = tokenIds.map((tokenId) => fetchMintedNFTMetadata(tokenId))
   const nftMetadatas = await Promise.all(nftMetadataPromises)
   const nftPromises = tokenIds.map((tokenId, index) => {
     const metadata = nftMetadatas[index]
@@ -61,9 +60,8 @@ async function fetchNFTsFromUTXOs(
   return (await Promise.all(nftPromises)).filter((nft) => nft !== undefined) as NFT[]
 }
 
-export async function fetchNFTsByAddress(nodeProvider: NodeProvider, address: string): Promise<NFT[]> {
-  web3.setCurrentNodeProvider(nodeProvider)
-  const nftsFromUTXOs = await fetchNFTsFromUTXOs(nodeProvider, address)
+export async function fetchNFTsByAddress(address: string): Promise<NFT[]> {
+  const nftsFromUTXOs = await fetchNFTsFromUTXOs(address)
   const listedNFTs = await fetchListedNFTs(address)
 
   const isListed = (nftTokenId: string) => listedNFTs.find((nft) => nft.tokenId === nftTokenId) !== undefined
@@ -74,22 +72,25 @@ export async function fetchNFTsByAddress(nodeProvider: NodeProvider, address: st
 export const useNFT = (
   tokenId: string,
   listed: boolean,
-  nodeProvider?: NodeProvider
+  nodeProvider?: NodeProvider,
+  explorerProvider?: ExplorerProvider
 ) => {
   const { data, error, ...rest } = useSWR(
     nodeProvider &&
+    explorerProvider &&
     [
       tokenId,
       "nft",
     ],
     async () => {
-      if (!nodeProvider) {
+      if (!nodeProvider || !explorerProvider) {
         return undefined;
       }
 
       web3.setCurrentNodeProvider(nodeProvider)
+      web3.setCurrentExplorerProvider(explorerProvider)
 
-      return await fetchMintedNFT(nodeProvider, tokenId, listed)
+      return await fetchMintedNFT(tokenId, listed)
     },
     {
       refreshInterval: 60e3 /* 1 minute */,

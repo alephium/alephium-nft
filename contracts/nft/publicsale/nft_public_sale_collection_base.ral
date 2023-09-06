@@ -1,4 +1,4 @@
-Abstract Contract NFTPublicSaleCollection(
+Abstract Contract NFTPublicSaleCollectionBase(
     nftBaseUri: ByteVec,
     maxSupply: U256,
     mintPrice: U256
@@ -15,7 +15,4 @@ Abstract Contract NFTPublicSaleCollection(
     pub fn getMintPrice() -> U256 {
         return mintPrice
     }
-
-    @using(assetsInContract = true)
-    pub fn withdraw(to: Address, amount: U256) -> ()
 }

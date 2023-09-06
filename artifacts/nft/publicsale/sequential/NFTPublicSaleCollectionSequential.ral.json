@@ -1,30 +1,33 @@
 {
-  "version": "v2.5.0",
-  "name": "NFTPublicSaleCollectionRandom",
-  "bytecode": "0809091240264037404b405440ae40b740c0010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b160102010202020008b4ce02450d7b16001601a801000101010a1600ce04310c7bce031600894402010000000102ce05020101010501402b1600ce04310e7bb41701b11600000416001406414c5048000313046413006417031702160113c40de0b6b3a7640000a2160040ce00160216030d1601c917041601ce05a9a0000d2aa10005160116005f160402010000000102ce0202010000000102ce0402",
-  "codeHash": "3895b997ff50f3c7fcbbcbdeceeebf48e0fd96a66f8343afa075aa771cae28d4",
+  "version": "v2.5.2",
+  "name": "NFTPublicSaleCollectionSequential",
+  "bytecode": "090909124026405f409d41074118412c4135010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020003020401161601000716011406414c5048000313036413006417031702160013c40de0b6b3a7640000a2160140ce00160216030d1600c9020101000c011ea000ce04310e7bb41700a0001701160013c40de0b6b3a7640000a216001601000317021600ce05a9a0000d2aa10005160016010d60160202010101050140381600ce06320f7b1600ce04a0002b32107bb41701a0001702140017030c170416041600314c101603160113c40de0b6b3a7640000a21601160216042a000344170316040d2a17044a2c1601ce0516002ca9a00016002aa1000516011602160060160302010202020008b4ce03450d7b16001601a801000101010a1600ce04310c7bce021600894402010000000102ce0502",
+  "codeHash": "53ba8d897250f9e9e03ca71a10d5694d93a031e0a9df49ee8060d8654c8f89a3",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
       "collectionUri",
-      "collectionOwner",
       "nftBaseUri",
+      "collectionOwner",
       "maxSupply",
       "mintPrice",
+      "maxBatchMintSize",
       "totalSupply",
       "__stdInterfaceId"
     ],
     "types": [
       "ByteVec",
       "ByteVec",
-      "Address",
       "ByteVec",
+      "Address",
+      "U256",
       "U256",
       "U256",
       "U256",
       "ByteVec"
     ],
     "isMutable": [
+      false,
       false,
       false,
       false,
@@ -40,10 +43,12 @@
       "name": "Mint",
       "fieldNames": [
         "minter",
-        "index"
+        "fromIndex",
+        "mintSize"
       ],
       "fieldTypes": [
         "Address",
+        "U256",
         "U256"
       ]
     }
@@ -80,6 +85,57 @@
       "isPublic": true,
       "paramNames": [
         "index"
+      ],
+      "paramTypes": [
+        "U256"
+      ],
+      "paramIsMutable": [
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "mint_",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": false,
+      "isPublic": false,
+      "paramNames": [
+        "minter",
+        "index"
+      ],
+      "paramTypes": [
+        "Address",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "mint",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [],
+      "paramTypes": [],
+      "paramIsMutable": [],
+      "returnTypes": [
+        "ByteVec"
+      ]
+    },
+    {
+      "name": "mintBatch",
+      "usePreapprovedAssets": true,
+      "useAssetsInContract": true,
+      "isPublic": true,
+      "paramNames": [
+        "size"
       ],
       "paramTypes": [
         "U256"
@@ -139,48 +195,6 @@
       "returnTypes": [
         "U256"
       ]
-    },
-    {
-      "name": "mint",
-      "usePreapprovedAssets": true,
-      "useAssetsInContract": true,
-      "isPublic": true,
-      "paramNames": [
-        "index"
-      ],
-      "paramTypes": [
-        "U256"
-      ],
-      "paramIsMutable": [
-        false
-      ],
-      "returnTypes": [
-        "ByteVec"
-      ]
-    },
-    {
-      "name": "getCollectionOwner",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "Address"
-      ]
-    },
-    {
-      "name": "getMaxSupply",
-      "usePreapprovedAssets": false,
-      "useAssetsInContract": false,
-      "isPublic": true,
-      "paramNames": [],
-      "paramTypes": [],
-      "paramIsMutable": [],
-      "returnTypes": [
-        "U256"
-      ]
     }
   ],
   "constants": [],
@@ -201,6 +215,27 @@
       "name": "ErrorCodes",
       "fields": [
         {
+          "name": "IncorrectTokenIndex",
+          "value": {
+            "type": "U256",
+            "value": "2"
+          }
+        },
+        {
+          "name": "InvalidMintBatchSize",
+          "value": {
+            "type": "U256",
+            "value": "3"
+          }
+        },
+        {
+          "name": "InsufficientNumOfUnminted",
+          "value": {
+            "type": "U256",
+            "value": "4"
+          }
+        },
+        {
           "name": "NFTNotFound",
           "value": {
             "type": "U256",
@@ -208,17 +243,10 @@
           }
         },
         {
-          "name": "TokenOwnerAllowedOnly",
+          "name": "CollectionOwnerAllowedOnly",
           "value": {
             "type": "U256",
             "value": "1"
-          }
-        },
-        {
-          "name": "IncorrectTokenIndex",
-          "value": {
-            "type": "U256",
-            "value": "2"
           }
         }
       ]

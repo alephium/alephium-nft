@@ -1,0 +1,17 @@
+TxScript CreateOpenCollectionWithRoyalty(
+  openCollectionWithRoyaltyTemplateId: ByteVec,
+  nftTemplateId: ByteVec,
+  collectionUri: ByteVec,
+  collectionOwner: Address,
+  royaltyRate: U256,
+  totalSupply: U256
+) {
+  let (encodedImmFields, encodedMutFields) = NFTOpenCollectionWithRoyalty.encodeFields!(
+    nftTemplateId,
+    collectionUri,
+    collectionOwner,
+    royaltyRate,
+    totalSupply
+  )
+  copyCreateContract!{callerAddress!() -> ALPH : 1 alph}(openCollectionWithRoyaltyTemplateId, encodedImmFields, encodedMutFields)
+}

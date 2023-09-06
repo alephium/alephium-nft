@@ -3,9 +3,9 @@ Contract NFTListing(
     tokenOwner: Address,
     marketContractId: ByteVec,
     commissionRate: U256,
-    listingFee: U256,
+    royalty: Bool,
     mut price: U256
-) {
+) extends NFTMarketPlaceUtils() {
 
     enum ErrorCodes {
         MarketplaceAllowedOnly = 0
@@ -23,14 +23,18 @@ Contract NFTListing(
         return commissionRate
     }
 
-    pub fn getListingFee() -> U256 {
-        return listingFee
+    pub fn requiresRoyalty() -> Bool {
+        return royalty
+    }
+
+    @using(checkExternalCaller = false)
+    pub fn royaltyAmount(collectionId: ByteVec) -> U256 {
+        return getRoyaltyAmount(tokenId, collectionId, price, royalty)
     }
 
     @using(preapprovedAssets = true, assetsInContract = true)
-    pub fn buy(buyer: Address) -> () {
+    pub fn buy(buyer: Address, priceAfterFee: U256) -> () {
         checkCaller!(callerContractId!() == marketContractId, ErrorCodes.MarketplaceAllowedOnly)
-        let priceAfterFee = NFTMarketPlace(marketContractId).checkListingPriceAfterFee(price, commissionRate, listingFee)
         transferToken!(buyer, tokenOwner, ALPH, priceAfterFee)
         transferTokenFromSelf!(buyer, tokenId, 1)
         destroySelf!(tokenOwner)

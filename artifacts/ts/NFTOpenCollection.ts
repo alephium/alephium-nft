@@ -24,7 +24,7 @@ import {
   ContractInstance,
   getContractEventsCurrentCount,
 } from "@alephium/web3";
-import { default as NFTOpenCollectionContractJson } from "../nft/NFTOpenCollection.ral.json";
+import { default as NFTOpenCollectionContractJson } from "../nft/open/NFTOpenCollection.ral.json";
 import { getContractByCodeHash } from "./contracts";
 
 // Custom types for the contract
@@ -76,9 +76,16 @@ class Factory extends ContractFactory<
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes.Fields
 > {
+  getInitialFieldsWithDefaultValues() {
+    return this.contract.getInitialFieldsWithDefaultValues() as NFTOpenCollectionTypes.Fields;
+  }
+
   eventIndex = { Mint: 0 };
   consts = {
-    ErrorCodes: { NFTNotFound: BigInt(0), TokenOwnerAllowedOnly: BigInt(1) },
+    ErrorCodes: {
+      NFTNotFound: BigInt(0),
+      CollectionOwnerAllowedOnly: BigInt(1),
+    },
   };
 
   at(address: string): NFTOpenCollectionInstance {
@@ -118,6 +125,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "mint", params);
     },
+    withdraw: async (
+      params: TestContractParams<
+        NFTOpenCollectionTypes.Fields,
+        { to: Address; amount: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "withdraw", params);
+    },
   };
 }
 
@@ -126,7 +141,7 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "34880ed9de1e709b511299a7fb61c4cedc74f7518e9e0de709580d49705a97e4"
+    "992de38ae0324a3b99133bc4aa7fadaf6ec821ddfb49f029cc4f87006c6dc711"
   )
 );
 

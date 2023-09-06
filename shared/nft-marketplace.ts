@@ -6,18 +6,16 @@ import {
   DUST_AMOUNT,
   NodeProvider,
   SignerProvider,
-  addressFromContractId
 } from '@alephium/web3'
 import { DeployHelpers } from './deploy-helpers'
 import { NFTListing, NFTMarketPlace, NFTMarketPlaceInstance } from '../artifacts/ts'
-import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateListingFee, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
+import { ListNFT, UpdateNFTPrice, BuyNFT, CancelListing, UpdateAdmin, UpdateComissionRate, WithdrawFromMarketPlace } from '../artifacts/ts/scripts'
 import { ContractEvent } from '@alephium/web3/dist/src/api/api-alephium'
 import { randomContractAddress, randomContractId } from '.'
-import { getAlephiumNFTConfig } from './configs'
 
 export class NFTMarketplace extends DeployHelpers {
-  static defaultListingFee: bigint = ONE_ALPH / 10n // Listing price default to 0.1 ALPH
   static defaultCommissionRate: bigint = 200n       // 200 basis point: 2%
+  public contractId: string | undefined
 
   async create(
     signer: SignerProvider = this.signer
@@ -31,8 +29,8 @@ export class NFTMarketplace extends DeployHelpers {
           tokenOwner: randomContractAddress(),
           marketContractId: randomContractId(),
           commissionRate: NFTMarketplace.defaultCommissionRate,
-          listingFee: NFTMarketplace.defaultListingFee,
-          price: 1000n
+          price: 1000n,
+          royalty: false
         }
       }
     )
@@ -44,19 +42,21 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           nftListingTemplateId: nftListingDeployTx.contractInstance.contractId,
           admin: adminAddress,
-          listingFee: NFTMarketplace.defaultListingFee,
           commissionRate: NFTMarketplace.defaultCommissionRate
         }
       }
     )
 
+    this.contractId = nftMarketplaceDeployResult.contractInstance.contractId
     return nftMarketplaceDeployResult
   }
 
   async listNFT(
     tokenId: string,
+    collectionId: string,
     price: Number256,
     marketPlaceContractId: string,
+    royalty: boolean = false,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
     return await ListNFT.execute(
@@ -64,8 +64,10 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
+          collectionId: collectionId,
           price: BigInt(price),
-          nftMarketplace: marketPlaceContractId
+          nftMarketplace: marketPlaceContractId,
+          royalty
         },
         attoAlphAmount: ONE_ALPH + DUST_AMOUNT,
         tokens: [
@@ -81,6 +83,7 @@ export class NFTMarketplace extends DeployHelpers {
   async updateNFTPrice(
     price: Number256,
     tokenId: string,
+    collectionId: string,
     marketPlaceContractId: string,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
@@ -90,6 +93,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           price: BigInt(price),
           tokenId: tokenId,
+          collectionId: collectionId,
           nftMarketplace: marketPlaceContractId
         }
       }
@@ -99,6 +103,7 @@ export class NFTMarketplace extends DeployHelpers {
   async buyNFT(
     totalPayment: Number256,
     tokenId: string,
+    collectionId: string,
     marketPlaceContractId: string,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
@@ -108,6 +113,7 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           totalPayment: BigInt(totalPayment),
           tokenId: tokenId,
+          collectionId: collectionId,
           nftMarketplace: marketPlaceContractId
         },
         attoAlphAmount: BigInt(totalPayment) + DUST_AMOUNT,
@@ -125,22 +131,6 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
-          nftMarketplace: marketPlaceContractId
-        }
-      }
-    )
-  }
-
-  async updateListingFee(
-    price: Number256,
-    marketPlaceContractId: string,
-    signer: SignerProvider = this.signer
-  ): Promise<ExecuteScriptResult> {
-    return await UpdateListingFee.execute(
-      signer,
-      {
-        initialFields: {
-          price: BigInt(price),
           nftMarketplace: marketPlaceContractId
         }
       }

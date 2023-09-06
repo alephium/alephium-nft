@@ -1,0 +1,7 @@
+Contract NFTOpenCollection(
+    nftTemplateId: ByteVec,
+    collectionUri: ByteVec,
+    collectionOwner: Address,
+    mut totalSupply: U256
+) extends NFTOpenCollectionBase(nftTemplateId, collectionUri, collectionOwner, totalSupply) {
+}
