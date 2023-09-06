@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.2",
+  "version": "v2.5.5",
   "name": "MintSpecific",
   "bytecodeTemplate": "01010300000019{3}4c0cb413c40de0b6b3a7640000{1}2aa2{0}0d0d{2}0106184a0bb413c40de0b6b3a7640000{1}2aa2{0}0d0d{2}010318",
   "fieldsSig": {

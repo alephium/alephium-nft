@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.2",
+  "version": "v2.5.5",
   "name": "UpdateNFTPrice",
   "bytecodeTemplate": "01010300000007{1}{2}{0}0f0c{3}0105",
   "fieldsSig": {

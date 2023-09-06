@@ -1,5 +1,5 @@
 {
-  "version": "v2.5.2",
+  "version": "v2.5.5",
   "name": "BuyNFT",
   "bytecodeTemplate": "01010300000009b4{0}a2{1}{2}0e0c{3}0102",
   "fieldsSig": {
