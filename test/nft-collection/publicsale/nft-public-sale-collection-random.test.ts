@@ -89,9 +89,12 @@ async function mintAndVerify(
   const nftByIndexResult = await collectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-  const nftContractState = await NFT.at(addressFromContractId(nftContractId)).fetchState()
+  const nftInstance = NFT.at(addressFromContractId(nftContractId))
+  const nftContractState = await nftInstance.fetchState()
+  const [collectionId, index] = (await nftInstance.methods.getCollectionIndex()).returns
+  expect(collectionId).toEqual(collectionInstance.contractId)
+  expect(index).toEqual(tokenIndex)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-  const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
   const tokenUri = (await nftInstance.methods.getTokenUri()).returns
   utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
 

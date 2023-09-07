@@ -140,9 +140,12 @@ describe('nft public sale collection - sequential', function() {
       const nftByIndexResult = await nftCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
       expect(nftByIndexResult.returns).toEqual(nftContractId)
 
-      const nftContractState = await NFT.at(addressFromContractId(nftContractId)).fetchState()
+      const nftInstance = NFT.at(addressFromContractId(nftContractId))
+      const nftContractState = await nftInstance.fetchState()
+      const [collectionId, nftIndex] = (await nftInstance.methods.getCollectionIndex()).returns
+      expect(collectionId).toEqual(nftCollectionInstance.contractId)
+      expect(nftIndex).toEqual(tokenIndex)
       expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-      const nftInstance = new NFTInstance(addressFromTokenId(nftContractId))
       const tokenUri = (await nftInstance.methods.getTokenUri()).returns
       utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
     }

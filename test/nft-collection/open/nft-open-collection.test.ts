@@ -3,7 +3,7 @@ import { getSigners } from '@alephium/web3-test'
 import * as utils from '../../../shared'
 import { checkEvent, getNFTCollection, getNFTUri } from '../utils'
 import { NFTCollectionHelper } from '../../../shared/nft-collection'
-import { NFTInstance, NFTOpenCollection, NFTOpenCollectionInstance, NFTOpenCollectionWithRoyaltyInstance } from '../../../artifacts/ts'
+import { NFT, NFTOpenCollection, NFTOpenCollectionInstance, NFTOpenCollectionWithRoyaltyInstance } from '../../../artifacts/ts'
 
 describe('nft open collection', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -71,7 +71,11 @@ async function mintAndVerify(
   // NFT doesn't exist yet
   await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + BigInt(1) } })).rejects.toThrow(Error)
 
-  const nftContractState = await new NFTInstance(addressFromContractId(nftContractId)).fetchState()
+  const nftInstance = NFT.at(addressFromContractId(nftContractId))
+  const nftContractState = await nftInstance.fetchState()
+  const [collectionId, index] = (await nftInstance.methods.getCollectionIndex()).returns
+  expect(collectionId).toEqual(nftOpenCollectionInstance.contractId)
+  expect(index).toEqual(tokenIndex)
   utils.checkHexString(nftContractState.fields.tokenUri, getNFTUri(tokenIndex))
 
   const account = await nftCollection.signer.getSelectedAccount()
