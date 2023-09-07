@@ -21,7 +21,7 @@ Abstract Contract NFTPublicSaleCollectionSequentialBase(
 
     @using(preapprovedAssets = true)
     fn mint_(minter: Address, index: U256) -> ByteVec {
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(getNFTUri(index), index)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(getNFTUri(index), selfContractId!(), index)
         return copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),
             nftTemplateId,

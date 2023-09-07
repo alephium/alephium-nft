@@ -21,7 +21,7 @@ Abstract Contract NFTPublicSaleCollectionRandomBase(
         assert!(index < maxSupply, ErrorCodes.IncorrectTokenIndex)
 
         let minter = callerAddress!()
-        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(getNFTUri(index), index)
+        let (encodeImmutableFields, encodeMutableFields) = NFT.encodeFields!(getNFTUri(index), selfContractId!(), index)
 
         let contractId = copyCreateSubContractWithToken!{minter -> ALPH: 1 alph}(
             toByteVec!(index),

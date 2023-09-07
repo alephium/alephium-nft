@@ -31,6 +31,7 @@ import { getContractByCodeHash } from "./contracts";
 export namespace NFTTypes {
   export type Fields = {
     tokenUri: HexString;
+    collectionId: HexString;
     nftIndex: bigint;
   };
 
@@ -40,6 +41,10 @@ export namespace NFTTypes {
     getTokenUri: {
       params: Omit<CallContractParams<{}>, "args">;
       result: CallContractResult<HexString>;
+    };
+    getCollectionIndex: {
+      params: Omit<CallContractParams<{}>, "args">;
+      result: CallContractResult<[HexString, bigint]>;
     };
     getNFTIndex: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -75,6 +80,11 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "getTokenUri", params);
     },
+    getCollectionIndex: async (
+      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
+    ): Promise<TestContractResult<[HexString, bigint]>> => {
+      return testMethod(this, "getCollectionIndex", params);
+    },
     getNFTIndex: async (
       params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
     ): Promise<TestContractResult<bigint>> => {
@@ -88,7 +98,7 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "774b9128f080be0e5952423b9582ffe20a002b282059fd02b395eadd10e637b7"
+    "7386b370672aff98393754e2785b59018eed34a07e7a7eab3d18b4289f627b72"
   )
 );
 
@@ -110,6 +120,17 @@ export class NFTInstance extends ContractInstance {
         NFT,
         this,
         "getTokenUri",
+        params === undefined ? {} : params,
+        getContractByCodeHash
+      );
+    },
+    getCollectionIndex: async (
+      params?: NFTTypes.CallMethodParams<"getCollectionIndex">
+    ): Promise<NFTTypes.CallMethodResult<"getCollectionIndex">> => {
+      return callMethod(
+        NFT,
+        this,
+        "getCollectionIndex",
         params === undefined ? {} : params,
         getContractByCodeHash
       );

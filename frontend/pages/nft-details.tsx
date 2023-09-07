@@ -161,7 +161,6 @@ const AssetDetails = () => {
           result = await nftMarketplace.buyNFT(
             nftListing.price,
             nftListing._id,
-            nftListing.collectionId,
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
         } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {

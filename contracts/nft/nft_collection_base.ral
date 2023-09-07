@@ -1,4 +1,4 @@
-import "std/nft_collection_interface"
+//import "std/nft_collection_interface"
 
 Abstract Contract NFTCollectionBase(
     collectionUri: ByteVec,
@@ -7,6 +7,7 @@ Abstract Contract NFTCollectionBase(
     enum ErrorCodes {
         NFTNotFound = 0
         CollectionOwnerAllowedOnly = 1
+        NFTNotPartOfCollection = 2
     }
 
     pub fn getCollectionUri() -> ByteVec {
@@ -29,5 +30,11 @@ Abstract Contract NFTCollectionBase(
     pub fn withdraw(to: Address, amount: U256) -> () {
         checkCaller!(callerAddress!() == collectionOwner, ErrorCodes.CollectionOwnerAllowedOnly)
         transferTokenFromSelf!(to, ALPH, amount)
+    }
+
+    @using(checkExternalCaller = false)
+    pub fn validateNFT(nftId: ByteVec, nftIndex: U256) -> () {
+      let expectedTokenContract = nftByIndex(nftIndex)
+      assert!(nftId == contractId!(expectedTokenContract), ErrorCodes.NFTNotPartOfCollection)
     }
 }

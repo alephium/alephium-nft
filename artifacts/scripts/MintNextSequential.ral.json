@@ -1,7 +1,7 @@
 {
   "version": "v2.5.5",
   "name": "MintNextSequential",
-  "bytecodeTemplate": "01010300000017{2}4c0bb413c40de0b6b3a7640000{1}2aa20c0d{0}0107184a0ab413c40de0b6b3a7640000{1}2aa20c0d{0}010418",
+  "bytecodeTemplate": "01010300000017{2}4c0bb413c40de0b6b3a7640000{1}2aa20c0d{0}0108184a0ab413c40de0b6b3a7640000{1}2aa20c0d{0}010518",
   "fieldsSig": {
     "names": [
       "nftCollectionId",

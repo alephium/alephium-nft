@@ -1,8 +1,8 @@
 {
   "version": "v2.5.5",
   "name": "NFTOpenCollectionWithRoyalty",
-  "bytecode": "06080912402640364041404d40a340b4010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b1601020100020201061601ce032c1367102d0201010202000316001601a901000202000316001601000701030106014028b417011601ce02450d7ba0001702160016021406414c5048000313036413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202040008b4ce02450d7b16001601a8",
-  "codeHash": "7151d9fd8004269b7582a845020f801b17ad2972519eedfadaf529359d313efd",
+  "bytecode": "060909124026403940494054406040b740c8010000000102ce0102010000000102a0000201000102010a160040cb17011601c50c7b16010201000203000816010002170216001602410e7b0100020201061601ce032c1367102d0201010202000316001601a901000202000316001601000801030106014029b417011601ce02450d7ba00017021600b116021406414c5048000313046413006417041703160113c40de0b6b3a7640000a2160240ce00160316040d1601c91705a0000d2aa10005160116025f160502010202040008b4ce02450d7b16001601a8",
+  "codeHash": "0153ed557c8aa35fe084a2e4f8c721e154b275901cbd8055c629cfa26fb25e80",
   "fieldsSig": {
     "names": [
       "nftTemplateId",
@@ -84,6 +84,25 @@
       "returnTypes": [
         "ByteVec"
       ]
+    },
+    {
+      "name": "validateNFT",
+      "usePreapprovedAssets": false,
+      "useAssetsInContract": false,
+      "isPublic": true,
+      "paramNames": [
+        "nftId",
+        "nftIndex"
+      ],
+      "paramTypes": [
+        "ByteVec",
+        "U256"
+      ],
+      "paramIsMutable": [
+        false,
+        false
+      ],
+      "returnTypes": []
     },
     {
       "name": "royaltyAmount",
@@ -199,6 +218,13 @@
           "value": {
             "type": "U256",
             "value": "1"
+          }
+        },
+        {
+          "name": "NFTNotPartOfCollection",
+          "value": {
+            "type": "U256",
+            "value": "2"
           }
         }
       ]

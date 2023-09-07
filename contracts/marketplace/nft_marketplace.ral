@@ -45,9 +45,9 @@ Contract NFTMarketPlace(
 
     @using(preapprovedAssets = true, assetsInContract = true, checkExternalCaller = false)
     pub fn buyNFT(
-        tokenId: ByteVec,
-        collectionId: ByteVec  // Do not need this after parentId instr is introduced
+        tokenId: ByteVec
     ) -> () {
+        let collectionId = getCollectionId(tokenId)
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
         let buyer = callerAddress!()
@@ -76,10 +76,10 @@ Contract NFTMarketPlace(
     @using(preapprovedAssets = true, checkExternalCaller = false)
     pub fn listNFT(
         tokenId: ByteVec,
-        collectionId: ByteVec,   // Do not need this after parentId instr is introduced
         price: U256,
         royalty: Bool
     ) -> (Address) {
+        let collectionId = getCollectionId(tokenId)
         let royaltyAmount = getRoyaltyAmount(tokenId, collectionId, price, royalty)
         getPriceAfterFee(price, commissionRate, royaltyAmount)
 
@@ -115,9 +115,9 @@ Contract NFTMarketPlace(
 
     pub fn updateNFTPrice(
         tokenId: ByteVec,
-        collectionId: ByteVec,
         newPrice: U256
     ) -> () {
+        let collectionId = getCollectionId(tokenId)
         let nftListingContractId = subContractId!(tokenId)
         let nftListing = NFTListing(nftListingContractId)
 
@@ -153,5 +153,11 @@ Contract NFTMarketPlace(
     pub fn withdraw(to: Address, amount: U256) -> () {
         checkCaller!(callerAddress!() == admin, ErrorCodes.AdminAllowedOnly)
         transferTokenFromSelf!(to, ALPH, amount)
+    }
+
+    fn getCollectionId(tokenId: ByteVec) -> ByteVec {
+        let (collectionId, nftIndex) = INFT(tokenId).getCollectionIndex()
+        INFTCollection(collectionId).validateNFT(tokenId, nftIndex)
+        return collectionId
     }
 }

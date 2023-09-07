@@ -88,7 +88,6 @@ export namespace NFTMarketPlaceTypes {
     listNFT: {
       params: CallContractParams<{
         tokenId: HexString;
-        collectionId: HexString;
         price: bigint;
         royalty: boolean;
       }>;
@@ -162,7 +161,7 @@ class Factory extends ContractFactory<
     buyNFT: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { tokenId: HexString; collectionId: HexString }
+        { tokenId: HexString }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "buyNFT", params);
@@ -170,12 +169,7 @@ class Factory extends ContractFactory<
     listNFT: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        {
-          tokenId: HexString;
-          collectionId: HexString;
-          price: bigint;
-          royalty: boolean;
-        }
+        { tokenId: HexString; price: bigint; royalty: boolean }
       >
     ): Promise<TestContractResult<Address>> => {
       return testMethod(this, "listNFT", params);
@@ -191,7 +185,7 @@ class Factory extends ContractFactory<
     updateNFTPrice: async (
       params: TestContractParams<
         NFTMarketPlaceTypes.Fields,
-        { tokenId: HexString; collectionId: HexString; newPrice: bigint }
+        { tokenId: HexString; newPrice: bigint }
       >
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "updateNFTPrice", params);
@@ -220,6 +214,14 @@ class Factory extends ContractFactory<
     ): Promise<TestContractResult<null>> => {
       return testMethod(this, "withdraw", params);
     },
+    getCollectionId: async (
+      params: TestContractParams<
+        NFTMarketPlaceTypes.Fields,
+        { tokenId: HexString }
+      >
+    ): Promise<TestContractResult<HexString>> => {
+      return testMethod(this, "getCollectionId", params);
+    },
   };
 }
 
@@ -228,7 +230,7 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "4cdedee37f8cb9ea04e581d783b7fa19a9c3eca5b7cffa1df1af8ec8f0820f9e"
+    "58b1fe54c48ae9100e522bd453d4043e9f20676d81c6b5d895d97ca037496263"
   )
 );
 

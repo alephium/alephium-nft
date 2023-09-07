@@ -1,8 +1,7 @@
 TxScript UpdateNFTPrice(
     price: U256,
     tokenId: ByteVec,
-    collectionId: ByteVec,
     nftMarketplace: NFTMarketPlace
 ) {
-    nftMarketplace.updateNFTPrice(tokenId, collectionId, price)
+    nftMarketplace.updateNFTPrice(tokenId, price)
 }
