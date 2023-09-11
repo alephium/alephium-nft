@@ -10,6 +10,7 @@ export interface NFTListing {
   marketAddress: string
   listingContractId: string,
   collectionId: string,
+  nftIndex: number,
   createdAt: Date
 }
 
@@ -43,6 +44,9 @@ const NFTListingSchema: Schema = new Schema({
   },
   collectionId: {
     type: String
+  },
+  nftIndex: {
+    type: Number
   },
   createdAt: {
     type: Date

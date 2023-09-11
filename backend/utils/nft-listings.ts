@@ -126,6 +126,7 @@ async function fetchNFTListing(
       marketAddress: addressFromContractId(listingState.fields.marketContractId as string),
       listingContractId: listingContractId,
       collectionId: nft.collectionId,
+      nftIndex: nft.nftIndex,
       createdAt: new Date()
     }
   }

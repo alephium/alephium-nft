@@ -7,6 +7,7 @@ export interface INFTCollection extends Document {
   name: string
   description: string
   image: string
+  nftIndex: number
   createdAt: Date
 }
 
@@ -28,6 +29,9 @@ const NFTCollectionSchema: Schema = new Schema({
   },
   image: {
     type: String
+  },
+  nftIndex: {
+    type: Number
   },
   createdAt: {
     type: Date

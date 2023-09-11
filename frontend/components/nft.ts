@@ -8,14 +8,14 @@ import { getNodeProvider } from "../../shared"
 
 export async function fetchPreMintNFT(
   collectionId: string,
-  tokenIndex: bigint,
+  nftIndex: bigint,
   mintPrice?: bigint,
 ): Promise<NFT | undefined> {
-  const tokenId = subContractId(collectionId, binToHex(encodeU256(tokenIndex)), 0)
+  const tokenId = subContractId(collectionId, binToHex(encodeU256(nftIndex)), 0)
   try {
     const collectionAddress = addressFromContractId(collectionId)
     const collection = NFTPublicSaleCollectionSequential.at(collectionAddress)
-    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: tokenIndex } })).returns)
+    const tokenUri = hexToString((await collection.methods.getNFTUri({ args: { index: nftIndex } })).returns)
     if (mintPrice === undefined) {
       mintPrice = (await collection.methods.getMintPrice()).returns
     }
@@ -29,7 +29,7 @@ export async function fetchPreMintNFT(
       listed: false,
       minted: false,
       price: mintPrice,
-      tokenIndex: Number(tokenIndex)
+      nftIndex: Number(nftIndex)
     }
   } catch (e) {
     console.error(`error fetching information for pre mint NFT ${tokenId}`, e)
