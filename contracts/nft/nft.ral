@@ -1,4 +1,4 @@
-//import "std/nft_interface"
+import "std/nft_interface"
 
 Contract NFT(
   tokenUri: ByteVec,

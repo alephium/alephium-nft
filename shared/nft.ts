@@ -1,7 +1,4 @@
 import {
-  web3,
-  ExplorerProvider,
-  NodeProvider,
   addressFromTokenId,
   binToHex,
   contractIdFromAddress,

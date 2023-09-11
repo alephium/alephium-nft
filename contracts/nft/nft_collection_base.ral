@@ -1,4 +1,4 @@
-//import "std/nft_collection_interface"
+import "std/nft_collection_interface"
 
 Abstract Contract NFTCollectionBase(
     collectionUri: ByteVec,
