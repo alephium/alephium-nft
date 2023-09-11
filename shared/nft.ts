@@ -1,11 +1,6 @@
 import {
-  web3,
-  ExplorerProvider,
-  NodeProvider,
   addressFromTokenId,
-  binToHex,
-  contractIdFromAddress,
-  hexToString
+  NFTMetaData
 } from "@alephium/web3"
 import axios from "axios"
 import { getExplorerProvider, getNodeProvider } from "."
@@ -18,43 +13,35 @@ export interface NFT {
   tokenId: string,
   listed: boolean,
   minted: boolean,
+  nftIndex: number
   collectionId: string,
   price?: bigint,
-  tokenIndex?: number
 }
 
 export async function fetchMintedNFTMetadata(
   tokenId: string
-): Promise<{ collectionId: string, tokenUri: string } | undefined> {
+): Promise<NFTMetaData | undefined> {
   const nodeProvider = getNodeProvider()
   const explorerProvider = getExplorerProvider()
   if (!explorerProvider) return undefined
 
   try {
-    const tokenAddress = addressFromTokenId(tokenId)
     const tokenType = await nodeProvider.guessStdTokenType(tokenId)
     if (tokenType !== 'non-fungible') return undefined
-    const { parent } = await explorerProvider.contracts.getContractsContractParent(tokenAddress)
-    if (!parent) return undefined
-
-    const nftInstance = NFT.at(tokenAddress)
-    const tokenUri = (await nftInstance.methods.getTokenUri()).returns
-    return {
-      tokenUri: hexToString(tokenUri),
-      collectionId: binToHex(contractIdFromAddress(parent))
-    }
+    return await nodeProvider.fetchNFTMetaData(tokenId)
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
+    return undefined
   }
 }
 
 export async function fetchMintedNFTByMetadata(
   tokenId: string,
-  metadata: { tokenUri: string, collectionId: string },
+  metadata: NFTMetaData,
   listed: boolean
 ): Promise<NFT | undefined> {
   try {
-    const { tokenUri, collectionId } = metadata
+    const { tokenUri, nftIndex, collectionId } = metadata
     if (tokenUri && collectionId) {
       const metadata = (await axios.get(tokenUri)).data
       return {
@@ -62,6 +49,7 @@ export async function fetchMintedNFTByMetadata(
         description: metadata.description,
         image: metadata.image,
         tokenId: tokenId,
+        nftIndex: Number(nftIndex),
         collectionId: collectionId,
         minted: true,
         listed

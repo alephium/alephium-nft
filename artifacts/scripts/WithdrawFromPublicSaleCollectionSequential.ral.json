@@ -1,7 +1,7 @@
 {
-  "version": "v2.5.2",
+  "version": "v2.5.5",
   "name": "WithdrawFromPublicSaleCollectionSequential",
-  "bytecodeTemplate": "0101030000000f{3}4c07{0}{1}0e0c{2}01094a06{0}{1}0e0c{2}0106",
+  "bytecodeTemplate": "0101030000000f{3}4c07{0}{1}0e0c{2}010a4a06{0}{1}0e0c{2}0107",
   "fieldsSig": {
     "names": [
       "to",

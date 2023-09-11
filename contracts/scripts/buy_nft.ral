@@ -1,8 +1,7 @@
 TxScript BuyNFT(
     totalPayment: U256,
     tokenId: ByteVec,
-    collectionId: ByteVec,
     nftMarketplace: NFTMarketPlace
 ) {
-    nftMarketplace.buyNFT{callerAddress!() -> ALPH: totalPayment}(tokenId, collectionId)
+    nftMarketplace.buyNFT{callerAddress!() -> ALPH: totalPayment}(tokenId)
 }

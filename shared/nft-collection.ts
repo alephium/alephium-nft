@@ -111,37 +111,27 @@ export type NFTsByCollection = Map<NFTCollection, NFT[]>
 
 async function fetchNonEnumerableNFTs(nodeProvider: NodeProvider, addresses: string[], listed: boolean): Promise<NFT[]> {
   if (addresses.length === 0) return []
-  const methodIndexes = [0, 1] // getTokenUri, getCollectionId
-  const calls = addresses.flatMap((address) => methodIndexes.map((idx) => ({
-    group: groupOfAddress(address),
-    address: address,
-    methodIndex: idx
-  })))
-  const callResult = await nodeProvider.contracts.postContractsMulticallContract({ calls })
-  const getNFT = async (address: string, metadataUri: string, collectionId: string): Promise<NFT | undefined> => {
+  const getNFT = async (address: string): Promise<NFT | undefined> => {
     try {
-      if (metadataUri && collectionId) {
-        const metadata = (await axios.get(metadataUri)).data
-        return {
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image,
-          tokenId: binToHex(contractIdFromAddress(address)),
-          collectionId: collectionId,
-          minted: true,
-          listed
-        }
+      const { collectionId, nftIndex, tokenUri } = await nodeProvider.fetchNFTMetaData(binToHex(contractIdFromAddress(address)))
+      const metadata = (await axios.get(tokenUri)).data
+      return {
+        name: metadata.name,
+        description: metadata.description,
+        image: metadata.image,
+        tokenId: binToHex(contractIdFromAddress(address)),
+        collectionId: collectionId,
+        minted: true,
+        nftIndex: Number(nftIndex),
+        listed
       }
     } catch (error) {
-      console.error(`failed to get non-enumerable nft, collection id: ${collectionId}, address: ${address} error: ${error}`)
+      console.error(`failed to get non-enumerable nft, address: ${address} error: ${error}`)
     }
     return undefined
   }
-  const promises = addresses.map((address, idx) => {
-    const callResultIndex = idx * 2
-    const metadataUri = hexToString((callResult.results[callResultIndex] as CallContractSucceeded).returns[0].value as string)
-    const collectionId = (callResult.results[callResultIndex + 1] as CallContractSucceeded).returns[0].value as string
-    return getNFT(address, metadataUri, collectionId)
+  const promises = addresses.map((address) => {
+    return getNFT(address)
   })
   return (await Promise.all(promises)).filter((nft) => nft !== undefined) as NFT[]
 }
@@ -163,7 +153,7 @@ async function fetchEnumerableNFTs(collectionMetadata: NFTPublicSaleCollectionMe
         collectionId: collectionMetadata.id,
         listed: listed,
         minted: false,
-        tokenIndex: index
+        nftIndex: index
       }
     } catch (error) {
       console.error(`failed to fetch enumerable nft, collection id: ${collectionMetadata.id}, index: ${index}, error: ${error}`)
@@ -196,7 +186,7 @@ export async function fetchNFTByPage(
   const indexes = range(skipped, pageSize).filter((idx) => idx < maxSupply)
   const nfts = await fetchEnumerableNFTs(collectionMetadata, indexes, false)
   return nfts.map<NFT>((nft) => {
-    if (nft.tokenIndex! < totalSupply) {
+    if (nft.nftIndex! < totalSupply) {
       return { ...nft, minted: true }
     } else {
       return { ...nft, mintPrice: collectionMetadata.mintPrice }

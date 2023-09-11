@@ -2,6 +2,7 @@ import "std/nft_interface"
 
 Contract NFT(
   tokenUri: ByteVec,
+  collectionId: ByteVec,
   nftIndex: U256
 ) implements INFT {
   pub fn getTokenUri() -> ByteVec {
@@ -10,5 +11,9 @@ Contract NFT(
 
   pub fn getNFTIndex() -> U256 {
     return nftIndex
+  }
+
+  pub fn getCollectionIndex() -> (ByteVec, U256) {
+    return collectionId, nftIndex
   }
 }

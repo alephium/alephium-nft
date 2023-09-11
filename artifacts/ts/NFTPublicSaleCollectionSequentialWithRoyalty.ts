@@ -114,6 +114,7 @@ class Factory extends ContractFactory<
       InsufficientNumOfUnminted: BigInt(4),
       NFTNotFound: BigInt(0),
       CollectionOwnerAllowedOnly: BigInt(1),
+      NFTNotPartOfCollection: BigInt(2),
     },
   };
 
@@ -151,6 +152,14 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "nftByIndex", params);
+    },
+    validateNFT: async (
+      params: TestContractParams<
+        NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
+        { nftId: HexString; nftIndex: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "validateNFT", params);
     },
     royaltyAmount: async (
       params: TestContractParams<
@@ -238,7 +247,7 @@ export const NFTPublicSaleCollectionSequentialWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialWithRoyaltyContractJson,
     "",
-    "760e23ee0957736f8830e18198b811aede40809a9b5dab8b2c9c2014d54967eb"
+    "4cdc890635635f64a7697b2e73a35fa5a0faf74ebfe2fb8bdea16d4e24302b88"
   )
 );
 

@@ -203,7 +203,7 @@ export const NFTListing = new Factory(
   Contract.fromJson(
     NFTListingContractJson,
     "",
-    "e6f2fe34e8987fd089658ff8e72a6e4d6594630342fbda59e9b70de6d4c28c54"
+    "395b3bf1f28c21821f76889d5a96f5f9a1f396b1dcde04ad41701951210244ba"
   )
 );
 

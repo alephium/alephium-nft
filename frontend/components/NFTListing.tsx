@@ -15,7 +15,8 @@ export interface NFTListing {
   tokenOwner: string,
   marketAddress: string
   listingContractId: string,
-  collectionId: string
+  collectionId: string,
+  nftIndex: number
 }
 
 function toPriceOrder(activeSelect: string): string | undefined {

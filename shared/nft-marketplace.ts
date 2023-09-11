@@ -53,7 +53,6 @@ export class NFTMarketplace extends DeployHelpers {
 
   async listNFT(
     tokenId: string,
-    collectionId: string,
     price: Number256,
     marketPlaceContractId: string,
     royalty: boolean = false,
@@ -64,7 +63,6 @@ export class NFTMarketplace extends DeployHelpers {
       {
         initialFields: {
           tokenId: tokenId,
-          collectionId: collectionId,
           price: BigInt(price),
           nftMarketplace: marketPlaceContractId,
           royalty
@@ -83,7 +81,6 @@ export class NFTMarketplace extends DeployHelpers {
   async updateNFTPrice(
     price: Number256,
     tokenId: string,
-    collectionId: string,
     marketPlaceContractId: string,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
@@ -93,7 +90,6 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           price: BigInt(price),
           tokenId: tokenId,
-          collectionId: collectionId,
           nftMarketplace: marketPlaceContractId
         }
       }
@@ -103,7 +99,6 @@ export class NFTMarketplace extends DeployHelpers {
   async buyNFT(
     totalPayment: Number256,
     tokenId: string,
-    collectionId: string,
     marketPlaceContractId: string,
     signer: SignerProvider = this.signer
   ): Promise<ExecuteScriptResult> {
@@ -113,7 +108,6 @@ export class NFTMarketplace extends DeployHelpers {
         initialFields: {
           totalPayment: BigInt(totalPayment),
           tokenId: tokenId,
-          collectionId: collectionId,
           nftMarketplace: marketPlaceContractId
         },
         attoAlphAmount: BigInt(totalPayment) + DUST_AMOUNT,

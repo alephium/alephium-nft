@@ -4,9 +4,9 @@
 
 import { Contract, ContractFactory } from "@alephium/web3";
 import {
+  NFT,
   NFTListing,
   NFTMarketPlace,
-  NFT,
   NFTOpenCollection,
   NFTOpenCollectionWithRoyalty,
   NFTPublicSaleCollectionRandom,
@@ -19,9 +19,9 @@ let contracts: ContractFactory<any>[] | undefined = undefined;
 export function getContractByCodeHash(codeHash: string): Contract {
   if (contracts === undefined) {
     contracts = [
+      NFT,
       NFTListing,
       NFTMarketPlace,
-      NFT,
       NFTOpenCollection,
       NFTOpenCollectionWithRoyalty,
       NFTPublicSaleCollectionRandom,

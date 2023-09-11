@@ -108,7 +108,7 @@ async function testMarketplace(
   const price = ONE_ALPH * 10n
   const newPrice = ONE_ALPH * 20n
   await listNFTAndVerify(nftMarketplace, tokenId, collectionId, price, signer1, provider)
-  await updateListingPriceAndVerify(nftMarketplace, tokenId, collectionId, price, newPrice, signer2, provider)
+  await updateListingPriceAndVerify(nftMarketplace, tokenId, price, newPrice, signer2, provider)
   await buyNFTAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer1, signer2, provider)
   await cancelListingAndVerify(nftMarketplace, tokenId, collectionId, newPrice, signer2, provider)
   await withdrawAndVerify(nftMarketplace, signer2.address, NFTMarketplace.defaultCommissionRate * price / 10000n)
@@ -230,7 +230,7 @@ async function listNFTAndVerify(
   const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
 
-  await nftMarketplace.listNFT(tokenId, collectionId, price, nftMarketplaceContractId, royalty)
+  await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId, royalty)
   await sleep(3000)
 
   const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
@@ -255,7 +255,6 @@ async function listNFTAndVerify(
 async function updateListingPriceAndVerify(
   nftMarketplace: NFTMarketplace,
   tokenId: string,
-  collectionId: string,
   oldPrice: bigint,
   newPrice: bigint,
   wrongSigner: PrivateKeyWallet,
@@ -263,7 +262,7 @@ async function updateListingPriceAndVerify(
 ) {
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
-  await nftMarketplace.updateNFTPrice(newPrice, tokenId, collectionId, nftMarketplaceContractId)
+  await nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId)
   const nftListingContractId = subContractId(nftMarketplaceContractId, tokenId, 0)
   const nftListingContractAddress = addressFromContractId(nftListingContractId)
 
@@ -281,7 +280,7 @@ async function updateListingPriceAndVerify(
   expect(BigInt(+nftPriceUpdatedEventFields[1].value)).toEqual(oldPrice)
   expect(BigInt(+nftPriceUpdatedEventFields[2].value)).toEqual(newPrice)
 
-  await expect(nftMarketplace.updateNFTPrice(newPrice, tokenId, collectionId, nftMarketplaceContractId, wrongSigner)).rejects.toThrow(Error)
+  await expect(nftMarketplace.updateNFTPrice(newPrice, tokenId, nftMarketplaceContractId, wrongSigner)).rejects.toThrow(Error)
 }
 
 async function buyNFTAndVerify(
@@ -301,7 +300,7 @@ async function buyNFTAndVerify(
   const signer1BalanceBefore = await getBalance(signer1)
   const signer2BalanceBefore = await getBalance(signer2)
 
-  const result = await nftMarketplace.buyNFT(price, tokenId, collectionId, nftMarketplaceContractId, signer2)
+  const result = await nftMarketplace.buyNFT(price, tokenId, nftMarketplaceContractId, signer2)
   const consumedGas = BigInt(result.gasAmount) * BigInt(result.gasPrice)
   await sleep(3000)
 
@@ -343,7 +342,7 @@ async function cancelListingAndVerify(
   const nftMarketplaceContractId = nftMarketplace.contractId!
   const nftMarketplaceContractAddress = addressFromContractId(nftMarketplaceContractId)
 
-  await nftMarketplace.listNFT(tokenId, collectionId, price, nftMarketplaceContractId, royalty, signer)
+  await nftMarketplace.listNFT(tokenId, price, nftMarketplaceContractId, royalty, signer)
 
   const nftMarketplaceContractEvents = await provider.events.getEventsContractContractaddress(
     nftMarketplaceContractAddress,

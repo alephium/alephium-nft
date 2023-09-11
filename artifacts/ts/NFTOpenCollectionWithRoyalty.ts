@@ -90,6 +90,7 @@ class Factory extends ContractFactory<
     ErrorCodes: {
       NFTNotFound: BigInt(0),
       CollectionOwnerAllowedOnly: BigInt(1),
+      NFTNotPartOfCollection: BigInt(2),
     },
   };
 
@@ -121,6 +122,14 @@ class Factory extends ContractFactory<
       >
     ): Promise<TestContractResult<HexString>> => {
       return testMethod(this, "nftByIndex", params);
+    },
+    validateNFT: async (
+      params: TestContractParams<
+        NFTOpenCollectionWithRoyaltyTypes.Fields,
+        { nftId: HexString; nftIndex: bigint }
+      >
+    ): Promise<TestContractResult<null>> => {
+      return testMethod(this, "validateNFT", params);
     },
     royaltyAmount: async (
       params: TestContractParams<
@@ -170,7 +179,7 @@ export const NFTOpenCollectionWithRoyalty = new Factory(
   Contract.fromJson(
     NFTOpenCollectionWithRoyaltyContractJson,
     "",
-    "7151d9fd8004269b7582a845020f801b17ad2972519eedfadaf529359d313efd"
+    "0153ed557c8aa35fe084a2e4f8c721e154b275901cbd8055c629cfa26fb25e80"
   )
 );
 

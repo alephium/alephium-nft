@@ -315,14 +315,24 @@ export default function CreateCollections() {
               {collectionImage()}
               {collectionName()}
               {collectionDescription()}
-              {collectionRoyaltyRate()}
+              {
+                /*
+                Disable before the next announcement of the optional royalty rate feature
+                collectionRoyaltyRate()
+                */
+              }
               {createCollectionButton(() => createOpenCollection(), 'NFTOpenCollection')}
             </TabPanel>
             <TabPanel>
               {collectionImage()}
               {collectionName()}
               {collectionDescription()}
-              {collectionRoyaltyRate()}
+              {
+                /*
+                Disable before the next announcement of the optional royalty rate feature
+                collectionRoyaltyRate()
+                */
+              }
               {collectionMaxSupply()}
               {collectionMaxBatchMintSize()}
               {collectionMintPrice()}

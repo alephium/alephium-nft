@@ -39,7 +39,7 @@ const SellNFT = () => {
       setIsSellingNFT(true)
       const interfaceId = await wallet.signer.nodeProvider.guessStdInterfaceId(nft.collectionId)
       const royalty = interfaceId === '000201'
-      const result = await nftMarketplace.listNFT(nft.tokenId, nft.collectionId, priceInSets, marketplaceContractId, royalty)
+      const result = await nftMarketplace.listNFT(nft.tokenId, priceInSets, marketplaceContractId, royalty)
       await waitTxConfirmed(wallet.signer.nodeProvider, result.txId)
       setIsSellingNFT(false)
 
