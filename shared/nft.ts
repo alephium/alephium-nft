@@ -26,10 +26,9 @@ export async function fetchMintedNFTMetadata(
   if (!explorerProvider) return undefined
 
   try {
-    const tokenAddress = addressFromTokenId(tokenId)
     const tokenType = await nodeProvider.guessStdTokenType(tokenId)
     if (tokenType !== 'non-fungible') return undefined
-    return await nodeProvider.fetchNFTMetaData(tokenAddress)
+    return await nodeProvider.fetchNFTMetaData(tokenId)
   } catch (error) {
     console.error(`failed to fetch nft metadata, token id: ${tokenId}, error: ${error}`)
     return undefined

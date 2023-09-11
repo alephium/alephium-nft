@@ -26,14 +26,17 @@ function isConfirmed(txStatus: node.TxStatus): txStatus is node.Confirmed {
   return txStatus.type === 'Confirmed'
 }
 
+// `nodeProvider.fetchNFTMetadata` has breaking change since v0.22.0
+// Since we can not expect all wallets to be up to date, here we use the node provider bundled
+// with the NFT project
 export function getNodeProvider(): NodeProvider {
   const nodeUrl = process.env.NODE_URL || getAlephiumNFTConfig().defaultNodeUrl
-  return web3.getCurrentNodeProvider() ?? new NodeProvider(nodeUrl)
+  return new NodeProvider(nodeUrl)
 }
 
 export function getExplorerProvider(): ExplorerProvider {
   const explorerUrl = process.env.EXPLORER_URL || getAlephiumNFTConfig().defaultExplorerUrl
-  return web3.getCurrentExplorerProvider() ?? new ExplorerProvider(explorerUrl)
+  return new ExplorerProvider(explorerUrl)
 }
 
 export async function waitTxConfirmed(
