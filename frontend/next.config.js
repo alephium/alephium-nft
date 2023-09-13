@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     //ENVIRONMENT: "development-walletconnect"
     //ENVIRONMENT: "development-nodewallet"
