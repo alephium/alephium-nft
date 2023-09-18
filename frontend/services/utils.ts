@@ -23,8 +23,8 @@ export function nftImageUrl(nft: { image: string }): string {
   return nft.image
 }
 
-export function showNFTDisplayName(nft: { name?: string, tokenIndex?: number }): string {
+export function showNFTDisplayName(nft: { name?: string, nftIndex?: number }): string {
   return nft.name ? (nft.name.length > 14 ?
     shortenName(nft.name) : nft.name) :
-    (nft.tokenIndex ? nft.tokenIndex.toString() : '')
+    (nft.nftIndex ? nft.nftIndex.toString() : '')
 }

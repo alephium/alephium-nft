@@ -45,7 +45,7 @@ async function testNFTMinting(royalty: boolean) {
 async function mintAndVerify(
   nftCollection: NFTCollectionHelper,
   nftOpenCollectionInstance: NFTOpenCollectionWithRoyaltyInstance | NFTOpenCollectionInstance,
-  tokenIndex: bigint
+  nftIndex: bigint
 ) {
   let royalty = false
   if (nftOpenCollectionInstance instanceof NFTOpenCollectionWithRoyaltyInstance) {
@@ -55,28 +55,28 @@ async function mintAndVerify(
   const nftCollectionContractAddress = addressFromContractId(nftOpenCollectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(
-    nftOpenCollectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group
+    nftOpenCollectionInstance.contractId, binToHex(encodeU256(nftIndex)), group
   )
 
   const { txId } = await nftCollection.openCollection.mint(
     nftOpenCollectionInstance.contractId,
-    getNFTUri(tokenIndex),
+    getNFTUri(nftIndex),
     royalty,
     nftCollection.signer
   )
 
   // NFT just minted
-  const nftByIndexResult = await nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
+  const nftByIndexResult = await nftOpenCollectionInstance.methods.nftByIndex({ args: { index: nftIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
   // NFT doesn't exist yet
-  await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: tokenIndex + BigInt(1) } })).rejects.toThrow(Error)
+  await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: nftIndex + BigInt(1) } })).rejects.toThrow(Error)
 
   const nftInstance = NFT.at(addressFromContractId(nftContractId))
   const nftContractState = await nftInstance.fetchState()
   const [collectionId, index] = (await nftInstance.methods.getCollectionIndex()).returns
   expect(collectionId).toEqual(nftOpenCollectionInstance.contractId)
-  expect(index).toEqual(tokenIndex)
-  utils.checkHexString(nftContractState.fields.tokenUri, getNFTUri(tokenIndex))
+  expect(index).toEqual(nftIndex)
+  utils.checkHexString(nftContractState.fields.tokenUri, getNFTUri(nftIndex))
 
   const account = await nftCollection.signer.getSelectedAccount()
   await checkEvent(NFTOpenCollection, txId, {
@@ -84,12 +84,12 @@ async function mintAndVerify(
     contractAddress: nftOpenCollectionInstance.address,
     eventIndex: 0,
     name: 'Mint',
-    fields: { minter: account.address, index: tokenIndex }
+    fields: { minter: account.address, index: nftIndex }
   })
 
   if (royalty) {
     const nftOpenCollectionWithRoyaltyInstance = nftOpenCollectionInstance as NFTOpenCollectionWithRoyaltyInstance
-    const tokenIdResult = await nftOpenCollectionWithRoyaltyInstance.methods.nftByIndex({ args: { index: tokenIndex } })
+    const tokenIdResult = await nftOpenCollectionWithRoyaltyInstance.methods.nftByIndex({ args: { index: nftIndex } })
     const tokenId = tokenIdResult.returns
     const royaltyAmount = await nftOpenCollectionWithRoyaltyInstance.methods.royaltyAmount({ args: { tokenId: tokenId, salePrice: BigInt(100) } })
 

@@ -82,7 +82,7 @@ const AssetDetails = () => {
   const [paymentModal, setPaymentModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const router = useRouter();
-  const { tokenId, collectionId, tokenIndex } = router.query
+  const { tokenId, collectionId, nftIndex } = router.query
   const [nft, setNFT] = useState<NFT | undefined>(undefined)
   const [isNFTLoading, setIsNFTLoading] = useState<boolean>(false)
   const [tokenIds, setTokenIds] = useState<string[]>([])
@@ -135,9 +135,9 @@ const AssetDetails = () => {
       })
     }
 
-    if (collectionId && tokenIndex) {
+    if (collectionId && nftIndex) {
       setIsNFTLoading(true)
-      fetchPreMintNFT(collectionId as string, BigInt(tokenIndex as string)).then((nft) => {
+      fetchPreMintNFT(collectionId as string, BigInt(nftIndex as string)).then((nft) => {
         setNFT(nft)
         setIsNFTLoading(false)
       })
@@ -163,9 +163,9 @@ const AssetDetails = () => {
             nftListing._id,
             binToHex(contractIdFromAddress(nftListing.marketAddress))
           )
-        } else if (nft.minted === false && nft.price && tokenIndex && collectionId) {
+        } else if (nft.minted === false && nft.price && nftIndex && collectionId) {
           const nftCollection = new NFTCollectionHelper(wallet.signer)
-          result = await nftCollection.publicSaleCollection.random.mint(BigInt(tokenIndex as string), nft.price, collectionId as string, false)
+          result = await nftCollection.publicSaleCollection.random.mint(BigInt(nftIndex as string), nft.price, collectionId as string, false)
         }
 
         setPaymentModal(false);

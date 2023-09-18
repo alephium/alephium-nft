@@ -13,7 +13,7 @@ interface NFTCardProps {
     image: string,
     tokenOwner?: string,
     collectionId?: string
-    tokenIndex?: number,
+    nftIndex?: number,
     price?: bigint
     minted?: boolean
     marketAddress?: string
@@ -25,7 +25,7 @@ interface NFTCardProps {
 const NFTCard = ({ nft }: NFTCardProps) => {
   var motionDivClassName = "dark:bg-nft-black-3 bg-white rounded-2xl cursor-pointer shadow-md hover:shadow-lg duration-500 p-4"
   motionDivClassName = nft.minted ? motionDivClassName : motionDivClassName + " border"
-  const query = nft.minted ? { tokenId: nft.tokenId } : { collectionId: nft.collectionId, tokenIndex: nft.tokenIndex }
+  const query = nft.minted ? { tokenId: nft.tokenId } : { collectionId: nft.collectionId, nftIndex: nft.nftIndex }
   return (
     <Link href={{ pathname: '/nft-details', query: query }}>
       <motion.div
