@@ -22,7 +22,7 @@ export default function MintNFT() {
   const { theme } = useTheme();
   const [isMinting, setIsMinting] = useState<boolean>(false)
   const { collectionId } = router.query
-  const { collectionMetadata } = useCollectionMetadata(collectionId as string, wallet?.signer)
+  const { collectionMetadata } = useCollectionMetadata(collectionId as string)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const onDrop = useCallback(async (acceptedFile: any[]) => {

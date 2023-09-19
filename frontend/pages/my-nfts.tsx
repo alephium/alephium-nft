@@ -7,32 +7,37 @@ import { useWallet } from '@alephium/web3-react';
 import { useEffect, useState } from 'react';
 import { fetchNFTsByAddress } from '../components/nft';
 import { NFT } from '../../shared/nft';
-import { web3 } from "@alephium/web3"
+import { ExplorerProvider, NodeProvider, web3 } from "@alephium/web3"
+import { useRouter } from 'next/router';
+import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
+import { getExplorerProvider, getNodeProvider } from '../../shared';
 
 const MyNFTs = () => {
   const wallet = useWallet()
 
+  const router = useRouter();
   const [nfts, setNFTs] = useState<NFT[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { address } = router.query
+
+  const userAddress = address as string || wallet?.account.address
 
   useEffect(() => {
     (async () => {
-      if (wallet?.signer
-        && wallet.signer.nodeProvider
-        && wallet.signer.explorerProvider
-        && wallet.account.address
-      ) {
+      if (userAddress) {
         setIsLoading(true)
-        web3.setCurrentNodeProvider(wallet.signer.nodeProvider)
-        web3.setCurrentExplorerProvider(wallet.signer.explorerProvider)
-        const nfts = await fetchNFTsByAddress(wallet.account.address)
+        const nodeProvider = getNodeProvider()
+        const explorerProvider = getExplorerProvider()
+        web3.setCurrentNodeProvider(nodeProvider)
+        web3.setCurrentExplorerProvider(explorerProvider)
+        const nfts = await fetchNFTsByAddress(userAddress)
         setNFTs(nfts)
         setIsLoading(false)
       }
     })()
-  }, [wallet?.signer, wallet?.account]);
+  }, [wallet?.signer, wallet?.account, userAddress]);
 
-  if (!wallet) {
+  if (!userAddress) {
     return (
       <ConnectToWalletBanner />
     );
@@ -58,12 +63,12 @@ const MyNFTs = () => {
         <div className="flexCenter flex-col -mt-20 z-0">
           <div className="flexCenter w-40 h-40 sm:w-36 sm:h-36 p-1 dark:bg-nft-black-4 bg-white rounded-full">
             <Image
-              src={addressToCreatorImage(wallet.account.address)}
+              src={addressToCreatorImage(userAddress)}
               className="rounded-full object-cover"
               objectFit="cover"
             />
           </div>
-          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(wallet.account.address)}</p>
+          <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-2xl mt-6">{shortenAddress(userAddress)}</p>
         </div>
       </div>
 
@@ -77,7 +82,7 @@ const MyNFTs = () => {
             {nfts.map((nft) => (
               <NFTCard
                 key={nft.tokenId}
-                nft={{ tokenOwner: wallet.account.address || '', ...nft }}
+                nft={{ tokenOwner: userAddress || '', ...nft }}
               />
             ))}
           </div>
