@@ -103,12 +103,17 @@ export function ListNFTListings() {
       const fetchCount = remainCount > pageSize ? pageSize : remainCount
       return [...prev, ...Array(fetchCount).fill(undefined)]
     })
+    const currentPage = page
     fetchNFTListings(toPriceOrder(activeSelect), searchText, page, pageSize)
       .then((listings) => {
-        if (!cancelled) {
+        setNftListing(current => {
+          const fromIndex = currentPage * pageSize
+          listings.forEach((nftListing, index) => current[fromIndex + index] = nftListing)
           setHasMore(listings.length === pageSize)
+          return current
+        })
+        if (!cancelled) {
           setIsLoading(false)
-          setNftListing(prev => [...prev.filter((v) => v !== undefined), ...listings])
         }
       })
       .catch((err) => {
