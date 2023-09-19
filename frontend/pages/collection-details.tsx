@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { getDefaultExplorerUrl, getDefaultNodeUrl } from '../../shared/configs';
 import { web3, ExplorerProvider, NodeProvider, ONE_ALPH, prettifyAttoAlphAmount, ExecuteScriptResult } from '@alephium/web3';
 import { NFTCollectionHelper } from '../../shared/nft-collection';
-import { waitTxConfirmed } from '../../shared';
+import { getExplorerProvider, getNodeProvider, waitTxConfirmed } from '../../shared';
 import LoaderWithText from '../components/LoaderWithText';
 import { InfiniteScroll } from "../components/InfiniteScroll";
 import { NFTSkeletonLoader } from '../components/NFTCard';
@@ -132,16 +132,20 @@ export default function CollectionDetails() {
   useEffect(() => {
     if (collectionMetadata === undefined) return
 
-    const nodeProvider = wallet?.signer?.nodeProvider || new NodeProvider(getDefaultNodeUrl())
-    const explorerProvider = wallet?.signer?.explorerProvider || new ExplorerProvider(getDefaultExplorerUrl())
+    const nodeProvider = getNodeProvider()
+    const explorerProvider = getExplorerProvider()
 
     let cancelled = false
     setIsNFTsLoading(true)
     setNFTs(prev => {
-      const maxSupply = collectionMetadata.collectionType === 'NFTOpenCollection' ? Number(collectionMetadata.totalSupply) : Number(collectionMetadata.maxSupply!)
+      const maxSupply = collectionMetadata.collectionType === 'NFTOpenCollection' ? Number(collectionMetadata.totalSupply) : Number(collectionMetadata.totalSupply)
       const remainCount = maxSupply - prev.length
       const fetchCount = remainCount > pageSize ? pageSize : remainCount
-      return [...prev, ...Array(fetchCount).fill(undefined)]
+      if (fetchCount > 0) {
+        return [...prev, ...Array(fetchCount).fill(undefined)]
+      } else {
+        return prev
+      }
     })
     fetchNFTByPage(nodeProvider, explorerProvider, collectionMetadata, page, pageSize)
       .then((nfts) => {

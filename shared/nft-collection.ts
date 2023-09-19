@@ -182,8 +182,7 @@ export async function fetchNFTByPage(
 
   const range = (from: number, count: number): number[] => Array.from(Array(count).keys()).map((v) => from + v)
   const totalSupply = Number(collectionMetadata.totalSupply)
-  const maxSupply = Number(collectionMetadata.maxSupply!)
-  const indexes = range(skipped, pageSize).filter((idx) => idx < maxSupply)
+  const indexes = range(skipped, pageSize).filter((idx) => idx < totalSupply)
   const nfts = await fetchEnumerableNFTs(collectionMetadata, indexes, false)
   return nfts.map<NFT>((nft) => {
     if (nft.nftIndex! < totalSupply) {
