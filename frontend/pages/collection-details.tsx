@@ -143,12 +143,17 @@ export default function CollectionDetails() {
       const fetchCount = remainCount > pageSize ? pageSize : remainCount
       return [...prev, ...Array(fetchCount).fill(undefined)]
     })
+    const currentPage = page
     fetchNFTByPage(nodeProvider, explorerProvider, collectionMetadata, page, pageSize)
       .then((nfts) => {
-        if (!cancelled) {
+        setNFTs(current => {
+          const fromIndex = currentPage * pageSize
+          nfts.forEach((nft, index) => current[fromIndex + index] = nft)
           setHasMore(nfts.length === pageSize)
+          return current
+        })
+        if (!cancelled) {
           setIsNFTsLoading(false)
-          setNFTs(prev => [...prev.filter((v) => v !== undefined), ...nfts])
         }
       })
       .catch((err) => {
