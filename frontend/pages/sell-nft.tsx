@@ -21,7 +21,7 @@ const SellNFT = () => {
   const router = useRouter();
   const { tokenId } = router.query;
   const { nft, isLoading: isNFTLoading } = useNFT(tokenId as string, false, wallet?.signer.nodeProvider, wallet?.signer.explorerProvider)
-  const { collectionMetadata } = useCollectionMetadata(nft?.collectionId, wallet?.signer)
+  const { collectionMetadata } = useCollectionMetadata(nft?.collectionId)
   const [isSellingNFT, setIsSellingNFT] = useState(false);
   const config = getAlephiumNFTConfig()
 

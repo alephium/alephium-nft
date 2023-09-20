@@ -1,27 +1,21 @@
 import useSWR from "swr"
 import { getNetwork } from "../../shared/configs";
-import { web3, SignerProvider, Account } from "@alephium/web3"
+import { web3, Account } from "@alephium/web3"
 import { fetchNFTCollectionMetadata } from "../../shared/nft-collection";
+import { getExplorerProvider, getNodeProvider } from "../../shared";
 
 export const useCollectionMetadata = (
-  collectionId?: string,
-  signerProvider?: SignerProvider
+  collectionId?: string
 ) => {
   const { data: collectionMetadata, error, ...rest } = useSWR(
     collectionId &&
-    signerProvider?.nodeProvider &&
-    signerProvider?.explorerProvider &&
     [
       collectionId,
       "collection",
     ],
     async () => {
-      if (!signerProvider || !signerProvider.nodeProvider || !signerProvider.explorerProvider) {
-        return undefined;
-      }
-
-      web3.setCurrentNodeProvider(signerProvider.nodeProvider)
-      web3.setCurrentExplorerProvider(signerProvider.explorerProvider)
+      web3.setCurrentNodeProvider(getNodeProvider())
+      web3.setCurrentExplorerProvider(getExplorerProvider())
 
       return await fetchNFTCollectionMetadata(collectionId as string)
     },
