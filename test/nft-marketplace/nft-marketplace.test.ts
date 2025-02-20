@@ -1,8 +1,8 @@
 import {
   web3,
+  codec,
   subContractId,
   binToHex,
-  encodeU256,
   addressFromContractId,
   sleep,
   ONE_ALPH,
@@ -14,7 +14,6 @@ import { NFTCollectionHelper } from '../../shared/nft-collection'
 import { NFTMarketplace } from '../../shared/nft-marketplace'
 import { NFT, NFTListingInstance, NFTMarketPlaceInstance } from '../../artifacts/ts'
 import { contractExists, getNodeProvider } from '../../shared'
-import { Balance } from '@alephium/web3/dist/src/api/api-alephium'
 
 describe('nft marketplace', function() {
   const nodeUrl = 'http://127.0.0.1:22973'
@@ -60,7 +59,6 @@ describe('nft marketplace', function() {
   test('Update metadata in the NFT marketplace', async () => {
     const [signer1, signer2] = await getSigners(2, ONE_ALPH * 1000n, 0)
     const nftMarketplace = new NFTMarketplace(signer1)
-    await nftMarketplace.buildProject()
 
     const nftMarketplaceDeployTx = await nftMarketplace.create()
     const nftMarketplaceContractId = nftMarketplaceDeployTx.contractInstance.contractId
@@ -102,7 +100,6 @@ async function testMarketplace(
   provider: NodeProvider
 ) {
   const nftMarketplace = new NFTMarketplace(signer1)
-  await nftMarketplace.buildProject()
   await nftMarketplace.create()
 
   const price = ONE_ALPH * 10n
@@ -128,7 +125,7 @@ async function createNFTOpenCollection(
   }
 
   const nftUri = "https://cryptopunks.app/cryptopunks/details/1"
-  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
+  const nftContractId = subContractId(nftCollectionContractId, binToHex(codec.u256Codec.encode(0n)), 0)
   await nftCollection.openCollection.mint(
     nftCollectionContractId,
     nftUri,
@@ -164,7 +161,7 @@ async function createNFTPublicSaleCollectionRandom(
     nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
   }
 
-  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
+  const nftContractId = subContractId(nftCollectionContractId, binToHex(codec.u256Codec.encode(0n)), 0)
   await nftCollection.publicSaleCollection.random.mint(
     0n,
     mintPrice,
@@ -204,7 +201,7 @@ async function createNFTPublicSaleCollectionSequential(
     nftCollectionContractId = nftCollectionDeployTx.contractInstance.contractId
   }
 
-  const nftContractId = subContractId(nftCollectionContractId, binToHex(encodeU256(0n)), 0)
+  const nftContractId = subContractId(nftCollectionContractId, binToHex(codec.u256Codec.encode(0n)), 0)
   await nftCollection.publicSaleCollection.sequential.batchMint(
     1n,
     mintPrice,
@@ -415,7 +412,7 @@ async function supportRoyalty(tokenId: string, collectionId: string, provider: N
   return collectionIterfaceId === '000201'
 }
 
-function getBalance(signer: PrivateKeyWallet): Promise<Balance> {
+function getBalance(signer: PrivateKeyWallet) {
   return signer.nodeProvider!.addresses.getAddressesAddressBalance(signer.address)
 }
 

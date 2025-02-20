@@ -1,6 +1,7 @@
-import { web3, addressFromContractId, SignerProvider, Contract, ContractFactory, ContractEvent } from "@alephium/web3"
+import { addressFromContractId, SignerProvider, Contract, ContractFactory, ContractEvent } from "@alephium/web3"
 import { getNodeProvider } from "../../shared"
 import { NFTCollectionHelper } from "../../shared/nft-collection"
+import { getContractByCodeHash } from "../../artifacts/ts/contracts"
 
 export const nftBaseUri = "https://cryptopunks.app/cryptopunks/details/"
 export function getNFTUri(tokenIndex: bigint): string {
@@ -22,9 +23,7 @@ export async function checkWithdraw(
 }
 
 export async function getNFTCollection(signer: SignerProvider) {
-  const nftCollection = new NFTCollectionHelper(signer)
-  nftCollection.buildProject()
-  return nftCollection
+  return new NFTCollectionHelper(signer)
 }
 
 export async function checkEvent<C extends ContractFactory<any>>(
@@ -36,7 +35,7 @@ export async function checkEvent<C extends ContractFactory<any>>(
   const result = await nodeProvider.events.getEventsTxIdTxid(txId)
   const events = result.events.filter((e) => e.eventIndex !== Contract.ContractCreatedEventIndex)
   expect(events.length).toEqual(1)
-  const parsedEvent = Contract.fromApiEvent(events[0], factory.contract.codeHash, txId)
+  const parsedEvent = Contract.fromApiEvent(events[0], factory.contract.codeHash, txId, getContractByCodeHash)
   expect(parsedEvent.txId).toEqual(expected.txId)
   expect(parsedEvent.contractAddress).toEqual(expected.contractAddress)
   expect(parsedEvent.eventIndex).toEqual(expected.eventIndex)

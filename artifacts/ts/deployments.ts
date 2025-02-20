@@ -2,8 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { RunScriptResult, DeployContractExecutionResult } from "@alephium/cli";
-import { NetworkId } from "@alephium/web3";
+import {
+  RunScriptResult,
+  DeployContractExecutionResult,
+  NetworkId,
+} from "@alephium/web3";
 import {
   NFTListing,
   NFTListingInstance,
@@ -100,7 +103,7 @@ export function loadDeployments(
   if (deployments === undefined) {
     throw Error("The contract has not been deployed to the " + networkId);
   }
-  const allDeployments = Array.isArray(deployments)
+  const allDeployments: any[] = Array.isArray(deployments)
     ? deployments
     : [deployments];
   if (deployerAddress === undefined) {

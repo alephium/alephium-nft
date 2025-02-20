@@ -1,54 +1,68 @@
-# Alephium NFT
+# Alephium NFT Marketplace Demo
 
-## Install
+A demonstration of NFT and NFT marketplace on the Alephium blockchain, showcasing different minting strategies and NFT trading capabilities.
 
-```
-yarn
-```
+## Features
+
+- NFT Marketplace contract for buying and selling NFTs
+- Multiple NFT collection types:
+  - Open collections (unlimited minting)
+  - Public sale collections with random minting
+  - Public sale collections with sequential minting
+- Optional royalty support for collections
+- Batch minting capabilities
+- Price updates for listed NFTs
+- Commission system for marketplace trades
+
+## Prerequisites
+
+- Node.js and Yarn
+- Docker and Docker Compose
+- Git
 
 ## Getting Started
 
-First, run the development server:
+1. Start the Alephium development environment with Mongodb:
+   ```bash
+   cd docker
+   docker-compose up -d
+   ```
 
-```
-yarn run dev
-```
+2. Install dependencies:
+   ```bash
+   yarn
+   ```
 
-## Stop/restart devnet
+3. Deploy the smart contracts:
+   ```bash
+   yarn run deploy:contracts
+   ```
+   This will deploy:
+   - The NFT marketplace contract for trading NFTs
+   - A default NFT collection contract
 
-```
-npx @alephium/cli devnet start // this will start a devnet for smart contract tests
-npx @alephium/cli devnet stop
-```
+4. Start the backend server:
+   ```bash
+   yarn run start:backend
+   ```
 
-or
+5. Start the frontend development server:
+   ```bash
+   yarn run start:frontend
+   ```
+   The frontend will be available at http://localhost:3000
 
-```
-cd test/docker
-docker-compose up -d
-```
 
-## Deploy Smart Contracts
-Before running the application, two smart contracts need to be created:
-1. A [marketplace smart contract](contracts/nft_marketplace.ral) where
-   NFTs can be traded
-2. A default [NFT collection smart
-   contract](contracts/nft_collection.ral), which will be the default
-   collection for NFTs that do not explicitly belong to any NFT
-   collections
+## Testing
 
-```
-yarn run deploy:contracts
-```
+Run all contract tests:
 
-## Testing Smart Contract
-
-```
+```bash
 yarn run test:contracts
 ```
 
-or
+Run specific test file:
 
-```
+```bash
 yarn run test:contracts -- nft-marketplace.test.ts
 ```

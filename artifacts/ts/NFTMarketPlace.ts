@@ -21,11 +21,20 @@ import {
   callMethod,
   multicallMethods,
   fetchContractState,
+  Asset,
   ContractInstance,
   getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
+  Narrow,
 } from "@alephium/web3";
 import { default as NFTMarketPlaceContractJson } from "../marketplace/NFTMarketPlace.ral.json";
-import { getContractByCodeHash } from "./contracts";
+import { getContractByCodeHash, registerContract } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTMarketPlaceTypes {
@@ -85,6 +94,10 @@ export namespace NFTMarketPlaceTypes {
       }>;
       result: CallContractResult<bigint>;
     };
+    buyNFT: {
+      params: CallContractParams<{ tokenId: HexString }>;
+      result: CallContractResult<null>;
+    };
     listNFT: {
       params: CallContractParams<{
         tokenId: HexString;
@@ -92,6 +105,30 @@ export namespace NFTMarketPlaceTypes {
         royalty: boolean;
       }>;
       result: CallContractResult<Address>;
+    };
+    cancelNFTListing: {
+      params: CallContractParams<{ tokenId: HexString }>;
+      result: CallContractResult<null>;
+    };
+    updateNFTPrice: {
+      params: CallContractParams<{ tokenId: HexString; newPrice: bigint }>;
+      result: CallContractResult<null>;
+    };
+    updateAdmin: {
+      params: CallContractParams<{ newAdmin: Address }>;
+      result: CallContractResult<null>;
+    };
+    updateCommissionRate: {
+      params: CallContractParams<{ newCommissionRate: bigint }>;
+      result: CallContractResult<null>;
+    };
+    withdraw: {
+      params: CallContractParams<{ to: Address; amount: bigint }>;
+      result: CallContractResult<null>;
+    };
+    getCollectionId: {
+      params: CallContractParams<{ tokenId: HexString }>;
+      result: CallContractResult<HexString>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -106,14 +143,84 @@ export namespace NFTMarketPlaceTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> = {
+    [index in keyof Callss]: MultiCallResults<Callss[index]>;
+  };
+
+  export interface SignExecuteMethodTable {
+    getPriceAfterFee: {
+      params: SignExecuteContractMethodParams<{
+        priceIn: bigint;
+        commissionRateIn: bigint;
+        royaltyAmount: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    getRoyaltyAmount: {
+      params: SignExecuteContractMethodParams<{
+        tokenIdIn: HexString;
+        collectionId: HexString;
+        priceIn: bigint;
+        requiresRoyalty: boolean;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    buyNFT: {
+      params: SignExecuteContractMethodParams<{ tokenId: HexString }>;
+      result: SignExecuteScriptTxResult;
+    };
+    listNFT: {
+      params: SignExecuteContractMethodParams<{
+        tokenId: HexString;
+        price: bigint;
+        royalty: boolean;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    cancelNFTListing: {
+      params: SignExecuteContractMethodParams<{ tokenId: HexString }>;
+      result: SignExecuteScriptTxResult;
+    };
+    updateNFTPrice: {
+      params: SignExecuteContractMethodParams<{
+        tokenId: HexString;
+        newPrice: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    updateAdmin: {
+      params: SignExecuteContractMethodParams<{ newAdmin: Address }>;
+      result: SignExecuteScriptTxResult;
+    };
+    updateCommissionRate: {
+      params: SignExecuteContractMethodParams<{ newCommissionRate: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    withdraw: {
+      params: SignExecuteContractMethodParams<{ to: Address; amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    getCollectionId: {
+      params: SignExecuteContractMethodParams<{ tokenId: HexString }>;
+      result: SignExecuteScriptTxResult;
+    };
+  }
+  export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["params"];
+  export type SignExecuteMethodResult<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["result"];
 }
 
 class Factory extends ContractFactory<
   NFTMarketPlaceInstance,
   NFTMarketPlaceTypes.Fields
 > {
-  getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as NFTMarketPlaceTypes.Fields;
+  encodeFields(fields: NFTMarketPlaceTypes.Fields) {
+    return encodeContractFields(
+      addStdIdToFields(this.contract, fields),
+      this.contract.fieldsSig,
+      []
+    );
   }
 
   eventIndex = {
@@ -126,9 +233,9 @@ class Factory extends ContractFactory<
   };
   consts = {
     ErrorCodes: {
-      NFTPriceTooLow: BigInt(2),
-      AdminAllowedOnly: BigInt(0),
-      TokenOwnerAllowedOnly: BigInt(1),
+      NFTPriceTooLow: BigInt("2"),
+      AdminAllowedOnly: BigInt("0"),
+      TokenOwnerAllowedOnly: BigInt("1"),
     },
   };
 
@@ -138,15 +245,20 @@ class Factory extends ContractFactory<
 
   tests = {
     getPriceAfterFee: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { priceIn: bigint; commissionRateIn: bigint; royaltyAmount: bigint }
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getPriceAfterFee", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(
+        this,
+        "getPriceAfterFee",
+        params,
+        getContractByCodeHash
+      );
     },
     getRoyaltyAmount: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         {
           tokenIdIn: HexString;
@@ -155,74 +267,97 @@ class Factory extends ContractFactory<
           requiresRoyalty: boolean;
         }
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getRoyaltyAmount", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(
+        this,
+        "getRoyaltyAmount",
+        params,
+        getContractByCodeHash
+      );
     },
     buyNFT: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "buyNFT", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "buyNFT", params, getContractByCodeHash);
     },
     listNFT: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString; price: bigint; royalty: boolean }
       >
-    ): Promise<TestContractResult<Address>> => {
-      return testMethod(this, "listNFT", params);
+    ): Promise<TestContractResultWithoutMaps<Address>> => {
+      return testMethod(this, "listNFT", params, getContractByCodeHash);
     },
     cancelNFTListing: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "cancelNFTListing", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(
+        this,
+        "cancelNFTListing",
+        params,
+        getContractByCodeHash
+      );
     },
     updateNFTPrice: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString; newPrice: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "updateNFTPrice", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "updateNFTPrice", params, getContractByCodeHash);
     },
     updateAdmin: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { newAdmin: Address }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "updateAdmin", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "updateAdmin", params, getContractByCodeHash);
     },
     updateCommissionRate: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { newCommissionRate: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "updateCommissionRate", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(
+        this,
+        "updateCommissionRate",
+        params,
+        getContractByCodeHash
+      );
     },
     withdraw: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { to: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "withdraw", params, getContractByCodeHash);
     },
     getCollectionId: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTMarketPlaceTypes.Fields,
         { tokenId: HexString }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionId", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "getCollectionId", params, getContractByCodeHash);
     },
   };
+
+  stateForTest(
+    initFields: NFTMarketPlaceTypes.Fields,
+    asset?: Asset,
+    address?: string
+  ) {
+    return this.stateForTest_(initFields, asset, address, undefined);
+  }
 }
 
 // Use this object to test and deploy the contract
@@ -230,9 +365,11 @@ export const NFTMarketPlace = new Factory(
   Contract.fromJson(
     NFTMarketPlaceContractJson,
     "",
-    "58b1fe54c48ae9100e522bd453d4043e9f20676d81c6b5d895d97ca037496263"
+    "58b1fe54c48ae9100e522bd453d4043e9f20676d81c6b5d895d97ca037496263",
+    []
   )
 );
+registerContract(NFTMarketPlace);
 
 // Use this class to interact with the blockchain
 export class NFTMarketPlaceInstance extends ContractInstance {
@@ -345,7 +482,7 @@ export class NFTMarketPlaceInstance extends ContractInstance {
     );
   }
 
-  methods = {
+  view = {
     getPriceAfterFee: async (
       params: NFTMarketPlaceTypes.CallMethodParams<"getPriceAfterFee">
     ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getPriceAfterFee">> => {
@@ -368,6 +505,17 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    buyNFT: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"buyNFT">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"buyNFT">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "buyNFT",
+        params,
+        getContractByCodeHash
+      );
+    },
     listNFT: async (
       params: NFTMarketPlaceTypes.CallMethodParams<"listNFT">
     ): Promise<NFTMarketPlaceTypes.CallMethodResult<"listNFT">> => {
@@ -379,16 +527,177 @@ export class NFTMarketPlaceInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    cancelNFTListing: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"cancelNFTListing">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"cancelNFTListing">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "cancelNFTListing",
+        params,
+        getContractByCodeHash
+      );
+    },
+    updateNFTPrice: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"updateNFTPrice">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"updateNFTPrice">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "updateNFTPrice",
+        params,
+        getContractByCodeHash
+      );
+    },
+    updateAdmin: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"updateAdmin">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"updateAdmin">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "updateAdmin",
+        params,
+        getContractByCodeHash
+      );
+    },
+    updateCommissionRate: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"updateCommissionRate">
+    ): Promise<
+      NFTMarketPlaceTypes.CallMethodResult<"updateCommissionRate">
+    > => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "updateCommissionRate",
+        params,
+        getContractByCodeHash
+      );
+    },
+    withdraw: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"withdraw">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"withdraw">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "withdraw",
+        params,
+        getContractByCodeHash
+      );
+    },
+    getCollectionId: async (
+      params: NFTMarketPlaceTypes.CallMethodParams<"getCollectionId">
+    ): Promise<NFTMarketPlaceTypes.CallMethodResult<"getCollectionId">> => {
+      return callMethod(
+        NFTMarketPlace,
+        this,
+        "getCollectionId",
+        params,
+        getContractByCodeHash
+      );
+    },
+  };
+
+  transact = {
+    getPriceAfterFee: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"getPriceAfterFee">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"getPriceAfterFee">
+    > => {
+      return signExecuteMethod(
+        NFTMarketPlace,
+        this,
+        "getPriceAfterFee",
+        params
+      );
+    },
+    getRoyaltyAmount: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"getRoyaltyAmount">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"getRoyaltyAmount">
+    > => {
+      return signExecuteMethod(
+        NFTMarketPlace,
+        this,
+        "getRoyaltyAmount",
+        params
+      );
+    },
+    buyNFT: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"buyNFT">
+    ): Promise<NFTMarketPlaceTypes.SignExecuteMethodResult<"buyNFT">> => {
+      return signExecuteMethod(NFTMarketPlace, this, "buyNFT", params);
+    },
+    listNFT: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"listNFT">
+    ): Promise<NFTMarketPlaceTypes.SignExecuteMethodResult<"listNFT">> => {
+      return signExecuteMethod(NFTMarketPlace, this, "listNFT", params);
+    },
+    cancelNFTListing: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"cancelNFTListing">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"cancelNFTListing">
+    > => {
+      return signExecuteMethod(
+        NFTMarketPlace,
+        this,
+        "cancelNFTListing",
+        params
+      );
+    },
+    updateNFTPrice: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"updateNFTPrice">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"updateNFTPrice">
+    > => {
+      return signExecuteMethod(NFTMarketPlace, this, "updateNFTPrice", params);
+    },
+    updateAdmin: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"updateAdmin">
+    ): Promise<NFTMarketPlaceTypes.SignExecuteMethodResult<"updateAdmin">> => {
+      return signExecuteMethod(NFTMarketPlace, this, "updateAdmin", params);
+    },
+    updateCommissionRate: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"updateCommissionRate">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"updateCommissionRate">
+    > => {
+      return signExecuteMethod(
+        NFTMarketPlace,
+        this,
+        "updateCommissionRate",
+        params
+      );
+    },
+    withdraw: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"withdraw">
+    ): Promise<NFTMarketPlaceTypes.SignExecuteMethodResult<"withdraw">> => {
+      return signExecuteMethod(NFTMarketPlace, this, "withdraw", params);
+    },
+    getCollectionId: async (
+      params: NFTMarketPlaceTypes.SignExecuteMethodParams<"getCollectionId">
+    ): Promise<
+      NFTMarketPlaceTypes.SignExecuteMethodResult<"getCollectionId">
+    > => {
+      return signExecuteMethod(NFTMarketPlace, this, "getCollectionId", params);
+    },
   };
 
   async multicall<Calls extends NFTMarketPlaceTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<NFTMarketPlaceTypes.MultiCallResults<Calls>> {
-    return (await multicallMethods(
+  ): Promise<NFTMarketPlaceTypes.MultiCallResults<Calls>>;
+  async multicall<Callss extends NFTMarketPlaceTypes.MultiCallParams[]>(
+    callss: Narrow<Callss>
+  ): Promise<NFTMarketPlaceTypes.MulticallReturnType<Callss>>;
+  async multicall<
+    Callss extends
+      | NFTMarketPlaceTypes.MultiCallParams
+      | NFTMarketPlaceTypes.MultiCallParams[]
+  >(callss: Callss): Promise<unknown> {
+    return await multicallMethods(
       NFTMarketPlace,
       this,
-      calls,
+      callss,
       getContractByCodeHash
-    )) as NFTMarketPlaceTypes.MultiCallResults<Calls>;
+    );
   }
 }

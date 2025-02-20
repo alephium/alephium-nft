@@ -5,7 +5,7 @@ Abstract Contract NFTOpenCollectionBase(
     collectionUri: ByteVec,
     collectionOwner: Address, // Only owner can mint
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply) {
+) extends NFTCollectionBase(collectionUri, collectionOwner, totalSupply) {
     event Mint(minter: Address, index: U256)
 
     @using(preapprovedAssets = true, updateFields = true)

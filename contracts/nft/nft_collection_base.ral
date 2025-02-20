@@ -2,6 +2,7 @@ import "std/nft_collection_interface"
 
 Abstract Contract NFTCollectionBase(
     collectionUri: ByteVec,
+    collectionOwner: Address,
     mut totalSupply: U256
 ) implements INFTCollection {
     enum ErrorCodes {

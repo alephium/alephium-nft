@@ -11,6 +11,7 @@ import {
   SignerProvider,
   HexString,
 } from "@alephium/web3";
+import { getContractByCodeHash } from "./contracts";
 import { default as BuyNFTScriptJson } from "../scripts/BuyNFT.ral.json";
 import { default as CancelListingScriptJson } from "../scripts/CancelListing.ral.json";
 import { default as CreateOpenCollectionScriptJson } from "../scripts/CreateOpenCollection.ral.json";
@@ -34,18 +35,24 @@ export const BuyNFT = new ExecutableScript<{
   totalPayment: bigint;
   tokenId: HexString;
   nftMarketplace: HexString;
-}>(Script.fromJson(BuyNFTScriptJson));
+}>(Script.fromJson(BuyNFTScriptJson, "", []), getContractByCodeHash);
+
 export const CancelListing = new ExecutableScript<{
   tokenId: HexString;
   nftMarketplace: HexString;
-}>(Script.fromJson(CancelListingScriptJson));
+}>(Script.fromJson(CancelListingScriptJson, "", []), getContractByCodeHash);
+
 export const CreateOpenCollection = new ExecutableScript<{
   openCollectionTemplateId: HexString;
   nftTemplateId: HexString;
   collectionUri: HexString;
   collectionOwner: Address;
   totalSupply: bigint;
-}>(Script.fromJson(CreateOpenCollectionScriptJson));
+}>(
+  Script.fromJson(CreateOpenCollectionScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const CreateOpenCollectionWithRoyalty = new ExecutableScript<{
   openCollectionWithRoyaltyTemplateId: HexString;
   nftTemplateId: HexString;
@@ -53,7 +60,11 @@ export const CreateOpenCollectionWithRoyalty = new ExecutableScript<{
   collectionOwner: Address;
   royaltyRate: bigint;
   totalSupply: bigint;
-}>(Script.fromJson(CreateOpenCollectionWithRoyaltyScriptJson));
+}>(
+  Script.fromJson(CreateOpenCollectionWithRoyaltyScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const CreatePublicSaleCollectionSequential = new ExecutableScript<{
   publicSaleCollectionTemplateId: HexString;
   nftTemplateId: HexString;
@@ -64,7 +75,11 @@ export const CreatePublicSaleCollectionSequential = new ExecutableScript<{
   mintPrice: bigint;
   maxBatchMintSize: bigint;
   totalSupply: bigint;
-}>(Script.fromJson(CreatePublicSaleCollectionSequentialScriptJson));
+}>(
+  Script.fromJson(CreatePublicSaleCollectionSequentialScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const CreatePublicSaleCollectionSequentialWithRoyalty =
   new ExecutableScript<{
     publicSaleCollectionTemplateId: HexString;
@@ -78,69 +93,107 @@ export const CreatePublicSaleCollectionSequentialWithRoyalty =
     royaltyRate: bigint;
     totalSupply: bigint;
   }>(
-    Script.fromJson(CreatePublicSaleCollectionSequentialWithRoyaltyScriptJson)
+    Script.fromJson(
+      CreatePublicSaleCollectionSequentialWithRoyaltyScriptJson,
+      "",
+      []
+    ),
+    getContractByCodeHash
   );
+
 export const ListNFT = new ExecutableScript<{
   tokenId: HexString;
   price: bigint;
   nftMarketplace: HexString;
   royalty: boolean;
-}>(Script.fromJson(ListNFTScriptJson));
+}>(Script.fromJson(ListNFTScriptJson, "", []), getContractByCodeHash);
+
 export const MintBatchSequential = new ExecutableScript<{
   nftCollectionId: HexString;
   batchSize: bigint;
   mintPrice: bigint;
   royalty: boolean;
-}>(Script.fromJson(MintBatchSequentialScriptJson));
+}>(
+  Script.fromJson(MintBatchSequentialScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const MintNextSequential = new ExecutableScript<{
   nftCollectionId: HexString;
   mintPrice: bigint;
   royalty: boolean;
-}>(Script.fromJson(MintNextSequentialScriptJson));
+}>(
+  Script.fromJson(MintNextSequentialScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const MintOpenNFT = new ExecutableScript<{
   nftCollectionId: HexString;
   uri: HexString;
   royalty: boolean;
-}>(Script.fromJson(MintOpenNFTScriptJson));
+}>(Script.fromJson(MintOpenNFTScriptJson, "", []), getContractByCodeHash);
+
 export const MintSpecific = new ExecutableScript<{
   index: bigint;
   mintPrice: bigint;
   nftCollectionId: HexString;
   royalty: boolean;
-}>(Script.fromJson(MintSpecificScriptJson));
+}>(Script.fromJson(MintSpecificScriptJson, "", []), getContractByCodeHash);
+
 export const UpdateAdmin = new ExecutableScript<{
   newAdmin: Address;
   nftMarketplace: HexString;
-}>(Script.fromJson(UpdateAdminScriptJson));
+}>(Script.fromJson(UpdateAdminScriptJson, "", []), getContractByCodeHash);
+
 export const UpdateComissionRate = new ExecutableScript<{
   newCommissionRate: bigint;
   nftMarketplace: HexString;
-}>(Script.fromJson(UpdateComissionRateScriptJson));
+}>(
+  Script.fromJson(UpdateComissionRateScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const UpdateNFTPrice = new ExecutableScript<{
   price: bigint;
   tokenId: HexString;
   nftMarketplace: HexString;
-}>(Script.fromJson(UpdateNFTPriceScriptJson));
+}>(Script.fromJson(UpdateNFTPriceScriptJson, "", []), getContractByCodeHash);
+
 export const WithdrawFromMarketPlace = new ExecutableScript<{
   to: Address;
   amount: bigint;
   nftMarketplace: HexString;
-}>(Script.fromJson(WithdrawFromMarketPlaceScriptJson));
+}>(
+  Script.fromJson(WithdrawFromMarketPlaceScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const WithdrawFromOpenCollection = new ExecutableScript<{
   to: Address;
   amount: bigint;
   nftCollectionId: HexString;
   royalty: boolean;
-}>(Script.fromJson(WithdrawFromOpenCollectionScriptJson));
+}>(
+  Script.fromJson(WithdrawFromOpenCollectionScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const WithdrawFromPublicSaleCollectionRandom = new ExecutableScript<{
   to: Address;
   amount: bigint;
   nftCollectionId: HexString;
   royalty: boolean;
-}>(Script.fromJson(WithdrawFromPublicSaleCollectionRandomScriptJson));
+}>(
+  Script.fromJson(WithdrawFromPublicSaleCollectionRandomScriptJson, "", []),
+  getContractByCodeHash
+);
+
 export const WithdrawFromPublicSaleCollectionSequential = new ExecutableScript<{
   to: Address;
   amount: bigint;
   nftCollectionId: HexString;
   royalty: boolean;
-}>(Script.fromJson(WithdrawFromPublicSaleCollectionSequentialScriptJson));
+}>(
+  Script.fromJson(WithdrawFromPublicSaleCollectionSequentialScriptJson, "", []),
+  getContractByCodeHash
+);

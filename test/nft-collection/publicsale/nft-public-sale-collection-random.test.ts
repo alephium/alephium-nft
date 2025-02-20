@@ -2,10 +2,9 @@ import {
   web3,
   subContractId,
   addressFromContractId,
-  encodeU256,
   binToHex,
+  codec,
   groupOfAddress,
-  addressFromTokenId,
   ONE_ALPH,
   SignerProvider
 } from '@alephium/web3'
@@ -15,7 +14,6 @@ import { checkEvent, checkWithdraw, getNFTCollection, getNFTUri } from '../utils
 import { NFTCollectionHelper } from '../../../shared/nft-collection'
 import {
   NFT,
-  NFTInstance,
   NFTPublicSaleCollectionRandom,
   NFTPublicSaleCollectionRandomInstance,
   NFTPublicSaleCollectionRandomWithRoyaltyInstance
@@ -81,21 +79,21 @@ async function mintAndVerify(
 
   const nftCollectionContractAddress = addressFromContractId(collectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
-  const nftContractId = subContractId(collectionInstance.contractId, binToHex(encodeU256(tokenIndex)), group)
+  const nftContractId = subContractId(collectionInstance.contractId, binToHex(codec.u256Codec.encode(tokenIndex)), group)
 
   const result = await nftCollection.publicSaleCollection.random.mint(tokenIndex, mintPrice, collectionInstance.contractId, royalty)
 
   // NFT just minted
-  const nftByIndexResult = await collectionInstance.methods.nftByIndex({ args: { index: tokenIndex } })
+  const nftByIndexResult = await collectionInstance.view.nftByIndex({ args: { index: tokenIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
 
   const nftInstance = NFT.at(addressFromContractId(nftContractId))
   const nftContractState = await nftInstance.fetchState()
-  const [collectionId, index] = (await nftInstance.methods.getCollectionIndex()).returns
+  const [collectionId, index] = (await nftInstance.view.getCollectionIndex()).returns
   expect(collectionId).toEqual(collectionInstance.contractId)
   expect(index).toEqual(tokenIndex)
   expect(nftContractState.fields.nftIndex).toEqual(tokenIndex)
-  const tokenUri = (await nftInstance.methods.getTokenUri()).returns
+  const tokenUri = (await nftInstance.view.getTokenUri()).returns
   utils.checkHexString(tokenUri, getNFTUri(tokenIndex))
 
   const account = await nftCollection.signer.getSelectedAccount()
@@ -109,9 +107,9 @@ async function mintAndVerify(
 
   if (royalty) {
     const nftPublicSaleCollectionRandomWithRoyaltyInstance = collectionInstance as NFTPublicSaleCollectionRandomWithRoyaltyInstance
-    const tokenIdResult = await nftPublicSaleCollectionRandomWithRoyaltyInstance.methods.nftByIndex({ args: { index: tokenIndex } })
+    const tokenIdResult = await nftPublicSaleCollectionRandomWithRoyaltyInstance.view.nftByIndex({ args: { index: tokenIndex } })
     const tokenId = tokenIdResult.returns
-    const royaltyAmount = await nftPublicSaleCollectionRandomWithRoyaltyInstance.methods.royaltyAmount({ args: { tokenId: tokenId, salePrice: BigInt(100) } })
+    const royaltyAmount = await nftPublicSaleCollectionRandomWithRoyaltyInstance.view.royaltyAmount({ args: { tokenId: tokenId, salePrice: BigInt(100) } })
     expect(royaltyAmount.returns).toEqual(BigInt(100) * royaltyRate / BigInt(10000))
   }
 }
@@ -123,7 +121,7 @@ async function getCollectionInstance(
   royalty: boolean,
   signer: SignerProvider
 ): Promise<NFTPublicSaleCollectionRandomInstance | NFTPublicSaleCollectionRandomWithRoyaltyInstance> {
-  let collectionInstance = undefined
+  let collectionInstance
   if (royalty) {
     const nftCollectionDeployTx = await nftCollection.publicSaleCollection.random.createWithRoyalty(
       maxSupply,

@@ -21,11 +21,20 @@ import {
   callMethod,
   multicallMethods,
   fetchContractState,
+  Asset,
   ContractInstance,
   getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
+  Narrow,
 } from "@alephium/web3";
 import { default as NFTContractJson } from "../nft/NFT.ral.json";
-import { getContractByCodeHash } from "./contracts";
+import { getContractByCodeHash, registerContract } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTTypes {
@@ -63,11 +72,37 @@ export namespace NFTTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> = {
+    [index in keyof Callss]: MultiCallResults<Callss[index]>;
+  };
+
+  export interface SignExecuteMethodTable {
+    getTokenUri: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    getCollectionIndex: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    getNFTIndex: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+  }
+  export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["params"];
+  export type SignExecuteMethodResult<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["result"];
 }
 
 class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
-  getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as NFTTypes.Fields;
+  encodeFields(fields: NFTTypes.Fields) {
+    return encodeContractFields(
+      addStdIdToFields(this.contract, fields),
+      this.contract.fieldsSig,
+      []
+    );
   }
 
   at(address: string): NFTInstance {
@@ -76,21 +111,39 @@ class Factory extends ContractFactory<NFTInstance, NFTTypes.Fields> {
 
   tests = {
     getTokenUri: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getTokenUri", params);
+      params: Omit<
+        TestContractParamsWithoutMaps<NFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "getTokenUri", params, getContractByCodeHash);
     },
     getCollectionIndex: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<[HexString, bigint]>> => {
-      return testMethod(this, "getCollectionIndex", params);
+      params: Omit<
+        TestContractParamsWithoutMaps<NFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResultWithoutMaps<[HexString, bigint]>> => {
+      return testMethod(
+        this,
+        "getCollectionIndex",
+        params,
+        getContractByCodeHash
+      );
     },
     getNFTIndex: async (
-      params: Omit<TestContractParams<NFTTypes.Fields, never>, "testArgs">
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getNFTIndex", params);
+      params: Omit<
+        TestContractParamsWithoutMaps<NFTTypes.Fields, never>,
+        "testArgs"
+      >
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "getNFTIndex", params, getContractByCodeHash);
     },
   };
+
+  stateForTest(initFields: NFTTypes.Fields, asset?: Asset, address?: string) {
+    return this.stateForTest_(initFields, asset, address, undefined);
+  }
 }
 
 // Use this object to test and deploy the contract
@@ -98,9 +151,11 @@ export const NFT = new Factory(
   Contract.fromJson(
     NFTContractJson,
     "",
-    "7386b370672aff98393754e2785b59018eed34a07e7a7eab3d18b4289f627b72"
+    "7386b370672aff98393754e2785b59018eed34a07e7a7eab3d18b4289f627b72",
+    []
   )
 );
+registerContract(NFT);
 
 // Use this class to interact with the blockchain
 export class NFTInstance extends ContractInstance {
@@ -112,7 +167,7 @@ export class NFTInstance extends ContractInstance {
     return fetchContractState(NFT, this);
   }
 
-  methods = {
+  view = {
     getTokenUri: async (
       params?: NFTTypes.CallMethodParams<"getTokenUri">
     ): Promise<NFTTypes.CallMethodResult<"getTokenUri">> => {
@@ -148,14 +203,33 @@ export class NFTInstance extends ContractInstance {
     },
   };
 
+  transact = {
+    getTokenUri: async (
+      params: NFTTypes.SignExecuteMethodParams<"getTokenUri">
+    ): Promise<NFTTypes.SignExecuteMethodResult<"getTokenUri">> => {
+      return signExecuteMethod(NFT, this, "getTokenUri", params);
+    },
+    getCollectionIndex: async (
+      params: NFTTypes.SignExecuteMethodParams<"getCollectionIndex">
+    ): Promise<NFTTypes.SignExecuteMethodResult<"getCollectionIndex">> => {
+      return signExecuteMethod(NFT, this, "getCollectionIndex", params);
+    },
+    getNFTIndex: async (
+      params: NFTTypes.SignExecuteMethodParams<"getNFTIndex">
+    ): Promise<NFTTypes.SignExecuteMethodResult<"getNFTIndex">> => {
+      return signExecuteMethod(NFT, this, "getNFTIndex", params);
+    },
+  };
+
   async multicall<Calls extends NFTTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<NFTTypes.MultiCallResults<Calls>> {
-    return (await multicallMethods(
-      NFT,
-      this,
-      calls,
-      getContractByCodeHash
-    )) as NFTTypes.MultiCallResults<Calls>;
+  ): Promise<NFTTypes.MultiCallResults<Calls>>;
+  async multicall<Callss extends NFTTypes.MultiCallParams[]>(
+    callss: Narrow<Callss>
+  ): Promise<NFTTypes.MulticallReturnType<Callss>>;
+  async multicall<
+    Callss extends NFTTypes.MultiCallParams | NFTTypes.MultiCallParams[]
+  >(callss: Callss): Promise<unknown> {
+    return await multicallMethods(NFT, this, callss, getContractByCodeHash);
   }
 }

@@ -21,11 +21,20 @@ import {
   callMethod,
   multicallMethods,
   fetchContractState,
+  Asset,
   ContractInstance,
   getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
+  Narrow,
 } from "@alephium/web3";
 import { default as NFTPublicSaleCollectionSequentialWithRoyaltyContractJson } from "../nft/publicsale/sequential/NFTPublicSaleCollectionSequentialWithRoyalty.ral.json";
-import { getContractByCodeHash } from "./contracts";
+import { getContractByCodeHash, registerContract } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTPublicSaleCollectionSequentialWithRoyaltyTypes {
@@ -62,9 +71,25 @@ export namespace NFTPublicSaleCollectionSequentialWithRoyaltyTypes {
       params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
     };
+    validateNFT: {
+      params: CallContractParams<{ nftId: HexString; nftIndex: bigint }>;
+      result: CallContractResult<null>;
+    };
     royaltyAmount: {
       params: CallContractParams<{ tokenId: HexString; salePrice: bigint }>;
       result: CallContractResult<bigint>;
+    };
+    payRoyalty: {
+      params: CallContractParams<{ payer: Address; amount: bigint }>;
+      result: CallContractResult<null>;
+    };
+    withdrawRoyalty: {
+      params: CallContractParams<{ to: Address; amount: bigint }>;
+      result: CallContractResult<null>;
+    };
+    mint_: {
+      params: CallContractParams<{ minter: Address; index: bigint }>;
+      result: CallContractResult<HexString>;
     };
     mint: {
       params: Omit<CallContractParams<{}>, "args">;
@@ -73,6 +98,10 @@ export namespace NFTPublicSaleCollectionSequentialWithRoyaltyTypes {
     mintBatch: {
       params: CallContractParams<{ size: bigint }>;
       result: CallContractResult<HexString>;
+    };
+    withdraw: {
+      params: CallContractParams<{ to: Address; amount: bigint }>;
+      result: CallContractResult<null>;
     };
     getNFTUri: {
       params: CallContractParams<{ index: bigint }>;
@@ -95,26 +124,106 @@ export namespace NFTPublicSaleCollectionSequentialWithRoyaltyTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> = {
+    [index in keyof Callss]: MultiCallResults<Callss[index]>;
+  };
+
+  export interface SignExecuteMethodTable {
+    getCollectionUri: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    totalSupply: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    nftByIndex: {
+      params: SignExecuteContractMethodParams<{ index: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    validateNFT: {
+      params: SignExecuteContractMethodParams<{
+        nftId: HexString;
+        nftIndex: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    royaltyAmount: {
+      params: SignExecuteContractMethodParams<{
+        tokenId: HexString;
+        salePrice: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    payRoyalty: {
+      params: SignExecuteContractMethodParams<{
+        payer: Address;
+        amount: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    withdrawRoyalty: {
+      params: SignExecuteContractMethodParams<{ to: Address; amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    mint_: {
+      params: SignExecuteContractMethodParams<{
+        minter: Address;
+        index: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    mint: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    mintBatch: {
+      params: SignExecuteContractMethodParams<{ size: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    withdraw: {
+      params: SignExecuteContractMethodParams<{ to: Address; amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    getNFTUri: {
+      params: SignExecuteContractMethodParams<{ index: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    getMintPrice: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+  }
+  export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["params"];
+  export type SignExecuteMethodResult<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["result"];
 }
 
 class Factory extends ContractFactory<
   NFTPublicSaleCollectionSequentialWithRoyaltyInstance,
   NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields
 > {
-  getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields;
+  encodeFields(
+    fields: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields
+  ) {
+    return encodeContractFields(
+      addStdIdToFields(this.contract, fields),
+      this.contract.fieldsSig,
+      []
+    );
   }
 
   eventIndex = { Mint: 0 };
   consts = {
-    PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt(0) },
+    PublicSaleErrorCodes: { IncorrectTokenIndex: BigInt("0") },
     ErrorCodes: {
-      IncorrectTokenIndex: BigInt(2),
-      InvalidMintBatchSize: BigInt(3),
-      InsufficientNumOfUnminted: BigInt(4),
-      NFTNotFound: BigInt(0),
-      CollectionOwnerAllowedOnly: BigInt(1),
-      NFTNotPartOfCollection: BigInt(2),
+      IncorrectTokenIndex: BigInt("2"),
+      InvalidMintBatchSize: BigInt("3"),
+      InsufficientNumOfUnminted: BigInt("4"),
+      NFTNotFound: BigInt("0"),
+      CollectionOwnerAllowedOnly: BigInt("1"),
+      NFTNotPartOfCollection: BigInt("2"),
     },
   };
 
@@ -125,121 +234,134 @@ class Factory extends ContractFactory<
   tests = {
     getCollectionUri: async (
       params: Omit<
-        TestContractParams<
+        TestContractParamsWithoutMaps<
           NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
           never
         >,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionUri", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(
+        this,
+        "getCollectionUri",
+        params,
+        getContractByCodeHash
+      );
     },
     totalSupply: async (
       params: Omit<
-        TestContractParams<
+        TestContractParamsWithoutMaps<
           NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
           never
         >,
         "testArgs"
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "totalSupply", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "totalSupply", params, getContractByCodeHash);
     },
     nftByIndex: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { index: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "nftByIndex", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "nftByIndex", params, getContractByCodeHash);
     },
     validateNFT: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { nftId: HexString; nftIndex: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "validateNFT", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "validateNFT", params, getContractByCodeHash);
     },
     royaltyAmount: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { tokenId: HexString; salePrice: bigint }
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "royaltyAmount", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "royaltyAmount", params, getContractByCodeHash);
     },
     payRoyalty: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { payer: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "payRoyalty", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "payRoyalty", params, getContractByCodeHash);
     },
     withdrawRoyalty: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { to: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdrawRoyalty", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "withdrawRoyalty", params, getContractByCodeHash);
     },
     mint_: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { minter: Address; index: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "mint_", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "mint_", params, getContractByCodeHash);
     },
     mint: async (
       params: Omit<
-        TestContractParams<
+        TestContractParamsWithoutMaps<
           NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
           never
         >,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "mint", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "mint", params, getContractByCodeHash);
     },
     mintBatch: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { size: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "mintBatch", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "mintBatch", params, getContractByCodeHash);
     },
     withdraw: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { to: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "withdraw", params, getContractByCodeHash);
     },
     getNFTUri: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
         { index: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getNFTUri", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "getNFTUri", params, getContractByCodeHash);
     },
     getMintPrice: async (
       params: Omit<
-        TestContractParams<
+        TestContractParamsWithoutMaps<
           NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
           never
         >,
         "testArgs"
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "getMintPrice", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "getMintPrice", params, getContractByCodeHash);
     },
   };
+
+  stateForTest(
+    initFields: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.Fields,
+    asset?: Asset,
+    address?: string
+  ) {
+    return this.stateForTest_(initFields, asset, address, undefined);
+  }
 }
 
 // Use this object to test and deploy the contract
@@ -247,9 +369,11 @@ export const NFTPublicSaleCollectionSequentialWithRoyalty = new Factory(
   Contract.fromJson(
     NFTPublicSaleCollectionSequentialWithRoyaltyContractJson,
     "",
-    "4cdc890635635f64a7697b2e73a35fa5a0faf74ebfe2fb8bdea16d4e24302b88"
+    "4cdc890635635f64a7697b2e73a35fa5a0faf74ebfe2fb8bdea16d4e24302b88",
+    []
   )
 );
+registerContract(NFTPublicSaleCollectionSequentialWithRoyalty);
 
 // Use this class to interact with the blockchain
 export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends ContractInstance {
@@ -281,7 +405,7 @@ export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends Contra
     );
   }
 
-  methods = {
+  view = {
     getCollectionUri: async (
       params?: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"getCollectionUri">
     ): Promise<
@@ -321,6 +445,19 @@ export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends Contra
         getContractByCodeHash
       );
     },
+    validateNFT: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"validateNFT">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodResult<"validateNFT">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "validateNFT",
+        params,
+        getContractByCodeHash
+      );
+    },
     royaltyAmount: async (
       params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"royaltyAmount">
     ): Promise<
@@ -330,6 +467,45 @@ export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends Contra
         NFTPublicSaleCollectionSequentialWithRoyalty,
         this,
         "royaltyAmount",
+        params,
+        getContractByCodeHash
+      );
+    },
+    payRoyalty: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"payRoyalty">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodResult<"payRoyalty">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "payRoyalty",
+        params,
+        getContractByCodeHash
+      );
+    },
+    withdrawRoyalty: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"withdrawRoyalty">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodResult<"withdrawRoyalty">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "withdrawRoyalty",
+        params,
+        getContractByCodeHash
+      );
+    },
+    mint_: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"mint_">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodResult<"mint_">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "mint_",
         params,
         getContractByCodeHash
       );
@@ -356,6 +532,19 @@ export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends Contra
         NFTPublicSaleCollectionSequentialWithRoyalty,
         this,
         "mintBatch",
+        params,
+        getContractByCodeHash
+      );
+    },
+    withdraw: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodParams<"withdraw">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.CallMethodResult<"withdraw">
+    > => {
+      return callMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "withdraw",
         params,
         getContractByCodeHash
       );
@@ -388,18 +577,189 @@ export class NFTPublicSaleCollectionSequentialWithRoyaltyInstance extends Contra
     },
   };
 
+  transact = {
+    getCollectionUri: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"getCollectionUri">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"getCollectionUri">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "getCollectionUri",
+        params
+      );
+    },
+    totalSupply: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"totalSupply">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"totalSupply">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "totalSupply",
+        params
+      );
+    },
+    nftByIndex: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"nftByIndex">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"nftByIndex">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "nftByIndex",
+        params
+      );
+    },
+    validateNFT: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"validateNFT">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"validateNFT">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "validateNFT",
+        params
+      );
+    },
+    royaltyAmount: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"royaltyAmount">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"royaltyAmount">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "royaltyAmount",
+        params
+      );
+    },
+    payRoyalty: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"payRoyalty">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"payRoyalty">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "payRoyalty",
+        params
+      );
+    },
+    withdrawRoyalty: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"withdrawRoyalty">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"withdrawRoyalty">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "withdrawRoyalty",
+        params
+      );
+    },
+    mint_: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"mint_">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"mint_">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "mint_",
+        params
+      );
+    },
+    mint: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"mint">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"mint">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "mint",
+        params
+      );
+    },
+    mintBatch: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"mintBatch">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"mintBatch">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "mintBatch",
+        params
+      );
+    },
+    withdraw: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"withdraw">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"withdraw">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "withdraw",
+        params
+      );
+    },
+    getNFTUri: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"getNFTUri">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"getNFTUri">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "getNFTUri",
+        params
+      );
+    },
+    getMintPrice: async (
+      params: NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodParams<"getMintPrice">
+    ): Promise<
+      NFTPublicSaleCollectionSequentialWithRoyaltyTypes.SignExecuteMethodResult<"getMintPrice">
+    > => {
+      return signExecuteMethod(
+        NFTPublicSaleCollectionSequentialWithRoyalty,
+        this,
+        "getMintPrice",
+        params
+      );
+    },
+  };
+
   async multicall<
     Calls extends NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallParams
   >(
     calls: Calls
   ): Promise<
     NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallResults<Calls>
-  > {
-    return (await multicallMethods(
+  >;
+  async multicall<
+    Callss extends NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallParams[]
+  >(
+    callss: Narrow<Callss>
+  ): Promise<
+    NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MulticallReturnType<Callss>
+  >;
+  async multicall<
+    Callss extends
+      | NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallParams
+      | NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallParams[]
+  >(callss: Callss): Promise<unknown> {
+    return await multicallMethods(
       NFTPublicSaleCollectionSequentialWithRoyalty,
       this,
-      calls,
+      callss,
       getContractByCodeHash
-    )) as NFTPublicSaleCollectionSequentialWithRoyaltyTypes.MultiCallResults<Calls>;
+    );
   }
 }

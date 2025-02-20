@@ -3,12 +3,14 @@
   "workspaces": ["frontend", "backend"],
   "scripts": {
     "build:contracts": "npx @alephium/cli compile",
-    "test:contracts": "npm run build:contracts && jest -i --config ./configs/jest-contracts.config.ts",
-    "deploy:contracts": "npx @alephium/cli deploy"
+    "test:contracts": "jest -i --config ./configs/jest-contracts.config.ts",
+    "deploy:contracts": "npx @alephium/cli deploy",
+    "start:backend": "cd backend && yarn dev",
+    "start:frontend": "cd frontend && yarn dev"
   },
   "dependencies": {
-    "@alephium/web3": "^0.22.0",
-    "@alephium/web3-wallet": "^0.22.0",
+    "@alephium/web3": "^1.11.4",
+    "@alephium/web3-wallet": "^1.11.4",
     "axios": "^0.27.2",
     "bs58": "^5.0.0",
     "ipfs-http-client": "56.0.0",
@@ -19,8 +21,8 @@
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
-    "@alephium/cli": "^0.22.0",
-    "@alephium/web3-test": "^0.22.0",
+    "@alephium/cli": "^1.11.4",
+    "@alephium/web3-test": "^1.11.4",
     "@types/node": "17.0.40",
     "autoprefixer": "^10.4.7",
     "eslint": "8.17.0",
@@ -29,7 +31,7 @@
     "typescript": "4.7.3"
   },
   "engines": {
-    "npm": ">=8.0.0 <9.0.0",
-    "node": ">=16.0.0 <17.0.0"
+    "npm": ">=8.0.0",
+    "node": ">=18.0.0"
   }
 }

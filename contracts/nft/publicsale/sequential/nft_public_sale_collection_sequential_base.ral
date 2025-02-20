@@ -10,7 +10,7 @@ Abstract Contract NFTPublicSaleCollectionSequentialBase(
     mintPrice: U256,
     maxBatchMintSize: U256,
     mut totalSupply: U256
-) extends NFTCollectionBase(collectionUri, totalSupply), NFTPublicSaleCollectionBase(nftBaseUri, maxSupply, mintPrice){
+) extends NFTCollectionBase(collectionUri, collectionOwner, totalSupply), NFTPublicSaleCollectionBase(nftBaseUri, maxSupply, mintPrice){
     event Mint(minter: Address, fromIndex: U256, mintSize: U256)
 
     enum ErrorCodes {

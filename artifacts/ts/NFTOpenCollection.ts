@@ -21,11 +21,20 @@ import {
   callMethod,
   multicallMethods,
   fetchContractState,
+  Asset,
   ContractInstance,
   getContractEventsCurrentCount,
+  TestContractParamsWithoutMaps,
+  TestContractResultWithoutMaps,
+  SignExecuteContractMethodParams,
+  SignExecuteScriptTxResult,
+  signExecuteMethod,
+  addStdIdToFields,
+  encodeContractFields,
+  Narrow,
 } from "@alephium/web3";
 import { default as NFTOpenCollectionContractJson } from "../nft/open/NFTOpenCollection.ral.json";
-import { getContractByCodeHash } from "./contracts";
+import { getContractByCodeHash, registerContract } from "./contracts";
 
 // Custom types for the contract
 export namespace NFTOpenCollectionTypes {
@@ -53,9 +62,17 @@ export namespace NFTOpenCollectionTypes {
       params: CallContractParams<{ index: bigint }>;
       result: CallContractResult<HexString>;
     };
+    validateNFT: {
+      params: CallContractParams<{ nftId: HexString; nftIndex: bigint }>;
+      result: CallContractResult<null>;
+    };
     mint: {
       params: CallContractParams<{ nftUri: HexString }>;
       result: CallContractResult<HexString>;
+    };
+    withdraw: {
+      params: CallContractParams<{ to: Address; amount: bigint }>;
+      result: CallContractResult<null>;
     };
   }
   export type CallMethodParams<T extends keyof CallMethodTable> =
@@ -70,22 +87,63 @@ export namespace NFTOpenCollectionTypes {
       ? CallMethodTable[MaybeName]["result"]
       : undefined;
   };
+  export type MulticallReturnType<Callss extends MultiCallParams[]> = {
+    [index in keyof Callss]: MultiCallResults<Callss[index]>;
+  };
+
+  export interface SignExecuteMethodTable {
+    getCollectionUri: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    totalSupply: {
+      params: Omit<SignExecuteContractMethodParams<{}>, "args">;
+      result: SignExecuteScriptTxResult;
+    };
+    nftByIndex: {
+      params: SignExecuteContractMethodParams<{ index: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+    validateNFT: {
+      params: SignExecuteContractMethodParams<{
+        nftId: HexString;
+        nftIndex: bigint;
+      }>;
+      result: SignExecuteScriptTxResult;
+    };
+    mint: {
+      params: SignExecuteContractMethodParams<{ nftUri: HexString }>;
+      result: SignExecuteScriptTxResult;
+    };
+    withdraw: {
+      params: SignExecuteContractMethodParams<{ to: Address; amount: bigint }>;
+      result: SignExecuteScriptTxResult;
+    };
+  }
+  export type SignExecuteMethodParams<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["params"];
+  export type SignExecuteMethodResult<T extends keyof SignExecuteMethodTable> =
+    SignExecuteMethodTable[T]["result"];
 }
 
 class Factory extends ContractFactory<
   NFTOpenCollectionInstance,
   NFTOpenCollectionTypes.Fields
 > {
-  getInitialFieldsWithDefaultValues() {
-    return this.contract.getInitialFieldsWithDefaultValues() as NFTOpenCollectionTypes.Fields;
+  encodeFields(fields: NFTOpenCollectionTypes.Fields) {
+    return encodeContractFields(
+      addStdIdToFields(this.contract, fields),
+      this.contract.fieldsSig,
+      []
+    );
   }
 
   eventIndex = { Mint: 0 };
   consts = {
     ErrorCodes: {
-      NFTNotFound: BigInt(0),
-      CollectionOwnerAllowedOnly: BigInt(1),
-      NFTNotPartOfCollection: BigInt(2),
+      NFTNotFound: BigInt("0"),
+      CollectionOwnerAllowedOnly: BigInt("1"),
+      NFTNotPartOfCollection: BigInt("2"),
     },
   };
 
@@ -96,53 +154,66 @@ class Factory extends ContractFactory<
   tests = {
     getCollectionUri: async (
       params: Omit<
-        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
+        TestContractParamsWithoutMaps<NFTOpenCollectionTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "getCollectionUri", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(
+        this,
+        "getCollectionUri",
+        params,
+        getContractByCodeHash
+      );
     },
     totalSupply: async (
       params: Omit<
-        TestContractParams<NFTOpenCollectionTypes.Fields, never>,
+        TestContractParamsWithoutMaps<NFTOpenCollectionTypes.Fields, never>,
         "testArgs"
       >
-    ): Promise<TestContractResult<bigint>> => {
-      return testMethod(this, "totalSupply", params);
+    ): Promise<TestContractResultWithoutMaps<bigint>> => {
+      return testMethod(this, "totalSupply", params, getContractByCodeHash);
     },
     nftByIndex: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTOpenCollectionTypes.Fields,
         { index: bigint }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "nftByIndex", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "nftByIndex", params, getContractByCodeHash);
     },
     validateNFT: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTOpenCollectionTypes.Fields,
         { nftId: HexString; nftIndex: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "validateNFT", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "validateNFT", params, getContractByCodeHash);
     },
     mint: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTOpenCollectionTypes.Fields,
         { nftUri: HexString }
       >
-    ): Promise<TestContractResult<HexString>> => {
-      return testMethod(this, "mint", params);
+    ): Promise<TestContractResultWithoutMaps<HexString>> => {
+      return testMethod(this, "mint", params, getContractByCodeHash);
     },
     withdraw: async (
-      params: TestContractParams<
+      params: TestContractParamsWithoutMaps<
         NFTOpenCollectionTypes.Fields,
         { to: Address; amount: bigint }
       >
-    ): Promise<TestContractResult<null>> => {
-      return testMethod(this, "withdraw", params);
+    ): Promise<TestContractResultWithoutMaps<null>> => {
+      return testMethod(this, "withdraw", params, getContractByCodeHash);
     },
   };
+
+  stateForTest(
+    initFields: NFTOpenCollectionTypes.Fields,
+    asset?: Asset,
+    address?: string
+  ) {
+    return this.stateForTest_(initFields, asset, address, undefined);
+  }
 }
 
 // Use this object to test and deploy the contract
@@ -150,9 +221,11 @@ export const NFTOpenCollection = new Factory(
   Contract.fromJson(
     NFTOpenCollectionContractJson,
     "",
-    "3c7285b3db939cfa5f708874823d71815db8d30c54f49c8f8d6822f89addf25b"
+    "3c7285b3db939cfa5f708874823d71815db8d30c54f49c8f8d6822f89addf25b",
+    []
   )
 );
+registerContract(NFTOpenCollection);
 
 // Use this class to interact with the blockchain
 export class NFTOpenCollectionInstance extends ContractInstance {
@@ -181,7 +254,7 @@ export class NFTOpenCollectionInstance extends ContractInstance {
     );
   }
 
-  methods = {
+  view = {
     getCollectionUri: async (
       params?: NFTOpenCollectionTypes.CallMethodParams<"getCollectionUri">
     ): Promise<NFTOpenCollectionTypes.CallMethodResult<"getCollectionUri">> => {
@@ -215,6 +288,17 @@ export class NFTOpenCollectionInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    validateNFT: async (
+      params: NFTOpenCollectionTypes.CallMethodParams<"validateNFT">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"validateNFT">> => {
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "validateNFT",
+        params,
+        getContractByCodeHash
+      );
+    },
     mint: async (
       params: NFTOpenCollectionTypes.CallMethodParams<"mint">
     ): Promise<NFTOpenCollectionTypes.CallMethodResult<"mint">> => {
@@ -226,16 +310,81 @@ export class NFTOpenCollectionInstance extends ContractInstance {
         getContractByCodeHash
       );
     },
+    withdraw: async (
+      params: NFTOpenCollectionTypes.CallMethodParams<"withdraw">
+    ): Promise<NFTOpenCollectionTypes.CallMethodResult<"withdraw">> => {
+      return callMethod(
+        NFTOpenCollection,
+        this,
+        "withdraw",
+        params,
+        getContractByCodeHash
+      );
+    },
+  };
+
+  transact = {
+    getCollectionUri: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"getCollectionUri">
+    ): Promise<
+      NFTOpenCollectionTypes.SignExecuteMethodResult<"getCollectionUri">
+    > => {
+      return signExecuteMethod(
+        NFTOpenCollection,
+        this,
+        "getCollectionUri",
+        params
+      );
+    },
+    totalSupply: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"totalSupply">
+    ): Promise<
+      NFTOpenCollectionTypes.SignExecuteMethodResult<"totalSupply">
+    > => {
+      return signExecuteMethod(NFTOpenCollection, this, "totalSupply", params);
+    },
+    nftByIndex: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"nftByIndex">
+    ): Promise<
+      NFTOpenCollectionTypes.SignExecuteMethodResult<"nftByIndex">
+    > => {
+      return signExecuteMethod(NFTOpenCollection, this, "nftByIndex", params);
+    },
+    validateNFT: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"validateNFT">
+    ): Promise<
+      NFTOpenCollectionTypes.SignExecuteMethodResult<"validateNFT">
+    > => {
+      return signExecuteMethod(NFTOpenCollection, this, "validateNFT", params);
+    },
+    mint: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"mint">
+    ): Promise<NFTOpenCollectionTypes.SignExecuteMethodResult<"mint">> => {
+      return signExecuteMethod(NFTOpenCollection, this, "mint", params);
+    },
+    withdraw: async (
+      params: NFTOpenCollectionTypes.SignExecuteMethodParams<"withdraw">
+    ): Promise<NFTOpenCollectionTypes.SignExecuteMethodResult<"withdraw">> => {
+      return signExecuteMethod(NFTOpenCollection, this, "withdraw", params);
+    },
   };
 
   async multicall<Calls extends NFTOpenCollectionTypes.MultiCallParams>(
     calls: Calls
-  ): Promise<NFTOpenCollectionTypes.MultiCallResults<Calls>> {
-    return (await multicallMethods(
+  ): Promise<NFTOpenCollectionTypes.MultiCallResults<Calls>>;
+  async multicall<Callss extends NFTOpenCollectionTypes.MultiCallParams[]>(
+    callss: Narrow<Callss>
+  ): Promise<NFTOpenCollectionTypes.MulticallReturnType<Callss>>;
+  async multicall<
+    Callss extends
+      | NFTOpenCollectionTypes.MultiCallParams
+      | NFTOpenCollectionTypes.MultiCallParams[]
+  >(callss: Callss): Promise<unknown> {
+    return await multicallMethods(
       NFTOpenCollection,
       this,
-      calls,
+      callss,
       getContractByCodeHash
-    )) as NFTOpenCollectionTypes.MultiCallResults<Calls>;
+    );
   }
 }

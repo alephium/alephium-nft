@@ -1,4 +1,4 @@
-import { web3, subContractId, addressFromContractId, encodeU256, binToHex, groupOfAddress } from '@alephium/web3'
+import { web3, subContractId, addressFromContractId, binToHex, groupOfAddress, codec } from '@alephium/web3'
 import { getSigners } from '@alephium/web3-test'
 import * as utils from '../../../shared'
 import { checkEvent, getNFTCollection, getNFTUri } from '../utils'
@@ -23,9 +23,8 @@ const royaltyRate = BigInt(200)
 async function testNFTMinting(royalty: boolean) {
   const [signer] = await getSigners(1)
   const nftCollection = await getNFTCollection(signer)
-  nftCollection.buildProject()
 
-  let nftCollectionDeployTx = undefined
+  let nftCollectionDeployTx
   if (royalty) {
     nftCollectionDeployTx = await nftCollection.openCollection.createWithRoyalty("https://crypto-punk-uri", royaltyRate, signer)
   } else {
@@ -55,7 +54,7 @@ async function mintAndVerify(
   const nftCollectionContractAddress = addressFromContractId(nftOpenCollectionInstance.contractId)
   const group = groupOfAddress(nftCollectionContractAddress)
   const nftContractId = subContractId(
-    nftOpenCollectionInstance.contractId, binToHex(encodeU256(nftIndex)), group
+    nftOpenCollectionInstance.contractId, binToHex(codec.u256Codec.encode(nftIndex)), group
   )
 
   const { txId } = await nftCollection.openCollection.mint(
@@ -66,14 +65,14 @@ async function mintAndVerify(
   )
 
   // NFT just minted
-  const nftByIndexResult = await nftOpenCollectionInstance.methods.nftByIndex({ args: { index: nftIndex } })
+  const nftByIndexResult = await nftOpenCollectionInstance.view.nftByIndex({ args: { index: nftIndex } })
   expect(nftByIndexResult.returns).toEqual(nftContractId)
   // NFT doesn't exist yet
-  await expect(nftOpenCollectionInstance.methods.nftByIndex({ args: { index: nftIndex + BigInt(1) } })).rejects.toThrow(Error)
+  await expect(nftOpenCollectionInstance.view.nftByIndex({ args: { index: nftIndex + BigInt(1) } })).rejects.toThrow(Error)
 
   const nftInstance = NFT.at(addressFromContractId(nftContractId))
   const nftContractState = await nftInstance.fetchState()
-  const [collectionId, index] = (await nftInstance.methods.getCollectionIndex()).returns
+  const [collectionId, index] = (await nftInstance.view.getCollectionIndex()).returns
   expect(collectionId).toEqual(nftOpenCollectionInstance.contractId)
   expect(index).toEqual(nftIndex)
   utils.checkHexString(nftContractState.fields.tokenUri, getNFTUri(nftIndex))
@@ -89,9 +88,9 @@ async function mintAndVerify(
 
   if (royalty) {
     const nftOpenCollectionWithRoyaltyInstance = nftOpenCollectionInstance as NFTOpenCollectionWithRoyaltyInstance
-    const tokenIdResult = await nftOpenCollectionWithRoyaltyInstance.methods.nftByIndex({ args: { index: nftIndex } })
+    const tokenIdResult = await nftOpenCollectionWithRoyaltyInstance.view.nftByIndex({ args: { index: nftIndex } })
     const tokenId = tokenIdResult.returns
-    const royaltyAmount = await nftOpenCollectionWithRoyaltyInstance.methods.royaltyAmount({ args: { tokenId: tokenId, salePrice: BigInt(100) } })
+    const royaltyAmount = await nftOpenCollectionWithRoyaltyInstance.view.royaltyAmount({ args: { tokenId: tokenId, salePrice: BigInt(100) } })
 
     expect(royaltyAmount.returns).toEqual(BigInt(100) * royaltyRate / BigInt(10000))
   }

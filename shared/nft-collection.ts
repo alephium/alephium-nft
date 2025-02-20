@@ -43,7 +43,7 @@ import {
   hexToString,
   contractIdFromAddress,
   subContractId,
-  encodeU256,
+  encodeVmU256,
   isHexString,
   NodeProvider,
   ExplorerProvider,
@@ -53,7 +53,6 @@ import { getAlephiumNFTConfig } from './configs'
 import * as blake from 'blakejs'
 import axios from 'axios'
 import { NFT } from './nft'
-import { CallContractSucceeded } from '@alephium/web3/dist/src/api/api-alephium'
 import { getNodeProvider } from '.'
 
 export class NFTCollectionHelper extends DeployHelpers {
@@ -144,7 +143,7 @@ async function fetchEnumerableNFTs(collectionMetadata: NFTPublicSaleCollectionMe
       const hexStr = collectionMetadata.nftBaseUri + Buffer.from(index.toString(), 'ascii').toString('hex')
       const tokenUri = hexToString(hexStr)
       const metadata = (await axios.get(tokenUri)).data
-      const tokenId = subContractId(collectionMetadata.id, binToHex(encodeU256(BigInt(index))), groupIndex)
+      const tokenId = subContractId(collectionMetadata.id, binToHex(encodeVmU256(BigInt(index))), groupIndex)
       return {
         name: metadata.name,
         description: metadata.description,
@@ -175,7 +174,7 @@ export async function fetchNFTByPage(
   if (collectionMetadata.collectionType === 'NFTOpenCollection') {
     if (explorerProvider === undefined) return []
     const collectionAddress = addressFromContractId(collectionMetadata.id)
-    const { subContracts } = await explorerProvider.contracts.getContractsContractSubContracts(collectionAddress)
+    const { subContracts } = await explorerProvider.contracts.getContractsContractAddressSubContracts(collectionAddress)
     const addresses = (subContracts ?? []).slice(skipped, skipped + pageSize)
     return await fetchNonEnumerableNFTs(nodeProvider, addresses, false)
   }
@@ -200,7 +199,7 @@ export async function fetchNFTCollectionMetadata(
 ): Promise<NFTCollectionMetadata | undefined> {
   const nodeProvider = getNodeProvider()
   const collectionAddress = addressFromContractId(collectionId)
-  const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress, { group: 0 })
+  const state = await nodeProvider.contracts.getContractsAddressState(collectionAddress)
   if (state.codeHash === NFTOpenCollection.contract.codeHash) {
     const contractState = NFTOpenCollection.contract.fromApiContractState(state) as NFTOpenCollectionTypes.State
     const metadataUri = hexToString(contractState.fields.collectionUri)
